@@ -13,6 +13,7 @@
  *   OPENAI_API_KEY=sk-...             — API key (optional for local models)
  *   OPENAI_BASE_URL=http://...        — base URL (default: https://api.openai.com/v1)
  *   OPENAI_MODEL=gpt-4o              — default model override
+ *   OPENAI_TOOLLESS=1                — strip tool definitions from all requests (text-only mode)
  *   CODEX_API_KEY / ~/.codex/auth.json — Codex auth for codexplan/codexspark
  *
  * GitHub Copilot API (api.githubcopilot.com), OpenAI-compatible:
@@ -1545,7 +1546,7 @@ class OpenAIShimMessages {
     if (params.temperature !== undefined) body.temperature = params.temperature
     if (params.top_p !== undefined) body.top_p = params.top_p
 
-    if (params.tools && params.tools.length > 0) {
+    if (params.tools && params.tools.length > 0 && !isEnvTruthy(process.env.OPENAI_TOOLLESS)) {
       const converted = convertTools(
         params.tools as Array<{
           name: string

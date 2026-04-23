@@ -1,0 +1,75 @@
+#!/usr/bin/env node
+
+/**
+ * Zero CLI — OpenClaude with COPILOT_* env var support
+ *
+ * Maps COPILOT_PROVIDER_* / COPILOT_MODEL vars to the native OpenAI-shim
+ * vars that OpenClaude understands, then boots the app.
+ *
+ * Internal (localhost):
+ *   export COPILOT_PROVIDER_BASE_URL=http://localhost:3052/v1
+ *   export COPILOT_PROVIDER_TYPE=openai
+ *   export COPILOT_PROVIDER_API_KEY=not-required
+ *   export COPILOT_MODEL=gemma4:code
+ *   zero
+ *
+ * External (remote server):
+ *   export COPILOT_PROVIDER_BASE_URL=http://10.11.36.131:3052/v1
+ *   export COPILOT_PROVIDER_TYPE=openai
+ *   export COPILOT_PROVIDER_API_KEY=not-required
+ *   export COPILOT_MODEL=gemma4:code
+ *   zero
+ */
+
+// ── COPILOT_* → native env var mapping ──────────────────────────────────────
+
+const providerType = (process.env.COPILOT_PROVIDER_TYPE ?? '').toLowerCase()
+
+if (providerType === 'openai' || process.env.COPILOT_PROVIDER_BASE_URL) {
+  // Activate OpenAI-compatible shim
+  process.env.CLAUDE_CODE_USE_OPENAI = '1'
+}
+
+if (process.env.COPILOT_PROVIDER_BASE_URL && !process.env.OPENAI_BASE_URL) {
+  process.env.OPENAI_BASE_URL = process.env.COPILOT_PROVIDER_BASE_URL
+}
+
+if (process.env.COPILOT_PROVIDER_API_KEY && !process.env.OPENAI_API_KEY) {
+  process.env.OPENAI_API_KEY = process.env.COPILOT_PROVIDER_API_KEY
+}
+
+if (process.env.COPILOT_MODEL && !process.env.OPENAI_MODEL) {
+  process.env.OPENAI_MODEL = process.env.COPILOT_MODEL
+}
+
+// COPILOT_TOOLLESS=1 → disable tool calling (text-only mode).
+// Useful for models that loop on tool calls instead of answering.
+if (process.env.COPILOT_TOOLLESS && !process.env.OPENAI_TOOLLESS) {
+  process.env.OPENAI_TOOLLESS = process.env.COPILOT_TOOLLESS
+}
+
+// ── Boot the compiled bundle ─────────────────────────────────────────────────
+
+import { existsSync } from 'fs'
+import { join, dirname } from 'path'
+import { fileURLToPath, pathToFileURL } from 'url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const distPath = join(__dirname, '..', 'dist', 'cli.mjs')
+
+if (existsSync(distPath)) {
+  await import(pathToFileURL(distPath).href)
+} else {
+  console.error(`
+  zero: dist/cli.mjs not found.
+
+  Build first:
+    bun run build
+
+  Or run directly with Bun:
+    bun run dev
+
+  See README.md for setup instructions.
+`)
+  process.exit(1)
+}
