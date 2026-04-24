@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.6.0](https://github.com/Gitlawb/openclaude/compare/v0.5.2...v0.6.0) (2026-04-22)
+## [0.6.1](https://github.com/Gitlawb/openclaude/compare/v0.5.2...v0.6.0) (2026-04-22)
 
 
 ### Features

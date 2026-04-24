@@ -32,7 +32,7 @@ OpenClaude is also mirrored to GitLawb:
 ### Install
 
 ```bash
-npm install -g @gitlawb/openclaude
+npm install -g @duheso/zerocli
 ```
 
 If the install later reports `ripgrep not found`, install ripgrep system-wide and confirm `rg --version` works in the same terminal before starting OpenClaude.
