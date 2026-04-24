@@ -1,11 +1,12 @@
 import type { Command } from '../types/command.js'
+import { t } from '../i18n/index.js'
 
 const command: Command = {
   name: 'auto-fix',
-  description: 'Configure auto-fix: run lint/test after AI edits',
+  description: t('cmd_auto_fix') as string,
   isEnabled: () => true,
   type: 'prompt',
-  progressMessage: 'Configuring auto-fix...',
+  progressMessage: t('progress_configuring_autofix') as string,
   contentLength: 0,
   source: 'builtin',
   async getPromptForCommand() {

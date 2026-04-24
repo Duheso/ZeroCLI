@@ -3,6 +3,7 @@ import { Text } from '../ink.js';
 import { saveGlobalConfig } from '../utils/config.js';
 import { Select } from './CustomSelect/index.js';
 import { Dialog } from './design-system/Dialog.js';
+import { t } from '../i18n/index.js';
 type Props = {
   customApiKeyTruncated: string;
   onDone(approved: boolean): void;
@@ -74,7 +75,7 @@ export function ApproveApiKey(t0: Props) {
   }
   let t5;
   if ($[8] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Text>Do you want to use this API key?</Text>;
+    t5 = <Text>{t('doYouWantToUseApiKey')}</Text>;
     $[8] = t5;
   } else {
     t5 = $[8];
@@ -82,7 +83,7 @@ export function ApproveApiKey(t0: Props) {
   let t6;
   if ($[9] === Symbol.for("react.memo_cache_sentinel")) {
     t6 = {
-      label: "Yes",
+      label: t('yes') as string,
       value: "yes"
     };
     $[9] = t6;

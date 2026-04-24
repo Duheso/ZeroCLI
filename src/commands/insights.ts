@@ -9,6 +9,7 @@ import {
 } from 'fs/promises'
 import { extname, join } from 'path'
 import type { Command } from '../commands.js'
+import { t } from '../i18n/index.js'
 import { queryWithModel } from '../services/api/claude.js'
 import {
   AGENT_TOOL_NAME,
@@ -2836,9 +2837,9 @@ function safeKeys(obj: Record<string, unknown> | undefined | null): string[] {
 const usageReport: Command = {
   type: 'prompt',
   name: 'insights',
-  description: 'Generate a report analyzing your Claude Code sessions',
+  description: t('cmd_insights') as string,
   contentLength: 0, // Dynamic content
-  progressMessage: 'analyzing your sessions',
+  progressMessage: t('progress_analyzing_sessions') as string,
   source: 'builtin',
   async getPromptForCommand(_args) {
     const { insights, htmlPath, data } = await generateUsageReport()

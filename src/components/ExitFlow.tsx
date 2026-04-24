@@ -3,9 +3,9 @@ import sample from 'lodash-es/sample.js';
 import React from 'react';
 import { gracefulShutdown } from '../utils/gracefulShutdown.js';
 import { WorktreeExitDialog } from './WorktreeExitDialog.js';
-const GOODBYE_MESSAGES = ['Goodbye!', 'See ya!', 'Bye!', 'Catch you later!'];
+import { t } from '../i18n/index.js';
 function getRandomGoodbyeMessage(): string {
-  return sample(GOODBYE_MESSAGES) ?? 'Goodbye!';
+  return sample(t('goodbyeMessages') as string[]) ?? (t('goodbyeMessages') as string[])[0]!;
 }
 type Props = {
   onDone: (message?: string) => void;

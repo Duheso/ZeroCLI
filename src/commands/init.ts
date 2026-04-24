@@ -1,6 +1,7 @@
 import type { Command } from '../commands.js'
 import { maybeMarkProjectOnboardingComplete } from '../projectOnboardingState.js'
 import { isNewInitEnabled } from './initMode.js'
+import { t } from '../i18n/index.js'
 
 const OLD_INIT_PROMPT = `Please analyze this codebase and create a CLAUDE.md file, which will be given to future instances of Claude Code to operate in this repository.
 
@@ -233,7 +234,7 @@ const command = {
       : 'Initialize a new project instruction file with codebase documentation'
   },
   contentLength: 0, // Dynamic content
-  progressMessage: 'analyzing your codebase',
+  progressMessage: t('progress_analyzing_codebase') as string,
   source: 'builtin',
   async getPromptForCommand() {
     maybeMarkProjectOnboardingComplete()

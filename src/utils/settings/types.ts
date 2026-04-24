@@ -659,6 +659,12 @@ export const SettingsSchema = lazySchema(() =>
         .describe(
           'Preferred language for Claude responses and voice dictation (e.g., "japanese", "spanish")',
         ),
+      uiLanguage: z
+        .string()
+        .optional()
+        .describe(
+          'Language for the Zero CLI interface. Supported values: "en" (English), "pt-BR" (Portuguese Brazil). Can also be set via the ZERO_LANG environment variable.',
+        ),
       skipWebFetchPreflight: z
         .boolean()
         .optional()

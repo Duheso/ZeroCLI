@@ -2,6 +2,7 @@ import { parseFrontmatter } from '../utils/frontmatterParser.js'
 import { parseSlashCommandToolsFromFrontmatter } from '../utils/markdownConfigLoader.js'
 import { executeShellCommandsInPrompt } from '../utils/promptShellExecution.js'
 import { createMovedToPluginCommand } from './createMovedToPluginCommand.js'
+import { t } from '../i18n/index.js'
 
 const SECURITY_REVIEW_MARKDOWN = `---
 allowed-tools: Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Bash(git remote show:*), Read, Glob, Grep, LS, Task
@@ -197,9 +198,8 @@ Your final reply must contain the markdown report and nothing else.`
 
 export default createMovedToPluginCommand({
   name: 'security-review',
-  description:
-    'Complete a security review of the pending changes on the current branch',
-  progressMessage: 'analyzing code changes for security risks',
+  description: t('cmd_security_review') as string,
+  progressMessage: t('progress_analyzing_security') as string,
   pluginName: 'security-review',
   pluginCommand: 'security-review',
   async getPromptWhileMarketplaceIsPrivate(_args, context) {

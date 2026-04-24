@@ -63,7 +63,7 @@ function DistTagsDisplay(t0) {
   if (!distTags.latest) {
     let t1;
     if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-      t1 = <Text dimColor={true}>└ Failed to fetch versions</Text>;
+      t1 = <Text dimColor={true}>└ {t('failedToFetchVersions')}</Text>;
       $[0] = t1;
     } else {
       t1 = $[0];
@@ -72,7 +72,7 @@ function DistTagsDisplay(t0) {
   }
   let t1;
   if ($[1] !== distTags.stable) {
-    t1 = distTags.stable && <Text>└ Stable version: {distTags.stable}</Text>;
+    t1 = distTags.stable && <Text>└ {t('stableVersion')} {distTags.stable}</Text>;
     $[1] = distTags.stable;
     $[2] = t1;
   } else {
@@ -80,7 +80,7 @@ function DistTagsDisplay(t0) {
   }
   let t2;
   if ($[3] !== distTags.latest) {
-    t2 = <Text>└ Latest version: {distTags.latest}</Text>;
+    t2 = <Text>└ {t('latestVersion')} {distTags.latest}</Text>;
     $[3] = distTags.latest;
     $[4] = t2;
   } else {

@@ -1,16 +1,78 @@
 import { getInitialSettings } from '../utils/settings/settings.js'
+import { isPortuguese } from '../i18n/index.js'
 
 export function getSpinnerVerbs(): string[] {
   const settings = getInitialSettings()
   const config = settings.spinnerVerbs
+  const baseVerbs = isPortuguese() ? SPINNER_VERBS_PT_BR : SPINNER_VERBS
   if (!config) {
-    return SPINNER_VERBS
+    return baseVerbs
   }
   if (config.mode === 'replace') {
-    return config.verbs.length > 0 ? config.verbs : SPINNER_VERBS
+    return config.verbs.length > 0 ? config.verbs : baseVerbs
   }
-  return [...SPINNER_VERBS, ...config.verbs]
+  return [...baseVerbs, ...config.verbs]
 }
+
+// PT-BR spinner verbs – verbos de carregamento em português
+export const SPINNER_VERBS_PT_BR = [
+  'Analisando',
+  'Arquitetando',
+  'Calculando',
+  'Cogitando',
+  'Compilando',
+  'Computando',
+  'Concebendo',
+  'Construindo',
+  'Criando',
+  'Depurando',
+  'Desenvolvendo',
+  'Elaborando',
+  'Elucidando',
+  'Encantando',
+  'Engenhando',
+  'Escrevendo',
+  'Estruturando',
+  'Explorando',
+  'Fazendo',
+  'Fermentando',
+  'Fluindo',
+  'Formulando',
+  'Garimpando',
+  'Gerando',
+  'Harmonizando',
+  'Idealizando',
+  'Imaginando',
+  'Implementando',
+  'Improvisando',
+  'Inferindo',
+  'Integrando',
+  'Inventando',
+  'Manejando',
+  'Mapeando',
+  'Meditando',
+  'Melhorando',
+  'Modulando',
+  'Navegando',
+  'Orquestrando',
+  'Otimizando',
+  'Pensando',
+  'Planejando',
+  'Processando',
+  'Programando',
+  'Racioc\u00EDnando',
+  'Refinando',
+  'Resolvendo',
+  'Sintetizando',
+  'Sistematizando',
+  'Tecendo',
+  'Testando',
+  'Trabalhando',
+  'Transformando',
+  'Transmutando',
+  'Verificando',
+  'Zerando',
+]
 
 // Spinner verbs for loading messages
 export const SPINNER_VERBS = [

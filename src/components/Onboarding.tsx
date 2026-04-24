@@ -19,6 +19,7 @@ import { WelcomeV2 } from './LogoV2/WelcomeV2.js';
 import { PressEnterToContinue } from './PressEnterToContinue.js';
 import { ThemePicker } from './ThemePicker.js';
 import { OrderedList } from './ui/OrderedList.js';
+import { t } from '../i18n/index.js';
 type StepId = 'preflight' | 'theme' | 'oauth' | 'api-key' | 'security' | 'terminal-setup';
 interface OnboardingStep {
   id: StepId;
@@ -63,7 +64,7 @@ export function Onboarding({
     />
     </Box>;
   const securityStep = <Box flexDirection="column" gap={1} paddingLeft={1}>
-      <Text bold>Security notes:</Text>
+      <Text bold>{t('securityNotes')}</Text>
       <Box flexDirection="column" width={70}>
         {/**
          * OrderedList misnumbers items when rendering conditionally,
@@ -71,20 +72,18 @@ export function Onboarding({
          */}
         <OrderedList>
           <OrderedList.Item>
-            <Text>Claude can make mistakes</Text>
+            <Text>{t('claudeCanMakeMistakes')}</Text>
             <Text dimColor wrap="wrap">
-              You should always review Claude&apos;s responses, especially when
-              <Newline />
-              running code.
+              {t('reviewClaudeResponses').split('\n').map((line, i) => i === 0 ? line : <><Newline />{line}</>)}
               <Newline />
             </Text>
           </OrderedList.Item>
           <OrderedList.Item>
             <Text>
-              Due to prompt injection risks, only use it with code you trust
+              {t('promptInjectionRisk')}
             </Text>
             <Text dimColor wrap="wrap">
-              For more details see:
+              {t('forMoreDetailsSee')}
               <Newline />
               <Link url="https://code.claude.com/docs/en/security" />
             </Text>

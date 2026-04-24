@@ -3,6 +3,7 @@ import { Box, Link, Text } from '../ink.js'
 import { Select } from './CustomSelect/index.js'
 import { Dialog } from './design-system/Dialog.js'
 import { getAPIProvider } from '../utils/model/providers.js'
+import { t } from '../i18n/index.js'
 
 type Props = {
   onDone: () => void
@@ -30,20 +31,21 @@ function getProviderLabel(): string {
 
 export function CostThresholdDialog({ onDone }: Props): React.ReactNode {
   const providerLabel = getProviderLabel()
+  const spentFn = t('spentOnProvider')
   return (
     <Dialog
-      title={`You've spent $5 on the ${providerLabel} this session.`}
+      title={spentFn('$5', providerLabel)}
       onCancel={onDone}
     >
       <Box flexDirection="column">
-        <Text>Learn more about how to monitor your spending:</Text>
+        <Text>{t('learnMoreCosts')}</Text>
         <Link url="https://code.claude.com/docs/en/costs" />
       </Box>
       <Select
         options={[
           {
             value: 'ok',
-            label: 'Got it, thanks!',
+            label: t('gotItThanks') as string,
           },
         ]}
         onChange={onDone}

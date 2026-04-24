@@ -1,9 +1,10 @@
 import type { Command } from '../../commands.js'
 import { isKeybindingCustomizationEnabled } from '../../keybindings/loadUserBindings.js'
+import { t } from '../../i18n/index.js'
 
 const keybindings = {
   name: 'keybindings',
-  description: 'Open or create your keybindings configuration file',
+  description: t('cmd_keybindings') as string,
   isEnabled: () => isKeybindingCustomizationEnabled(),
   supportsNonInteractive: false,
   type: 'local',

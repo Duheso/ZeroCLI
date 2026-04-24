@@ -1,9 +1,10 @@
 import type { Command } from '../../commands.js'
+import { t } from '../../i18n/index.js'
 
 const resume: Command = {
   type: 'local-jsx',
   name: 'resume',
-  description: 'Resume a previous conversation',
+  description: t('cmd_resume') as string,
   aliases: ['continue'],
   argumentHint: '[conversation id or search term]',
   load: () => import('./resume.js'),

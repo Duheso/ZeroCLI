@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.2](https://github.com/Gitlawb/openclaude/compare/v0.6.1...v0.6.2) (2026-04-23)
+
+
+### Features
+
+* **i18n:** add Portuguese Brazil (PT-BR) language support for the entire CLI interface ([#820](https://github.com/Gitlawb/openclaude/issues/820))
+  * All UI components translated: welcome screen, onboarding, help, dialogs, spinner messages
+  * All slash-command descriptions and progress messages translated
+  * Language auto-detected from `$LANG` / `$LC_ALL` / `$LC_MESSAGES` system environment
+  * Manual override via `ZERO_LANG=pt-BR` environment variable or `uiLanguage: "pt-BR"` in settings
+  * PT-BR spinner verb list and turn-completion verbs included
+  * New `src/i18n/` module with `en` and `pt-BR` locale files
+
+
 ## [0.6.1](https://github.com/Gitlawb/openclaude/compare/v0.5.2...v0.6.0) (2026-04-22)
 
 

@@ -104,6 +104,8 @@ export function Config({
   const initialOutputStyle = React.useRef(currentOutputStyle);
   const [currentLanguage, setCurrentLanguage] = useState<string | undefined>(settingsData?.language);
   const initialLanguage = React.useRef(currentLanguage);
+  const [currentUiLanguage, setCurrentUiLanguage] = useState<string>((settingsData as Record<string, unknown> | undefined)?.uiLanguage as string ?? 'en');
+  const initialUiLanguage = React.useRef(currentUiLanguage);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [isSearchMode, setIsSearchMode] = useState(true);
@@ -803,6 +805,22 @@ export function Config({
     type: 'managedEnum' as const,
     onChange: () => {} // handled by LanguagePicker submenu
   }, {
+    id: 'uiLanguage',
+    label: 'UI Language',
+    value: currentUiLanguage,
+    options: ['en', 'pt-BR'],
+    type: 'enum' as const,
+    onChange(value_ui: string) {
+      setCurrentUiLanguage(value_ui);
+      updateSettingsForSource('userSettings', {
+        uiLanguage: value_ui === 'en' ? undefined : value_ui
+      } as Record<string, unknown>);
+      setChanges(prev_ui => ({
+        ...prev_ui,
+        uiLanguage: value_ui
+      }));
+    }
+  }, {
     id: 'editorMode',
     label: 'Editor mode',
     // Convert 'emacs' to 'normal' for backward compatibility
@@ -1161,6 +1179,9 @@ export function Config({
     if (currentLanguage !== initialLanguage.current) {
       formattedChanges.push(`Set response language to ${chalk.bold(currentLanguage ?? 'Default (English)')}`);
     }
+    if (currentUiLanguage !== initialUiLanguage.current) {
+      formattedChanges.push(`Set UI language to ${chalk.bold(currentUiLanguage)}`);
+    }
     if (globalConfig.editorMode !== initialConfig.current.editorMode) {
       formattedChanges.push(`Set editor mode to ${chalk.bold(globalConfig.editorMode || 'emacs')}`);
     }
@@ -1244,6 +1265,7 @@ export function Config({
       autoUpdatesChannel: iu?.autoUpdatesChannel,
       minimumVersion: iu?.minimumVersion,
       language: iu?.language,
+      uiLanguage: (iu as Record<string, unknown> | undefined)?.uiLanguage as string | undefined,
       ...(feature('TRANSCRIPT_CLASSIFIER') ? {
         useAutoModeDuringPlan: (iu as {
           useAutoModeDuringPlan?: boolean;
