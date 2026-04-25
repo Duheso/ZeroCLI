@@ -10,14 +10,8 @@ Use OpenAI-compatible APIs, Gemini, GitHub Models, Codex OAuth, Codex, Ollama, A
 [![Security Policy](https://img.shields.io/badge/security-policy-0f766e)](SECURITY.md)
 [![License](https://img.shields.io/badge/license-MIT-2563eb)](LICENSE)
 
-Zero CLI is also mirrored to GitLawb:
-[gitlawb.com/node/repos/z6MkqDnb/zero](https://gitlawb.com/node/repos/z6MkqDnb/zero)
 
 [Quick Start](#quick-start) | [Setup Guides](#setup-guides) | [Providers](#supported-providers) | [Source Build](#source-build-and-local-development) | [VS Code Extension](#vs-code-extension) | [Community](#community)
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/chart?repos=gitlawb/zero&type=date&legend=top-left)](https://www.star-history.com/?repos=gitlawb%2Fzero&type=date&legend=top-left)
 
 ## Why Zero CLI
 

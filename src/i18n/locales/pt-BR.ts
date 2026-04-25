@@ -141,7 +141,7 @@ export const ptBR: TranslationKeys = {
   cmd_web_setup: 'Configurar o Claude Code na web (requer conexão com conta do GitHub)',
 
   // Strings de UI – tela inicial, rodapé, indicador IDE
-  tagline: 'Qualquer modelo. Toda ferramenta. Zero limites.',
+  tagline: 'Qualquer modelo. Qualquer ferramenta. Zero limites.',
   providerLabel: 'Provedor',
   modelLabel: 'Modelo',
   endpointLabel: 'Endpoint',

@@ -1,10 +1,10 @@
 {
   "name": "@duheso/zerocli",
-  "version": "0.6.3",
+  "version": "0.6.5",
   "description": "Zero Cli to any LLM — OpenAI, Gemini, DeepSeek, Ollama, and 200+ models",
   "type": "module",
   "bin": {
-    "zero": "./bin/zero"
+    "zero": "bin/zero"
   },
   "files": [
     "bin/",
@@ -147,7 +147,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Duheso/ZeroCLI.git"
+    "url": "git+https://github.com/Duheso/ZeroCLI.git"
   },
   "keywords": [
     "claude-code",
