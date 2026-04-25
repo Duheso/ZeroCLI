@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Zero CLI — OpenClaude with COPILOT_* env var support
+ * Zero CLI — COPILOT_* env var support
  *
  * Maps COPILOT_PROVIDER_* / COPILOT_MODEL vars to the native OpenAI-shim
- * vars that OpenClaude understands, then boots the app.
+ * vars, then boots the app.
  *
  * Internal (localhost):
  *   export COPILOT_PROVIDER_BASE_URL=http://localhost:3052/v1
