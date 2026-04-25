@@ -3,6 +3,7 @@ import { CLAUDE_CODE_GUIDE_AGENT_TYPE } from 'src/tools/AgentTool/built-in/claud
 import { getSettingsFilePathForSource } from 'src/utils/settings/settings.js'
 import { enableDebugLogging, getDebugLogPath } from '../../utils/debug.js'
 import { errorMessage, isENOENT } from '../../utils/errors.js'
+import { t } from '../../i18n/index.js'
 import { formatFileSize } from '../../utils/format.js'
 import { registerBundledSkill } from '../bundledSkills.js'
 
@@ -12,10 +13,7 @@ const TAIL_READ_BYTES = 64 * 1024
 export function registerDebugSkill(): void {
   registerBundledSkill({
     name: 'debug',
-    description:
-      process.env.USER_TYPE === 'ant'
-        ? 'Debug your current Claude Code session by reading the session debug log. Includes all event logging'
-        : 'Enable debug logging for this session and help diagnose issues',
+    description: t('cmd_debug_bundled') as string,
     allowedTools: ['Read', 'Grep', 'Glob'],
     argumentHint: '[issue description]',
     // disableModelInvocation so that the user has to explicitly request it in

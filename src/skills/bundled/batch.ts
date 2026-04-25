@@ -3,6 +3,7 @@ import { ASK_USER_QUESTION_TOOL_NAME } from '../../tools/AskUserQuestionTool/pro
 import { ENTER_PLAN_MODE_TOOL_NAME } from '../../tools/EnterPlanModeTool/constants.js'
 import { EXIT_PLAN_MODE_TOOL_NAME } from '../../tools/ExitPlanModeTool/constants.js'
 import { SKILL_TOOL_NAME } from '../../tools/SkillTool/constants.js'
+import { t } from '../../i18n/index.js'
 import { getIsGit } from '../../utils/git.js'
 import { registerBundledSkill } from '../bundledSkills.js'
 
@@ -100,8 +101,7 @@ Examples:
 export function registerBatchSkill(): void {
   registerBundledSkill({
     name: 'batch',
-    description:
-      'Research and plan a large-scale change, then execute it in parallel across 5–30 isolated worktree agents that each open a PR.',
+    description: t('cmd_batch') as string,
     whenToUse:
       'Use when the user wants to make a sweeping, mechanical change across many files (migrations, refactors, bulk renames) that can be decomposed into independent parallel units.',
     argumentHint: '<instruction>',

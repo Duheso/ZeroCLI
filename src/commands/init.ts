@@ -230,8 +230,8 @@ const command = {
   name: 'init',
   get description() {
     return isNewInitEnabled()
-      ? 'Initialize new project instruction file(s) and optional skills/hooks with codebase documentation'
-      : 'Initialize a new project instruction file with codebase documentation'
+      ? t('cmd_init_new') as string
+      : t('cmd_init') as string
   },
   contentLength: 0, // Dynamic content
   progressMessage: t('progress_analyzing_codebase') as string,
