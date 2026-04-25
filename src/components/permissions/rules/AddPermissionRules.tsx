@@ -32,7 +32,7 @@ export function optionForPermissionSaveDestination(saveDestination: EditableSett
     case 'userSettings':
       return {
         label: 'User settings',
-        description: `Saved in ~/.zero/settings.json`,
+        description: `Saved in ~/.zerocli/settings.json`,
         value: saveDestination
       };
   }

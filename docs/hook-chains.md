@@ -31,7 +31,7 @@ MVP runtime trigger wiring:
 
 Default config path:
 
-- `.zero/hook-chains.json`
+- `.zerocli/hook-chains.json`
 
 Override path:
 

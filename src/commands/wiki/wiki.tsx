@@ -12,7 +12,7 @@ import { getCwd } from '../../utils/cwd.js'
 function renderHelp(): string {
   return `Usage: /wiki [init|status|ingest <path>]
 
-Manage the Zero CLI project wiki stored in .zero/wiki.
+Manage the Zero CLI project wiki stored in .zerocli/wiki.
 
 Commands:
   /wiki init    Initialize the wiki structure in the current project

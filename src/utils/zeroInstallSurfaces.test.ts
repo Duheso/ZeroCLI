@@ -63,13 +63,13 @@ test('cleanupNpmInstallations removes both zero and legacy claude local install 
   }))
 
   mock.module('./envUtils.js', () => ({
-    getClaudeConfigHomeDir: () => join(homedir(), '.zero'),
+    getClaudeConfigHomeDir: () => join(homedir(), '.zerocli'),
     isEnvTruthy: (value: string | undefined) => value === '1',
   }))
 
   const { cleanupNpmInstallations } = await importFreshInstaller()
   await cleanupNpmInstallations()
 
-  expect(removedPaths).toContain(join(homedir(), '.zero', 'local'))
+  expect(removedPaths).toContain(join(homedir(), '.zerocli', 'local'))
   expect(removedPaths).toContain(join(homedir(), '.claude', 'local'))
 })

@@ -25,7 +25,7 @@ afterEach(() => {
 })
 
 describe('Zero CLI paths', () => {
-  test('defaults user config home to ~/.zero', async () => {
+  test('defaults user config home to ~/.zerocli', async () => {
     delete process.env.CLAUDE_CONFIG_DIR
     const { resolveClaudeConfigHomeDir } = await importFreshEnvUtils()
 
@@ -35,10 +35,10 @@ describe('Zero CLI paths', () => {
         openClaudeExists: true,
         legacyClaudeExists: false,
       }),
-    ).toBe(join(homedir(), '.zero'))
+    ).toBe(join(homedir(), '.zerocli'))
   })
 
-  test('falls back to ~/.claude when legacy config exists and ~/.zero does not', async () => {
+  test('falls back to ~/.claude when legacy config exists and ~/.zerocli does not', async () => {
     delete process.env.CLAUDE_CONFIG_DIR
     const { resolveClaudeConfigHomeDir } = await importFreshEnvUtils()
 
@@ -64,35 +64,35 @@ describe('Zero CLI paths', () => {
     ).toBe('/tmp/custom-zero')
   })
 
-  test('project and local settings paths use .zero', async () => {
+  test('project and local settings paths use .zerocli', async () => {
     const { getRelativeSettingsFilePathForSource } = await importFreshSettings()
 
     expect(getRelativeSettingsFilePathForSource('projectSettings')).toBe(
-      '.zero/settings.json',
+      '.zerocli/settings.json',
     )
     expect(getRelativeSettingsFilePathForSource('localSettings')).toBe(
-      '.zero/settings.local.json',
+      '.zerocli/settings.local.json',
     )
   })
 
   test('local installer uses zero wrapper path', async () => {
-    // Force .zero config home so the test doesn't fall back to
-    // ~/.claude when ~/.zero doesn't exist on this machine.
-    process.env.CLAUDE_CONFIG_DIR = join(homedir(), '.zero')
+    // Force .zerocli config home so the test doesn't fall back to
+    // ~/.claude when ~/.zerocli doesn't exist on this machine.
+    process.env.CLAUDE_CONFIG_DIR = join(homedir(), '.zerocli')
     const { getLocalClaudePath } = await importFreshLocalInstaller()
 
     expect(getLocalClaudePath()).toBe(
-      join(homedir(), '.zero', 'local', 'zero'),
+      join(homedir(), '.zerocli', 'local', 'zero'),
     )
   })
 
-  test('local installation detection matches .zero path', async () => {
+  test('local installation detection matches .zerocli path', async () => {
     const { isManagedLocalInstallationPath } =
       await importFreshLocalInstaller()
 
     expect(
       isManagedLocalInstallationPath(
-        `${join(homedir(), '.zero', 'local')}/node_modules/.bin/zero`,
+        `${join(homedir(), '.zerocli', 'local')}/node_modules/.bin/zero`,
       ),
     ).toBe(true)
   })
@@ -113,11 +113,11 @@ describe('Zero CLI paths', () => {
 
     expect(
       getCandidateLocalInstallDirs({
-        configHomeDir: join(homedir(), '.zero'),
+        configHomeDir: join(homedir(), '.zerocli'),
         homeDir: homedir(),
       }),
     ).toEqual([
-      join(homedir(), '.zero', 'local'),
+      join(homedir(), '.zerocli', 'local'),
       join(homedir(), '.claude', 'local'),
     ])
   })

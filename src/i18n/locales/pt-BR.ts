@@ -58,7 +58,7 @@ export const ptBR: TranslationKeys = {
   cmd_clear: 'Limpar histórico da conversa e liberar contexto',
   cmd_commit: 'Criar um commit git',
   cmd_review: 'Revisar um pull request',
-  cmd_init: 'Inicializar um novo projeto',
+  cmd_init: 'Inicializar arquivo de instruções do projeto com documentação da base de código',
   cmd_memory: 'Editar arquivos de memória do Claude',
   cmd_mcp: 'Gerenciar servidores MCP',
   cmd_resume: 'Retomar uma conversa anterior',
@@ -66,7 +66,7 @@ export const ptBR: TranslationKeys = {
   cmd_vim: 'Alternar entre os modos de edição Vim e Normal',
   cmd_doctor: 'Verificar saúde do sistema e configuração',
   cmd_cost: 'Mostrar o custo total e duração da sessão atual',
-  cmd_compact: 'Limpar histórico mas manter um resumo no contexto. Opcional: /compact [instruções para resumo]',
+  cmd_compact: 'Compactar conversa para liberar contexto. Opcional: /compact [instruções para resumo]',
   cmd_export: 'Exportar a conversa atual para arquivo ou área de transferência',
   cmd_diff: 'Ver alterações não confirmadas e diffs por turno',
   cmd_version: 'Mostrar informações de versão',
@@ -175,4 +175,43 @@ export const ptBR: TranslationKeys = {
     'Executou',
     'Trabalhou',
   ],
+
+  // Shortcut help menu – estático
+  shortcut_bash_mode: '! para modo bash',
+  shortcut_commands: '/ para comandos',
+  shortcut_file_paths: '@ para caminhos de arquivo',
+  shortcut_background: '& para segundo plano',
+  shortcut_btw: '/btw para pergunta paralela',
+  shortcut_clear_input: 'esc duplo para limpar entrada',
+  shortcut_suspend: 'ctrl + z para suspender',
+  shortcut_keybindings: '/keybindings para personalizar',
+
+  // Shortcut help menu – dinâmico
+  shortcut_auto_accept: (shortcut: string) => `${shortcut} para aceitar edições`,
+  shortcut_verbose_output: (shortcut: string) => `${shortcut} para saída detalhada`,
+  shortcut_toggle_tasks: (shortcut: string) => `${shortcut} para alternar tarefas`,
+  shortcut_terminal: (shortcut: string) => `${shortcut} para terminal`,
+  shortcut_undo: (shortcut: string) => `${shortcut} para desfazer`,
+  shortcut_paste_images: (shortcut: string) => `${shortcut} para colar imagens`,
+  shortcut_switch_model: (shortcut: string) => `${shortcut} para trocar modelo`,
+  shortcut_fast_mode: (shortcut: string) => `${shortcut} para alternar modo rápido`,
+  shortcut_stash_prompt: (shortcut: string) => `${shortcut} para guardar prompt`,
+  shortcut_editor: (shortcut: string) => `${shortcut} para editar no $EDITOR`,
+
+  // Instruções de nova linha
+  shortcut_newline_shift: 'shift + ⏎ para nova linha',
+  shortcut_newline_backslash: '\\⏎ para nova linha',
+  shortcut_newline_full: 'barra invertida (\\) + enter (⏎) para nova linha',
+
+  // Sufixo de fonte
+  sourceSuffixBundled: '(integrado)',
+
+  // Descrições de comandos adicionais
+  cmd_init_new: 'Inicializar arquivo(s) de instruções do projeto e skills/hooks opcionais com documentação da base de código',
+  cmd_statusline: 'Configurar a interface de linha de status do Claude Code',
+  cmd_debug_bundled: 'Ativar registro de depuração para esta sessão e ajudar a diagnosticar problemas',
+  cmd_batch: 'Pesquisar e planejar uma mudança em grande escala, depois executá-la em paralelo em 5 a 30 agentes isolados em worktrees, cada um abrindo um PR.',
+  cmd_loop: 'Executar um prompt em intervalos fixos ou reagendar dinamicamente, incluindo loops de manutenção.',
+  cmd_simplify: 'Revisar código alterado quanto a reutilização, qualidade e eficiência, corrigindo os problemas encontrados.',
+  cmd_update_config: 'Use esta skill para configurar o harness do Claude Code via settings.json. Comportamentos automatizados ("a partir de agora quando X", "cada vez que X", "sempre que X", "antes/depois de X") requerem hooks configurados em settings.json — o harness os executa, não o Claude. Use também para: permissões ("permitir X"), variáveis de ambiente ("definir X=Y"), solução de problemas de hooks ou alterações em settings.json/settings.local.json. Para configurações simples como tema/modelo, use a ferramenta Config.',
 }

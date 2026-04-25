@@ -1,7 +1,7 @@
 import { join } from 'path'
 import type { WikiPaths } from './types.js'
 
-export const ZERO_DIRNAME = '.zero'
+export const ZERO_DIRNAME = '.zerocli'
 export const WIKI_DIRNAME = 'wiki'
 
 export function getWikiPaths(cwd: string): WikiPaths {

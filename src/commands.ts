@@ -160,6 +160,7 @@ import advisor from './commands/advisor.js'
 import { logError } from './utils/log.js'
 import { toError } from './utils/errors.js'
 import { logForDebugging } from './utils/debug.js'
+import { t } from './i18n/index.js'
 import {
   getSkillDirCommands,
   clearSkillCaches,
@@ -197,7 +198,7 @@ import stats from './commands/stats/index.js'
 const usageReport: Command = {
   type: 'prompt',
   name: 'insights',
-  description: 'Generate a report analyzing your Claude Code sessions',
+  description: t('cmd_insights') as string,
   contentLength: 0,
   progressMessage: 'analyzing your sessions',
   source: 'builtin',
@@ -760,7 +761,7 @@ export function formatDescriptionWithSource(cmd: Command): string {
   }
 
   if (cmd.source === 'bundled') {
-    return `${cmd.description} (bundled)`
+    return `${cmd.description} ${t('sourceSuffixBundled') as string}`
   }
 
   return `${cmd.description} (${getSettingSourceName(cmd.source)})`

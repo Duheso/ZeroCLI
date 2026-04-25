@@ -161,6 +161,45 @@ export interface TranslationKeys {
 
   // Turn completion verbs
   turnCompletionVerbs: readonly string[]
+
+  // Shortcut help menu – static labels
+  shortcut_bash_mode: string
+  shortcut_commands: string
+  shortcut_file_paths: string
+  shortcut_background: string
+  shortcut_btw: string
+  shortcut_clear_input: string
+  shortcut_suspend: string
+  shortcut_keybindings: string
+
+  // Shortcut help menu – dynamic (shortcut key prefix)
+  shortcut_auto_accept: (shortcut: string) => string
+  shortcut_verbose_output: (shortcut: string) => string
+  shortcut_toggle_tasks: (shortcut: string) => string
+  shortcut_terminal: (shortcut: string) => string
+  shortcut_undo: (shortcut: string) => string
+  shortcut_paste_images: (shortcut: string) => string
+  shortcut_switch_model: (shortcut: string) => string
+  shortcut_fast_mode: (shortcut: string) => string
+  shortcut_stash_prompt: (shortcut: string) => string
+  shortcut_editor: (shortcut: string) => string
+
+  // Newline instructions
+  shortcut_newline_shift: string
+  shortcut_newline_backslash: string
+  shortcut_newline_full: string
+
+  // Source suffix (help menu)
+  sourceSuffixBundled: string
+
+  // Additional command descriptions
+  cmd_init_new: string
+  cmd_statusline: string
+  cmd_debug_bundled: string
+  cmd_batch: string
+  cmd_loop: string
+  cmd_simplify: string
+  cmd_update_config: string
 }
 
 // English (default) locale
@@ -221,7 +260,6 @@ export const en: TranslationKeys = {
   cmd_clear: 'Clear conversation history and free up context',
   cmd_commit: 'Create a git commit',
   cmd_review: 'Review a pull request',
-  cmd_init: 'Initialize a new project',
   cmd_memory: 'Edit Claude memory files',
   cmd_mcp: 'Manage MCP servers',
   cmd_resume: 'Resume a previous conversation',
@@ -329,4 +367,44 @@ export const en: TranslationKeys = {
 
   // Turn completion verbs
   turnCompletionVerbs: ['Baked', 'Brewed', 'Churned', 'Cogitated', 'Cooked', 'Crunched', 'Sautéed', 'Worked'],
+
+  // Shortcut help menu – static labels
+  shortcut_bash_mode: '! for bash mode',
+  shortcut_commands: '/ for commands',
+  shortcut_file_paths: '@ for file paths',
+  shortcut_background: '& for background',
+  shortcut_btw: '/btw for side question',
+  shortcut_clear_input: 'double tap esc to clear input',
+  shortcut_suspend: 'ctrl + z to suspend',
+  shortcut_keybindings: '/keybindings to customize',
+
+  // Shortcut help menu – dynamic
+  shortcut_auto_accept: (shortcut: string) => `${shortcut} to auto-accept edits`,
+  shortcut_verbose_output: (shortcut: string) => `${shortcut} for verbose output`,
+  shortcut_toggle_tasks: (shortcut: string) => `${shortcut} to toggle tasks`,
+  shortcut_terminal: (shortcut: string) => `${shortcut} for terminal`,
+  shortcut_undo: (shortcut: string) => `${shortcut} to undo`,
+  shortcut_paste_images: (shortcut: string) => `${shortcut} to paste images`,
+  shortcut_switch_model: (shortcut: string) => `${shortcut} to switch model`,
+  shortcut_fast_mode: (shortcut: string) => `${shortcut} to toggle fast mode`,
+  shortcut_stash_prompt: (shortcut: string) => `${shortcut} to stash prompt`,
+  shortcut_editor: (shortcut: string) => `${shortcut} to edit in $EDITOR`,
+
+  // Newline instructions
+  shortcut_newline_shift: 'shift + ⏎ for newline',
+  shortcut_newline_backslash: '\\⏎ for newline',
+  shortcut_newline_full: 'backslash (\\) + return (⏎) for newline',
+
+  // Source suffix
+  sourceSuffixBundled: '(bundled)',
+
+  // Additional command descriptions
+  cmd_init: 'Initialize a new project instruction file with codebase documentation',
+  cmd_init_new: 'Initialize new project instruction file(s) and optional skills/hooks with codebase documentation',
+  cmd_statusline: "Set up Claude Code's status line UI",
+  cmd_debug_bundled: 'Enable debug logging for this session and help diagnose issues',
+  cmd_batch: 'Research and plan a large-scale change, then execute it in parallel across 5–30 isolated worktree agents that each open a PR.',
+  cmd_loop: 'Run a prompt on a fixed interval or dynamically reschedule it, including bare maintenance-mode loops.',
+  cmd_simplify: 'Review changed code for reuse, quality, and efficiency, then fix any issues found.',
+  cmd_update_config: 'Use this skill to configure the Claude Code harness via settings.json. Automated behaviors ("from now on when X", "each time X", "whenever X", "before/after X") require hooks configured in settings.json - the harness executes these, not Claude, so memory/preferences cannot fulfill them. Also use for: permissions ("allow X", "add permission", "move permission to"), env vars ("set X=Y"), hook troubleshooting, or any changes to settings.json/settings.local.json files. For simple settings like theme/model, use Config tool.',
 }

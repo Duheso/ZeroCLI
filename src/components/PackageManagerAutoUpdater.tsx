@@ -3,10 +3,9 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useInterval } from 'usehooks-ts';
 import { Text } from '../ink.js';
-import { type AutoUpdaterResult, getLatestVersionFromGcs, getMaxVersion, shouldSkipVersion } from '../utils/autoUpdater.js';
+import { type AutoUpdaterResult, getLatestVersion, getMaxVersion, shouldSkipVersion } from '../utils/autoUpdater.js';
 import { isAutoUpdaterDisabled } from '../utils/config.js';
 import { logForDebugging } from '../utils/debug.js';
-import { getPackageManager, type PackageManager } from '../utils/nativeInstaller/packageManagers.js';
 import { gt, gte } from '../utils/semver.js';
 import { getInitialSettings } from '../utils/settings/settings.js';
 type Props = {
@@ -23,7 +22,6 @@ export function PackageManagerAutoUpdater(t0) {
     verbose
   } = t0;
   const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [packageManager, setPackageManager] = useState("unknown");
   let t1;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = async () => {
@@ -31,9 +29,8 @@ export function PackageManagerAutoUpdater(t0) {
       if (isAutoUpdaterDisabled()) {
         return;
       }
-      const [channel, pm] = await Promise.all([Promise.resolve(getInitialSettings()?.autoUpdatesChannel ?? "latest"), getPackageManager()]);
-      setPackageManager(pm);
-      let latest = await getLatestVersionFromGcs(channel);
+      const channel = getInitialSettings()?.autoUpdatesChannel ?? "latest";
+      let latest = await getLatestVersion(channel);
       const maxVersion = await getMaxVersion();
       if (maxVersion && latest && gt(latest, maxVersion)) {
         logForDebugging(`PackageManagerAutoUpdater: maxVersion ${maxVersion} is set, capping update from ${latest} to ${maxVersion}`);
@@ -73,7 +70,7 @@ export function PackageManagerAutoUpdater(t0) {
   if (!updateAvailable) {
     return null;
   }
-  const updateCommand = packageManager === "homebrew" ? "brew upgrade claude-code" : packageManager === "winget" ? "winget upgrade Anthropic.ClaudeCode" : packageManager === "apk" ? "apk upgrade claude-code" : "your package manager update command";
+  const updateCommand = `npm install -g ${MACRO.PACKAGE_URL}`;
   let t4;
   if ($[3] !== verbose) {
     t4 = verbose && <Text dimColor={true} wrap="truncate">currentVersion: {MACRO.VERSION}</Text>;

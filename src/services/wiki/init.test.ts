@@ -26,10 +26,10 @@ test('initializeWiki creates the expected wiki scaffold', async () => {
 
   expect(result.alreadyExisted).toBe(false)
   expect(result.createdFiles).toEqual([
-    join('.zero', 'wiki', 'schema.md'),
-    join('.zero', 'wiki', 'index.md'),
-    join('.zero', 'wiki', 'log.md'),
-    join('.zero', 'wiki', 'pages', 'architecture.md'),
+    join('.zerocli', 'wiki', 'schema.md'),
+    join('.zerocli', 'wiki', 'index.md'),
+    join('.zerocli', 'wiki', 'log.md'),
+    join('.zerocli', 'wiki', 'pages', 'architecture.md'),
   ])
   expect(await readFile(paths.schemaFile, 'utf8')).toContain(
     '# Zero CLI Wiki Schema',

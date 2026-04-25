@@ -77,7 +77,7 @@ export const DANGEROUS_DIRECTORIES = [
   '.vscode',
   '.idea',
   '.claude',
-  '.zero',
+  '.zerocli',
 ] as const
 
 /**
@@ -237,9 +237,9 @@ function isClaudeConfigFilePath(filePath: string): boolean {
   const commandsDir = join(getOriginalCwd(), '.claude', 'commands')
   const agentsDir = join(getOriginalCwd(), '.claude', 'agents')
   const skillsDir = join(getOriginalCwd(), '.claude', 'skills')
-  const openCommandsDir = join(getOriginalCwd(), '.zero', 'commands')
-  const openAgentsDir = join(getOriginalCwd(), '.zero', 'agents')
-  const openSkillsDir = join(getOriginalCwd(), '.zero', 'skills')
+  const openCommandsDir = join(getOriginalCwd(), '.zerocli', 'commands')
+  const openAgentsDir = join(getOriginalCwd(), '.zerocli', 'agents')
+  const openSkillsDir = join(getOriginalCwd(), '.zerocli', 'skills')
 
   return (
     pathInWorkingPath(filePath, commandsDir) ||

@@ -9,13 +9,13 @@ describe('Zero CLI settings path surfaces', () => {
   test('isClaudeSettingsPath recognizes project .zero settings files', () => {
     expect(
       isClaudeSettingsPath(
-        join(process.cwd(), '.zero', 'settings.json'),
+        join(process.cwd(), '.zerocli', 'settings.json'),
       ),
     ).toBe(true)
 
     expect(
       isClaudeSettingsPath(
-        join(process.cwd(), '.zero', 'settings.local.json'),
+        join(process.cwd(), '.zerocli', 'settings.local.json'),
       ),
     ).toBe(true)
   })
@@ -23,7 +23,7 @@ describe('Zero CLI settings path surfaces', () => {
   test('permission save destinations point user settings to ~/.zero', () => {
     expect(optionForPermissionSaveDestination('userSettings')).toEqual({
       label: 'User settings',
-      description: 'Saved in ~/.zero/settings.json',
+      description: 'Saved in ~/.zerocli/settings.json',
       value: 'userSettings',
     })
   })
@@ -31,13 +31,13 @@ describe('Zero CLI settings path surfaces', () => {
   test('permission save destinations point project settings to .zero', () => {
     expect(optionForPermissionSaveDestination('projectSettings')).toEqual({
       label: 'Project settings',
-      description: 'Checked in at .zero/settings.json',
+      description: 'Checked in at .zerocli/settings.json',
       value: 'projectSettings',
     })
 
     expect(optionForPermissionSaveDestination('localSettings')).toEqual({
       label: 'Project settings (local)',
-      description: 'Saved in .zero/settings.local.json',
+      description: 'Saved in .zerocli/settings.local.json',
       value: 'localSettings',
     })
   })

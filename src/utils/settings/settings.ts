@@ -300,9 +300,9 @@ export function getRelativeSettingsFilePathForSource(
 ): string {
   switch (source) {
     case 'projectSettings':
-      return '.zero/settings.json'
+      return '.zerocli/settings.json'
     case 'localSettings':
-      return '.zero/settings.local.json'
+      return '.zerocli/settings.local.json'
   }
 }
 
