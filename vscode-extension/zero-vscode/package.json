@@ -1,0 +1,179 @@
+{
+  "name": "zero-vscode",
+  "displayName": "Zero CLI",
+  "description": "Practical VS Code companion for Zero CLI with project-aware launch behavior and a real Control Center.",
+  "version": "0.2.0",
+  "publisher": "devnull-bootloader",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Themes",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:zerocli.start",
+    "onCommand:zerocli.startInWorkspaceRoot",
+    "onCommand:zerocli.openDocs",
+    "onCommand:zerocli.openSetupDocs",
+    "onCommand:zerocli.openWorkspaceProfile",
+    "onCommand:zerocli.openControlCenter",
+    "onCommand:zerocli.newChat",
+    "onCommand:zerocli.openChat",
+    "onCommand:zerocli.resumeSession",
+    "onCommand:zerocli.abortChat",
+    "onView:zerocli.controlCenter",
+    "onView:zerocli.chat"
+  ],
+  "main": "./src/extension.js",
+  "files": [
+    "README.md",
+    "media/**",
+    "src/extension.js",
+    "src/presentation.js",
+    "src/state.js",
+    "src/chat/**",
+    "themes/**"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "zerocli.start",
+        "title": "Zero CLI: Launch in Terminal",
+        "category": "Zero CLI"
+      },
+      {
+        "command": "zerocli.startInWorkspaceRoot",
+        "title": "Zero CLI: Launch in Workspace Root",
+        "category": "Zero CLI"
+      },
+      {
+        "command": "zerocli.openDocs",
+        "title": "Zero CLI: Open Repository",
+        "category": "Zero CLI"
+      },
+      {
+        "command": "zerocli.openSetupDocs",
+        "title": "Zero CLI: Open Setup Guide",
+        "category": "Zero CLI"
+      },
+      {
+        "command": "zerocli.openWorkspaceProfile",
+        "title": "Zero CLI: Open Workspace Profile",
+        "category": "Zero CLI"
+      },
+      {
+        "command": "zerocli.openControlCenter",
+        "title": "Zero CLI: Open Control Center",
+        "category": "Zero CLI"
+      },
+      {
+        "command": "zerocli.newChat",
+        "title": "Zero CLI: New Chat",
+        "category": "Zero CLI"
+      },
+      {
+        "command": "zerocli.openChat",
+        "title": "Zero CLI: Open Chat Panel",
+        "category": "Zero CLI"
+      },
+      {
+        "command": "zerocli.resumeSession",
+        "title": "Zero CLI: Resume Session",
+        "category": "Zero CLI"
+      },
+      {
+        "command": "zerocli.abortChat",
+        "title": "Zero CLI: Abort Generation",
+        "category": "Zero CLI"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "zero",
+          "title": "Zero CLI",
+          "icon": "media/zero.svg"
+        }
+      ]
+    },
+    "views": {
+      "zero": [
+        {
+          "id": "zerocli.chat",
+          "name": "Chat",
+          "type": "webview"
+        },
+        {
+          "id": "zerocli.controlCenter",
+          "name": "Control Center",
+          "type": "webview"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "zerocli.openChat",
+        "key": "ctrl+shift+l",
+        "mac": "cmd+shift+l"
+      }
+    ],
+    "configuration": {
+      "title": "Zero CLI",
+      "properties": {
+        "zerocli.launchCommand": {
+          "type": "string",
+          "default": "zero",
+          "description": "Command run in the integrated terminal when launching Zero CLI."
+        },
+        "zerocli.terminalName": {
+          "type": "string",
+          "default": "Zero CLI",
+          "description": "Integrated terminal tab name for Zero CLI sessions."
+        },
+        "zerocli.useOpenAIShim": {
+          "type": "boolean",
+          "default": false,
+          "description": "Optionally set CLAUDE_CODE_USE_OPENAI=1 in launched Zero CLI terminals."
+        },
+        "zerocli.permissionMode": {
+          "type": "string",
+          "default": "acceptEdits",
+          "enum": ["default", "acceptEdits", "bypassPermissions", "plan"],
+          "enumDescriptions": [
+            "Prompt for permission on each tool use (requires manual approval)",
+            "Auto-approve file edits, prompt for other operations (recommended)",
+            "Auto-approve all operations without prompting",
+            "Read-only mode — no file modifications allowed"
+          ],
+          "description": "Permission mode for chat sessions. Controls which tool operations are auto-approved."
+        }
+      }
+    },
+    "themes": [
+      {
+        "label": "Zero CLI Terminal Black",
+        "uiTheme": "vs-dark",
+        "path": "./themes/Zero CLI-Terminal-Black.json"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node --test ./src/*.test.js",
+    "lint": "node scripts/lint.js",
+    "package": "npx @vscode/vsce package --no-dependencies"
+  },
+  "keywords": [
+    "zero",
+    "terminal",
+    "theme",
+    "cli",
+    "llm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Duheso/ZeroCLI"
+  },
+  "license": "MIT"
+}
