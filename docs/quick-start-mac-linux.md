@@ -18,7 +18,7 @@ npm --version
 ## 2. Install Zero CLI
 
 ```bash
-npm install -g @gitlawb/zero
+npm install -g @duheso/zerocli
 ```
 
 ## 3. Pick One Provider
@@ -127,13 +127,13 @@ Check the basics:
 ## 6. Updating Zero CLI
 
 ```bash
-npm install -g @gitlawb/zero@latest
+npm install -g @duheso/zerocli@latest
 ```
 
 ## 7. Uninstalling Zero CLI
 
 ```bash
-npm uninstall -g @gitlawb/zero
+npm uninstall -g @duheso/zerocli
 ```
 
 ## Need Advanced Setup?

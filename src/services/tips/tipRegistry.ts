@@ -55,6 +55,12 @@ import {
 } from '../api/referral.js'
 import { getSessionsSinceLastShown } from './tipHistory.js'
 import type { Tip, TipContext } from './types.js'
+import { t } from '../../i18n/index.js'
+
+/** Return the locale-translated text for a static tip, falling back to English. */
+function tipText(id: string, fallback: string): string {
+  return t('spinnerTips')[id] ?? fallback
+}
 
 let _isOfficialMarketplaceInstalledCache: boolean | undefined
 async function isOfficialMarketplaceInstalled(): Promise<boolean> {
@@ -96,7 +102,7 @@ const externalTips: Tip[] = [
   {
     id: 'new-user-warmup',
     content: async () =>
-      `Start with small features or bug fixes, tell Claude to propose a plan, and verify its suggested edits`,
+      tipText('new-user-warmup', 'Start with small features or bug fixes, tell ZeroCLI to propose a plan, and verify its suggested edits'),
     cooldownSessions: 3,
     async isRelevant() {
       const config = getGlobalConfig()
@@ -120,7 +126,7 @@ const externalTips: Tip[] = [
   {
     id: 'default-permission-mode-config',
     content: async () =>
-      `Use /config to change your default permission mode (including Plan Mode)`,
+      tipText('default-permission-mode-config', 'Use /config to change your default permission mode (including Plan Mode)'),
     cooldownSessions: 10,
     isRelevant: async () => {
       try {
@@ -142,7 +148,7 @@ const externalTips: Tip[] = [
   {
     id: 'git-worktrees',
     content: async () =>
-      'Use git worktrees to run multiple Claude sessions in parallel.',
+      tipText('git-worktrees', 'Use git worktrees to run multiple ZeroCLI sessions in parallel.'),
     cooldownSessions: 10,
     isRelevant: async () => {
       try {
@@ -157,7 +163,7 @@ const externalTips: Tip[] = [
   {
     id: 'color-when-multi-clauding',
     content: async () =>
-      'Running multiple Claude sessions? Use /color and /rename to tell them apart at a glance.',
+      tipText('color-when-multi-clauding', 'Running multiple ZeroCLI sessions? Use /color and /rename to tell them apart at a glance.'),
     cooldownSessions: 10,
     isRelevant: async () => {
       if (getCurrentSessionAgentColor()) return false
@@ -215,7 +221,7 @@ const externalTips: Tip[] = [
   },
   {
     id: 'memory-command',
-    content: async () => 'Use /memory to view and manage Claude memory',
+    content: async () => tipText('memory-command', 'Use /memory to view and manage ZeroCLI memory'),
     cooldownSessions: 15,
     async isRelevant() {
       const config = getGlobalConfig()
@@ -224,21 +230,21 @@ const externalTips: Tip[] = [
   },
   {
     id: 'theme-command',
-    content: async () => 'Use /theme to change the color theme',
+    content: async () => tipText('theme-command', 'Use /theme to change the color theme'),
     cooldownSessions: 20,
     isRelevant: async () => true,
   },
   {
     id: 'colorterm-truecolor',
     content: async () =>
-      'Try setting environment variable COLORTERM=truecolor for richer colors',
+      tipText('colorterm-truecolor', 'Try setting environment variable COLORTERM=truecolor for richer colors'),
     cooldownSessions: 30,
     isRelevant: async () => !process.env.COLORTERM && chalk.level < 3,
   },
   {
     id: 'powershell-tool-env',
     content: async () =>
-      'Set CLAUDE_CODE_USE_POWERSHELL_TOOL=1 to enable the PowerShell tool (preview)',
+      tipText('powershell-tool-env', 'Set CLAUDE_CODE_USE_POWERSHELL_TOOL=1 to enable the PowerShell tool (preview)'),
     cooldownSessions: 10,
     isRelevant: async () =>
       getPlatform() === 'windows' &&
@@ -247,14 +253,14 @@ const externalTips: Tip[] = [
   {
     id: 'status-line',
     content: async () =>
-      'Use /statusline to set up a custom status line that will display beneath the input box',
+      tipText('status-line', 'Use /statusline to set up a custom status line that will display beneath the input box'),
     cooldownSessions: 25,
     isRelevant: async () => getSettings_DEPRECATED().statusLine === undefined,
   },
   {
     id: 'prompt-queue',
     content: async () =>
-      'Hit Enter to queue up additional messages while Claude is working.',
+      tipText('prompt-queue', 'Hit Enter to queue up additional messages while ZeroCLI is working.'),
     cooldownSessions: 5,
     async isRelevant() {
       const config = getGlobalConfig()
@@ -264,14 +270,14 @@ const externalTips: Tip[] = [
   {
     id: 'enter-to-steer-in-relatime',
     content: async () =>
-      'Send messages to Claude while it works to steer Claude in real-time',
+      tipText('enter-to-steer-in-relatime', 'Send messages to ZeroCLI while it works to steer in real-time'),
     cooldownSessions: 20,
     isRelevant: async () => true,
   },
   {
     id: 'todo-list',
     content: async () =>
-      'Ask Claude to create a todo list when working on complex tasks to track progress and remain on track',
+      tipText('todo-list', 'Ask ZeroCLI to create a todo list when working on complex tasks to track progress and remain on track'),
     cooldownSessions: 20,
     isRelevant: async () => true,
   },
@@ -304,7 +310,7 @@ const externalTips: Tip[] = [
   },
   {
     id: 'ide-upsell-external-terminal',
-    content: async () => 'Connect Claude to your IDE · /ide',
+    content: async () => tipText('ide-upsell-external-terminal', 'Connect ZeroCLI to your IDE · /ide'),
     cooldownSessions: 4,
     async isRelevant() {
       if (isSupportedTerminal()) {
@@ -324,20 +330,20 @@ const externalTips: Tip[] = [
   {
     id: 'install-github-app',
     content: async () =>
-      'Run /install-github-app to tag @claude right from your Github issues and PRs',
+      tipText('install-github-app', 'Run /install-github-app to tag @claude right from your Github issues and PRs'),
     cooldownSessions: 10,
     isRelevant: async () => !getGlobalConfig().githubActionSetupCount,
   },
   {
     id: 'install-slack-app',
-    content: async () => 'Run /install-slack-app to use Claude in Slack',
+    content: async () => tipText('install-slack-app', 'Run /install-slack-app to use ZeroCLI in Slack'),
     cooldownSessions: 10,
     isRelevant: async () => !getGlobalConfig().slackAppInstallCount,
   },
   {
     id: 'permissions',
     content: async () =>
-      'Use /permissions to pre-approve and pre-deny bash, edit, and MCP tools',
+      tipText('permissions', 'Use /permissions to pre-approve and pre-deny bash, edit, and MCP tools'),
     cooldownSessions: 10,
     async isRelevant() {
       const config = getGlobalConfig()
@@ -347,42 +353,42 @@ const externalTips: Tip[] = [
   {
     id: 'drag-and-drop-images',
     content: async () =>
-      'Did you know you can drag and drop image files into your terminal?',
+      tipText('drag-and-drop-images', 'Did you know you can drag and drop image files into your terminal?'),
     cooldownSessions: 10,
     isRelevant: async () => !env.isSSH(),
   },
   {
     id: 'paste-images-mac',
     content: async () =>
-      'Paste images into Claude Code using control+v (not cmd+v!)',
+      tipText('paste-images-mac', 'Paste images into ZeroCLI using control+v (not cmd+v!)'),
     cooldownSessions: 10,
     isRelevant: async () => getPlatform() === 'macos',
   },
   {
     id: 'double-esc',
     content: async () =>
-      'Double-tap esc to rewind the conversation to a previous point in time',
+      tipText('double-esc', 'Double-tap esc to rewind the conversation to a previous point in time'),
     cooldownSessions: 10,
     isRelevant: async () => !fileHistoryEnabled(),
   },
   {
     id: 'double-esc-code-restore',
     content: async () =>
-      'Double-tap esc to rewind the code and/or conversation to a previous point in time',
+      tipText('double-esc-code-restore', 'Double-tap esc to rewind the code and/or conversation to a previous point in time'),
     cooldownSessions: 10,
     isRelevant: async () => fileHistoryEnabled(),
   },
   {
     id: 'continue',
     content: async () =>
-      'Run claude --continue or claude --resume to resume a conversation',
+      tipText('continue', 'Run zero --continue or zero --resume to resume a conversation'),
     cooldownSessions: 10,
     isRelevant: async () => true,
   },
   {
     id: 'rename-conversation',
     content: async () =>
-      'Name your conversations with /rename to find them easily in /resume later',
+      tipText('rename-conversation', 'Name your conversations with /rename to find them easily in /resume later'),
     cooldownSessions: 15,
     isRelevant: async () =>
       isCustomTitleEnabled() && getGlobalConfig().numStartups > 10,
@@ -390,7 +396,7 @@ const externalTips: Tip[] = [
   {
     id: 'custom-commands',
     content: async () =>
-      'Create skills by adding .md files to .claude/skills/ in your project or ~/.claude/skills/ for skills that work in any project',
+      tipText('custom-commands', 'Create skills by adding .md files to .claude/skills/ in your project or ~/.claude/skills/ for skills that work in any project'),
     cooldownSessions: 15,
     async isRelevant() {
       const config = getGlobalConfig()
@@ -414,7 +420,7 @@ const externalTips: Tip[] = [
   {
     id: 'custom-agents',
     content: async () =>
-      'Use /agents to optimize specific tasks. Eg. Software Architect, Code Writer, Code Reviewer',
+      tipText('custom-agents', 'Use /agents to optimize specific tasks. Eg. Software Architect, Code Writer, Code Reviewer'),
     cooldownSessions: 15,
     async isRelevant() {
       const config = getGlobalConfig()
@@ -424,7 +430,7 @@ const externalTips: Tip[] = [
   {
     id: 'agent-flag',
     content: async () =>
-      'Use --agent <agent_name> to directly start a conversation with a subagent',
+      tipText('agent-flag', 'Use --agent <agent_name> to directly start a conversation with a subagent'),
     cooldownSessions: 15,
     async isRelevant() {
       const config = getGlobalConfig()
@@ -434,7 +440,7 @@ const externalTips: Tip[] = [
   {
     id: 'desktop-app',
     content: async () =>
-      'Run Claude Code locally or remotely using the Claude desktop app: clau.de/desktop',
+      tipText('desktop-app', 'Run ZeroCLI locally or remotely using the Claude desktop app: clau.de/desktop'),
     cooldownSessions: 15,
     isRelevant: async () => getPlatform() !== 'linux',
   },
@@ -442,7 +448,7 @@ const externalTips: Tip[] = [
     id: 'desktop-shortcut',
     content: async ctx => {
       const blue = color('suggestion', ctx.theme)
-      return `Continue your session in Claude Code Desktop with ${blue('/desktop')}`
+      return `Continue your session in ZeroCLI Desktop with ${blue('/desktop')}`
     },
     cooldownSessions: 15,
     isRelevant: async () => {
@@ -456,14 +462,14 @@ const externalTips: Tip[] = [
   {
     id: 'web-app',
     content: async () =>
-      'Run tasks in the cloud while you keep coding locally · clau.de/web',
+      tipText('web-app', 'Run tasks in the cloud while you keep coding locally · clau.de/web'),
     cooldownSessions: 15,
     isRelevant: async () => true,
   },
   {
     id: 'mobile-app',
     content: async () =>
-      '/mobile to use Claude Code from the Claude app on your phone',
+      tipText('mobile-app', '/mobile to use ZeroCLI from the Claude app on your phone'),
     cooldownSessions: 15,
     isRelevant: async () => true,
   },
@@ -517,7 +523,7 @@ const externalTips: Tip[] = [
         'off' | 'copy_a' | 'copy_b'
       >('tengu_tide_elm', 'off')
       return variant === 'copy_b'
-        ? `Use ${cmd} for better one-shot answers. Claude thinks it through first.`
+        ? `Use ${cmd} for better one-shot answers. ZeroCLI thinks it through first.`
         : `Working on something tricky? ${cmd} gives better first answers`
     },
     cooldownSessions: 3,
@@ -546,8 +552,8 @@ const externalTips: Tip[] = [
         'off' | 'copy_a' | 'copy_b'
       >('tengu_tern_alloy', 'off')
       return variant === 'copy_b'
-        ? `For big tasks, tell Claude to ${blue('use subagents')}. They work in parallel and keep your main thread clean.`
-        : `Say ${blue('"fan out subagents"')} and Claude sends a team. Each one digs deep so nothing gets missed.`
+        ? `For big tasks, tell ZeroCLI to ${blue('use subagents')}. They work in parallel and keep your main thread clean.`
+        : `Say ${blue('"fan out subagents"')} and ZeroCLI sends a team. Each one digs deep so nothing gets missed.`
     },
     cooldownSessions: 3,
     isRelevant: async () => {
@@ -589,7 +595,7 @@ const externalTips: Tip[] = [
       const claude = color('claude', ctx.theme)
       const reward = getCachedReferrerReward()
       return reward
-        ? `Share Claude Code and earn ${claude(formatCreditAmount(reward))} of extra usage · ${claude('/passes')}`
+        ? `Share ZeroCLI and earn ${claude(formatCreditAmount(reward))} of extra usage · ${claude('/passes')}`
         : `You have free guest passes to share · ${claude('/passes')}`
     },
     cooldownSessions: 3,
@@ -617,7 +623,7 @@ const externalTips: Tip[] = [
   },
   {
     id: 'feedback-command',
-    content: async () => 'Use /feedback to help us improve!',
+    content: async () => tipText('feedback-command', 'Use /feedback to help us improve!'),
     cooldownSessions: 15,
     async isRelevant() {
       const config = getGlobalConfig()

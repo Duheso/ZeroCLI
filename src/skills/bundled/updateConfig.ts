@@ -110,7 +110,7 @@ Plugin syntax: \`plugin-name@source\` where source is \`claude-code-marketplace\
 
 const HOOKS_DOCS = `## Hooks Configuration
 
-Hooks run commands at specific points in Claude Code's lifecycle.
+Hooks run commands at specific points in ZeroCLI's lifecycle.
 
 ### Hook Structure
 \`\`\`json
@@ -307,7 +307,7 @@ Given an event, matcher, target file, and desired behavior, follow this flow. Ea
 
 const UPDATE_CONFIG_PROMPT = `# Update Config Skill
 
-Modify Claude Code configuration by updating settings.json files.
+Modify ZeroCLI configuration by updating settings.json files.
 
 ## When Hooks Are Required (Not Memory)
 

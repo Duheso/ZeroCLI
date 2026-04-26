@@ -7,7 +7,7 @@ This guide is for users who want source builds, Bun workflows, provider profiles
 ### Option A: npm
 
 ```bash
-npm install -g @gitlawb/zero
+npm install -g @duheso/zerocli
 ```
 
 ### Option B: From source with Bun
@@ -15,22 +15,12 @@ npm install -g @gitlawb/zero
 Use Bun `1.3.11` or newer for source builds on Windows. Older Bun versions can fail during `bun run build`.
 
 ```bash
-git clone https://node.gitlawb.com/z6MkqDnb7Siv3Cwj7pGJq4T5EsUisECqR8KpnDLwcaZq5TPr/zero.git
+git clone hhttps://github.com/Duheso/ZeroCLI.git
 cd zero
 
 bun install
 bun run build
 npm link
-```
-
-### Option C: Run directly with Bun
-
-```bash
-git clone https://node.gitlawb.com/z6MkqDnb7Siv3Cwj7pGJq4T5EsUisECqR8KpnDLwcaZq5TPr/zero.git
-cd zero
-
-bun install
-bun run dev
 ```
 
 ## Provider Examples

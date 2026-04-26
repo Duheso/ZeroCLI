@@ -28,7 +28,7 @@ A practical VS Code companion for Zero CLI with a project-aware **Control Center
 ## Requirements
 
 - VS Code `1.95+`
-- `zero` available in your terminal PATH (`npm install -g @gitlawb/zero`)
+- `zero` available in your terminal PATH (`npm install -g @duheso/zerocli`)
 
 ## Commands
 

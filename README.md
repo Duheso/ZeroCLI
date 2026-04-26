@@ -86,6 +86,64 @@ $env:OPENAI_MODEL="qwen2.5-coder:7b"
 zero
 ```
 
+### Using COPILOT_* env vars (remote or local server)
+
+The `COPILOT_*` variables are an alternative mapping supported by the launcher. They are translated to the native OpenAI-compatible vars at startup, so you never need to set both.
+
+**Remote server — macOS / Linux:**
+
+```bash
+export COPILOT_PROVIDER_BASE_URL=http://10.11.36.131:3053/v1
+export COPILOT_PROVIDER_TYPE=openai
+export COPILOT_PROVIDER_API_KEY=not-required
+export COPILOT_MODEL=gpt-oss-120b
+
+zero
+```
+
+**Remote server — Windows PowerShell:**
+
+```powershell
+$env:COPILOT_PROVIDER_BASE_URL="http://10.11.36.131:3053/v1"
+$env:COPILOT_PROVIDER_TYPE="openai"
+$env:COPILOT_PROVIDER_API_KEY="not-required"
+$env:COPILOT_MODEL="gpt-oss-120b"
+
+zero
+```
+
+**Localhost — macOS / Linux:**
+
+```bash
+export COPILOT_PROVIDER_BASE_URL=http://localhost:3053/v1
+export COPILOT_PROVIDER_TYPE=openai
+export COPILOT_PROVIDER_API_KEY=not-required
+export COPILOT_MODEL=gpt-oss-120b
+
+zero
+```
+
+**Localhost — Windows PowerShell:**
+
+```powershell
+$env:COPILOT_PROVIDER_BASE_URL="http://localhost:3053/v1"
+$env:COPILOT_PROVIDER_TYPE="openai"
+$env:COPILOT_PROVIDER_API_KEY="not-required"
+$env:COPILOT_MODEL="gpt-oss-120b"
+
+zero
+```
+
+| Variable | Maps to | Description |
+|---|---|---|
+| `COPILOT_PROVIDER_BASE_URL` | `OPENAI_BASE_URL` | Base URL of the OpenAI-compatible server |
+| `COPILOT_PROVIDER_TYPE` | activates OpenAI shim | Set to `openai` for any `/v1` endpoint |
+| `COPILOT_PROVIDER_API_KEY` | `OPENAI_API_KEY` | API key; use `not-required` for local servers |
+| `COPILOT_MODEL` | `OPENAI_MODEL` | Model name served by the endpoint |
+| `COPILOT_TOOLLESS` | `OPENAI_TOOLLESS` | Set to `1` to disable tool calling (text-only mode) |
+
+> **Note:** `COPILOT_*` vars are only applied when the matching native var (`OPENAI_BASE_URL`, etc.) is not already set, so the two styles can coexist without conflict.
+
 ### Using Ollama's launch command
 
 If you have [Ollama](https://ollama.com) installed, you can skip the env var setup entirely:
@@ -192,7 +250,7 @@ export FIRECRAWL_API_KEY=your-key-here
 
 With Firecrawl enabled:
 
-- `WebSearch` can use Firecrawl's search API while DuckDuckGo remains the default free path for non-Claude models
+- `WebSearch` can use Firecrawl's search API while DuckDuckGo remains the default free path for non-ZeroCLI models
 - `WebFetch` uses Firecrawl's scrape endpoint instead of raw HTTP, handling JS-rendered pages correctly
 
 Free tier at [firecrawl.dev](https://firecrawl.dev) includes 500 credits. The key is optional.

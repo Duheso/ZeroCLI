@@ -45,7 +45,7 @@ test('install command displays zero.exe path on Windows', async () => {
 test('cleanupNpmInstallations removes both zero and legacy claude local install dirs', async () => {
   const removedPaths: string[] = []
   ;(globalThis as Record<string, unknown>).MACRO = {
-    PACKAGE_URL: '@gitlawb/zero',
+    PACKAGE_URL: '@duheso/zerocli',
   }
 
   mock.module('fs/promises', () => ({
