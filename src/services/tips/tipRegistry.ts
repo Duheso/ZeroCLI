@@ -658,7 +658,7 @@ export async function getRelevantTips(context?: TipContext): Promise<Tip[]> {
 
   // Otherwise, filter built-in tips as before and combine with custom
   const tips = [...externalTips, ...internalOnlyTips]
-  const isRelevant = await Promise.all(tips.map(_ => _.isRelevant(context)))
+  const isRelevant = await Promise.all(tips.map(_ => _.isRelevant ? _.isRelevant(context) : Promise.resolve(true)))
   const filtered = tips
     .filter((_, index) => isRelevant[index])
     .filter(_ => getSessionsSinceLastShown(_.id) >= _.cooldownSessions)

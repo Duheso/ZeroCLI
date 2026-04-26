@@ -103,7 +103,7 @@ export function isEligibleBridgeMessage(m: Message): boolean {
 export function extractTitleText(m: Message): string | undefined {
   if (m.type !== 'user' || m.isMeta || m.toolUseResult || m.isCompactSummary)
     return undefined
-  if (m.origin && m.origin.kind !== 'human') return undefined
+  if (m.origin && !['bridge', 'ide', 'voice'].includes(m.origin)) return undefined
   const content = m.message.content
   let raw: string | undefined
   if (typeof content === 'string') {
@@ -304,7 +304,7 @@ export function handleServerControlRequest(
       break
 
     case 'set_model':
-      onSetModel?.(request.request.model)
+      onSetModel?.(request.request.model as string | undefined)
       response = {
         type: 'control_response',
         response: {
@@ -315,7 +315,7 @@ export function handleServerControlRequest(
       break
 
     case 'set_max_thinking_tokens':
-      onSetMaxThinkingTokens?.(request.request.max_thinking_tokens)
+      onSetMaxThinkingTokens?.(request.request.max_thinking_tokens as number | null)
       response = {
         type: 'control_response',
         response: {
@@ -333,7 +333,7 @@ export function handleServerControlRequest(
       // see daemonBridge.ts), return an error verdict rather than a silent
       // false-success: the mode is never actually applied in that context,
       // so success would lie to the client.
-      const verdict = onSetPermissionMode?.(request.request.mode) ?? {
+      const verdict = onSetPermissionMode?.(request.request.mode as PermissionMode) ?? {
         ok: false,
         error:
           'set_permission_mode is not supported in this context (onSetPermissionMode callback not registered)',

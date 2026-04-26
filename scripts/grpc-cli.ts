@@ -41,7 +41,7 @@ async function main() {
     call = client.Chat()
     let textStreamed = false
 
-    call.on('data', async (serverMessage: any) => {
+    call!.on('data', async (serverMessage: any) => {
       if (serverMessage.text_chunk) {
         process.stdout.write(serverMessage.text_chunk.text)
         textStreamed = true
@@ -80,12 +80,12 @@ async function main() {
       }
     })
 
-    call.on('end', () => {
+    call!.on('end', () => {
       console.log('\n\x1b[90m[Stream closed by server]\x1b[0m')
       // Don't prompt user here, let 'done' or 'error' handlers do it
     })
 
-    call.on('error', (err: Error) => {
+    call!.on('error', (err: Error) => {
       console.error('\n\x1b[31m[Stream Error]\x1b[0m', err.message)
       promptUser()
     })

@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(npx tsc:*)",
+      "Bash(ls /home/accadmin/workspace/ZeroCLI/src/types/permissions*)",
+      "Bash(ls /home/accadmin/workspace/ZeroCLI/src/utils/permissions/PermissionMode*)",
+      "Bash(grep -rn USER_TYPE /home/accadmin/workspace/ZeroCLI/src --include=*.ts --include=*.tsx)"
     ]
   },
   "prefersReducedMotion": true

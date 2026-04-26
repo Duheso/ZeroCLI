@@ -442,5 +442,7 @@ export const en: TranslationKeys = {
     'web-app': 'Run tasks in the cloud while you keep coding locally \u00b7 clau.de/web',
     'mobile-app': '/mobile to use ZeroCLI from the Claude app on your phone',
     'feedback-command': 'Use /feedback to help us improve!',
+    'clear': 'Use /clear to start fresh when switching topics and free up context',
+    'btw': "Use /btw to ask a quick side question without interrupting Claude's current work",
   },
 }

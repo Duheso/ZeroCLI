@@ -246,5 +246,7 @@ export const ptBR: TranslationKeys = {
     'web-app': 'Execute tarefas na nuvem enquanto continua codificando localmente \u00b7 clau.de/web',
     'mobile-app': '/mobile para usar o ZeroCLI pelo app Claude no seu celular',
     'feedback-command': 'Use /feedback para nos ajudar a melhorar!',
+    'clear': 'Use /clear para limpar a conversa ao trocar de assunto e liberar contexto',
+    'btw': 'Use /btw para fazer uma pergunta rápida sem interromper o trabalho atual do ZeroCLI',
   },
 }

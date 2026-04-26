@@ -1,5 +1,17 @@
 /// <reference types="bun-types" />
 
+/** Type declarations for modules without bundled types. */
+declare module 'qrcode' {
+  export function toString(
+    text: string,
+    options?: Record<string, unknown>,
+  ): Promise<string>
+  export function toDataURL(
+    text: string,
+    options?: Record<string, unknown>,
+  ): Promise<string>
+}
+
 /**
  * Build-time constants injected by Bun.define in scripts/build.ts.
  * Replaced with string literals at bundle time; declared here for TypeScript.

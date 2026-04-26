@@ -146,7 +146,7 @@ const result = await Bun.build({
     {
       name: 'bun-bundle-shim',
       setup(build) {
-        const internalFeatureStubModules = new Map([
+        const internalFeatureStubModules = new Map<string, string>([
           [
             '../daemon/workerRegistry.js',
             'export async function runDaemonWorker() { throw new Error("Daemon worker is unavailable in the open build."); }',
@@ -177,7 +177,7 @@ export async function handleBgFlag() { throw new Error("Background sessions are 
             '../self-hosted-runner/main.js',
             'export async function selfHostedRunnerMain() { throw new Error("Self-hosted runner is unavailable in the open build."); }',
           ],
-        ] as const)
+        ])
 
         // bun:bundle feature() replacement is handled by the source
         // pre-processing step above (see preProcessFeatureFlags).
