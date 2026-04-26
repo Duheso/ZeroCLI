@@ -36,12 +36,20 @@ function gradAt(stops: RGB[], t: number): RGB {
   return lerp(stops[i], stops[i + 1], s - i)
 }
 
-function paintLine(text: string, stops: RGB[], lineT: number): string {
+function paintLine(text: string, stops: RGB[], lineT: number, wavePos?: number): string {
+  const WHITE: RGB = [255, 255, 255]
   let out = ''
-  for (let i = 0; i < text.length; i++) {
-    const t = text.length > 1 ? lineT * 0.5 + (i / (text.length - 1)) * 0.5 : lineT
-    const [r, g, b] = gradAt(stops, t)
-    out += `${rgb(r, g, b)}${text[i]}`
+  const len = text.length
+  for (let i = 0; i < len; i++) {
+    const charT = len > 1 ? lineT * 0.5 + (i / (len - 1)) * 0.5 : lineT
+    const base = gradAt(stops, charT)
+    let color = base
+    if (wavePos !== undefined) {
+      const wave = (i / Math.max(1, len - 1)) - wavePos
+      const shimmer = Math.max(0, Math.sin(wave * Math.PI * 3)) ** 4
+      color = lerp(base, WHITE, shimmer * 0.88)
+    }
+    out += `${rgb(...color)}${text[i]}`
   }
   return out + RESET
 }
@@ -74,7 +82,7 @@ const LOGO_ZERO = [
 
 // ─── Provider detection ───────────────────────────────────────────────────────
 
-function detectProvider(): { name: string; model: string; baseUrl: string; isLocal: boolean } {
+export function detectProvider(): { name: string; model: string; baseUrl: string; isLocal: boolean } {
   const useGemini = process.env.CLAUDE_CODE_USE_GEMINI === '1' || process.env.CLAUDE_CODE_USE_GEMINI === 'true'
   const useGithub = process.env.CLAUDE_CODE_USE_GITHUB === '1' || process.env.CLAUDE_CODE_USE_GITHUB === 'true'
   const useOpenAI = process.env.CLAUDE_CODE_USE_OPENAI === '1' || process.env.CLAUDE_CODE_USE_OPENAI === 'true'
@@ -160,31 +168,14 @@ function boxRow(content: string, width: number, rawLen: number): string {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-export function printStartupScreen(): void {
-  // Skip in non-interactive / CI / print mode
-  if (process.env.CI || !process.stdout.isTTY) return
-
+/** Builds the provider info box lines as ANSI strings (used by ProviderInfoBox Ink component). */
+export function buildProviderInfoLines(): string[] {
   const p = detectProvider()
   const W = 62
   const out: string[] = []
 
-  out.push('')
-
-  // Gradient logo
-  const allLogo = [...LOGO_ZERO]
-  const total = allLogo.length
-  for (let i = 0; i < total; i++) {
-    const t = total > 1 ? i / (total - 1) : 0
-    out.push(paintLine(allLogo[i], PURPLE_CYAN_GRAD, t))
-  }
-
-  out.push('')
-
-  // Tagline
   out.push(`  ${rgb(...ACCENT)}\u2726${RESET} ${rgb(...CREAM)}${t('tagline')}${RESET} ${rgb(...ACCENT)}\u2726${RESET}`)
-  out.push('')
 
-  // Provider info box
   out.push(`${rgb(...BORDER)}\u2554${'\u2550'.repeat(W - 2)}\u2557${RESET}`)
 
   const lbl = (k: string, v: string, c: RGB = CREAM): [string, number] => {
@@ -215,7 +206,12 @@ export function printStartupScreen(): void {
 
   out.push(`${rgb(...BORDER)}\u255a${'\u2550'.repeat(W - 2)}\u255d${RESET}`)
   out.push(`  ${DIM}${rgb(...DIMCOL)}zero ${RESET}${rgb(...ACCENT)}v${MACRO.DISPLAY_VERSION ?? MACRO.VERSION}${RESET}`)
-  out.push('')
 
-  process.stdout.write(out.join('\n') + '\n')
+  return out
+}
+
+/** Prints the provider info box to stdout before Ink starts (legacy — now a no-op).
+ *  The logo and provider info are rendered by Ink (ShimmerLogo + ProviderInfoBox). */
+export function printStartupScreen(): void {
+  // Provider info is now rendered by Ink in ProviderInfoBox component
 }

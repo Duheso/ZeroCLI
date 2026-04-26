@@ -3,6 +3,7 @@ import * as React from 'react';
 import { type ReactNode, useEffect } from 'react';
 import { useMainLoopModel } from '../../hooks/useMainLoopModel.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
+import { ShimmerLogo } from './ShimmerLogo.js';
 import { stringWidth } from '../../ink/stringWidth.js';
 import { Box, Text } from '../../ink.js';
 import { useAppState } from '../../state/AppState.js';
@@ -151,7 +152,7 @@ export function CondensedLogo() {
   } else {
     t12 = $[28];
   }
-  return t12;
+  return <>{columns >= 62 && <ShimmerLogo />}{t12}</>
 }
 function _temp2(s_0) {
   return s_0.effortValue;

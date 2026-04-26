@@ -5,7 +5,16 @@
       "Bash(npx tsc:*)",
       "Bash(ls /home/accadmin/workspace/ZeroCLI/src/types/permissions*)",
       "Bash(ls /home/accadmin/workspace/ZeroCLI/src/utils/permissions/PermissionMode*)",
-      "Bash(grep -rn USER_TYPE /home/accadmin/workspace/ZeroCLI/src --include=*.ts --include=*.tsx)"
+      "Bash(grep -rn USER_TYPE /home/accadmin/workspace/ZeroCLI/src --include=*.ts --include=*.tsx)",
+      "Bash(grep -rn \"buddy\\\\|companion\\\\|/buddy\" /home/accadmin/workspace/ZeroCLI/src --include=*.tsx --include=*.ts -l)",
+      "Bash(grep -rn \"LogoV2\\\\|logoV2\\\\|LOGO\" /home/accadmin/workspace/ZeroCLI/src --include=*.tsx -l)",
+      "Bash(find . -path ./node_modules -prune -o -name ripgrep* -print)",
+      "Bash(ls *.config.*)",
+      "Bash(ls src/*.config.*)",
+      "Bash(ls vite.*)",
+      "Bash(ls rollup.*)",
+      "Bash(ls esbuild.*)",
+      "Bash(grep -rn execFileNoThrowWithCwd /home/accadmin/workspace/ZeroCLI/src --include=*.ts)"
     ]
   },
   "prefersReducedMotion": true

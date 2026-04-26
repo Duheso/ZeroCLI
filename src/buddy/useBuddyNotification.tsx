@@ -19,7 +19,7 @@ export function isBuddyLive(): boolean {
   const d = new Date();
   return d.getFullYear() > 2026 || d.getFullYear() === 2026 && d.getMonth() >= 3;
 }
-function RainbowText(t0) {
+function RainbowText(t0: { text: string }) {
   const $ = _c(2);
   const {
     text

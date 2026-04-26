@@ -34,6 +34,8 @@ import { renderableSearchText } from '../utils/transcriptSearch.js';
 import { Divider } from './design-system/Divider.js';
 import type { UnseenDivider } from './FullscreenLayout.js';
 import { LogoV2 } from './LogoV2/LogoV2.js';
+import { ShimmerLogo } from './LogoV2/ShimmerLogo.js';
+import { ProviderInfoBox } from './LogoV2/ProviderInfoBox.js';
 import { StreamingMarkdown } from './Markdown.js';
 import { hasContentAfterIndex, MessageRow } from './MessageRow.js';
 import { InVirtualListContext, type MessageActionsNav, MessageActionsSelectedContext, type MessageActionsState } from './messageActions.js';
@@ -72,7 +74,7 @@ const LogoHeader = React.memo(function LogoHeader(t0) {
   } else {
     t2 = $[2];
   }
-  return t2;
+  return <><ShimmerLogo /><ProviderInfoBox />{t2}</>;
 });
 
 // Dead code elimination: conditional import for proactive mode
