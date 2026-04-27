@@ -63,6 +63,7 @@ const LOGO_LINES = [
 const TOTAL = LOGO_LINES.length
 const SWEEP_FRAMES = 40 // frames per full sweep
 const FPS_MS = 40       // ~25 fps
+const ANIM_DURATION_MS = 3000 // stop after 3 seconds
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -71,7 +72,11 @@ export function ShimmerLogo() {
 
   useEffect(() => {
     const id = setInterval(() => setFrame(f => f + 1), FPS_MS)
-    return () => clearInterval(id)
+    const stop = setTimeout(() => clearInterval(id), ANIM_DURATION_MS)
+    return () => {
+      clearInterval(id)
+      clearTimeout(stop)
+    }
   }, [])
 
   const globalWave = ((frame % SWEEP_FRAMES) / SWEEP_FRAMES) * 1.5 - 0.25

@@ -5,6 +5,7 @@ import { Box, Text } from '../ink.js'
 import { useKeybinding } from '../keybindings/useKeybinding.js'
 import { useSetAppState } from '../state/AppState.js'
 import type { ProviderProfile } from '../utils/config.js'
+import { getGlobalConfig, saveGlobalConfig } from '../utils/config.js'
 import {
   clearCodexCredentials,
   readCodexCredentialsAsync,
@@ -671,6 +672,8 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
   }
 
   function clearStartupProviderOverrideFromUserSettings(): string | null {
+    // Clear all provider routing env vars from user settings.json so stale
+    // values can't block the active provider profile on next startup.
     const { error } = updateSettingsForSource('userSettings', {
       env: {
         CLAUDE_CODE_USE_OPENAI: undefined as any,
@@ -679,8 +682,41 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
         CLAUDE_CODE_USE_BEDROCK: undefined as any,
         CLAUDE_CODE_USE_VERTEX: undefined as any,
         CLAUDE_CODE_USE_FOUNDRY: undefined as any,
+        CLAUDE_CODE_USE_MISTRAL: undefined as any,
+        OPENAI_BASE_URL: undefined as any,
+        OPENAI_API_BASE: undefined as any,
+        OPENAI_MODEL: undefined as any,
+        GEMINI_BASE_URL: undefined as any,
+        GEMINI_MODEL: undefined as any,
+        MISTRAL_BASE_URL: undefined as any,
+        MISTRAL_MODEL: undefined as any,
       },
     })
+
+    // Also clear provider routing vars from the global config env block
+    // (~/.zerocli.json). A stale CLAUDE_CODE_USE_OPENAI=1 + OPENAI_BASE_URL
+    // there is enough to block applyActiveProviderProfileFromConfig at startup
+    // (hasCompleteProviderSelection returns true → saved profile is skipped).
+    const PROVIDER_ROUTING_KEYS = [
+      'CLAUDE_CODE_USE_OPENAI', 'CLAUDE_CODE_USE_GEMINI', 'CLAUDE_CODE_USE_GITHUB',
+      'CLAUDE_CODE_USE_BEDROCK', 'CLAUDE_CODE_USE_VERTEX', 'CLAUDE_CODE_USE_FOUNDRY',
+      'CLAUDE_CODE_USE_MISTRAL',
+      'OPENAI_BASE_URL', 'OPENAI_API_BASE', 'OPENAI_MODEL',
+      'GEMINI_BASE_URL', 'GEMINI_MODEL',
+      'MISTRAL_BASE_URL', 'MISTRAL_MODEL',
+    ] as const
+    const globalEnv = getGlobalConfig().env ?? {}
+    const hasStaleProviderEnv = PROVIDER_ROUTING_KEYS.some(key => globalEnv[key] !== undefined)
+    if (hasStaleProviderEnv) {
+      saveGlobalConfig(current => {
+        const nextEnv = { ...(current.env ?? {}) }
+        for (const key of PROVIDER_ROUTING_KEYS) {
+          delete nextEnv[key]
+        }
+        return { ...current, env: nextEnv }
+      })
+    }
+
     return error ? error.message : null
   }
 
@@ -1025,6 +1061,10 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     )
 
     if (mode === 'first-run') {
+      // Clear any stale provider env from previous setups so the newly saved
+      // profile is not blocked on next startup by old settings.json / global
+      // config env values.
+      clearStartupProviderOverrideFromUserSettings()
       onDone({
         action: 'saved',
         activeProfileId: saved.id,

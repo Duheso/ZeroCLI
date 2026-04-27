@@ -14,6 +14,8 @@ import type {
 } from 'src/entrypoints/agentSdkTypes.js'
 import { SDKControlElicitationResponseSchema } from 'src/entrypoints/sdk/controlSchemas.js'
 import type {
+  ControlErrorResponse,
+  ControlResponse,
   SDKControlRequest,
   SDKControlResponse,
   StdinMessage,
@@ -175,7 +177,7 @@ export class StructuredIO {
    */
   private trackResolvedToolUseId(request: SDKControlRequest): void {
     if (request.request.subtype === 'can_use_tool') {
-      this.resolvedToolUseIds.add(request.request.tool_use_id)
+      this.resolvedToolUseIds.add(request.request.tool_use_id as string)
       if (this.resolvedToolUseIds.size > MAX_RESOLVED_TOOL_USE_IDS) {
         // Evict the oldest entry (Sets iterate in insertion order)
         const first = this.resolvedToolUseIds.values().next().value
@@ -350,8 +352,9 @@ export class StructuredIO {
         // Used by bridge session runner for auth token refresh
         // (CLAUDE_CODE_SESSION_ACCESS_TOKEN) which must be readable
         // by the REPL process itself, not just child Bash commands.
-        const keys = Object.keys(message.variables)
-        for (const [key, value] of Object.entries(message.variables)) {
+        const vars = message.variables as Record<string, string>
+        const keys = Object.keys(vars)
+        for (const [key, value] of Object.entries(vars)) {
           process.env[key] = value
         }
         logForDebugging(
@@ -371,7 +374,8 @@ export class StructuredIO {
         if (uuid) {
           notifyCommandLifecycle(uuid, 'completed')
         }
-        const request = this.pendingRequests.get(message.response.request_id)
+        const resp = message.response as ControlResponse | ControlErrorResponse
+        const request = this.pendingRequests.get(resp.request_id)
         if (!request) {
           // Check if this tool_use was already resolved through the normal
           // permission flow. Duplicate control_response deliveries (e.g. from
@@ -379,8 +383,8 @@ export class StructuredIO {
           // re-processing them would push duplicate assistant messages into
           // the conversation, causing API 400 errors.
           const responsePayload =
-            message.response.subtype === 'success'
-              ? message.response.response
+            resp.subtype === 'success'
+              ? resp.response
               : undefined
           const toolUseID = responsePayload?.toolUseID
           if (
@@ -388,31 +392,31 @@ export class StructuredIO {
             this.resolvedToolUseIds.has(toolUseID)
           ) {
             logForDebugging(
-              `Ignoring duplicate control_response for already-resolved toolUseID=${toolUseID} request_id=${message.response.request_id}`,
+              `Ignoring duplicate control_response for already-resolved toolUseID=${toolUseID} request_id=${resp.request_id}`,
             )
             return undefined
           }
           if (this.unexpectedResponseCallback) {
-            await this.unexpectedResponseCallback(message)
+            await this.unexpectedResponseCallback(message as unknown as SDKControlResponse)
           }
           return undefined // Ignore responses for requests we don't know about
         }
         this.trackResolvedToolUseId(request.request)
-        this.pendingRequests.delete(message.response.request_id)
+        this.pendingRequests.delete(resp.request_id)
         // Notify the bridge when the SDK consumer resolves a can_use_tool
         // request, so it can cancel the stale permission prompt on claude.ai.
         if (
           request.request.request.subtype === 'can_use_tool' &&
           this.onControlRequestResolved
         ) {
-          this.onControlRequestResolved(message.response.request_id)
+          this.onControlRequestResolved(resp.request_id)
         }
 
-        if (message.response.subtype === 'error') {
-          request.reject(new Error(message.response.error))
+        if (resp.subtype === 'error') {
+          request.reject(new Error(resp.error))
           return undefined
         }
-        const result = message.response.response
+        const result = resp.response
         if (request.schema) {
           try {
             request.resolve(request.schema.parse(result))
@@ -448,12 +452,13 @@ export class StructuredIO {
       if (message.type === 'assistant' || message.type === 'system') {
         return message
       }
-      if (message.message.role !== 'user') {
+      const userMessage = message as unknown as { message: { role: string } }
+      if (userMessage.message.role !== 'user') {
         exitWithMessage(
-          `Error: Expected message role 'user', got '${message.message.role}'`,
+          `Error: Expected message role 'user', got '${userMessage.message.role}'`,
         )
       }
-      return message
+      return message as unknown as StdinMessage
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole:: intentional console output
       console.error(`Error parsing streaming input line: ${line}: ${error}`)

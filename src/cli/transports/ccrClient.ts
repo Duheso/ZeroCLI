@@ -70,6 +70,16 @@ const MAX_CONSECUTIVE_AUTH_FAILURES = 10
 type EventPayload = {
   uuid: string
   type: string
+  session_id?: string
+  parent_tool_use_id?: string | null
+  [key: string]: unknown
+}
+
+interface CCRStdoutEvent {
+  type: string
+  message?: { id: string }
+  delta?: { type: string; text?: string }
+  index?: number
   [key: string]: unknown
 }
 
@@ -148,33 +158,35 @@ export function accumulateStreamEvents(
   // rewrite the same entry instead of emitting one event per delta.
   const touched = new Map<string[], CoalescedStreamEvent>()
   for (const msg of buffer) {
-    switch (msg.event.type) {
+    const e = msg.event as CCRStdoutEvent
+    const m = msg as unknown as { uuid: string; session_id: string; parent_tool_use_id: string | null }
+    switch (e.type) {
       case 'message_start': {
-        const id = msg.event.message.id
-        const prevId = state.scopeToMessage.get(scopeKey(msg))
+        const id = e.message!.id
+        const prevId = state.scopeToMessage.get(scopeKey(m))
         if (prevId) state.byMessage.delete(prevId)
-        state.scopeToMessage.set(scopeKey(msg), id)
+        state.scopeToMessage.set(scopeKey(m), id)
         state.byMessage.set(id, [])
-        out.push(msg)
+        out.push(msg as unknown as EventPayload)
         break
       }
       case 'content_block_delta': {
-        if (msg.event.delta.type !== 'text_delta') {
-          out.push(msg)
+        if (e.delta!.type !== 'text_delta') {
+          out.push(msg as unknown as EventPayload)
           break
         }
-        const messageId = state.scopeToMessage.get(scopeKey(msg))
+        const messageId = state.scopeToMessage.get(scopeKey(m))
         const blocks = messageId ? state.byMessage.get(messageId) : undefined
         if (!blocks) {
           // Delta without a preceding message_start (reconnect mid-stream,
           // or message_start was in a prior buffer that got dropped). Pass
           // through raw — can't produce a full-so-far snapshot without the
           // prior chunks anyway.
-          out.push(msg)
+          out.push(msg as unknown as EventPayload)
           break
         }
-        const chunks = (blocks[msg.event.index] ??= [])
-        chunks.push(msg.event.delta.text)
+        const chunks = (blocks[e.index!] ??= [])
+        chunks.push(e.delta!.text!)
         const existing = touched.get(chunks)
         if (existing) {
           existing.event.delta.text = chunks.join('')
@@ -182,12 +194,12 @@ export function accumulateStreamEvents(
         }
         const snapshot: CoalescedStreamEvent = {
           type: 'stream_event',
-          uuid: msg.uuid,
-          session_id: msg.session_id,
-          parent_tool_use_id: msg.parent_tool_use_id,
+          uuid: m.uuid,
+          session_id: m.session_id,
+          parent_tool_use_id: m.parent_tool_use_id,
           event: {
             type: 'content_block_delta',
-            index: msg.event.index,
+            index: e.index!,
             delta: { type: 'text_delta', text: chunks.join('') },
           },
         }
@@ -196,7 +208,7 @@ export function accumulateStreamEvents(
         break
       }
       default:
-        out.push(msg)
+        out.push(msg as unknown as EventPayload)
     }
   }
   return out
@@ -734,7 +746,7 @@ export class CCRClient {
    */
   async writeEvent(message: StdoutMessage): Promise<void> {
     if (message.type === 'stream_event') {
-      this.streamEventBuffer.push(message)
+      this.streamEventBuffer.push(message as unknown as SDKPartialAssistantMessage)
       if (!this.streamEventTimer) {
         this.streamEventTimer = setTimeout(
           () => void this.flushStreamEventBuffer(),
@@ -745,7 +757,7 @@ export class CCRClient {
     }
     await this.flushStreamEventBuffer()
     if (message.type === 'assistant') {
-      clearStreamAccumulatorForMessage(this.streamTextAccumulator, message)
+      clearStreamAccumulatorForMessage(this.streamTextAccumulator, message as unknown as { session_id: string; parent_tool_use_id: string | null; message: { id: string } })
     }
     await this.eventUploader.enqueue(this.toClientEvent(message))
   }

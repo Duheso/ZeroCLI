@@ -1,4 +1,5 @@
-import { randomUUID, type UUID } from 'crypto'
+import { randomUUID } from 'crypto'
+import type { UUID } from 'crypto'
 import { mkdir, readFile, writeFile } from 'fs/promises'
 import { getOriginalCwd, getSessionId } from '../../bootstrap/state.js'
 import type { LocalJSXCommandContext } from '../../commands.js'
@@ -114,8 +115,7 @@ async function createFork(customTitle?: string): Promise<{
     throw new Error('No messages to branch')
   }
 
-  // Build forked entries with new sessionId and preserved metadata
-  let parentUuid: UUID | null = null
+  let parentUuid: string | null = null
   const lines: string[] = []
   const serializedMessages: SerializedMessage[] = []
 
@@ -124,11 +124,11 @@ async function createFork(customTitle?: string): Promise<{
     const forkedEntry: TranscriptEntry = {
       ...entry,
       sessionId: forkSessionId,
-      parentUuid,
+      parentUuid: parentUuid as (UUID | null),
       isSidechain: false,
       forkedFrom: {
-        sessionId: originalSessionId,
-        messageUuid: entry.uuid,
+        sessionId: originalSessionId as UUID,
+        messageUuid: entry.uuid as UUID,
       },
     }
 

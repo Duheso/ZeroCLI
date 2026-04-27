@@ -93,19 +93,22 @@ export function clearSessionCaches(
 
   // Clear tungsten session usage tracking
   if (process.env.USER_TYPE === 'ant') {
-    void import('../../tools/TungstenTool/TungstenTool.js').then(
-      ({ clearSessionsWithTungstenUsage, resetInitializationState }) => {
-        clearSessionsWithTungstenUsage()
-        resetInitializationState()
-      },
-    )
+    void import('../../tools/TungstenTool/TungstenTool.js').then((mod) => {
+      const m = mod as unknown as { clearSessionsWithTungstenUsage: () => void; resetInitializationState: () => void }
+      m.clearSessionsWithTungstenUsage()
+      m.resetInitializationState()
+    })
   }
   // Clear attribution caches (file content cache, pending bash states)
   // Dynamic import to preserve dead code elimination for COMMIT_ATTRIBUTION feature flag
   if (feature('COMMIT_ATTRIBUTION')) {
-    void import('../../utils/attributionHooks.js').then(
-      ({ clearAttributionCaches }) => clearAttributionCaches(),
-    )
+    const modPath = '../../utils/attributionHooks.js'
+    void import(modPath)
+      .then((mod) => {
+        const m = mod as { clearAttributionCaches: () => void }
+        m.clearAttributionCaches()
+      })
+      .catch(() => {})
   }
   // Clear repository detection caches
   clearRepositoryCaches()

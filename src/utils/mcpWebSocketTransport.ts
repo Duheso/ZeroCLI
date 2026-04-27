@@ -3,6 +3,7 @@ import {
   type JSONRPCMessage,
   JSONRPCMessageSchema,
 } from '@modelcontextprotocol/sdk/types.js'
+// @ts-ignore — ws is ESM-only without types
 import type WsWebSocket from 'ws'
 import { logForDiagnosticsNoPII } from './diagLogs.js'
 import { toError } from './errors.js'
@@ -48,7 +49,7 @@ export class WebSocketTransport implements Transport {
         nws.on('open', () => {
           resolve()
         })
-        nws.on('error', error => {
+        nws.on('error', (error: Error) => {
           logForDiagnosticsNoPII('error', 'mcp_websocket_connect_fail')
           reject(error)
         })
@@ -183,7 +184,7 @@ export class WebSocketTransport implements Transport {
         this.ws.send(json)
       } else {
         await new Promise<void>((resolve, reject) => {
-          ;(this.ws as unknown as WsWebSocket).send(json, error => {
+          ;(this.ws as unknown as WsWebSocket).send(json, (error: Error) => {
             if (error) {
               reject(error)
             } else {

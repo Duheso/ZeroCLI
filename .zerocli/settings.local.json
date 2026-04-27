@@ -29,7 +29,8 @@
       "Bash(chmod +x \"dist/vendor/ripgrep/x64-win32/rg.exe\")",
       "Bash(ln -sf /home/accadmin/workspace/ZeroCLI/dist/cli.mjs /home/accadmin/.npm-global/lib/node_modules/@duheso/zerocli/dist/cli.mjs)",
       "Bash(mkdir -p /home/accadmin/.npm-global/lib/node_modules/@duheso/zerocli/dist/vendor/ripgrep/x64-linux)",
-      "Bash(cp dist/vendor/ripgrep/x64-linux/rg /home/accadmin/.npm-global/lib/node_modules/@duheso/zerocli/dist/vendor/ripgrep/x64-linux/rg)"
+      "Bash(cp dist/vendor/ripgrep/x64-linux/rg /home/accadmin/.npm-global/lib/node_modules/@duheso/zerocli/dist/vendor/ripgrep/x64-linux/rg)",
+      "mcp__ide__getDiagnostics"
     ]
   },
   "prefersReducedMotion": true

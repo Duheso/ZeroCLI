@@ -35,7 +35,7 @@ type Props = {
  * Running /remote-control when already connected shows a dialog with the session
  * URL and options to disconnect or continue.
  */
-function BridgeToggle(t0) {
+function BridgeToggle(t0: Props) {
   const $ = _c(10);
   const {
     onDone,
@@ -117,7 +117,7 @@ function BridgeToggle(t0) {
   } else {
     t1 = $[6];
   }
-  let t2;
+  let t2: never[];
   if ($[7] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = [];
     $[7] = t2;
@@ -143,16 +143,16 @@ function BridgeToggle(t0) {
  * Dialog shown when /remote-control is used while the bridge is already connected.
  * Shows the session URL and lets the user disconnect or continue.
  */
-function _temp3(s_1) {
+function _temp3(s_1: { replBridgeOutboundOnly: boolean }) {
   return s_1.replBridgeOutboundOnly;
 }
-function _temp2(s_0) {
+function _temp2(s_0: { replBridgeEnabled: boolean }) {
   return s_0.replBridgeEnabled;
 }
-function _temp(s) {
+function _temp(s: { replBridgeConnected: boolean }) {
   return s.replBridgeConnected;
 }
-function BridgeDisconnectDialog(t0) {
+function BridgeDisconnectDialog(t0: { onDone: LocalJSXCommandOnDone }) {
   const $ = _c(61);
   const {
     onDone
@@ -276,12 +276,12 @@ function BridgeDisconnectDialog(t0) {
     t9 = $[16];
   }
   useKeybindings(t8, t9);
-  let T0;
-  let T1;
-  let t10;
-  let t11;
-  let t12;
-  let t13;
+  let T0: typeof Box;
+  let T1: typeof Dialog;
+  let t10: "column";
+  let t11: number;
+  let t12: React.ReactNode;
+  let t13: React.ReactNode;
   let t14;
   let t15;
   let t16;
@@ -289,7 +289,7 @@ function BridgeDisconnectDialog(t0) {
     const qrLines = qrText ? qrText.split("\n").filter(_temp1) : [];
     T1 = Dialog;
     t14 = "Remote Control";
-    t15 = handleContinue;
+    t15 = () => { handleContinue(); };
     t16 = true;
     T0 = Box;
     t10 = "column";
@@ -429,22 +429,22 @@ function BridgeDisconnectDialog(t0) {
  * cache is stale, so a user who just became entitled (e.g. upgraded to Max,
  * or the flag just launched) gets an accurate result on the first try.
  */
-function _temp10(line, i_1) {
+function _temp10(line: string, i_1: number) {
   return <Text key={i_1}>{line}</Text>;
 }
-function _temp1(l) {
+function _temp1(l: string) {
   return l.length > 0;
 }
-function _temp0(i_0) {
+function _temp0(i_0: number) {
   return (i_0 - 1 + 3) % 3;
 }
-function _temp9(i) {
+function _temp9(i: number) {
   return (i + 1) % 3;
 }
-function _temp8(prev_0) {
+function _temp8(prev_0: boolean) {
   return !prev_0;
 }
-function _temp7(prev) {
+function _temp7(prev: { replBridgeEnabled: boolean; replBridgeExplicit: boolean; replBridgeOutboundOnly: boolean }) {
   if (!prev.replBridgeEnabled) {
     return prev;
   }
@@ -455,13 +455,13 @@ function _temp7(prev) {
     replBridgeOutboundOnly: false
   };
 }
-function _temp6(s_1) {
+function _temp6(s_1: { replBridgeSessionActive: boolean }) {
   return s_1.replBridgeSessionActive;
 }
-function _temp5(s_0) {
+function _temp5(s_0: { replBridgeConnectUrl: string | undefined }) {
   return s_0.replBridgeConnectUrl;
 }
-function _temp4(s) {
+function _temp4(s: { replBridgeSessionUrl: string | undefined }) {
   return s.replBridgeSessionUrl;
 }
 async function checkBridgePrerequisites(): Promise<string | null> {

@@ -95,7 +95,7 @@ export async function clearConversation({
   const shouldKillTask = (task: AppState['tasks'][string]): boolean =>
     'isBackgrounded' in task && task.isBackgrounded === false
   if (getAppState) {
-    for (const task of Object.values(getAppState().tasks)) {
+    for (const task of Object.values(getAppState().tasks) as AppState['tasks'][string][]) {
       if (shouldKillTask(task)) continue
       if (isLocalAgentTask(task)) {
         preservedAgentIds.add(task.agentId)
@@ -137,7 +137,7 @@ export async function clearConversation({
       // Partition tasks using the same predicate computed above:
       // kill+remove foreground tasks, preserve everything else.
       const nextTasks: AppState['tasks'] = {}
-      for (const [taskId, task] of Object.entries(prev.tasks)) {
+      for (const [taskId, task] of Object.entries(prev.tasks) as [string, AppState['tasks'][string]][]) {
         if (!shouldKillTask(task)) {
           nextTasks[taskId] = task
           continue

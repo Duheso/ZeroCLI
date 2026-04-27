@@ -1,4 +1,5 @@
 import type { StdoutMessage } from 'src/entrypoints/sdk/controlTypes.js'
+// @ts-ignore — ws is ESM-only without types
 import type WsWebSocket from 'ws'
 import { logEvent } from '../../services/analytics/index.js'
 import { CircularBuffer } from '../../utils/CircularBuffer.js'
@@ -175,6 +176,7 @@ export class WebSocketTransport implements Transport {
       // 'pong' is Bun-specific — not in DOM typings.
       ws.addEventListener('pong', this.onPong)
     } else {
+      // @ts-ignore — ws is ESM-only without types
       const { default: WS } = await import('ws')
       const ws = new WS(this.url.href, {
         headers,
@@ -683,12 +685,14 @@ export class WebSocketTransport implements Transport {
   private getControlMessageDetailLabel(message: StdoutMessage): string {
     if (message.type === 'control_request') {
       const { request_id, request } = message
+      const req = request as Record<string, unknown>
       const toolName =
-        request.subtype === 'can_use_tool' ? request.tool_name : ''
-      return ` subtype=${request.subtype} request_id=${request_id}${toolName ? ` tool=${toolName}` : ''}`
+        req.subtype === 'can_use_tool' ? req.tool_name : ''
+      return ` subtype=${req.subtype} request_id=${request_id}${toolName ? ` tool=${toolName}` : ''}`
     }
     if (message.type === 'control_response') {
-      const { subtype, request_id } = message.response
+      const resp = message.response as Record<string, unknown>
+      const { subtype, request_id } = resp
       return ` subtype=${subtype} request_id=${request_id}`
     }
     return ''
