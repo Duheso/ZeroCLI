@@ -1143,10 +1143,12 @@ export async function checkRuleBasedPermissions(
 
   // 1g. Safety checks (e.g. .git/, .claude/, .vscode/, shell configs) are
   // bypass-immune — they must prompt even when a PreToolUse hook returned
-  // allow. checkPathSafetyForAutoEdit returns {type:'safetyCheck'} for these.
+  // allow. Exception: autopilot mode explicitly opts in to approving these paths.
+  // checkPathSafetyForAutoEdit returns {type:'safetyCheck'} for these.
   if (
     toolPermissionResult?.behavior === 'ask' &&
-    toolPermissionResult.decisionReason?.type === 'safetyCheck'
+    toolPermissionResult.decisionReason?.type === 'safetyCheck' &&
+    appState.toolPermissionContext.mode !== 'autopilot'
   ) {
     return toolPermissionResult
   }
