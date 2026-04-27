@@ -63,6 +63,13 @@ const PERMISSION_MODE_CONFIG: Partial<
     color: 'autoAccept',
     external: 'acceptEdits',
   },
+  autopilot: {
+    title: 'Autopilot',
+    shortTitle: 'Autopilot',
+    symbol: '✈',
+    color: 'warning',
+    external: 'autopilot',
+  },
   bypassPermissions: {
     title: 'Bypass Permissions',
     shortTitle: 'Bypass',

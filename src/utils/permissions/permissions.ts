@@ -1251,10 +1251,12 @@ async function hasPermissionsToUseToolInner(
 
   // 1g. Safety checks (e.g. .git/, .claude/, .vscode/, shell configs) are
   // bypass-immune — they must prompt even in bypassPermissions mode.
+  // Exception: autopilot mode explicitly opts in to approving these paths.
   // checkPathSafetyForAutoEdit returns {type:'safetyCheck'} for these paths.
   if (
     toolPermissionResult?.behavior === 'ask' &&
-    toolPermissionResult.decisionReason?.type === 'safetyCheck'
+    toolPermissionResult.decisionReason?.type === 'safetyCheck' &&
+    appState.toolPermissionContext.mode !== 'autopilot'
   ) {
     return toolPermissionResult
   }
@@ -1267,6 +1269,7 @@ async function hasPermissionsToUseToolInner(
   // - Plan mode when the user originally started with bypass mode (isBypassPermissionsModeAvailable)
   const shouldBypassPermissions =
     appState.toolPermissionContext.mode === 'bypassPermissions' ||
+    appState.toolPermissionContext.mode === 'autopilot' ||
     (appState.toolPermissionContext.mode === 'plan' &&
       appState.toolPermissionContext.isBypassPermissionsModeAvailable)
   if (shouldBypassPermissions) {

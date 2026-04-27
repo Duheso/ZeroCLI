@@ -15,6 +15,7 @@ import type { ContentBlockParam } from '@anthropic-ai/sdk/resources/messages.mjs
 
 export const EXTERNAL_PERMISSION_MODES = [
   'acceptEdits',
+  'autopilot',
   'bypassPermissions',
   'default',
   'dontAsk',

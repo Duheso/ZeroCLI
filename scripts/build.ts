@@ -483,6 +483,35 @@ if (!result.success) {
   process.exitCode = 1
 } else {
   console.log(`✓ Built zero v${version} → dist/cli.mjs`)
+
+  // Copy bundled ripgrep binaries for vendor search mode
+  const { writeFileSync, mkdirSync, existsSync } = require('fs')
+  const { execSync } = require('child_process')
+  const rgDir = join(import.meta.dir, '..', 'dist', 'vendor', 'ripgrep')
+  const rgVersion = '15.1.0'
+
+  // Linux x64
+  const linuxDir = join(rgDir, 'x64-linux')
+  mkdirSync(linuxDir, { recursive: true })
+  if (!existsSync(join(linuxDir, 'rg'))) {
+    execSync(`curl -sL "https://github.com/BurntSushi/ripgrep/releases/download/${rgVersion}/ripgrep-${rgVersion}-x86_64-unknown-linux-musl.tar.gz" -o /tmp/ripgrep-linux.tar.gz`)
+    execSync('tar -xzf /tmp/ripgrep-linux.tar.gz -C /tmp/')
+    execSync(`mv /tmp/ripgrep-${rgVersion}-x86_64-unknown-linux-musl/rg ${join(linuxDir, 'rg')}`)
+    execSync(`chmod +x ${join(linuxDir, 'rg')}`)
+    execSync('rm -rf /tmp/ripgrep-*')
+  }
+
+  // Windows x64
+  const winDir = join(rgDir, 'x64-win32')
+  mkdirSync(winDir, { recursive: true })
+  if (!existsSync(join(winDir, 'rg.exe'))) {
+    execSync(`curl -sL "https://github.com/BurntSushi/ripgrep/releases/download/${rgVersion}/ripgrep-${rgVersion}-x86_64-pc-windows-msvc.zip" -o /tmp/ripgrep-win.zip`)
+    execSync(`unzip -o /tmp/ripgrep-win.zip -d /tmp/ripgrep-win`)
+    execSync(`mv /tmp/ripgrep-win/ripgrep-${rgVersion}-x86_64-pc-windows-msvc/rg.exe ${join(winDir, 'rg.exe')}`)
+    execSync('rm -rf /tmp/ripgrep-win*')
+  }
+
+  console.log('  🔧 ripgrep: bundled for linux + windows')
 }
 
 } finally {
