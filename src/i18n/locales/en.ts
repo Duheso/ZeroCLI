@@ -183,6 +183,9 @@ export interface TranslationKeys {
   shortcut_fast_mode: (shortcut: string) => string
   shortcut_stash_prompt: (shortcut: string) => string
   shortcut_editor: (shortcut: string) => string
+  no_image_ssh: string
+  no_image_linux: string
+  no_image_generic: (shortcut: string) => string
 
   // Newline instructions
   shortcut_newline_shift: string
@@ -392,6 +395,9 @@ export const en: TranslationKeys = {
   shortcut_fast_mode: (shortcut: string) => `${shortcut} to toggle fast mode`,
   shortcut_stash_prompt: (shortcut: string) => `${shortcut} to stash prompt`,
   shortcut_editor: (shortcut: string) => `${shortcut} to edit in $EDITOR`,
+  no_image_ssh: 'Image paste unavailable over SSH. Drag an image file into the terminal.',
+  no_image_linux: 'No image in clipboard. Install xclip: sudo apt install xclip',
+  no_image_generic: (shortcut: string) => `No image in clipboard. Use ${shortcut} to paste.`,
 
   // Newline instructions
   shortcut_newline_shift: 'shift + ⏎ for newline',

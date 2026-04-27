@@ -37,6 +37,7 @@ import { stringWidth } from '../../ink/stringWidth.js';
 import { Box, type ClickEvent, type Key, Text, useInput } from '../../ink.js';
 import { useOptionalKeybindingContext } from '../../keybindings/KeybindingContext.js';
 import { getShortcutDisplay } from '../../keybindings/shortcutFormat.js';
+import { t } from '../../i18n/index.js';
 import { useKeybinding, useKeybindings } from '../../keybindings/useKeybinding.js';
 import type { MCPServerConnection } from '../../services/mcp/types.js';
 import { abortPromptSuggestion, logSuggestionSuppressed } from '../../services/PromptSuggestion/promptSuggestion.js';
@@ -1655,23 +1656,31 @@ function PromptInput({
     }
   }, [previousModeBeforeAuto, toolPermissionContext, setAppState, setToolPermissionContext]);
 
+  // Shared notification for when clipboard image paste fails
+  const showNoImageNotification = useCallback(() => {
+    const message = env.isSSH()
+      ? t('no_image_ssh')
+      : process.platform === 'linux'
+        ? t('no_image_linux')
+        : t('no_image_generic')(getShortcutDisplay('chat:imagePaste', 'Chat', 'ctrl+v'));
+    addNotification({
+      key: 'no-image-in-clipboard',
+      text: message,
+      priority: 'immediate',
+      timeoutMs: env.isSSH() ? 8000 : 4000
+    });
+  }, [addNotification]);
+
   // Handler for chat:imagePaste - paste image from clipboard
   const handleImagePaste = useCallback(() => {
     void getImageFromClipboard().then(imageData => {
       if (imageData) {
         onImagePaste(imageData.base64, imageData.mediaType);
       } else {
-        const shortcutDisplay = getShortcutDisplay('chat:imagePaste', 'Chat', 'ctrl+v');
-        const message = env.isSSH() ? "No image found in clipboard. You're SSH'd; try scp?" : `No image found in clipboard. Use ${shortcutDisplay} to paste images.`;
-        addNotification({
-          key: 'no-image-in-clipboard',
-          text: message,
-          priority: 'immediate',
-          timeoutMs: 1000
-        });
+        showNoImageNotification();
       }
     });
-  }, [addNotification, onImagePaste]);
+  }, [showNoImageNotification, onImagePaste]);
 
   // Register chat:submit handler directly in the handler registry (not via
   // useKeybindings) so that only the ChordInterceptor can invoke it for chord
@@ -2226,6 +2235,7 @@ function PromptInput({
       key
     }),
     onImagePaste,
+    onNoImageFound: showNoImageNotification,
     columns: textInputColumns,
     maxVisibleLines,
     disableCursorMovementForUpDownKeys: suggestions.length > 0 || !!footerItemSelected,

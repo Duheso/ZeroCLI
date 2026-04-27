@@ -33,6 +33,7 @@ type PasteHandlerProps = {
     dimensions?: ImageDimensions,
     sourcePath?: string,
   ) => void
+  onNoImageFound?: () => void
 }
 
 export function shouldHandleInputAsPaste(options: {
@@ -57,6 +58,7 @@ export function usePasteHandler({
   onPaste,
   onInput,
   onImagePaste,
+  onNoImageFound,
 }: PasteHandlerProps): {
   wrappedOnInput: (input: string, key: Key, event: InputEvent) => void
   pasteState: {
@@ -100,11 +102,14 @@ export function usePasteHandler({
             undefined, // no filename for clipboard images
             imageData.dimensions,
           )
+        } else if (isMountedRef.current) {
+          onNoImageFound?.()
         }
       })
       .catch(error => {
         if (isMountedRef.current) {
           logError(error as Error)
+          onNoImageFound?.()
         }
       })
       .finally(() => {
@@ -112,7 +117,7 @@ export function usePasteHandler({
           setIsPasting(false)
         }
       })
-  }, [onImagePaste])
+  }, [onImagePaste, onNoImageFound])
 
   const checkClipboardForImage = useDebounceCallback(
     checkClipboardForImageImpl,

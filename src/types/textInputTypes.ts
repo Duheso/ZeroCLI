@@ -129,6 +129,11 @@ export type BaseTextInputProps = {
   ) => void
 
   /**
+   * Optional callback when clipboard image paste fails (e.g. xclip not installed)
+   */
+  readonly onNoImageFound?: () => void
+
+  /**
    * Optional callback when a large text (over 800 chars) is pasted
    */
   readonly onPaste?: (text: string) => void

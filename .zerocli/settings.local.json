@@ -26,7 +26,10 @@
       "Bash(rm -rf /tmp/ripgrep*)",
       "Bash(npm run:*)",
       "Bash(curl -sL \"https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep-13.0.0-x86_64-windows-msvc.exe\" -o \"dist/vendor/ripgrep/x64-win32/rg.exe\")",
-      "Bash(chmod +x \"dist/vendor/ripgrep/x64-win32/rg.exe\")"
+      "Bash(chmod +x \"dist/vendor/ripgrep/x64-win32/rg.exe\")",
+      "Bash(ln -sf /home/accadmin/workspace/ZeroCLI/dist/cli.mjs /home/accadmin/.npm-global/lib/node_modules/@duheso/zerocli/dist/cli.mjs)",
+      "Bash(mkdir -p /home/accadmin/.npm-global/lib/node_modules/@duheso/zerocli/dist/vendor/ripgrep/x64-linux)",
+      "Bash(cp dist/vendor/ripgrep/x64-linux/rg /home/accadmin/.npm-global/lib/node_modules/@duheso/zerocli/dist/vendor/ripgrep/x64-linux/rg)"
     ]
   },
   "prefersReducedMotion": true

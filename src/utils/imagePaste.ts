@@ -118,31 +118,45 @@ export type ImageWithDimensions = {
  * Check if clipboard contains an image without retrieving it.
  */
 export async function hasImageInClipboard(): Promise<boolean> {
-  if (process.platform !== 'darwin') {
-    return false
-  }
-  if (
-    feature('NATIVE_CLIPBOARD_IMAGE') &&
-    getFeatureValue_CACHED_MAY_BE_STALE('tengu_collage_kaleidoscope', true)
-  ) {
-    // Native NSPasteboard check (~0.03ms warm). Fall through to osascript
-    // when the module/export is missing. Catch a throw too: it would surface
-    // as an unhandled rejection in useClipboardImageHint's setTimeout.
-    try {
-      const { getNativeModule } = await import('image-processor-napi')
-      const hasImage = getNativeModule()?.hasClipboardImage
-      if (hasImage) {
-        return hasImage()
+  if (process.platform === 'darwin') {
+    if (
+      feature('NATIVE_CLIPBOARD_IMAGE') &&
+      getFeatureValue_CACHED_MAY_BE_STALE('tengu_collage_kaleidoscope', true)
+    ) {
+      // Native NSPasteboard check (~0.03ms warm). Fall through to osascript
+      // when the module/export is missing. Catch a throw too: it would surface
+      // as an unhandled rejection in useClipboardImageHint's setTimeout.
+      try {
+        const { getNativeModule } = await import('image-processor-napi')
+        const hasImage = getNativeModule()?.hasClipboardImage
+        if (hasImage) {
+          return hasImage()
+        }
+      } catch (e) {
+        logError(e as Error)
       }
-    } catch (e) {
-      logError(e as Error)
     }
+    const result = await execFileNoThrowWithCwd('osascript', [
+      '-e',
+      'the clipboard as «class PNGf»',
+    ])
+    return result.code === 0
   }
-  const result = await execFileNoThrowWithCwd('osascript', [
-    '-e',
-    'the clipboard as «class PNGf»',
-  ])
-  return result.code === 0
+
+  if (process.platform === 'linux') {
+    const { commands } = getClipboardCommands()
+    const result = await execa(commands.checkImage, { shell: true, reject: false })
+    return result.exitCode === 0
+  }
+
+  if (process.platform === 'win32') {
+    // PowerShell always exits 0; check stdout for "True"/"False"
+    const { commands } = getClipboardCommands()
+    const result = await execa(commands.checkImage, { shell: true, reject: false })
+    return result.stdout.trim().toLowerCase() === 'true'
+  }
+
+  return false
 }
 
 export async function getImageFromClipboard(): Promise<ImageWithDimensions | null> {

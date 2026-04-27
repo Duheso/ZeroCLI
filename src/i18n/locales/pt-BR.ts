@@ -197,6 +197,9 @@ export const ptBR: TranslationKeys = {
   shortcut_fast_mode: (shortcut: string) => `${shortcut} para alternar modo rápido`,
   shortcut_stash_prompt: (shortcut: string) => `${shortcut} para guardar prompt`,
   shortcut_editor: (shortcut: string) => `${shortcut} para editar no $EDITOR`,
+  no_image_ssh: 'Colar imagem não disponível via SSH. Arraste um arquivo de imagem para o terminal.',
+  no_image_linux: 'Sem imagem no clipboard. Instale xclip: sudo apt install xclip',
+  no_image_generic: (shortcut: string) => `Sem imagem no clipboard. Use ${shortcut} para colar.`,
 
   // Instruções de nova linha
   shortcut_newline_shift: 'shift + ⏎ para nova linha',
