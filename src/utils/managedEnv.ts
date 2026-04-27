@@ -8,12 +8,59 @@ import {
 } from './managedEnvConstants.js'
 import { clearMTLSCache } from './mtls.js'
 import { clearProxyCache, configureGlobalAgents } from './proxy.js'
-import { applyActiveProviderProfileFromConfig } from './providerProfiles.js'
+import { applyActiveProviderProfileFromConfig, hasProviderProfiles } from './providerProfiles.js'
 import { isSettingSourceEnabled } from './settings/constants.js'
 import {
   getSettings_DEPRECATED,
   getSettingsForSource,
 } from './settings/settings.js'
+
+/**
+ * Provider-routing env vars that come from the legacy single-profile file or
+ * old manual setup stored in the global config / settings env blocks. When the
+ * plural provider-profile system has saved profiles, these stored values must
+ * NOT block the active profile from being applied at startup.
+ *
+ * `hasCompleteProviderSelection()` in providerProfiles.ts returns true when
+ * BOTH a USE flag AND a concrete config (URL/model) are present in process.env.
+ * If those come from the config file's env block (not the shell), they are
+ * stale and should be stripped before the profile system runs.
+ */
+const PROVIDER_ROUTING_ENV_KEYS = new Set([
+  'CLAUDE_CODE_USE_OPENAI',
+  'CLAUDE_CODE_USE_GEMINI',
+  'CLAUDE_CODE_USE_MISTRAL',
+  'CLAUDE_CODE_USE_GITHUB',
+  'CLAUDE_CODE_USE_BEDROCK',
+  'CLAUDE_CODE_USE_VERTEX',
+  'CLAUDE_CODE_USE_FOUNDRY',
+  'OPENAI_BASE_URL',
+  'OPENAI_API_BASE',
+  'OPENAI_MODEL',
+  'GEMINI_BASE_URL',
+  'GEMINI_MODEL',
+  'MISTRAL_BASE_URL',
+  'MISTRAL_MODEL',
+])
+
+/**
+ * When the plural provider-profile system has saved profiles, strip
+ * provider-routing keys from a settings-sourced env object so stale values
+ * stored in ~/.zerocli.json or settings.json can't block the active profile
+ * from being applied at startup.
+ */
+function withoutStaleProviderRoutingVars(
+  env: Record<string, string>,
+): Record<string, string> {
+  if (!hasProviderProfiles()) return env
+  const out: Record<string, string> = {}
+  for (const [key, value] of Object.entries(env)) {
+    if (!PROVIDER_ROUTING_ENV_KEYS.has(key.toUpperCase())) {
+      out[key] = value
+    }
+  }
+  return out
+}
 
 /**
  * `claude ssh` remote: ANTHROPIC_UNIX_SOCKET routes auth through a -R forwarded
@@ -134,7 +181,9 @@ export function applySafeConfigEnvironmentVariables(): void {
   // Global config (~/.zerocli.json) is user-controlled. In CCD mode,
   // filterSettingsEnv strips keys that were in the spawn env snapshot so
   // the desktop host's operational vars (OTEL, etc.) are not overridden.
-  Object.assign(process.env, filterSettingsEnv(getGlobalConfig().env))
+  // If the plural provider-profile system has saved profiles, also strip
+  // stale provider-routing vars so they don't block the active profile.
+  Object.assign(process.env, withoutStaleProviderRoutingVars(filterSettingsEnv(getGlobalConfig().env)))
 
   // Apply ALL env vars from trusted setting sources, policySettings last.
   // Gate on isSettingSourceEnabled so SDK settingSources: [] (isolation mode)
@@ -145,7 +194,7 @@ export function applySafeConfigEnvironmentVariables(): void {
     if (!isSettingSourceEnabled(source)) continue
     Object.assign(
       process.env,
-      filterSettingsEnv(getSettingsForSource(source)?.env),
+      withoutStaleProviderRoutingVars(filterSettingsEnv(getSettingsForSource(source)?.env ?? {})),
     )
   }
 
@@ -190,9 +239,9 @@ export function applySafeConfigEnvironmentVariables(): void {
  * dangerous environment variables such as LD_PRELOAD, PATH, etc.
  */
 export function applyConfigEnvironmentVariables(): void {
-  Object.assign(process.env, filterSettingsEnv(getGlobalConfig().env))
+  Object.assign(process.env, withoutStaleProviderRoutingVars(filterSettingsEnv(getGlobalConfig().env)))
 
-  Object.assign(process.env, filterSettingsEnv(getSettings_DEPRECATED()?.env))
+  Object.assign(process.env, withoutStaleProviderRoutingVars(filterSettingsEnv(getSettings_DEPRECATED()?.env ?? {})))
 
   // Keep runtime provider/model env aligned with the active profile, except
   // when an explicit provider selection is already present in process.env.
