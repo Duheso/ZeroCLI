@@ -6,6 +6,7 @@ import { getFeatureValue_CACHED_MAY_BE_STALE } from 'src/services/analytics/grow
 import { getAPIProvider } from './model/providers.js'
 import { get3PModelCapabilityOverride } from './model/modelSupportOverrides.js'
 import { supportsCodexReasoningEffort } from '../services/api/providerConfig.js'
+import { t } from '../i18n/index.js'
 import { isEnvTruthy } from './envUtils.js'
 import type { EffortLevel } from 'src/entrypoints/sdk/runtimeTypes.js'
 
@@ -279,15 +280,15 @@ export function convertEffortValueToLevel(value: EffortValue): EffortLevel {
 export function getEffortLevelDescription(level: EffortLevel | OpenAIEffortLevel): string {
   switch (level) {
     case 'low':
-      return 'Quick, straightforward implementation with minimal overhead'
+      return t('effort_low_description') as string
     case 'medium':
-      return 'Balanced approach with standard implementation and testing'
+      return t('effort_medium_description') as string
     case 'high':
-      return 'Comprehensive implementation with extensive testing and documentation'
+      return t('effort_high_description') as string
     case 'max':
-      return 'Maximum capability with deepest reasoning (Opus 4.6 only)'
+      return t('effort_max_description') as string
     case 'xhigh':
-      return 'Extra high reasoning effort for complex tasks (OpenAI/Codex)'
+      return t('effort_xhigh_description') as string
   }
 }
 

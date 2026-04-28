@@ -19,6 +19,7 @@ import { createAbortController } from '../../utils/abortController.js';
 import { saveGlobalConfig } from '../../utils/config.js';
 import { errorMessage } from '../../utils/errors.js';
 import { type CacheSafeParams, getLastCacheSafeParams } from '../../utils/forkedAgent.js';
+import { t } from '../../i18n/index.js';
 import { getMessagesAfterCompactBoundary } from '../../utils/messages.js';
 import type { ProcessUserInputContext } from '../../utils/processUserInput/processUserInput.js';
 import { runSideQuestion } from '../../utils/sideQuestion.js';
@@ -229,7 +230,7 @@ async function buildCacheSafeParams(context: ProcessUserInputContext): Promise<C
 export async function call(onDone: LocalJSXCommandOnDone, context: ProcessUserInputContext, args: string): Promise<React.ReactNode> {
   const question = args?.trim();
   if (!question) {
-    onDone('Usage: /btw <your question>', {
+    onDone(t('cmd_btw_usage') as string, {
       display: 'system'
     });
     return null;

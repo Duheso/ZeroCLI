@@ -3,6 +3,7 @@ import { createWriteStream, type WriteStream } from 'fs'
 import { tmpdir } from 'os'
 import { dirname, join } from 'path'
 import { createInterface } from 'readline'
+import { t } from '../i18n/index.js'
 import { jsonParse, jsonStringify } from '../utils/slowOperations.js'
 import { debugTruncate } from './debugUtils.js'
 import type {
@@ -130,29 +131,31 @@ type SessionSpawnerDeps = {
 }
 
 /** Map tool names to human-readable verbs for the status display. */
-const TOOL_VERBS: Record<string, string> = {
-  Read: 'Reading',
-  Write: 'Writing',
-  Edit: 'Editing',
-  MultiEdit: 'Editing',
-  Bash: 'Running',
-  Glob: 'Searching',
-  Grep: 'Searching',
-  WebFetch: 'Fetching',
-  WebSearch: 'Searching',
-  Task: 'Running task',
-  FileReadTool: 'Reading',
-  FileWriteTool: 'Writing',
-  FileEditTool: 'Editing',
-  GlobTool: 'Searching',
-  GrepTool: 'Searching',
-  BashTool: 'Running',
-  NotebookEditTool: 'Editing notebook',
-  LSP: 'LSP',
+function getToolVerbs(): Record<string, string> {
+  return {
+    Read: t('summary_reading_cap'),
+    Write: t('summary_writing_cap'),
+    Edit: t('tool_verb_editing'),
+    MultiEdit: t('tool_verb_editing'),
+    Bash: t('tool_verb_running'),
+    Glob: t('tool_verb_searching'),
+    Grep: t('tool_verb_searching'),
+    WebFetch: t('tool_verb_fetching'),
+    WebSearch: t('tool_verb_searching'),
+    Task: t('tool_verb_running_task'),
+    FileReadTool: t('summary_reading_cap'),
+    FileWriteTool: t('summary_writing_cap'),
+    FileEditTool: t('tool_verb_editing'),
+    GlobTool: t('tool_verb_searching'),
+    GrepTool: t('tool_verb_searching'),
+    BashTool: t('tool_verb_running'),
+    NotebookEditTool: t('tool_verb_editing_notebook'),
+    LSP: 'LSP',
+  }
 }
 
 function toolSummary(name: string, input: Record<string, unknown>): string {
-  const verb = TOOL_VERBS[name] ?? name
+  const verb = getToolVerbs()[name] ?? name
   const target =
     (input.file_path as string) ??
     (input.filePath as string) ??

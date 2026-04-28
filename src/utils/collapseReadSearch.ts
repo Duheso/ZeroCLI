@@ -23,6 +23,7 @@ import type {
 } from '../types/message.js'
 import { getDisplayPath } from './file.js'
 import { isFullscreenEnvEnabled } from './fullscreen.js'
+import { t } from '../i18n/index.js'
 import {
   isAutoManagedMemoryFile,
   isAutoManagedMemoryPattern,
@@ -982,35 +983,35 @@ export function getSearchReadSummaryText(
     if (memoryReadCount > 0) {
       const verb = isActive
         ? parts.length === 0
-          ? 'Recalling'
-          : 'recalling'
+          ? t('summary_recalling_cap')
+          : t('summary_recalling_lc')
         : parts.length === 0
-          ? 'Recalled'
-          : 'recalled'
+          ? t('summary_recalled_cap')
+          : t('summary_recalled_lc')
       parts.push(
-        `${verb} ${memoryReadCount} ${memoryReadCount === 1 ? 'memory' : 'memories'}`,
+        `${verb} ${memoryReadCount} ${memoryReadCount === 1 ? t('summary_memory_singular') : t('summary_memory_plural')}`,
       )
     }
     if (memorySearchCount > 0) {
       const verb = isActive
         ? parts.length === 0
-          ? 'Searching'
-          : 'searching'
+          ? t('summary_searching_mem_cap')
+          : t('summary_searching_mem_lc')
         : parts.length === 0
-          ? 'Searched'
-          : 'searched'
-      parts.push(`${verb} memories`)
+          ? t('summary_searched_mem_cap')
+          : t('summary_searched_mem_lc')
+      parts.push(`${verb} ${t('summary_mem_target')}`)
     }
     if (memoryWriteCount > 0) {
       const verb = isActive
         ? parts.length === 0
-          ? 'Writing'
-          : 'writing'
+          ? t('summary_writing_cap')
+          : t('summary_writing_lc')
         : parts.length === 0
-          ? 'Wrote'
-          : 'wrote'
+          ? t('summary_wrote_cap')
+          : t('summary_wrote_lc')
       parts.push(
-        `${verb} ${memoryWriteCount} ${memoryWriteCount === 1 ? 'memory' : 'memories'}`,
+        `${verb} ${memoryWriteCount} ${memoryWriteCount === 1 ? t('summary_memory_singular') : t('summary_memory_plural')}`,
       )
     }
     // Team memory operations
@@ -1022,43 +1023,43 @@ export function getSearchReadSummaryText(
   if (searchCount > 0) {
     const searchVerb = isActive
       ? parts.length === 0
-        ? 'Searching for'
-        : 'searching for'
+        ? t('summary_searching_for_cap')
+        : t('summary_searching_for_lc')
       : parts.length === 0
-        ? 'Searched for'
-        : 'searched for'
+        ? t('summary_searched_for_cap')
+        : t('summary_searched_for_lc')
     parts.push(
-      `${searchVerb} ${searchCount} ${searchCount === 1 ? 'pattern' : 'patterns'}`,
+      `${searchVerb} ${searchCount} ${searchCount === 1 ? t('summary_pattern_singular') : t('summary_pattern_plural')}`,
     )
   }
 
   if (readCount > 0) {
     const readVerb = isActive
       ? parts.length === 0
-        ? 'Reading'
-        : 'reading'
+        ? t('summary_reading_cap')
+        : t('summary_reading_lc')
       : parts.length === 0
-        ? 'Read'
-        : 'read'
-    parts.push(`${readVerb} ${readCount} ${readCount === 1 ? 'file' : 'files'}`)
+        ? t('summary_read_cap')
+        : t('summary_read_lc')
+    parts.push(`${readVerb} ${readCount} ${readCount === 1 ? t('summary_file_singular') : t('summary_file_plural')}`)
   }
 
   if (listCount > 0) {
     const listVerb = isActive
       ? parts.length === 0
-        ? 'Listing'
-        : 'listing'
+        ? t('summary_listing_cap')
+        : t('summary_listing_lc')
       : parts.length === 0
-        ? 'Listed'
-        : 'listed'
+        ? t('summary_listed_cap')
+        : t('summary_listed_lc')
     parts.push(
-      `${listVerb} ${listCount} ${listCount === 1 ? 'directory' : 'directories'}`,
+      `${listVerb} ${listCount} ${listCount === 1 ? t('summary_directory_singular') : t('summary_directory_plural')}`,
     )
   }
 
   if (replCount > 0) {
-    const replVerb = isActive ? "REPL'ing" : "REPL'd"
-    parts.push(`${replVerb} ${replCount} ${replCount === 1 ? 'time' : 'times'}`)
+    const replVerb = isActive ? t('summary_repling') : t('summary_repld')
+    parts.push(`${replVerb} ${replCount} ${replCount === 1 ? t('summary_time_singular') : t('summary_time_plural')}`)
   }
 
   const text = parts.join(', ')

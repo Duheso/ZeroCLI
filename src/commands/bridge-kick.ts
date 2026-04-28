@@ -1,5 +1,6 @@
 import { getBridgeDebugHandle } from '../bridge/bridgeDebug.js'
 import type { Command } from '../commands.js'
+import { t } from '../i18n/index.js'
 import type { LocalCommandCall } from '../types/command.js'
 
 /**
@@ -191,7 +192,7 @@ const call: LocalCommandCall = async args => {
 const bridgeKick = {
   type: 'local',
   name: 'bridge-kick',
-  description: 'Inject bridge failure states for manual recovery testing',
+  description: t('cmd_bridge_kick') as string,
   isEnabled: () => process.env.USER_TYPE === 'ant',
   supportsNonInteractive: false,
   load: () => Promise.resolve({ call }),

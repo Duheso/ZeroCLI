@@ -1,6 +1,7 @@
 import { c as _c } from "react-compiler-runtime";
 import React from 'react';
 import { z } from 'zod/v4';
+import { t } from '../../i18n/index.js';
 import { FallbackToolUseErrorMessage } from '../../components/FallbackToolUseErrorMessage.js';
 import { FallbackToolUseRejectedMessage } from '../../components/FallbackToolUseRejectedMessage.js';
 import { MessageResponse } from '../../components/MessageResponse.js';
@@ -474,7 +475,7 @@ function TaskOutputResultDisplay(t0) {
       }
       let t3;
       if ($[27] !== expandShortcut) {
-        t3 = <MessageResponse><Text dimColor={true}>Read output ({expandShortcut} to expand)</Text></MessageResponse>;
+        t3 = <MessageResponse><Text dimColor={true}>{t('hint_read_output_expand')(expandShortcut)}</Text></MessageResponse>;
         $[27] = expandShortcut;
         $[28] = t3;
       } else {
@@ -532,7 +533,7 @@ function TaskOutputResultDisplay(t0) {
     }
     let t5;
     if ($[38] !== expandShortcut || $[39] !== task.output || $[40] !== verbose) {
-      t5 = !verbose && task.output && <Text dimColor={true}>{"     "}({expandShortcut} to expand)</Text>;
+      t5 = !verbose && task.output && <Text dimColor={true}>{"     "}{t('hint_shortcut_to_expand')(expandShortcut)}</Text>;
       $[38] = expandShortcut;
       $[39] = task.output;
       $[40] = verbose;

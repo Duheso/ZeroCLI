@@ -16,6 +16,7 @@ import {
   getAgentDefinitionsWithOverrides,
 } from '../../tools/AgentTool/loadAgentsDir.js'
 import { getCwd } from '../../utils/cwd.js'
+import { t } from '../../i18n/index.js'
 
 function formatAgent(agent: ResolvedAgent): string {
   const model = resolveAgentModelDisplay(agent)
@@ -60,7 +61,7 @@ export async function agentsHandler(): Promise<void> {
 
   if (lines.length === 0) {
     // biome-ignore lint/suspicious/noConsole:: intentional console output
-    console.log('No agents found.')
+    console.log(t('agents_cli_none_found'))
   } else {
     // biome-ignore lint/suspicious/noConsole:: intentional console output
     console.log(`${totalActive} active agents\n`)

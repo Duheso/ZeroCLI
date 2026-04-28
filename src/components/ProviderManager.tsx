@@ -1,5 +1,6 @@
 import figures from 'figures'
 import * as React from 'react'
+import { t } from '../i18n/index.js'
 import { DEFAULT_CODEX_BASE_URL } from '../services/api/providerConfig.js'
 import { Box, Text } from '../ink.js'
 import { useKeybinding } from '../keybindings/useKeybinding.js'
@@ -103,39 +104,41 @@ type AtomicChatSelectionState =
     }
   | { state: 'unavailable'; message: string }
 
-const FORM_STEPS: Array<{
+function getFormSteps(): Array<{
   key: DraftField
   label: string
   placeholder: string
   helpText: string
   optional?: boolean
-}> = [
-  {
-    key: 'name',
-    label: 'Provider name',
-    placeholder: 'e.g. Ollama Home, OpenAI Work',
-    helpText: 'A short label shown in /provider and startup setup.',
-  },
-  {
-    key: 'baseUrl',
-    label: 'Base URL',
-    placeholder: 'e.g. http://localhost:11434/v1',
-    helpText: 'API base URL used for this provider profile.',
-  },
-  {
-    key: 'model',
-    label: 'Default model',
-    placeholder: 'e.g. llama3.1:8b or glm-4.7, glm-4.7-flash',
-    helpText: 'Model name(s) to use. Separate multiple with commas; first is default.',
-  },
-  {
-    key: 'apiKey',
-    label: 'API key',
-    placeholder: 'Leave empty if your provider does not require one',
-    helpText: 'Optional. Press Enter with empty value to skip.',
-    optional: true,
-  },
-]
+}> {
+  return [
+    {
+      key: 'name',
+      label: t('pm_field_name_label'),
+      placeholder: t('pm_field_name_placeholder'),
+      helpText: t('pm_field_name_help'),
+    },
+    {
+      key: 'baseUrl',
+      label: t('pm_field_baseurl_label'),
+      placeholder: t('pm_field_baseurl_placeholder'),
+      helpText: t('pm_field_baseurl_help'),
+    },
+    {
+      key: 'model',
+      label: t('pm_field_model_label'),
+      placeholder: t('pm_field_model_placeholder'),
+      helpText: t('pm_field_model_help'),
+    },
+    {
+      key: 'apiKey',
+      label: t('pm_field_apikey_label'),
+      placeholder: t('pm_field_apikey_placeholder'),
+      helpText: t('pm_field_apikey_help'),
+      optional: true,
+    },
+  ]
+}
 
 const GITHUB_PROVIDER_ID = '__github_models__'
 const GITHUB_PROVIDER_LABEL = 'GitHub Models'
@@ -166,10 +169,10 @@ function presetToDraft(preset: ProviderPreset): ProviderDraft {
 }
 
 function profileSummary(profile: ProviderProfile, isActive: boolean): string {
-  const activeSuffix = isActive ? ' (active)' : ''
-  const keyInfo = profile.apiKey ? 'key set' : 'no key'
+  const activeSuffix = isActive ? ` ${t('pm_profile_active_suffix')}` : ''
+  const keyInfo = profile.apiKey ? t('pm_profile_key_set') : t('pm_profile_no_key')
   const providerKind =
-    profile.provider === 'anthropic' ? 'anthropic' : 'openai-compatible'
+    profile.provider === 'anthropic' ? t('pm_profile_anthropic') : t('pm_profile_openai_compat')
   const models = parseModelList(profile.model)
   const modelDisplay =
     models.length <= 3
@@ -228,11 +231,11 @@ function getGithubProviderSummary(
 ): string {
   const credentialSummary =
     credentialSource === 'stored'
-      ? 'token stored'
+      ? t('pm_profile_token_stored')
       : credentialSource === 'env'
-        ? 'token via env'
-        : 'no token found'
-  const activeSuffix = isActive ? ' (active)' : ''
+        ? t('pm_profile_token_via_env')
+        : t('pm_profile_no_token')
+  const activeSuffix = isActive ? ` ${t('pm_profile_active_suffix')}` : ''
   return `github-models · ${GITHUB_PROVIDER_DEFAULT_BASE_URL} · ${getGithubProviderModel(processEnv)} · ${credentialSummary}${activeSuffix}`
 }
 
@@ -324,16 +327,16 @@ function CodexOAuthSetup({
     return (
       <Box flexDirection="column" gap={1}>
         <Text color="error" bold>
-          Codex OAuth failed
+          {t('pm_err_codex_oauth_failed_title')}
         </Text>
         <Text>{status.message}</Text>
-        <Text dimColor>Press Enter or Esc to go back.</Text>
+        <Text dimColor>{t('pm_codex_press_enter_esc')}</Text>
         <Select
           options={[
             {
               value: 'back',
-              label: 'Back',
-              description: 'Return to provider presets',
+              label: t('pm_back_label'),
+              description: t('pm_back_to_presets'),
             },
           ]}
           onChange={onBack}
@@ -347,34 +350,31 @@ function CodexOAuthSetup({
   return (
     <Box flexDirection="column" gap={1}>
       <Text color="remember" bold>
-        Codex OAuth
+        {t('pm_codex_title')}
       </Text>
       <Text>
-        Sign in with your ChatGPT account in the browser. Zero CLI will store
-        the resulting Codex credentials securely and switch this session to the
-        new Codex login when setup completes.
+        {t('pm_codex_signin_desc')}
       </Text>
       {status.state === 'starting' ? (
-        <Text dimColor>Starting local callback and preparing your browser...</Text>
+        <Text dimColor>{t('pm_codex_starting')}</Text>
       ) : status.browserOpened === false ? (
         <>
           <Text color="warning">
-            Browser did not open automatically. Visit this URL to continue:
+            {t('pm_codex_browser_not_opened')}
           </Text>
           <Text>{status.authUrl}</Text>
         </>
       ) : status.browserOpened === true ? (
         <>
           <Text dimColor>
-            Browser opened. Finish the ChatGPT sign-in there and this setup will
-            complete automatically.
+            {t('pm_codex_browser_opened')}
           </Text>
           <Text>{status.authUrl}</Text>
         </>
       ) : (
-        <Text dimColor>Opening your browser...</Text>
+        <Text dimColor>{t('pm_codex_opening_browser')}</Text>
       )}
-      <Text dimColor>Press Esc to cancel and go back.</Text>
+      <Text dimColor>{t('pm_codex_press_esc')}</Text>
     </Box>
   )
 }
@@ -454,6 +454,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     })
   }, [])
 
+  const FORM_STEPS = getFormSteps()
   const currentStep = FORM_STEPS[formStepIndex] ?? FORM_STEPS[0]
   const currentStepKey = currentStep.key
   const currentValue = draft[currentStepKey]
@@ -467,40 +468,40 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     () => [
       {
         value: 'add',
-        label: 'Add provider',
-        description: 'Create a new provider profile',
+        label: t('pm_menu_add_label'),
+        description: t('pm_menu_add_desc'),
       },
       {
         value: 'activate',
-        label: 'Set active provider',
-        description: 'Switch the active provider profile',
+        label: t('pm_menu_activate_label'),
+        description: t('pm_menu_activate_desc'),
         disabled: !hasSelectableProviders,
       },
       {
         value: 'edit',
-        label: 'Edit provider',
-        description: 'Update URL, model, or key',
+        label: t('pm_menu_edit_label'),
+        description: t('pm_menu_edit_desc'),
         disabled: !hasProfiles,
       },
       {
         value: 'delete',
-        label: 'Delete provider',
-        description: 'Remove a provider profile',
+        label: t('pm_menu_delete_label'),
+        description: t('pm_menu_delete_desc'),
         disabled: !hasSelectableProviders,
       },
       ...(hasStoredCodexOAuthCredentials
         ? [
             {
               value: 'logout-codex-oauth',
-              label: 'Log out Codex OAuth',
-              description: 'Clear securely stored Codex OAuth credentials',
+              label: t('pm_menu_logout_codex_label'),
+              description: t('pm_menu_logout_codex_desc'),
             },
           ]
         : []),
       {
         value: 'done',
-        label: 'Done',
-        description: 'Return to chat',
+        label: t('pm_menu_done_label'),
+        description: t('pm_menu_done_desc'),
       },
     ],
     [hasSelectableProviders, hasProfiles, hasStoredCodexOAuthCredentials],
@@ -726,14 +727,14 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     warnings: string[]
   }): string {
     if (options.activationWarning) {
-      return `${options.prefix}. Saved for next startup. Warning: ${options.warnings.join('; ')}.`
+      return t('pm_activation_saved_next_startup_warning')(options.prefix, options.warnings.join('; '))
     }
 
     if (options.warnings.length > 0) {
-      return `${options.prefix}. Zero CLI switched to it for this session with warnings: ${options.warnings.join('; ')}.`
+      return t('pm_activation_switched_with_warnings')(options.prefix, options.warnings.join('; '))
     }
 
-    return `${options.prefix}. Zero CLI switched to it for this session.`
+    return t('pm_activation_switched')(options.prefix)
   }
 
   async function activateCodexOAuthSession(tokens?: {
@@ -778,7 +779,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
 
     // Set loading state before sync I/O to keep UI responsive
     setIsActivating(true)
-    setStatusMessage('Activating provider...')
+    setStatusMessage(t('pm_status_activating'))
 
     try {
       // Defer sync I/O to next microtask - UI renders loading state first.
@@ -792,7 +793,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
         providerLabel = GITHUB_PROVIDER_LABEL
         const githubError = activateGithubProvider()
         if (githubError) {
-          setErrorMessage(`Could not activate GitHub provider: ${githubError}`)
+          setErrorMessage(t('pm_err_cannot_activate_github')(githubError))
           setIsActivating(false)
           returnToMenu()
           return
@@ -808,7 +809,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
           ...prev,
           mainLoopModel: GITHUB_PROVIDER_DEFAULT_MODEL,
         }))
-        setStatusMessage(`Active provider: ${GITHUB_PROVIDER_LABEL}`)
+        setStatusMessage(t('pm_status_active_provider')(GITHUB_PROVIDER_LABEL))
         setIsActivating(false)
         returnToMenu()
         return
@@ -816,7 +817,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
 
       const active = setActiveProviderProfile(profileId)
       if (!active) {
-        setErrorMessage('Could not change active provider.')
+        setErrorMessage(t('pm_err_cannot_change_provider'))
         setIsActivating(false)
         returnToMenu()
         return
@@ -852,7 +853,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       setStatusMessage(
         isActiveCodexOAuth
           ? buildCodexOAuthActivationMessage({
-              prefix: `Active provider: ${active.name}`,
+              prefix: t('pm_status_active_provider')(active.name),
               activationWarning,
               warnings: [
                 activationWarning,
@@ -862,8 +863,8 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
               ].filter((warning): warning is string => Boolean(warning)),
             })
           : settingsOverrideError
-            ? `Active provider: ${active.name}. Warning: could not clear startup provider override (${settingsOverrideError}).`
-            : `Active provider: ${active.name}`,
+            ? `${t('pm_status_active_provider')(active.name)}${t('pm_warning_override_suffix')(settingsOverrideError)}`
+            : t('pm_status_active_provider')(active.name),
       )
       setIsActivating(false)
       returnToMenu()
@@ -872,7 +873,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       setStatusMessage(undefined)
       setIsActivating(false)
       const detail = error instanceof Error ? error.message : String(error)
-      setErrorMessage(`Could not finish activating ${providerLabel}: ${detail}`)
+      setErrorMessage(t('pm_err_cannot_finish_activating')(providerLabel, detail))
       returnToMenu()
     }
   }
@@ -1033,7 +1034,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       : addProviderProfile(payload, { makeActive: true })
 
     if (!saved) {
-      setErrorMessage('Could not save provider. Fill all required fields.')
+      setErrorMessage(t('pm_err_cannot_save_provider'))
       return
     }
 
@@ -1052,11 +1053,11 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     refreshProfiles()
     const successMessage =
       editingProfileId
-        ? `Updated provider: ${saved.name}`
-        : `Added provider: ${saved.name} (now active)`
+        ? t('pm_status_updated_provider')(saved.name)
+        : t('pm_status_added_provider')(saved.name)
     setStatusMessage(
       settingsOverrideError
-        ? `${successMessage}. Warning: could not clear startup provider override (${settingsOverrideError}).`
+        ? `${successMessage}${t('pm_warning_override_suffix')(settingsOverrideError)}`
         : successMessage,
     )
 
@@ -1068,7 +1069,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       onDone({
         action: 'saved',
         activeProfileId: saved.id,
-        message: `Provider configured: ${saved.name}`,
+        message: t('pm_status_provider_configured')(saved.name),
       })
       return
     }
@@ -1087,9 +1088,9 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       return (
         <Box flexDirection="column" gap={1}>
           <Text color="remember" bold>
-            Checking Atomic Chat
+            {t('pm_checking_atomic_title')}
           </Text>
-          <Text dimColor>Looking for loaded Atomic Chat models...</Text>
+          <Text dimColor>{t('pm_checking_atomic_msg')}</Text>
         </Box>
       )
     }
@@ -1098,20 +1099,20 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       return (
         <Box flexDirection="column" gap={1}>
           <Text color="remember" bold>
-            Atomic Chat setup
+            {t('pm_atomic_setup_title')}
           </Text>
           <Text dimColor>{atomicChatSelection.message}</Text>
           <Select
             options={[
               {
                 value: 'manual',
-                label: 'Enter manually',
-                description: 'Fill in the base URL and model yourself',
+                label: t('pm_enter_manually_label'),
+                description: t('pm_enter_manually_desc'),
               },
               {
                 value: 'back',
-                label: 'Back',
-                description: 'Choose another provider preset',
+                label: t('pm_back_label'),
+                description: t('pm_back_preset_desc'),
               },
             ]}
             onChange={(value: string) => {
@@ -1133,11 +1134,10 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     return (
       <Box flexDirection="column" gap={1}>
         <Text color="remember" bold>
-          Choose an Atomic Chat model
+          {t('pm_choose_atomic_title')}
         </Text>
         <Text dimColor>
-          Pick one of the models loaded in Atomic Chat to save into a local
-          provider profile.
+          {t('pm_choose_atomic_desc')}
         </Text>
         <Select
           options={atomicChatSelection.options}
@@ -1164,9 +1164,9 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       return (
         <Box flexDirection="column" gap={1}>
           <Text color="remember" bold>
-            Checking Ollama
+            {t('pm_checking_ollama_title')}
           </Text>
-          <Text dimColor>Looking for installed Ollama models...</Text>
+          <Text dimColor>{t('pm_checking_ollama_msg')}</Text>
         </Box>
       )
     }
@@ -1175,20 +1175,20 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       return (
         <Box flexDirection="column" gap={1}>
           <Text color="remember" bold>
-            Ollama setup
+            {t('pm_ollama_setup_title')}
           </Text>
           <Text dimColor>{ollamaSelection.message}</Text>
           <Select
             options={[
               {
                 value: 'manual',
-                label: 'Enter manually',
-                description: 'Fill in the base URL and model yourself',
+                label: t('pm_enter_manually_label'),
+                description: t('pm_enter_manually_desc'),
               },
               {
                 value: 'back',
-                label: 'Back',
-                description: 'Choose another provider preset',
+                label: t('pm_back_label'),
+                description: t('pm_back_preset_desc'),
               },
             ]}
             onChange={(value: string) => {
@@ -1210,11 +1210,10 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     return (
       <Box flexDirection="column" gap={1}>
         <Text color="remember" bold>
-          Choose an Ollama model
+          {t('pm_choose_ollama_title')}
         </Text>
         <Text dimColor>
-          Pick one of the installed Ollama models to save into a local provider
-          profile.
+          {t('pm_choose_ollama_desc')}
         </Text>
         <Select
           options={ollamaSelection.options}
@@ -1240,7 +1239,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     const trimmed = value.trim()
 
     if (!currentStep.optional && trimmed.length === 0) {
-      setErrorMessage(`${currentStep.label} is required.`)
+      setErrorMessage(t('pm_field_required')(currentStep.label))
       return
     }
 
@@ -1408,10 +1407,10 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     return (
       <Box flexDirection="column" gap={1}>
         <Text color="remember" bold>
-          {mode === 'first-run' ? 'Set up provider' : 'Choose provider preset'}
+          {mode === 'first-run' ? t('pm_set_up_provider') : t('pm_choose_preset')}
         </Text>
         <Text dimColor>
-          Pick a preset, then confirm base URL, model, and API key.
+          {t('pm_pick_preset_hint')}
         </Text>
         <Select
           options={options}
@@ -1443,17 +1442,17 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     return (
       <Box flexDirection="column" gap={1}>
         <Text color="remember" bold>
-          {editingProfileId ? 'Edit provider profile' : 'Create provider profile'}
+          {editingProfileId ? t('pm_edit_form_title') : t('pm_create_form_title')}
         </Text>
         <Text dimColor>{currentStep.helpText}</Text>
         <Text dimColor>
-          Provider type:{' '}
+          {t('pm_provider_type_label')}{' '}
           {draftProvider === 'anthropic'
-            ? 'Anthropic native API'
-            : 'OpenAI-compatible API'}
+            ? t('pm_provider_type_anthropic')
+            : t('pm_provider_type_openai')}
         </Text>
         <Text dimColor>
-          Step {formStepIndex + 1} of {FORM_STEPS.length}: {currentStep.label}
+          {t('pm_step_of')(formStepIndex + 1, FORM_STEPS.length, currentStep.label)}
         </Text>
         <Box flexDirection="row" gap={1}>
           <Text>{figures.pointer}</Text>
@@ -1477,7 +1476,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
         </Box>
         {errorMessage && <Text color="error">{errorMessage}</Text>}
         <Text dimColor>
-          Press Enter to continue. Press Esc to go back.
+          {t('pm_press_enter_esc')}
         </Text>
       </Box>
     )
@@ -1491,18 +1490,18 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     return (
       <Box flexDirection="column" gap={1}>
         <Text color="remember" bold>
-          Provider manager
+          {t('pm_menu_title')}
         </Text>
         <Text dimColor>
-          Active profile controls base URL, model, and API key used by this session.
+          {t('pm_menu_active_profile_desc')}
         </Text>
         {statusMessage && <Text>{statusMessage}</Text>}
         <Box flexDirection="column">
           {profiles.length === 0 && !githubProviderAvailable ? (
             isGithubCredentialSourceResolved ? (
-              <Text dimColor>No provider profiles configured yet.</Text>
+              <Text dimColor>{t('pm_menu_no_profiles_yet')}</Text>
             ) : (
-              <Text dimColor>Checking GitHub Models credentials...</Text>
+              <Text dimColor>{t('pm_menu_checking_github_creds')}</Text>
             )
           ) : (
             <>
@@ -1551,7 +1550,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
                 if (!cleared.success) {
                   setErrorMessage(
                     cleared.warning ??
-                      'Could not clear Codex OAuth credentials.',
+                      t('pm_err_cannot_clear_codex'),
                   )
                   break
                 }
@@ -1567,7 +1566,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
                   const result = deleteProviderProfile(codexProfile.id)
                   if (!result.removed) {
                     setErrorMessage(
-                      'Codex OAuth credentials were cleared, but the Codex profile could not be removed.',
+                      t('pm_err_codex_credentials_cleared_no_profile'),
                     )
                     refreshProfiles()
                     break
@@ -1582,8 +1581,8 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
                 refreshProfiles()
                 setStatusMessage(
                   settingsOverrideError
-                    ? `Codex OAuth logged out. Warning: could not clear startup provider override (${settingsOverrideError}).`
-                    : 'Codex OAuth logged out.',
+                    ? `${t('pm_status_codex_logged_out')} ${t('pm_warning_override_suffix')(settingsOverrideError)}`
+                    : t('pm_status_codex_logged_out'),
                 )
                 break
               }
@@ -1611,16 +1610,16 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       value: profile.id,
       label:
         profile.id === activeProfileId
-          ? `${profile.name} (active)`
+          ? `${profile.name} ${t('pm_profile_active_suffix')}`
           : profile.name,
-      description: `${profile.provider === 'anthropic' ? 'anthropic' : 'openai-compatible'} · ${profile.baseUrl} · ${profile.model}`,
+      description: `${profile.provider === 'anthropic' ? t('pm_profile_anthropic') : t('pm_profile_openai_compat')} · ${profile.baseUrl} · ${profile.model}`,
     }))
 
     if (includeGithub && githubProviderAvailable) {
       selectOptions.push({
         value: GITHUB_PROVIDER_ID,
         label: isGithubActive
-          ? `${GITHUB_PROVIDER_LABEL} (active)`
+          ? `${GITHUB_PROVIDER_LABEL} ${t('pm_profile_active_suffix')}`
           : GITHUB_PROVIDER_LABEL,
         description: `github-models · ${GITHUB_PROVIDER_DEFAULT_BASE_URL} · ${getGithubProviderModel()}`,
       })
@@ -1637,8 +1636,8 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
             options={[
               {
                 value: 'back',
-                label: 'Back',
-                description: 'Return to provider manager',
+                label: t('pm_back_label'),
+                description: t('pm_back_to_provider_manager'),
               },
             ]}
             onChange={() => returnToMenu()}
@@ -1699,7 +1698,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
 
             if (!saved) {
               setErrorMessage(
-                'Codex OAuth login finished, but the provider profile could not be saved.',
+                t('pm_err_codex_login_no_profile'),
               )
               returnToMenu()
               return
@@ -1711,7 +1710,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
                 : saved
             if (!active) {
               setErrorMessage(
-                'Codex OAuth login finished, but the provider could not be set as the startup provider.',
+                t('pm_err_codex_login_no_active'),
               )
               returnToMenu()
               return
@@ -1731,7 +1730,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
                 : null,
             ].filter((warning): warning is string => Boolean(warning))
             const message = buildCodexOAuthActivationMessage({
-              prefix: 'Codex OAuth configured',
+              prefix: t('pm_status_codex_configured'),
               activationWarning,
               warnings,
             })
@@ -1757,8 +1756,8 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       break
     case 'select-active':
       content = renderProfileSelection(
-        'Set active provider',
-        'No providers available. Add one first.',
+        t('pm_select_active_title'),
+        t('pm_no_providers_available'),
         profileId => {
           void activateSelectedProvider(profileId)
         },
@@ -1767,8 +1766,8 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       break
     case 'select-edit':
       content = renderProfileSelection(
-        'Edit provider',
-        'No providers available. Add one first.',
+        t('pm_select_edit_title'),
+        t('pm_no_providers_available'),
         profileId => {
           startEditProfile(profileId)
         },
@@ -1776,16 +1775,16 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       break
     case 'select-delete':
       content = renderProfileSelection(
-        'Delete provider',
-        'No providers available. Add one first.',
+        t('pm_select_delete_title'),
+        t('pm_no_providers_available'),
         profileId => {
           if (profileId === GITHUB_PROVIDER_ID) {
             const githubDeleteError = deleteGithubProvider()
             if (githubDeleteError) {
-              setErrorMessage(`Could not delete GitHub provider: ${githubDeleteError}`)
+              setErrorMessage(t('pm_err_cannot_delete_github')(githubDeleteError))
             } else {
               refreshProfiles()
-              setStatusMessage('GitHub provider deleted')
+              setStatusMessage(t('pm_status_github_deleted'))
             }
             returnToMenu()
             return
@@ -1798,14 +1797,14 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
             )?.id === profileId
           const result = deleteProviderProfile(profileId)
           if (!result.removed) {
-            setErrorMessage('Could not delete provider.')
+            setErrorMessage(t('pm_err_cannot_delete_provider'))
           } else {
             if (deletedCodexOAuthProfile) {
               const cleared = clearCodexCredentials()
               if (!cleared.success) {
                 setErrorMessage(
                   cleared.warning ??
-                    'Provider deleted, but Codex OAuth credentials could not be cleared.',
+                    t('pm_err_codex_credentials_cleared_no_profile'),
                 )
               } else {
                 setStoredCodexOAuthProfileId(undefined)
@@ -1818,8 +1817,8 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
             refreshProfiles()
             setStatusMessage(
               settingsOverrideError
-                ? `Provider deleted. Warning: could not clear startup provider override (${settingsOverrideError}).`
-                : 'Provider deleted',
+                ? `${t('pm_status_provider_deleted')}. ${t('pm_warning_override_suffix')(settingsOverrideError)}`
+                : t('pm_status_provider_deleted'),
             )
           }
           returnToMenu()
@@ -1837,13 +1836,13 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
     <Pane color="permission">
       {isInitializing ? (
         <Box flexDirection="column" gap={1}>
-          <Text color="remember" bold>Loading providers...</Text>
-          <Text dimColor>Reading provider profiles from disk.</Text>
+          <Text color="remember" bold>{t('pm_loading_title')}</Text>
+          <Text dimColor>{t('pm_loading_desc')}</Text>
         </Box>
       ) : isActivating ? (
         <Box flexDirection="column" gap={1}>
-          <Text color="remember" bold>Activating provider...</Text>
-          <Text dimColor>Please wait while the provider is being configured.</Text>
+          <Text color="remember" bold>{t('pm_activating_title')}</Text>
+          <Text dimColor>{t('pm_activating_desc')}</Text>
         </Box>
       ) : (
         content

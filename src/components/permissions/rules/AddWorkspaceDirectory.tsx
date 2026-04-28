@@ -13,6 +13,7 @@ import { getDirectoryCompletions } from '../../../utils/suggestions/directoryCom
 import { ConfigurableShortcutHint } from '../../ConfigurableShortcutHint.js';
 import { Select } from '../../CustomSelect/select.js';
 import { Byline } from '../../design-system/Byline.js';
+import { t } from '../../../i18n/index.js';
 import { Dialog } from '../../design-system/Dialog.js';
 import { KeyboardShortcutHint } from '../../design-system/KeyboardShortcutHint.js';
 import { PromptInputFooterSuggestions, type SuggestionItem } from '../../PromptInput/PromptInputFooterSuggestions.js';
@@ -89,14 +90,14 @@ function DirectoryInput(t0) {
   } = t0;
   let t1;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t1 = <Text>Enter the path to the directory:</Text>;
+    t1 = <Text>{t('add_dir_enter_path') as string}</Text>;
     $[0] = t1;
   } else {
     t1 = $[0];
   }
   let t2;
   if ($[1] !== onChange || $[2] !== onSubmit || $[3] !== value) {
-    t2 = <Box borderDimColor={true} borderStyle="round" marginY={1} paddingLeft={1}><TextInput showCursor={true} placeholder={`Directory path${figures.ellipsis}`} value={value} onChange={onChange} onSubmit={onSubmit} columns={80} cursorOffset={value.length} onChangeCursorOffset={_temp} /></Box>;
+    t2 = <Box borderDimColor={true} borderStyle="round" marginY={1} paddingLeft={1}><TextInput showCursor={true} placeholder={t('add_dir_placeholder') as string} value={value} onChange={onChange} onSubmit={onSubmit} columns={80} cursorOffset={value.length} onChangeCursorOffset={_temp} /></Box>;
     $[1] = onChange;
     $[2] = onSubmit;
     $[3] = value;
@@ -315,7 +316,7 @@ export function AddWorkspaceDirectory(t0) {
   }
   let t12;
   if ($[27] !== onCancel || $[28] !== t10 || $[29] !== t11) {
-    t12 = <Dialog title="Add directory to workspace" onCancel={onCancel} color="permission" isCancelActive={false} inputGuide={t10}>{t11}</Dialog>;
+    t12 = <Dialog title={t('add_dir_title') as string} onCancel={onCancel} color="permission" isCancelActive={false} inputGuide={t10}>{t11}</Dialog>;
     $[27] = onCancel;
     $[28] = t10;
     $[29] = t11;

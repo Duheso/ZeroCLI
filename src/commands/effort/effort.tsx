@@ -5,6 +5,7 @@ import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEve
 import { useAppState, useSetAppState } from '../../state/AppState.js';
 import type { LocalJSXCommandOnDone } from '../../types/command.js';
 import { type EffortValue, getDisplayedEffortLevel, getEffortEnvOverride, getEffortValueDescription, isEffortLevel, isOpenAIEffortLevel, modelUsesOpenAIEffort, toPersistableEffort } from '../../utils/effort.js';
+import { t } from '../../i18n/index.js';
 import { EffortPicker } from '../../components/EffortPicker.js';
 import { updateSettingsForSource } from '../../utils/settings/settings.js';
 const COMMON_HELP_ARGS = ['help', '-h', '--help'];
@@ -54,7 +55,7 @@ function setEffortValue(effortValue: EffortValue): EffortCommandResult {
   const description = getEffortValueDescription(effortValue);
   const suffix = persistable !== undefined ? '' : ' (this session only)';
   return {
-    message: `Set effort level to ${effortValue}${suffix}: ${description}`,
+    message: t('effort_set_msg')(effortValue as string, suffix, description) as string,
     effortUpdate: {
       value: effortValue
     }
@@ -66,12 +67,12 @@ export function showCurrentEffort(appStateEffort: EffortValue | undefined, model
   if (effectiveValue === undefined) {
     const level = getDisplayedEffortLevel(model, appStateEffort);
     return {
-      message: `Effort level: auto (currently ${level})`
+      message: t('effort_status_auto')(level) as string
     };
   }
   const description = getEffortValueDescription(effectiveValue);
   return {
-    message: `Current effort level: ${effectiveValue} (${description})`
+    message: t('effort_current_msg')(effectiveValue as string, description) as string
   };
 }
 function unsetEffortLevel(): EffortCommandResult {
@@ -90,16 +91,16 @@ function unsetEffortLevel(): EffortCommandResult {
   // when env is pinning a specific level that will keep overriding.
   const envOverride = getEffortEnvOverride();
   if (envOverride !== undefined && envOverride !== null) {
-    const envRaw = process.env.CLAUDE_CODE_EFFORT_LEVEL;
+    const envRaw2 = process.env.CLAUDE_CODE_EFFORT_LEVEL;
     return {
-      message: `Cleared effort from settings, but CLAUDE_CODE_EFFORT_LEVEL=${envRaw} still controls this session`,
+      message: `Cleared effort from settings, but CLAUDE_CODE_EFFORT_LEVEL=${envRaw2} still controls this session`,
       effortUpdate: {
         value: undefined
       }
     };
   }
   return {
-    message: 'Effort level set to auto',
+    message: t('effort_auto_set_msg') as string,
     effortUpdate: {
       value: undefined
     }
@@ -114,13 +115,13 @@ export function executeEffort(args: string): EffortCommandResult {
     return setEffortValue(normalized);
   }
   if (isOpenAIEffortLevel(normalized)) {
-    return setEffortValue(normalized);
+    return setEffortValue(normalized as unknown as EffortValue);
   }
   return {
     message: `Invalid argument: ${args}. Valid options are: low, medium, high, max, xhigh, auto`
   };
 }
-function ShowCurrentEffort(t0) {
+function ShowCurrentEffort(t0: { onDone: LocalJSXCommandOnDone }) {
   const {
     onDone
   } = t0;
@@ -132,10 +133,10 @@ function ShowCurrentEffort(t0) {
   onDone(message);
   return null;
 }
-function _temp(s) {
+function _temp(s: { effortValue: EffortValue | undefined }) {
   return s.effortValue;
 }
-function ApplyEffortAndClose(t0) {
+function ApplyEffortAndClose(t0: { result: EffortCommandResult; onDone: LocalJSXCommandOnDone }) {
   const $ = _c(6);
   const {
     result,
@@ -175,7 +176,7 @@ function ApplyEffortAndClose(t0) {
 export async function call(onDone: LocalJSXCommandOnDone, _context: unknown, args?: string): Promise<React.ReactNode> {
   args = args?.trim() || '';
   if (COMMON_HELP_ARGS.includes(args)) {
-    onDone('Usage: /effort [low|medium|high|max|auto]\n\nEffort levels:\n- low: Quick, straightforward implementation\n- medium: Balanced approach with standard testing\n- high: Comprehensive implementation with extensive testing\n- max: Maximum capability with deepest reasoning (Opus 4.6 only)\n- auto: Use the default effort level for your model');
+    onDone(t('effort_usage_msg') as string);
     return;
   }
   if (args === 'current' || args === 'status') {
@@ -191,8 +192,6 @@ export async function call(onDone: LocalJSXCommandOnDone, _context: unknown, arg
 function EffortPickerWrapper({ onDone }: { onDone: LocalJSXCommandOnDone }) {
   const setAppState = useSetAppState();
   const model = useMainLoopModel();
-  const usesOpenAIEffort = modelUsesOpenAIEffort(model);
-
   function handleSelect(effort: EffortValue | undefined) {
     const persistable = toPersistableEffort(effort);
     if (persistable !== undefined) {
@@ -207,13 +206,13 @@ function EffortPickerWrapper({ onDone }: { onDone: LocalJSXCommandOnDone }) {
       ...prev,
       effortValue: effort
     }));
-    const description = effort ? getEffortValueDescription(effort) : 'Use default effort level for your model';
+    const description = effort ? getEffortValueDescription(effort) : t('effort_default_description') as string;
     const suffix = persistable !== undefined ? '' : ' (this session only)';
-    onDone(`Set effort level to ${effort ?? 'auto'}${suffix}: ${description}`);
+    onDone(t('effort_set_msg')(effort ? String(effort) : t('effort_level_auto') as string, suffix, description) as string);
   }
 
   function handleCancel() {
-    onDone('Cancelled');
+    onDone(t('effort_cancelled') as string);
   }
 
   return <EffortPicker onSelect={handleSelect} onCancel={handleCancel} />;

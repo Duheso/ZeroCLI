@@ -1,5 +1,4 @@
 import { c as _c } from "react-compiler-runtime";
-import React from 'react';
 import { GITHUB_ACTION_SETUP_DOCS_URL } from '../../constants/github-app.js';
 import { Box, Text } from '../../ink.js';
 interface ErrorStepProps {
@@ -7,7 +6,7 @@ interface ErrorStepProps {
   errorReason?: string;
   errorInstructions?: string[];
 }
-export function ErrorStep(t0) {
+export function ErrorStep(t0: ErrorStepProps) {
   const $ = _c(15);
   const {
     error,
@@ -79,6 +78,6 @@ export function ErrorStep(t0) {
   }
   return t8;
 }
-function _temp(instruction, index) {
+function _temp(instruction: string, index: number) {
   return <Box key={index} marginLeft={2}><Text dimColor={true}>• </Text><Text>{instruction}</Text></Box>;
 }

@@ -17,6 +17,7 @@ import { Select } from './CustomSelect/select.js'
 import { effortLevelToSymbol } from './EffortIndicator.js'
 import { KeyboardShortcutHint } from './design-system/KeyboardShortcutHint.js'
 import { Byline } from './design-system/Byline.js'
+import { t } from '../i18n/index.js'
 
 type EffortOption = {
   label: ReactNode
@@ -43,9 +44,9 @@ export function EffortPicker({ onSelect, onCancel }: Props) {
   const modelReasoningEffort = usesOpenAIEffort ? getReasoningEffortForModel(model) : undefined
   const options: EffortOption[] = [
     {
-      label: <EffortOptionLabel level="auto" text="Auto" isCurrent={false} />,
+      label: <EffortOptionLabel level="auto" text={t('effort_level_auto') as string} isCurrent={false} />,
       value: 'auto',
-      description: 'Use the default effort level for your model',
+      description: t('effort_auto_description') as string,
       isAvailable: true,
     },
     ...availableLevels.map(level => {
@@ -99,13 +100,13 @@ export function EffortPicker({ onSelect, onCancel }: Props) {
   return (
     <Box flexDirection="column">
       <Box marginBottom={1} flexDirection="column">
-        <Text color="remember" bold={true}>Set effort level</Text>
+        <Text color="remember" bold={true}>{t('effort_set_level_title') as string}</Text>
         <Text dimColor={true}>
             {supportsEffort && usesOpenAIEffort
               ? `OpenAI/Codex provider (${provider})`
               : supportsEffort
               ? `Claude model · ${provider} provider`
-              : `Effort not supported for this model`
+              : t('effort_not_supported') as string
           }
         </Text>
       </Box>

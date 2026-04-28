@@ -1,6 +1,7 @@
 import type { ToolResultBlockParam } from '@anthropic-ai/sdk/resources/index.mjs';
 import * as React from 'react';
 import { extractTag } from 'src/utils/messages.js';
+import { t } from '../../i18n/index.js';
 import { FallbackToolUseErrorMessage } from '../../components/FallbackToolUseErrorMessage.js';
 import { FilePathLink } from '../../components/FilePathLink.js';
 import { MessageResponse } from '../../components/MessageResponse.js';
@@ -156,7 +157,7 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
     }
     if (extractTag(result, 'tool_use_error')) {
       return <MessageResponse>
-          <Text color="error">Error reading file</Text>
+          <Text color="error">{t('fileread_error_reading_file')}</Text>
         </MessageResponse>;
     }
   }
@@ -164,12 +165,12 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
 }
 export function userFacingName(input: Partial<Input> | undefined): string {
   if (input?.file_path?.startsWith(getPlansDirectory())) {
-    return 'Reading Plan';
+    return t('fileread_reading_plan');
   }
   if (input?.file_path && getAgentOutputTaskId(input.file_path)) {
-    return 'Read agent output';
+    return t('fileread_read_agent_output');
   }
-  return 'Read';
+  return t('fileread_read');
 }
 export function getToolUseSummary(input: Partial<Input> | undefined): string | null {
   if (!input?.file_path) {

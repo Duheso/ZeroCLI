@@ -2,6 +2,7 @@ import { c as _c } from "react-compiler-runtime";
 import chalk from 'chalk';
 import React, { useContext } from 'react';
 import { Text } from '../ink.js';
+import { t } from '../i18n/index.js';
 import { getShortcutDisplay } from '../keybindings/shortcutFormat.js';
 import { useShortcutDisplay } from '../keybindings/useShortcutDisplay.js';
 import { KeyboardShortcutHint } from './design-system/KeyboardShortcutHint.js';
@@ -36,7 +37,7 @@ export function CtrlOToExpand() {
   }
   let t0;
   if ($[0] !== expandShortcut) {
-    t0 = <Text dimColor={true}><KeyboardShortcutHint shortcut={expandShortcut} action="expand" parens={true} /></Text>;
+    t0 = <Text dimColor={true}><KeyboardShortcutHint shortcut={expandShortcut} action={t('hint_to_expand')} parens={true} /></Text>;
     $[0] = expandShortcut;
     $[1] = t0;
   } else {
@@ -46,5 +47,5 @@ export function CtrlOToExpand() {
 }
 export function ctrlOToExpand(): string {
   const shortcut = getShortcutDisplay('app:toggleTranscript', 'Global', 'ctrl+o');
-  return chalk.dim(`(${shortcut} to expand)`);
+  return chalk.dim(`(${shortcut} ${t('hint_connector_to')} ${t('hint_to_expand')})`);
 }

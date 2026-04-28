@@ -15,6 +15,7 @@ import type {
   SystemMessage,
 } from '../types/message.js'
 import { logForDebugging } from '../utils/debug.js'
+import { t } from '../i18n/index.js'
 import { fromSDKCompactMetadata } from '../utils/messages/mappers.js'
 import { createUserMessage } from '../utils/messages.js'
 
@@ -95,7 +96,7 @@ function convertStatusMessage(msg: SDKStatusMessage): SystemMessage | null {
     subtype: 'informational',
     content:
       msg.status === 'compacting'
-        ? 'Compacting conversation…'
+        ? t('cmd_compact_in_progress') as string
         : `Status: ${msg.status}`,
     level: 'info',
     uuid: msg.uuid,

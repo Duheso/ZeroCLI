@@ -1,5 +1,6 @@
 import type { BetaUsage as Usage } from '@anthropic-ai/sdk/resources/beta/messages/messages.mjs'
 import chalk from 'chalk'
+import { t } from './i18n/index.js'
 import {
   addToTotalCostState,
   addToTotalLinesChanged,
@@ -209,19 +210,19 @@ function formatModelUsage(): string {
     accumulated.costUSD += usage.costUSD
   }
 
-  let result = 'Usage by model:'
+  let result = t('cmd_cost_usage_by_model') as string
   for (const [shortName, usage] of Object.entries(usageByShortName)) {
     let usageString =
-      `  ${formatNumber(usage.inputTokens)} input, ` +
-      `${formatNumber(usage.outputTokens)} output`
+      `  ${formatNumber(usage.inputTokens)} ${t('cmd_cost_input') as string}, ` +
+      `${formatNumber(usage.outputTokens)} ${t('cmd_cost_output') as string}`
     if (usage.cacheReadInputTokens > 0) {
-      usageString += `, ${formatNumber(usage.cacheReadInputTokens)} cache read`
+      usageString += `, ${formatNumber(usage.cacheReadInputTokens)} ${t('cmd_cost_cache_read') as string}`
     }
     if (usage.cacheCreationInputTokens > 0) {
-      usageString += `, ${formatNumber(usage.cacheCreationInputTokens)} cache write`
+      usageString += `, ${formatNumber(usage.cacheCreationInputTokens)} ${t('cmd_cost_cache_write') as string}`
     }
     if (usage.webSearchRequests > 0) {
-      usageString += `, ${formatNumber(usage.webSearchRequests)} web search`
+      usageString += `, ${formatNumber(usage.webSearchRequests)} ${t('cmd_cost_web_search') as string}`
     }
     usageString += ` (${formatCost(usage.costUSD)})`
     result += `\n` + `${shortName}:`.padStart(21) + usageString
@@ -233,17 +234,21 @@ export function formatTotalCost(): string {
   const costDisplay =
     formatCost(getTotalCostUSD()) +
     (hasUnknownModelCost()
-      ? ' (costs may be inaccurate due to usage of unknown models)'
+      ? t('cmd_cost_inaccurate') as string
       : '')
 
   const modelUsageDisplay = formatModelUsage()
 
+  const line = t('cmd_cost_line') as string
+  const lines = t('cmd_cost_lines') as string
   return chalk.dim(
-    `Total cost:            ${costDisplay}\n` +
-      `Total duration (API):  ${formatDuration(getTotalAPIDuration())}
-Total duration (wall): ${formatDuration(getTotalDuration())}
-Total code changes:    ${getTotalLinesAdded()} ${getTotalLinesAdded() === 1 ? 'line' : 'lines'} added, ${getTotalLinesRemoved()} ${getTotalLinesRemoved() === 1 ? 'line' : 'lines'} removed
-${modelUsageDisplay}`,
+    [
+      t('cmd_cost_total')(costDisplay),
+      t('cmd_cost_duration_api')(formatDuration(getTotalAPIDuration())),
+      t('cmd_cost_duration_wall')(formatDuration(getTotalDuration())),
+      t('cmd_cost_changes')(getTotalLinesAdded(), getTotalLinesAdded() === 1 ? line : lines, getTotalLinesRemoved(), getTotalLinesRemoved() === 1 ? line : lines),
+      modelUsageDisplay,
+    ].join('\n'),
   )
 }
 

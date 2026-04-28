@@ -15,6 +15,7 @@ import { ColorPicker } from './ColorPicker.js';
 import { ModelSelector } from './ModelSelector.js';
 import { ToolSelector } from './ToolSelector.js';
 import { getAgentSourceDisplayName } from './utils.js';
+import { t } from '../../i18n/index.js';
 type Props = {
   agent: AgentDefinition;
   tools: Tools;
@@ -44,7 +45,7 @@ export function AgentEditor({
     if (result.error) {
       setError(result.error);
     } else {
-      onSaved(`Opened ${agent.agentType} in editor. If you made edits, restart to load the latest version.`);
+      onSaved(t('agents_editor_opened_msg')(agent.agentType));
     }
   }, [agent, onSaved]);
   const handleSave = useCallback(async (changes: SaveChanges = {}) => {
@@ -86,24 +87,24 @@ export function AgentEditor({
           }
         };
       });
-      onSaved(`Updated agent: ${chalk.bold(agent.agentType)}`);
+      onSaved(t('agents_editor_updated_msg')(chalk.bold(agent.agentType)));
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save agent');
+      setError(err instanceof Error ? err.message : t('agents_editor_save_error'));
       return false;
     }
   }, [agent, selectedColor, onSaved, setAppState]);
   const menuItems = useMemo(() => [{
-    label: 'Open in editor',
+    label: t('agents_editor_open'),
     action: handleOpenInEditor
   }, {
-    label: 'Edit tools',
+    label: t('agents_editor_tools'),
     action: () => setEditMode('edit-tools')
   }, {
-    label: 'Edit model',
+    label: t('agents_editor_model'),
     action: () => setEditMode('edit-model')
   }, {
-    label: 'Edit color',
+    label: t('agents_editor_color'),
     action: () => setEditMode('edit-color')
   }], [handleOpenInEditor]);
   const handleEscape = useCallback(() => {

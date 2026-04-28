@@ -1,5 +1,6 @@
 import type { UUID } from 'crypto'
 import { getSessionId } from '../../bootstrap/state.js'
+import { t } from '../../i18n/index.js'
 import type { ToolUseContext } from '../../Tool.js'
 import {
   AGENT_COLORS,
@@ -25,7 +26,7 @@ export async function call(
   // Teammates cannot set their own color
   if (isTeammate()) {
     onDone(
-      'Cannot set color: This session is a swarm teammate. Teammate colors are assigned by the team leader.',
+      t('cmd_color_teammate') as string,
       { display: 'system' },
     )
     return null
@@ -33,7 +34,7 @@ export async function call(
 
   if (!args || args.trim() === '') {
     const colorList = AGENT_COLORS.join(', ')
-    onDone(`Please provide a color. Available colors: ${colorList}, default`, {
+    onDone(t('cmd_color_usage')(colorList), {
       display: 'system',
     })
     return null

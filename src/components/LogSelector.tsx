@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import figures from 'figures';
 import Fuse from 'fuse.js';
 import React from 'react';
+import { t } from '../i18n/index.js';
 import { getOriginalCwd, getSessionId } from '../bootstrap/state.js';
 import { useExitOnCtrlCDWithKeybindings } from '../hooks/useExitOnCtrlCDWithKeybindings.js';
 import { useSearchInput } from '../hooks/useSearchInput.js';
@@ -722,9 +723,9 @@ export function LogSelector(t0) {
       const isExpanded = expandedGroupSessionIds.has(sessionId_0);
       const isChildNode = sessionLogs.indexOf(focusedLog) > 0;
       if (isChildNode) {
-        return "\u2190 to collapse";
+        return t('hint_arrow_to_collapse');
       }
-      return isExpanded ? "\u2190 to collapse" : "\u2192 to expand";
+      return isExpanded ? t('hint_arrow_to_collapse') : t('hint_arrow_to_expand');
     };
     $[84] = displayedLogs;
     $[85] = expandedGroupSessionIds;

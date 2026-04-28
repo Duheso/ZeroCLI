@@ -2,6 +2,7 @@ import { c as _c } from "react-compiler-runtime";
 import type { StructuredPatchHunk } from 'diff';
 import { resolve } from 'path';
 import React, { useMemo } from 'react';
+import { t } from '../../i18n/index.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 import { Box, Text } from '../../ink.js';
 import { getCwd } from '../../utils/cwd.js';
@@ -260,7 +261,7 @@ export function DiffDetailView(t0) {
   }
   let t8;
   if ($[47] !== isTruncated) {
-    t8 = isTruncated && <Text dimColor={true} italic={true}>… diff truncated (exceeded 400 line limit)</Text>;
+    t8 = isTruncated && <Text dimColor={true} italic={true}>{t('diff_truncated') as string}</Text>;
     $[47] = isTruncated;
     $[48] = t8;
   } else {

@@ -16,6 +16,7 @@ import { logEvent } from '../../services/analytics/index.js';
 import type { LocalJSXCommandCall } from '../../types/command.js';
 import type { AssistantMessage, Message } from '../../types/message.js';
 import { getGlobalConfig, saveGlobalConfig, type GlobalConfig } from '../../utils/config.js';
+import { t } from '../../i18n/index.js';
 import { extractTextContent, stripPromptXMLTags } from '../../utils/messages.js';
 import { countCharInString } from '../../utils/stringUtils.js';
 const COPY_DIR = join(tmpdir(), 'claude');
@@ -85,9 +86,9 @@ async function copyOrWriteToFile(text: string, filename: string): Promise<string
   // terminal support), so the file provides a reliable fallback.
   try {
     const filePath = await writeToFile(text, filename);
-    return `Copied to clipboard (${charCount} characters, ${lineCount} lines)\nAlso written to ${filePath}`;
+    return t('cmd_copy_success_with_file')(charCount, lineCount, filePath) as string;
   } catch {
-    return `Copied to clipboard (${charCount} characters, ${lineCount} lines)`;
+    return t('cmd_copy_success')(charCount, lineCount) as string;
   }
 }
 function truncateLine(text: string, maxLen: number): string {
@@ -324,7 +325,7 @@ function _temp(block: CodeBlock, index: number): { label: string; value: number;
 export const call: LocalJSXCommandCall = async (onDone, context, args) => {
   const texts = collectRecentAssistantTexts(context.messages);
   if (texts.length === 0) {
-    onDone('No assistant message to copy');
+    onDone(t('cmd_copy_no_message') as string);
     return null;
   }
 

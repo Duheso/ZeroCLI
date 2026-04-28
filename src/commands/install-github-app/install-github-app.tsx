@@ -1,5 +1,5 @@
 import { execa } from 'execa';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from 'src/services/analytics/index.js';
 import { WorkflowMultiselectDialog } from '../../components/WorkflowMultiselectDialog.js';
 import { GITHUB_ACTION_SETUP_DOCS_URL } from '../../constants/github-app.js';
@@ -24,8 +24,8 @@ import { OAuthFlowStep } from './OAuthFlowStep.js';
 import { extractGitHubRepoSlug } from './repoSlug.js';
 import { SuccessStep } from './SuccessStep.js';
 import { setupGitHubActions } from './setupGitHubActions.js';
-import type { State, Warning, Workflow } from './types.js';
 import { WarningsStep } from './WarningsStep.js';
+import type { State, Warning, Workflow } from './types.js';
 const INITIAL_STATE: State = {
   step: 'check-gh',
   selectedRepoName: '',
@@ -48,13 +48,13 @@ function InstallGitHubApp(props: {
   onDone: (message: string) => void;
 }): React.ReactNode {
   const [existingApiKey] = useState(() => getAnthropicApiKey());
-  const [state, setState] = useState({
+  const [state, setState] = useState<State>({
     ...INITIAL_STATE,
     useExistingKey: !!existingApiKey,
     selectedApiKeyOption: (existingApiKey ? 'existing' : isAnthropicAuthEnabled() ? 'oauth' : 'new') as 'existing' | 'new' | 'oauth'
   });
   useExitOnCtrlCDWithKeybindings();
-  React.useEffect(() => {
+  useEffect(() => {
     logEvent('tengu_install_github_app_started', {});
   }, []);
   const checkGitHubCLI = useCallback(async () => {
@@ -125,7 +125,7 @@ function InstallGitHubApp(props: {
       step: warnings.length > 0 ? 'warnings' : 'choose-repo'
     }));
   }, []);
-  React.useEffect(() => {
+  useEffect(() => {
     if (state.step === 'check-gh') {
       void checkGitHubCLI();
     }
@@ -142,7 +142,7 @@ function InstallGitHubApp(props: {
           ...prev_4,
           currentWorkflowInstallStep: prev_4.currentWorkflowInstallStep + 1
         }));
-      }, state.workflowAction === 'skip', state.selectedWorkflows, state.authType, {
+      }, state.workflowAction === 'skip', state.selectedWorkflows, state.authType as 'api_key' | 'oauth_token', {
         useCurrentRepo: state.useCurrentRepo,
         workflowExists: state.workflowExists,
         secretExists: state.secretExists
@@ -558,7 +558,7 @@ function InstallGitHubApp(props: {
           <ErrorStep error={state.error} errorReason={state.errorReason} errorInstructions={state.errorInstructions} />
         </Box>;
     case 'select-workflows':
-      return <WorkflowMultiselectDialog defaultSelections={state.selectedWorkflows} onSubmit={selectedWorkflows => {
+      return <WorkflowMultiselectDialog defaultSelections={state.selectedWorkflows} onSubmit={(selectedWorkflows: Workflow[]) => {
         logEvent('tengu_install_github_app_step_completed', {
           step: 'select-workflows' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
         });

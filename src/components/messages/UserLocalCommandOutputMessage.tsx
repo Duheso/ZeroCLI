@@ -3,6 +3,7 @@ import * as React from 'react';
 import { DIAMOND_FILLED, DIAMOND_OPEN } from '../../constants/figures.js';
 import { NO_CONTENT_MESSAGE } from '../../constants/messages.js';
 import { Box, Text } from '../../ink.js';
+import { t } from '../../i18n/index.js';
 import { extractTag } from '../../utils/messages.js';
 import { Markdown } from '../Markdown.js';
 import FullWidthRow from '../design-system/FullWidthRow.js';
@@ -25,7 +26,7 @@ export function UserLocalCommandOutputMessage(t0) {
       if (!stdout && !stderr) {
         let t2;
         if ($[3] === Symbol.for("react.memo_cache_sentinel")) {
-          t2 = <MessageResponse><Text dimColor={true}>{NO_CONTENT_MESSAGE}</Text></MessageResponse>;
+          t2 = <MessageResponse><Text dimColor={true}>{t('const_no_content') as string}</Text></MessageResponse>;
           $[3] = t2;
         } else {
           t2 = $[3];

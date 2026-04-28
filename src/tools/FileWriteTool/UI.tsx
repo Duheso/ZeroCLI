@@ -7,6 +7,7 @@ import { Suspense, use, useState } from 'react';
 import { MessageResponse } from 'src/components/MessageResponse.js';
 import { extractTag } from 'src/utils/messages.js';
 import { CtrlOToExpand } from '../../components/CtrlOToExpand.js';
+import { t } from '../../i18n/index.js';
 import { FallbackToolUseErrorMessage } from '../../components/FallbackToolUseErrorMessage.js';
 import { FileEditToolUpdatedMessage } from '../../components/FileEditToolUpdatedMessage.js';
 import { FileEditToolUseRejectedMessage } from '../../components/FileEditToolUseRejectedMessage.js';
@@ -105,7 +106,7 @@ function FileWriteToolCreatedMessage(t0) {
   }
   let t8;
   if ($[17] !== numLines || $[18] !== plusLines || $[19] !== verbose) {
-    t8 = !verbose && plusLines > 0 && <Text dimColor={true}>… +{plusLines} {plusLines === 1 ? "line" : "lines"}{" "}{numLines > 0 && <CtrlOToExpand />}</Text>;
+    t8 = !verbose && plusLines > 0 && <Text dimColor={true}>… +{plusLines} {plusLines === 1 ? t('hint_line_singular') : t('hint_line_plural')}{" "}{numLines > 0 && <CtrlOToExpand />}</Text>;
     $[17] = numLines;
     $[18] = plusLines;
     $[19] = verbose;

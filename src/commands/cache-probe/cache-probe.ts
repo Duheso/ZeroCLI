@@ -1,4 +1,5 @@
 import { getSessionId } from '../../bootstrap/state.js'
+import { t } from '../../i18n/index.js'
 import { resolveProviderRequest } from '../../services/api/providerConfig.js'
 import type { LocalCommandCall } from '../../types/command.js'
 import { logForDebugging } from '../../utils/debug.js'
@@ -278,7 +279,7 @@ export const call: LocalCommandCall = async (args) => {
   if (r1.error) {
     return {
       type: 'text',
-      value: `Cache probe failed on first call: HTTP ${r1.status}\n${r1.error.slice(0, 300)}\n\nFull details in debug log.`,
+      value: t('cmd_cache_probe_failed')(r1.status, r1.error.slice(0, 300)),
     }
   }
 
@@ -345,13 +346,13 @@ export const call: LocalCommandCall = async (args) => {
   let verdict: string
   if (cached2 > 0) {
     const rate = input2 > 0 ? Math.round((cached2 / input2) * 100) : '?'
-    verdict = `CACHE HIT: ${cached2} cached tokens (${rate}% of input)`
+    verdict = t('cmd_cache_probe_verdict_hit')(cached2, rate)
   } else if (input1 === 0 && input2 === 0) {
-    verdict = 'INCONCLUSIVE: Server returns 0 input_tokens — cannot measure'
+    verdict = t('cmd_cache_probe_verdict_inconclusive') as string
   } else if (r2.elapsed < r1.elapsed * 0.6 && input1 > 100) {
-    verdict = `POSSIBLE SILENT CACHING: Call 2 was ${Math.round((1 - r2.elapsed / r1.elapsed) * 100)}% faster but no cached_tokens reported`
+    verdict = t('cmd_cache_probe_verdict_possible_silent')(Math.round((1 - r2.elapsed / r1.elapsed) * 100))
   } else {
-    verdict = 'NO CACHE DETECTED'
+    verdict = t('cmd_cache_probe_verdict_no_cache') as string
   }
 
   comparison.push(`\n  Verdict: ${verdict}`)
@@ -395,18 +396,19 @@ export const call: LocalCommandCall = async (args) => {
   // User-facing summary
   const mode = noKey ? ' (NO cache key sent)' : ''
   const shimLabel = useResponses ? 'codexShim.makeUsage()' : 'openaiShim.convertChunkUsage()'
+  const api = useResponses ? t('cmd_cache_probe_responses_api') as string : t('cmd_cache_probe_chat_completions') as string
   const summary = [
-    `Cache Probe — ${request.resolvedModel} via ${useResponses ? 'Responses API' : 'Chat Completions'}${mode}`,
+    t('cmd_cache_probe_title')(request.resolvedModel, api, mode),
     '',
-    `Call 1: ${r1.elapsed}ms, input=${input1}, cached=${(getField(r1.usage, 'input_tokens_details.cached_tokens') as number) ?? (getField(r1.usage, 'prompt_tokens_details.cached_tokens') as number) ?? 0}`,
-    `Call 2: ${r2.elapsed}ms, input=${input2}, cached=${cached2}`,
+    t('cmd_cache_probe_call')(1, r1.elapsed, input1, (getField(r1.usage, 'input_tokens_details.cached_tokens') as number) ?? (getField(r1.usage, 'prompt_tokens_details.cached_tokens') as number) ?? 0),
+    t('cmd_cache_probe_call')(2, r2.elapsed, input2, cached2),
     '',
     verdict,
     '',
-    `What main's ${shimLabel} reports:`,
+    t('cmd_cache_probe_what_main')(shimLabel),
     `  Call 2 cache_read_input_tokens = ${shim2.cache_read_input_tokens}${useResponses && cached2 > 0 ? '  ← BUG: server sent ' + cached2 + ' but main drops it' : ''}`,
     '',
-    'Full details written to debug log.',
+    t('cmd_cache_probe_full_details') as string,
   ].join('\n')
 
   return { type: 'text', value: summary }

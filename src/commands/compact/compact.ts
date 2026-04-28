@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import { markPostCompaction } from 'src/bootstrap/state.js'
 import { getSystemPrompt } from '../../constants/prompts.js'
 import { getSystemContext, getUserContext } from '../../context.js'
+import { t } from '../../i18n/index.js'
 import { getShortcutDisplay } from '../../keybindings/shortcutFormat.js'
 import { notifyCompaction } from '../../services/api/promptCacheBreakDetection.js'
 import {
@@ -240,11 +241,11 @@ function buildDisplayText(
   const dimmed = [
     ...(context.options.verbose
       ? []
-      : [`(${expandShortcut} to see full summary)`]),
+      : [t('cmd_compact_full_summary')(expandShortcut)]),
     ...(userDisplayMessage ? [userDisplayMessage] : []),
     ...(upgradeMessage ? [upgradeMessage] : []),
   ]
-  return chalk.dim('Compacted ' + dimmed.join('\n'))
+  return chalk.dim((t('cmd_compact_compacted') as string) + ' ' + dimmed.join('\n'))
 }
 
 async function getCacheSharingParams(

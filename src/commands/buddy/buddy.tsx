@@ -3,6 +3,7 @@ import { getGlobalConfig, saveGlobalConfig } from '../../utils/config.js'
 import { companionUserId, getCompanion, rollWithSeed } from '../../buddy/companion.js'
 import type { StoredCompanion } from '../../buddy/types.js'
 import { COMMON_HELP_ARGS, COMMON_INFO_ARGS } from '../../constants/xml.js'
+import { t } from '../../i18n/index.js'
 
 const NAME_PREFIXES = [
   'Byte',
@@ -91,7 +92,7 @@ function setCompanionReaction(
 
 function showHelp(onDone: LocalJSXCommandOnDone): void {
   onDone(
-    'Usage: /buddy [status|mute|unmute]\n\nRun /buddy with no args to hatch your companion the first time, then pet it on later runs.',
+    t('cmd_buddy_usage') as string,
     { display: 'system' },
   )
 }
@@ -121,7 +122,7 @@ export async function call(
   if (COMMON_INFO_ARGS.includes(arg) || arg === 'status') {
     const companion = getCompanion()
     if (!companion) {
-      onDone('No buddy hatched yet. Run /buddy to hatch one.', {
+      onDone(t('cmd_buddy_no_buddy') as string, {
         display: 'system',
       })
       return null
@@ -142,7 +143,7 @@ export async function call(
     if (muted) {
       setCompanionReaction(context, undefined)
     }
-    onDone(`Buddy ${muted ? 'muted' : 'unmuted'}.`, { display: 'system' })
+    onDone(muted ? t('cmd_buddy_muted') as string : t('cmd_buddy_unmuted') as string, { display: 'system' })
     return null
   }
 

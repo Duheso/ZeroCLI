@@ -3,6 +3,7 @@ import { readdir, readFile as readFileAsync } from 'fs/promises'
 import * as path from 'path'
 import { posix, win32 } from 'path'
 import { z } from 'zod/v4'
+import { t } from '../../i18n/index.js'
 import {
   PDF_AT_MENTION_INLINE_THRESHOLD,
   PDF_EXTRACT_SIZE_THRESHOLD,
@@ -368,7 +369,7 @@ export const FileReadTool = buildTool({
   getToolUseSummary,
   getActivityDescription(input) {
     const summary = getToolUseSummary(input)
-    return summary ? `Reading ${summary}` : 'Reading file'
+    return summary ? t('fileread_reading_summary')(summary) : t('fileread_reading_file')
   },
   isConcurrencySafe() {
     return true

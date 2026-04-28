@@ -1,5 +1,6 @@
 import type { ContentBlockParam } from '@anthropic-ai/sdk/resources/messages.mjs'
 import type { Command } from '../../commands.js'
+import { t } from '../../i18n/index.js'
 import { isAutoMemoryEnabled, getAutoMemPath } from '../../memdir/paths.js'
 import { getProjectDir } from '../../utils/sessionStorage.js'
 import { getOriginalCwd, getSessionId } from '../../bootstrap/state.js'
@@ -13,8 +14,7 @@ import {
 const command = {
   type: 'prompt',
   name: 'dream',
-  description:
-    'Run memory consolidation — synthesize recent sessions into durable memories',
+  description: t('cmd_dream') as string,
   isEnabled: () => isAutoMemoryEnabled(),
   progressMessage: 'consolidating memories',
   contentLength: 0,

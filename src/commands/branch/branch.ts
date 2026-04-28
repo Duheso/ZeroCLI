@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto'
 import type { UUID } from 'crypto'
 import { mkdir, readFile, writeFile } from 'fs/promises'
 import { getOriginalCwd, getSessionId } from '../../bootstrap/state.js'
+import { t } from '../../i18n/index.js'
 import type { LocalJSXCommandContext } from '../../commands.js'
 import { logEvent } from '../../services/analytics/index.js'
 import type { LocalJSXCommandOnDone } from '../../types/command.js'
@@ -80,11 +81,11 @@ async function createFork(customTitle?: string): Promise<{
   try {
     transcriptContent = await readFile(currentTranscriptPath)
   } catch {
-    throw new Error('No conversation to branch')
+    throw new Error(t('cmd_branch_no_conversation') as string)
   }
 
   if (transcriptContent.length === 0) {
-    throw new Error('No conversation to branch')
+    throw new Error(t('cmd_branch_no_conversation') as string)
   }
 
   // Parse all transcript entries (messages + metadata entries like content-replacement)
@@ -112,7 +113,7 @@ async function createFork(customTitle?: string): Promise<{
     .flatMap(entry => entry.replacements)
 
   if (mainConversationEntries.length === 0) {
-    throw new Error('No messages to branch')
+    throw new Error(t('cmd_branch_no_messages') as string)
   }
 
   let parentUuid: string | null = null
@@ -273,8 +274,8 @@ export async function call(
 
     // Resume into the fork
     const titleInfo = title ? ` "${title}"` : ''
-    const resumeHint = `\nTo resume the original: claude -r ${originalSessionId}`
-    const successMessage = `Branched conversation${titleInfo}. You are now in the branch.${resumeHint}`
+    const resumeHint = t('cmd_branch_resume_hint')(originalSessionId) as string
+    const successMessage = t('cmd_branch_success')(titleInfo, resumeHint) as string
 
     if (context.resume) {
       await context.resume(sessionId, forkLog, 'fork')
@@ -282,7 +283,7 @@ export async function call(
     } else {
       // Fallback if resume not available
       onDone(
-        `Branched conversation${titleInfo}. Resume with: /resume ${sessionId}`,
+        t('cmd_branch_success_fallback')(titleInfo, sessionId) as string,
       )
     }
 
@@ -290,7 +291,7 @@ export async function call(
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'Unknown error occurred'
-    onDone(`Failed to branch conversation: ${message}`)
+    onDone(t('cmd_branch_failed')(message))
     return null
   }
 }

@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 import { ctrlOToExpand } from '../components/CtrlOToExpand.js'
+import { t } from '../i18n/index.js'
 import { stringWidth } from '../ink/stringWidth.js'
 import sliceAnsi from './sliceAnsi.js'
 
@@ -104,7 +105,7 @@ export function renderTruncatedContent(
     aboveTheFold,
     estimatedRemaining > 0
       ? chalk.dim(
-          `… +${estimatedRemaining} lines${suppressExpandHint ? '' : ` ${ctrlOToExpand()}`}`,
+          `… +${estimatedRemaining} ${estimatedRemaining === 1 ? t('hint_line_singular') : t('hint_line_plural')}${suppressExpandHint ? '' : ` ${ctrlOToExpand()}`}`,
         )
       : '',
   ]

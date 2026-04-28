@@ -151,6 +151,387 @@ export interface TranslationKeys {
   ideSelected: string
   ideInFile: string
 
+  // Expand / collapse hints (keyboard shortcut hints shown in terminal)
+  hint_connector_to: string
+  hint_to_expand: string
+  hint_to_collapse: string
+  hint_arrow_to_collapse: string
+  hint_arrow_to_expand: string
+  hint_shortcut_to_expand: (shortcut: string) => string
+  hint_read_output_expand: (shortcut: string) => string
+  hint_p_to_expand: string
+  hint_line_singular: string
+  hint_line_plural: string
+
+  // Activity summary verbs – present (isActive) capitalized / lowercase
+  summary_recalling_cap: string
+  summary_recalling_lc: string
+  summary_recalled_cap: string
+  summary_recalled_lc: string
+  summary_searching_mem_cap: string
+  summary_searching_mem_lc: string
+  summary_searched_mem_cap: string
+  summary_searched_mem_lc: string
+  summary_mem_target: string
+  summary_writing_cap: string
+  summary_writing_lc: string
+  summary_wrote_cap: string
+  summary_wrote_lc: string
+  summary_searching_for_cap: string
+  summary_searching_for_lc: string
+  summary_searched_for_cap: string
+  summary_searched_for_lc: string
+  summary_reading_cap: string
+  summary_reading_lc: string
+  summary_read_cap: string
+  summary_read_lc: string
+  summary_listing_cap: string
+  summary_listing_lc: string
+  summary_listed_cap: string
+  summary_listed_lc: string
+  summary_repling: string
+  summary_repld: string
+  // Activity summary nouns (singular / plural)
+  summary_memory_singular: string
+  summary_memory_plural: string
+  summary_pattern_singular: string
+  summary_pattern_plural: string
+  summary_file_singular: string
+  summary_file_plural: string
+  summary_directory_singular: string
+  summary_directory_plural: string
+  summary_time_singular: string
+  summary_time_plural: string
+
+  // FileReadTool UI strings
+  fileread_error_reading_file: string
+  fileread_reading_plan: string
+  fileread_read_agent_output: string
+  fileread_read: string
+  fileread_reading_summary: (summary: string) => string
+  fileread_reading_file: string
+
+  // MCP query verbs
+  summary_querying_cap: string
+  summary_querying_lc: string
+  summary_queried_cap: string
+  summary_queried_lc: string
+
+  // Bash run verbs
+  summary_running_cap: string
+  summary_running_lc: string
+  summary_ran_cap: string
+  summary_ran_lc: string
+  summary_command_singular: string
+  summary_command_plural: string
+  summary_bash: string
+
+  // Git operation verbs (for collapsed group)
+  git_verb_committed: string
+  git_verb_amended: string
+  git_verb_cherry_picked: string
+  git_verb_pushed_to: string
+  git_verb_merged: string
+  git_verb_rebased_onto: string
+
+  // PR verbs (for collapsed group)
+  pr_verb_created: string
+  pr_verb_edited: string
+  pr_verb_merged: string
+  pr_verb_commented_on: string
+  pr_verb_closed: string
+  pr_verb_marked_ready: string
+
+  // Hook run info (collapsed group)
+  hook_pretooluse: string
+  hook_singular: string
+  hook_plural: string
+
+  // Tool activity verbs (sessionRunner)
+  tool_verb_editing: string
+  tool_verb_running: string
+  tool_verb_searching: string
+  tool_verb_fetching: string
+  tool_verb_running_task: string
+  tool_verb_editing_notebook: string
+
+  // Provider Manager UI strings
+  pm_menu_title: string
+  pm_menu_active_profile_desc: string
+  pm_menu_no_profiles_yet: string
+  pm_menu_checking_github_creds: string
+  pm_menu_add_label: string
+  pm_menu_add_desc: string
+  pm_menu_activate_label: string
+  pm_menu_activate_desc: string
+  pm_menu_edit_label: string
+  pm_menu_edit_desc: string
+  pm_menu_delete_label: string
+  pm_menu_delete_desc: string
+  pm_menu_logout_codex_label: string
+  pm_menu_logout_codex_desc: string
+  pm_menu_done_label: string
+  pm_menu_done_desc: string
+  pm_loading_title: string
+  pm_loading_desc: string
+  pm_activating_title: string
+  pm_activating_desc: string
+  pm_set_up_provider: string
+  pm_choose_preset: string
+  pm_pick_preset_hint: string
+  pm_create_form_title: string
+  pm_edit_form_title: string
+  pm_provider_type_label: string
+  pm_provider_type_anthropic: string
+  pm_provider_type_openai: string
+  pm_step_of: (step: number, total: number, label: string) => string
+  pm_press_enter_esc: string
+  pm_back_label: string
+  pm_back_to_provider_manager: string
+  pm_back_to_presets: string
+  pm_enter_manually_label: string
+  pm_enter_manually_desc: string
+  pm_back_preset_desc: string
+  pm_checking_ollama_title: string
+  pm_checking_ollama_msg: string
+  pm_ollama_setup_title: string
+  pm_choose_ollama_title: string
+  pm_choose_ollama_desc: string
+  pm_checking_atomic_title: string
+  pm_checking_atomic_msg: string
+  pm_atomic_setup_title: string
+  pm_choose_atomic_title: string
+  pm_choose_atomic_desc: string
+  pm_select_active_title: string
+  pm_select_edit_title: string
+  pm_select_delete_title: string
+  pm_no_providers_available: string
+  pm_profile_active_suffix: string
+  pm_profile_key_set: string
+  pm_profile_no_key: string
+  pm_profile_anthropic: string
+  pm_profile_openai_compat: string
+  pm_profile_token_stored: string
+  pm_profile_token_via_env: string
+  pm_profile_no_token: string
+  pm_skip_for_now_label: string
+  pm_skip_for_now_desc: string
+  pm_field_name_label: string
+  pm_field_name_placeholder: string
+  pm_field_name_help: string
+  pm_field_baseurl_label: string
+  pm_field_baseurl_placeholder: string
+  pm_field_baseurl_help: string
+  pm_field_model_label: string
+  pm_field_model_placeholder: string
+  pm_field_model_help: string
+  pm_field_apikey_label: string
+  pm_field_apikey_placeholder: string
+  pm_field_apikey_help: string
+  pm_field_required: (label: string) => string
+  pm_err_cannot_activate_github: (error: string) => string
+  pm_err_cannot_change_provider: string
+  pm_err_cannot_save_provider: string
+  pm_err_cannot_finish_activating: (label: string, detail: string) => string
+  pm_err_cannot_delete_provider: string
+  pm_err_cannot_delete_github: (error: string) => string
+  pm_err_codex_oauth_failed_title: string
+  pm_err_codex_login_no_profile: string
+  pm_err_codex_login_no_active: string
+  pm_err_codex_credentials_cleared_no_profile: string
+  pm_err_cannot_clear_codex: string
+  pm_status_activating: string
+  pm_status_active_provider: (name: string) => string
+  pm_status_updated_provider: (name: string) => string
+  pm_status_added_provider: (name: string) => string
+  pm_status_provider_configured: (name: string) => string
+  pm_status_provider_deleted: string
+  pm_status_github_deleted: string
+  pm_status_codex_logged_out: string
+  pm_status_codex_configured: string
+  pm_codex_title: string
+  pm_codex_signin_desc: string
+  pm_codex_starting: string
+  pm_codex_browser_not_opened: string
+  pm_codex_browser_opened: string
+  pm_codex_opening_browser: string
+  pm_codex_press_esc: string
+  pm_codex_press_enter_esc: string
+  pm_activation_saved_next_startup_warning: (prefix: string, warnings: string) => string
+  pm_activation_switched_with_warnings: (prefix: string, warnings: string) => string
+  pm_activation_switched: (prefix: string) => string
+  pm_warning_override_suffix: (error: string) => string
+
+  // Agents menu
+  agents_title: string
+  agents_builtin_source: string
+  agents_plugin_source: string
+  agents_create_new: string
+  agents_no_agents_subtitle: string
+  agents_no_agents_desc1: string
+  agents_no_agents_desc2: string
+  agents_no_agents_desc3: string
+  agents_builtin_always_available_title: string
+  agents_builtin_label: string
+  agents_builtin_always_avail_parens: string
+  agents_builtin_note: string
+  agents_memory_suffix: string
+  agents_shadowed_by: string
+  agents_count: (n: number) => string
+  agents_nav_default: string
+  agents_nav_enter_esc: string
+  agents_nav_navigate_cancel: string
+  agents_menu_view: string
+  agents_menu_edit: string
+  agents_menu_delete: string
+  agents_menu_back: string
+  agents_confirm_delete_title: string
+  agents_confirm_delete_prefix: string
+  agents_detail_source: (source: string) => string
+  agents_confirm_yes: string
+  agents_confirm_no: string
+  agents_edit_title: (name: string) => string
+  agents_deleted_msg: (name: string) => string
+  agents_editor_open: string
+  agents_editor_tools: string
+  agents_editor_model: string
+  agents_editor_color: string
+  agents_editor_opened_msg: (name: string) => string
+  agents_editor_updated_msg: (name: string) => string
+  agents_editor_save_error: string
+  agents_cli_none_found: string
+
+  // Command response messages (runtime output when commands execute)
+  cmd_agents_dismissed: string
+  cmd_branch_no_conversation: string
+  cmd_branch_no_messages: string
+  cmd_branch_failed: (msg: string) => string
+  cmd_btw_usage: string
+  cmd_buddy_usage: string
+  cmd_buddy_no_buddy: string
+  cmd_buddy_muted: string
+  cmd_buddy_unmuted: string
+  cmd_cache_probe_failed: (status: number, error: string) => string
+  cmd_cache_probe_title: (model: string, api: string, mode: string) => string
+  cmd_cache_probe_call: (n: number, elapsed: number, input: number, cached: number) => string
+  cmd_cache_probe_verdict_hit: (cached: number, rate: string | number) => string
+  cmd_cache_probe_verdict_inconclusive: string
+  cmd_cache_probe_verdict_possible_silent: (pct: number) => string
+  cmd_cache_probe_verdict_no_cache: string
+  cmd_cache_probe_what_main: (shimLabel: string) => string
+  cmd_cache_probe_full_details: string
+  cmd_cache_probe_responses_api: string
+  cmd_cache_probe_chat_completions: string
+  cmd_slash_usage: string
+  cmd_color_teammate: string
+  cmd_color_usage: (colors: string) => string
+  cmd_compact_spinner: string
+  cmd_compact_in_progress: string
+  cmd_compact_compacted: string
+  cmd_compact_full_summary: (shortcut: string) => string
+  cmd_compact_notification: (shortcut: string) => string
+  cmd_compact_boundary: (shortcut: string) => string
+  cmd_copy_no_message: string
+  cmd_cost_total: (cost: string) => string
+  cmd_cost_duration_api: (dur: string) => string
+  cmd_cost_duration_wall: (dur: string) => string
+  cmd_cost_changes: (added: number, addedLabel: string, removed: number, removedLabel: string) => string
+  cmd_cost_line: string
+  cmd_cost_lines: string
+  const_no_content: string
+
+  // Add directory dialog
+  add_dir_title: string
+  add_dir_enter_path: string
+  add_dir_placeholder: string
+
+  // Branch success messages
+  cmd_branch_success: (titleInfo: string, resumeHint: string) => string
+  cmd_branch_success_fallback: (titleInfo: string, sessionId: string) => string
+  cmd_branch_resume_hint: (sessionId: string) => string
+
+  // Compact summary labels
+  compact_summary_label: string
+  compact_summary_summarized_conv: string
+  compact_summary_messages_up_to: (n: number) => string
+  compact_summary_messages_from: (n: number) => string
+  compact_summary_context_label: string
+  compact_summary_expand_hint: string
+
+  // Transcript bar
+  transcript_bar_showing: string
+  transcript_bar_to_toggle: (shortcut: string) => string
+  transcript_bar_to_collapse: string
+  transcript_bar_to_show_all: string
+
+  // Copy command success
+  cmd_copy_success: (chars: number, lines: number) => string
+  cmd_copy_also_written: (path: string) => string
+  cmd_copy_success_with_file: (chars: number, lines: number, path: string) => string
+
+  // Cost: model usage
+  cmd_cost_usage_by_model: string
+  cmd_cost_input: string
+  cmd_cost_output: string
+  cmd_cost_cache_read: string
+  cmd_cost_cache_write: string
+  cmd_cost_web_search: string
+  cmd_cost_inaccurate: string
+
+  // Diff UI
+  diff_truncated: string
+  diff_nav_select: string
+  diff_nav_enter_view: string
+  diff_nav_esc_close: (key: string) => string
+  diff_nav_back: string
+  diff_nav_source: string
+
+  // Effort picker
+  effort_set_level_title: string
+  effort_not_supported: string
+  effort_auto_description: string
+  effort_low_description: string
+  effort_medium_description: string
+  effort_high_description: string
+  effort_max_description: string
+  effort_xhigh_description: string
+  effort_level_auto: string
+  effort_usage_msg: string
+  effort_set_msg: (level: string, suffix: string, description: string) => string
+  effort_auto_set_msg: string
+  effort_current_msg: (level: string, description: string) => string
+  effort_status_auto: (level: string) => string
+  effort_cancelled: string
+  effort_default_description: string
+
+  // IDE command screen
+  ide_dialog_title: string
+  ide_dialog_subtitle: string
+  ide_no_available_jetbrains: string
+  ide_no_available_general: string
+  ide_multiple_vscode_warning: string
+  ide_auto_connect_tip: string
+  ide_unavailable_count: (count: number) => string
+  ide_open_dialog_title: string
+  ide_install_dialog_title: string
+  ide_connecting: (name: string) => string
+  ide_connected: (name: string) => string
+  ide_failed_connect: (name: string) => string
+  ide_timed_out: (name: string) => string
+  ide_error_connecting: string
+  ide_disconnected: (name: string) => string
+  ide_no_selected: string
+  ide_selection_cancelled: string
+  ide_no_extensions_detected: string
+  ide_exited_without_opening: string
+  ide_opened_in: (typeLabel: string, boldName: string) => string
+  ide_failed_open_manual: (name: string, path: string) => string
+  ide_please_open_manually: (typeLabel: string, boldName: string, path: string) => string
+  ide_worktree_label: string
+  ide_project_label: string
+  ide_installed_plugin: (boldName: string) => string
+  ide_installed_extension: (boldName: string) => string
+
   // Progress messages
   progress_analyzing_codebase: string
   progress_creating_commit: string
@@ -203,6 +584,13 @@ export interface TranslationKeys {
   cmd_loop: string
   cmd_simplify: string
   cmd_update_config: string
+  cmd_dream: string
+  cmd_bridge_kick: string
+  cmd_commit_push_pr: string
+  cmd_brief: string
+  cmd_version_debug: string
+  cmd_init_verifiers: string
+  cmd_ultrareview: string
 
   // Spinner tips (static, localizable)
   spinnerTips: Record<string, string>
@@ -358,10 +746,391 @@ export const en: TranslationKeys = {
   forShortcuts: '? for shortcuts',
   pressKeyToExit: (key: string) => `Press ${key} again to exit`,
   pastingText: 'Pasting text\u2026',
+  // Expand / collapse hints
+  hint_connector_to: 'to',
+  hint_to_expand: 'expand',
+  hint_to_collapse: 'collapse',
+  hint_arrow_to_collapse: '\u2190 to collapse',
+  hint_arrow_to_expand: '\u2192 to expand',
+  hint_shortcut_to_expand: (shortcut: string) => `(${shortcut} to expand)`,
+  hint_read_output_expand: (shortcut: string) => `Read output (${shortcut} to expand)`,
+  hint_p_to_expand: 'p to expand',
+  hint_line_singular: 'line',
+  hint_line_plural: 'lines',
+
+  // Activity summary verbs
+  summary_recalling_cap: 'Recalling',
+  summary_recalling_lc: 'recalling',
+  summary_recalled_cap: 'Recalled',
+  summary_recalled_lc: 'recalled',
+  summary_searching_mem_cap: 'Searching',
+  summary_searching_mem_lc: 'searching',
+  summary_searched_mem_cap: 'Searched',
+  summary_searched_mem_lc: 'searched',
+  summary_mem_target: 'memories',
+  summary_writing_cap: 'Writing',
+  summary_writing_lc: 'writing',
+  summary_wrote_cap: 'Wrote',
+  summary_wrote_lc: 'wrote',
+  summary_searching_for_cap: 'Searching for',
+  summary_searching_for_lc: 'searching for',
+  summary_searched_for_cap: 'Searched for',
+  summary_searched_for_lc: 'searched for',
+  summary_reading_cap: 'Reading',
+  summary_reading_lc: 'reading',
+  summary_read_cap: 'Read',
+  summary_read_lc: 'read',
+  summary_listing_cap: 'Listing',
+  summary_listing_lc: 'listing',
+  summary_listed_cap: 'Listed',
+  summary_listed_lc: 'listed',
+  summary_repling: "REPL'ing",
+  summary_repld: "REPL'd",
+  // Activity summary nouns
+  summary_memory_singular: 'memory',
+  summary_memory_plural: 'memories',
+  summary_pattern_singular: 'pattern',
+  summary_pattern_plural: 'patterns',
+  summary_file_singular: 'file',
+  summary_file_plural: 'files',
+  summary_directory_singular: 'directory',
+  summary_directory_plural: 'directories',
+  summary_time_singular: 'time',
+  summary_time_plural: 'times',
+
+  // FileReadTool UI strings
+  fileread_error_reading_file: 'Error reading file',
+  fileread_reading_plan: 'Reading Plan',
+  fileread_read_agent_output: 'Read agent output',
+  fileread_read: 'Read',
+  fileread_reading_summary: (summary: string) => `Reading ${summary}`,
+  fileread_reading_file: 'Reading file',
+
+  // MCP query verbs
+  summary_querying_cap: 'Querying',
+  summary_querying_lc: 'querying',
+  summary_queried_cap: 'Queried',
+  summary_queried_lc: 'queried',
+
+  // Bash run verbs
+  summary_running_cap: 'Running',
+  summary_running_lc: 'running',
+  summary_ran_cap: 'Ran',
+  summary_ran_lc: 'ran',
+  summary_command_singular: 'command',
+  summary_command_plural: 'commands',
+  summary_bash: 'bash',
+
+  // Git operation verbs (for collapsed group)
+  git_verb_committed: 'committed',
+  git_verb_amended: 'amended commit',
+  git_verb_cherry_picked: 'cherry-picked',
+  git_verb_pushed_to: 'pushed to',
+  git_verb_merged: 'merged',
+  git_verb_rebased_onto: 'rebased onto',
+
+  // PR verbs (for collapsed group)
+  pr_verb_created: 'created',
+  pr_verb_edited: 'edited',
+  pr_verb_merged: 'merged',
+  pr_verb_commented_on: 'commented on',
+  pr_verb_closed: 'closed',
+  pr_verb_marked_ready: 'marked ready',
+
+  // Hook run info (collapsed group)
+  hook_pretooluse: 'PreToolUse',
+  hook_singular: 'hook',
+  hook_plural: 'hooks',
+
+  // Tool activity verbs (sessionRunner)
+  tool_verb_editing: 'Editing',
+  tool_verb_running: 'Running',
+  tool_verb_searching: 'Searching',
+  tool_verb_fetching: 'Fetching',
+  tool_verb_running_task: 'Running task',
+  tool_verb_editing_notebook: 'Editing notebook',
+
+  // Provider Manager UI strings
+  pm_menu_title: 'Provider manager',
+  pm_menu_active_profile_desc: 'Active profile controls base URL, model, and API key used by this session.',
+  pm_menu_no_profiles_yet: 'No provider profiles configured yet.',
+  pm_menu_checking_github_creds: 'Checking GitHub Models credentials...',
+  pm_menu_add_label: 'Add provider',
+  pm_menu_add_desc: 'Create a new provider profile',
+  pm_menu_activate_label: 'Set active provider',
+  pm_menu_activate_desc: 'Switch the active provider profile',
+  pm_menu_edit_label: 'Edit provider',
+  pm_menu_edit_desc: 'Update URL, model, or key',
+  pm_menu_delete_label: 'Delete provider',
+  pm_menu_delete_desc: 'Remove a provider profile',
+  pm_menu_logout_codex_label: 'Log out Codex OAuth',
+  pm_menu_logout_codex_desc: 'Clear securely stored Codex OAuth credentials',
+  pm_menu_done_label: 'Done',
+  pm_menu_done_desc: 'Return to chat',
+  pm_loading_title: 'Loading providers...',
+  pm_loading_desc: 'Reading provider profiles from disk.',
+  pm_activating_title: 'Activating provider...',
+  pm_activating_desc: 'Please wait while the provider is being configured.',
+  pm_set_up_provider: 'Set up provider',
+  pm_choose_preset: 'Choose provider preset',
+  pm_pick_preset_hint: 'Pick a preset, then confirm base URL, model, and API key.',
+  pm_create_form_title: 'Create provider profile',
+  pm_edit_form_title: 'Edit provider profile',
+  pm_provider_type_label: 'Provider type:',
+  pm_provider_type_anthropic: 'Anthropic native API',
+  pm_provider_type_openai: 'OpenAI-compatible API',
+  pm_step_of: (step: number, total: number, label: string) => `Step ${step} of ${total}: ${label}`,
+  pm_press_enter_esc: 'Press Enter to continue. Press Esc to go back.',
+  pm_back_label: 'Back',
+  pm_back_to_provider_manager: 'Return to provider manager',
+  pm_back_to_presets: 'Return to provider presets',
+  pm_enter_manually_label: 'Enter manually',
+  pm_enter_manually_desc: 'Fill in the base URL and model yourself',
+  pm_back_preset_desc: 'Choose another provider preset',
+  pm_checking_ollama_title: 'Checking Ollama',
+  pm_checking_ollama_msg: 'Looking for installed Ollama models...',
+  pm_ollama_setup_title: 'Ollama setup',
+  pm_choose_ollama_title: 'Choose an Ollama model',
+  pm_choose_ollama_desc: 'Pick one of the installed Ollama models to save into a local provider profile.',
+  pm_checking_atomic_title: 'Checking Atomic Chat',
+  pm_checking_atomic_msg: 'Looking for loaded Atomic Chat models...',
+  pm_atomic_setup_title: 'Atomic Chat setup',
+  pm_choose_atomic_title: 'Choose an Atomic Chat model',
+  pm_choose_atomic_desc: 'Pick one of the models loaded in Atomic Chat to save into a local provider profile.',
+  pm_select_active_title: 'Set active provider',
+  pm_select_edit_title: 'Edit provider',
+  pm_select_delete_title: 'Delete provider',
+  pm_no_providers_available: 'No providers available. Add one first.',
+  pm_profile_active_suffix: '(active)',
+  pm_profile_key_set: 'key set',
+  pm_profile_no_key: 'no key',
+  pm_profile_anthropic: 'anthropic',
+  pm_profile_openai_compat: 'openai-compatible',
+  pm_profile_token_stored: 'token stored',
+  pm_profile_token_via_env: 'token via env',
+  pm_profile_no_token: 'no token found',
+  pm_skip_for_now_label: 'Skip for now',
+  pm_skip_for_now_desc: 'Continue with current defaults',
+  pm_field_name_label: 'Provider name',
+  pm_field_name_placeholder: 'e.g. Ollama Home, OpenAI Work',
+  pm_field_name_help: 'A short label shown in /provider and startup setup.',
+  pm_field_baseurl_label: 'Base URL',
+  pm_field_baseurl_placeholder: 'e.g. http://localhost:11434/v1',
+  pm_field_baseurl_help: 'API base URL used for this provider profile.',
+  pm_field_model_label: 'Default model',
+  pm_field_model_placeholder: 'e.g. llama3.1:8b or glm-4.7, glm-4.7-flash',
+  pm_field_model_help: 'Model name(s) to use. Separate multiple with commas; first is default.',
+  pm_field_apikey_label: 'API key',
+  pm_field_apikey_placeholder: 'Leave empty if your provider does not require one',
+  pm_field_apikey_help: 'Optional. Press Enter with empty value to skip.',
+  pm_field_required: (label: string) => `${label} is required.`,
+  pm_err_cannot_activate_github: (error: string) => `Could not activate GitHub provider: ${error}`,
+  pm_err_cannot_change_provider: 'Could not change active provider.',
+  pm_err_cannot_save_provider: 'Could not save provider. Fill all required fields.',
+  pm_err_cannot_finish_activating: (label: string, detail: string) => `Could not finish activating ${label}: ${detail}`,
+  pm_err_cannot_delete_provider: 'Could not delete provider.',
+  pm_err_cannot_delete_github: (error: string) => `Could not delete GitHub provider: ${error}`,
+  pm_err_codex_oauth_failed_title: 'Codex OAuth failed',
+  pm_err_codex_login_no_profile: 'Codex OAuth login finished, but the provider profile could not be saved.',
+  pm_err_codex_login_no_active: 'Codex OAuth login finished, but the provider could not be set as the startup provider.',
+  pm_err_codex_credentials_cleared_no_profile: 'Provider deleted, but Codex OAuth credentials could not be cleared.',
+  pm_err_cannot_clear_codex: 'Could not clear Codex OAuth credentials.',
+  pm_status_activating: 'Activating provider...',
+  pm_status_active_provider: (name: string) => `Active provider: ${name}`,
+  pm_status_updated_provider: (name: string) => `Updated provider: ${name}`,
+  pm_status_added_provider: (name: string) => `Added provider: ${name} (now active)`,
+  pm_status_provider_configured: (name: string) => `Provider configured: ${name}`,
+  pm_status_provider_deleted: 'Provider deleted',
+  pm_status_github_deleted: 'GitHub provider deleted',
+  pm_status_codex_logged_out: 'Codex OAuth logged out.',
+  pm_status_codex_configured: 'Codex OAuth configured',
+  pm_codex_title: 'Codex OAuth',
+  pm_codex_signin_desc: 'Sign in with your ChatGPT account in the browser. Zero CLI will store the resulting Codex credentials securely and switch this session to the new Codex login when setup completes.',
+  pm_codex_starting: 'Starting local callback and preparing your browser...',
+  pm_codex_browser_not_opened: 'Browser did not open automatically. Visit this URL to continue:',
+  pm_codex_browser_opened: 'Browser opened. Finish the ChatGPT sign-in there and this setup will complete automatically.',
+  pm_codex_opening_browser: 'Opening your browser...',
+  pm_codex_press_esc: 'Press Esc to cancel and go back.',
+  pm_codex_press_enter_esc: 'Press Enter or Esc to go back.',
+  pm_activation_saved_next_startup_warning: (prefix: string, warnings: string) => `${prefix}. Saved for next startup. Warning: ${warnings}.`,
+  pm_activation_switched_with_warnings: (prefix: string, warnings: string) => `${prefix}. Zero CLI switched to it for this session with warnings: ${warnings}.`,
+  pm_activation_switched: (prefix: string) => `${prefix}. Zero CLI switched to it for this session.`,
+  pm_warning_override_suffix: (error: string) => `. Warning: could not clear startup provider override (${error}).`,
+
+  // Agents menu
+  agents_title: 'Agents',
+  agents_builtin_source: 'Built-in agents',
+  agents_plugin_source: 'Plugin agents',
+  agents_create_new: 'Create new agent',
+  agents_no_agents_subtitle: 'No agents found',
+  agents_no_agents_desc1: 'No agents found. Create specialized subagents that Claude can delegate to.',
+  agents_no_agents_desc2: 'Each subagent has its own context window, custom system prompt, and specific tools.',
+  agents_no_agents_desc3: 'Try creating: Code Reviewer, Code Simplifier, Security Reviewer, Tech Lead, or UX Reviewer.',
+  agents_builtin_always_available_title: 'Built-in (always available):',
+  agents_builtin_label: 'Built-in agents',
+  agents_builtin_always_avail_parens: ' (always available)',
+  agents_builtin_note: 'Built-in agents are provided by default and cannot be modified.',
+  agents_memory_suffix: ' memory',
+  agents_shadowed_by: ' shadowed by ',
+  agents_count: (n: number) => `${n} agents`,
+  agents_nav_default: 'Press \u2191\u2193 to navigate \xB7 Enter to select \xB7 Esc to go back',
+  agents_nav_enter_esc: 'Press Enter or Esc to go back',
+  agents_nav_navigate_cancel: 'Press \u2191\u2193 to navigate, Enter to select, Esc to cancel',
+  agents_menu_view: 'View agent',
+  agents_menu_edit: 'Edit agent',
+  agents_menu_delete: 'Delete agent',
+  agents_menu_back: 'Back',
+  agents_confirm_delete_title: 'Delete agent',
+  agents_confirm_delete_prefix: 'Are you sure you want to delete the agent',
+  agents_detail_source: (source: string) => `Source: ${source}`,
+  agents_confirm_yes: 'Yes, delete',
+  agents_confirm_no: 'No, cancel',
+  agents_edit_title: (name: string) => `Edit agent: ${name}`,
+  agents_deleted_msg: (name: string) => `Deleted agent: ${name}`,
+  agents_editor_open: 'Open in editor',
+  agents_editor_tools: 'Edit tools',
+  agents_editor_model: 'Edit model',
+  agents_editor_color: 'Edit color',
+  agents_editor_opened_msg: (name: string) => `Opened ${name} in editor. If you made edits, restart to load the latest version.`,
+  agents_editor_updated_msg: (name: string) => `Updated agent: ${name}`,
+  agents_editor_save_error: 'Failed to save agent',
+  agents_cli_none_found: 'No agents found.',
+
+  // Command response messages
+  cmd_agents_dismissed: 'Agents dialog dismissed',
+  cmd_branch_no_conversation: 'No conversation to branch',
+  cmd_branch_no_messages: 'No messages to branch',
+  cmd_branch_failed: (msg: string) => `Failed to branch conversation: ${msg}`,
+  cmd_btw_usage: 'Usage: /btw <your question>',
+  cmd_buddy_usage: 'Usage: /buddy [status|mute|unmute]\n\nRun /buddy with no args to hatch your companion the first time, then pet it on later runs.\n\n- mute: hides your buddy from the screen\n- unmute: brings your buddy back',
+  cmd_buddy_no_buddy: 'No buddy hatched yet. Run /buddy to hatch one.',
+  cmd_buddy_muted: 'Buddy muted.',
+  cmd_buddy_unmuted: 'Buddy unmuted.',
+  cmd_cache_probe_failed: (status: number, error: string) => `Cache probe failed on first call: HTTP ${status}\n${error}\n\nFull details in debug log.`,
+  cmd_cache_probe_title: (model: string, api: string, mode: string) => `Cache Probe — ${model} via ${api}${mode}`,
+  cmd_cache_probe_call: (n: number, elapsed: number, input: number, cached: number) => `Call ${n}: ${elapsed}ms, input=${input}, cached=${cached}`,
+  cmd_cache_probe_verdict_hit: (cached: number, rate: string | number) => `CACHE HIT: ${cached} cached tokens (${rate}% of input)`,
+  cmd_cache_probe_verdict_inconclusive: 'INCONCLUSIVE: Server returns 0 input_tokens — cannot measure',
+  cmd_cache_probe_verdict_possible_silent: (pct: number) => `POSSIBLE SILENT CACHING: Call 2 was ${pct}% faster but no cached_tokens reported`,
+  cmd_cache_probe_verdict_no_cache: 'NO CACHE DETECTED',
+  cmd_cache_probe_what_main: (shimLabel: string) => `What main's ${shimLabel} reports:`,
+  cmd_cache_probe_full_details: 'Full details written to debug log.',
+  cmd_cache_probe_responses_api: 'Responses API',
+  cmd_cache_probe_chat_completions: 'Chat Completions',
+  cmd_slash_usage: 'Commands are in the form `/command [args]`',
+  cmd_color_teammate: 'Cannot set color: This session is a swarm teammate. Teammate colors are assigned by the team leader.',
+  cmd_color_usage: (colors: string) => `Please provide a color. Available colors: ${colors}, default`,
+  cmd_compact_spinner: 'Compacting conversation',
+  cmd_compact_in_progress: 'Compacting conversation\u2026',
+  cmd_compact_compacted: 'Compacted',
+  cmd_compact_full_summary: (shortcut: string) => `(${shortcut} to see full summary)`,
+  cmd_compact_notification: (shortcut: string) => `Conversation summarized (${shortcut} for history)`,
+  cmd_compact_boundary: (shortcut: string) => `\u273b Conversation compacted (${shortcut} for history)`,
+  cmd_copy_no_message: 'No assistant message to copy',
+  cmd_cost_total: (cost: string) => `Total cost:            ${cost}`,
+  cmd_cost_duration_api: (dur: string) => `Total duration (API):  ${dur}`,
+  cmd_cost_duration_wall: (dur: string) => `Total duration (wall): ${dur}`,
+  cmd_cost_changes: (added: number, addedLabel: string, removed: number, removedLabel: string) => `Total code changes:    ${added} ${addedLabel} added, ${removed} ${removedLabel} removed`,
+  cmd_cost_line: 'line',
+  cmd_cost_lines: 'lines',
+  const_no_content: '(no content)',
+
+  // Add directory dialog
+  add_dir_title: 'Add directory to workspace',
+  add_dir_enter_path: 'Enter the path to the directory:',
+  add_dir_placeholder: 'Directory path…',
+
+  // Branch success messages
+  cmd_branch_success: (titleInfo: string, resumeHint: string) => `Branched conversation${titleInfo}. You are now in the branch.${resumeHint}`,
+  cmd_branch_success_fallback: (titleInfo: string, sessionId: string) => `Branched conversation${titleInfo}. Resume with: /resume ${sessionId}`,
+  cmd_branch_resume_hint: (sessionId: string) => `\nTo resume the original: claude -r ${sessionId}`,
+
+  // Compact summary labels
+  compact_summary_label: 'Compact summary',
+  compact_summary_summarized_conv: 'Summarized conversation',
+  compact_summary_messages_up_to: (n: number) => `Summarized ${n} messages up to this point`,
+  compact_summary_messages_from: (n: number) => `Summarized ${n} messages from this point`,
+  compact_summary_context_label: 'Context:',
+  compact_summary_expand_hint: 'expand history',
+
+  // Transcript bar
+  transcript_bar_showing: 'Showing detailed transcript',
+  transcript_bar_to_toggle: (shortcut: string) => `${shortcut} to toggle`,
+  transcript_bar_to_collapse: 'collapse',
+  transcript_bar_to_show_all: 'show all',
+
+  // Copy command success
+  cmd_copy_success: (chars: number, lines: number) => `Copied to clipboard (${chars} characters, ${lines} lines)`,
+  cmd_copy_also_written: (path: string) => `Also written to ${path}`,
+  cmd_copy_success_with_file: (chars: number, lines: number, path: string) => `Copied to clipboard (${chars} characters, ${lines} lines)\nAlso written to ${path}`,
+
+  // Cost: model usage
+  cmd_cost_usage_by_model: 'Usage by model:',
+  cmd_cost_input: 'input',
+  cmd_cost_output: 'output',
+  cmd_cost_cache_read: 'cache read',
+  cmd_cost_cache_write: 'cache write',
+  cmd_cost_web_search: 'web search',
+  cmd_cost_inaccurate: ' (costs may be inaccurate due to usage of unknown models)',
+
+  // Diff UI
+  diff_truncated: '\u2026 diff truncated (exceeded 400 line limit)',
+  diff_nav_select: '\u2191/\u2193 select',
+  diff_nav_enter_view: 'Enter view',
+  diff_nav_esc_close: (key: string) => `${key} close`,
+  diff_nav_back: '\u2190 back',
+  diff_nav_source: '\u2190/\u2192 source',
+
+  // Effort picker
+  effort_set_level_title: 'Set effort level',
+  effort_not_supported: 'Effort not supported for this model',
+  effort_auto_description: 'Use the default effort level for your model',
+  effort_low_description: 'Quick, straightforward implementation with minimal overhead',
+  effort_medium_description: 'Balanced approach with standard implementation and testing',
+  effort_high_description: 'Comprehensive implementation with extensive testing and documentation',
+  effort_max_description: 'Maximum capability with deepest reasoning (Opus 4.6 only)',
+  effort_xhigh_description: 'Extra high reasoning effort for complex tasks (OpenAI/Codex)',
+  effort_level_auto: 'Auto',
+  effort_usage_msg: 'Usage: /effort [low|medium|high|max|auto]\n\nEffort levels:\n- low: Quick, straightforward implementation\n- medium: Balanced approach with standard testing\n- high: Comprehensive implementation with extensive testing\n- max: Maximum capability with deepest reasoning (Opus 4.6 only)\n- auto: Use the default effort level for your model',
+  effort_set_msg: (level: string, suffix: string, description: string) => `Set effort level to ${level}${suffix}: ${description}`,
+  effort_auto_set_msg: 'Effort level set to auto',
+  effort_current_msg: (level: string, description: string) => `Current effort level: ${level} (${description})`,
+  effort_status_auto: (level: string) => `Effort level: auto (currently ${level})`,
+  effort_cancelled: 'Cancelled',
+  effort_default_description: 'Use default effort level for your model',
+
   ideLineSingular: 'line',
   ideLinePlural: 'lines',
   ideSelected: 'selected',
   ideInFile: 'In',
+
+  // IDE command screen
+  ide_dialog_title: 'Select IDE',
+  ide_dialog_subtitle: 'Connect to an IDE for integrated development features.',
+  ide_no_available_jetbrains: 'No available IDEs detected. Please install the plugin and restart your IDE:\nhttps://docs.claude.com/s/claude-code-jetbrains',
+  ide_no_available_general: 'No available IDEs detected. Make sure your IDE has the ZeroCLI extension or plugin installed and is running.',
+  ide_multiple_vscode_warning: 'Note: Only one ZeroCLI instance can be connected to VS Code at a time.',
+  ide_auto_connect_tip: 'Tip: You can enable auto-connect to IDE in /config or with the --ide flag',
+  ide_unavailable_count: (count: number) => `Found ${count} other running IDE(s). However, their workspace/project directories do not match the current cwd.`,
+  ide_open_dialog_title: 'Select an IDE to open the project',
+  ide_install_dialog_title: 'Select IDE to install extension',
+  ide_connecting: (name: string) => `Connecting to ${name}\u2026`,
+  ide_connected: (name: string) => `Connected to ${name}.`,
+  ide_failed_connect: (name: string) => `Failed to connect to ${name}.`,
+  ide_timed_out: (name: string) => `Connection to ${name} timed out.`,
+  ide_error_connecting: 'Error connecting to IDE.',
+  ide_disconnected: (name: string) => `Disconnected from ${name}.`,
+  ide_no_selected: 'No IDE selected.',
+  ide_selection_cancelled: 'IDE selection cancelled',
+  ide_no_extensions_detected: 'No IDEs with ZeroCLI extension detected.',
+  ide_exited_without_opening: 'Exited without opening IDE',
+  ide_opened_in: (typeLabel: string, boldName: string) => `Opened ${typeLabel} in ${boldName}`,
+  ide_failed_open_manual: (name: string, path: string) => `Failed to open in ${name}. Try opening manually: ${path}`,
+  ide_please_open_manually: (typeLabel: string, boldName: string, path: string) => `Please open the ${typeLabel} manually in ${boldName}: ${path}`,
+  ide_worktree_label: 'worktree',
+  ide_project_label: 'project',
+  ide_installed_plugin: (boldName: string) => `Installed plugin to ${boldName}\nPlease restart your IDE completely for it to take effect`,
+  ide_installed_extension: (boldName: string) => `Installed extension to ${boldName}`,
 
   // Progress messages
   progress_analyzing_codebase: 'analyzing your codebase',
@@ -416,6 +1185,13 @@ export const en: TranslationKeys = {
   cmd_loop: 'Run a prompt on a fixed interval or dynamically reschedule it, including bare maintenance-mode loops.',
   cmd_simplify: 'Review changed code for reuse, quality, and efficiency, then fix any issues found.',
   cmd_update_config: 'Use this skill to configure the Zero CLI harness via settings.json. Automated behaviors ("from now on when X", "each time X", "whenever X", "before/after X") require hooks configured in settings.json - the harness executes these, not Claude, so memory/preferences cannot fulfill them. Also use for: permissions ("allow X", "add permission", "move permission to"), env vars ("set X=Y"), hook troubleshooting, or any changes to settings.json/settings.local.json files. For simple settings like theme/model, use Config tool.',
+  cmd_dream: 'Run memory consolidation — synthesize recent sessions into durable memories',
+  cmd_bridge_kick: 'Inject bridge failure states for manual recovery testing',
+  cmd_commit_push_pr: 'Commit, push, and open a PR',
+  cmd_brief: 'Toggle brief-only mode',
+  cmd_version_debug: 'Print the version this session is running (not what autoupdate downloaded)',
+  cmd_init_verifiers: 'Create verifier skill(s) for automated verification of code changes',
+  cmd_ultrareview: '~10–20 min · Finds and verifies bugs in your branch. Runs in ZeroCLI on the web. See https://code.claude.com/docs/en/claude-code-on-the-web',
 
   // Spinner tips (static, localizable)
   spinnerTips: {

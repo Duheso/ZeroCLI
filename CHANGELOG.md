@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.2] (2026-05-01)
+
+### Bug Fixes
+
+* **provider:** saved profile ignored at bare startup when stale shell env vars (OPENAI_BASE_URL, CLAUDE_CODE_USE_OPENAI, etc.) block hasCompleteProviderSelection check — now bypassed at fresh startup unless an explicit COPILOT_* override is present ([#821](https://github.com/Duheso/ZeroCLI/issues/821))
+
 ## [0.6.2](https://github.com/Duheso/ZeroCLI/compare/v0.6.1...v0.6.2) (2026-04-23)
 
 

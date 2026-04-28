@@ -626,7 +626,23 @@ export function applyActiveProviderProfileFromConfig(
     processEnv[PROFILE_ENV_APPLIED_FLAG] === '1' &&
     trimOrUndefined(processEnv[PROFILE_ENV_APPLIED_ID]) === activeProfile.id
 
-  if (!options?.force && (hasCompleteProviderSelection(processEnv) || processEnv[PROFILE_ENV_APPLIED_FLAG] === '1')) {
+  // At fresh startup (flag not yet set), if there are saved profiles and no
+  // explicit COPILOT_* external override is present, any provider-routing vars
+  // already in process.env (CLAUDE_CODE_USE_OPENAI, OPENAI_BASE_URL, etc.) are
+  // treated as stale legacy shell exports — NOT as intentional overrides.
+  // In that case, bypass the hasCompleteProviderSelection guard and let the
+  // active saved profile win.  COPILOT_PROVIDER_BASE_URL / COPILOT_PROVIDER_TYPE
+  // / COPILOT_MODEL remain the documented external-override mechanism and are
+  // always respected.
+  const isFreshStartup = processEnv[PROFILE_ENV_APPLIED_FLAG] !== '1'
+  const hasCopilotOverride =
+    processEnv.COPILOT_PROVIDER_BASE_URL !== undefined ||
+    processEnv.COPILOT_PROVIDER_TYPE !== undefined ||
+    processEnv.COPILOT_MODEL !== undefined
+  const staleLegacyEnvBlocked =
+    isFreshStartup && !hasCopilotOverride && hasProviderProfiles(config)
+
+  if (!options?.force && !staleLegacyEnvBlocked && (hasCompleteProviderSelection(processEnv) || processEnv[PROFILE_ENV_APPLIED_FLAG] === '1')) {
     // Respect explicit startup provider intent. Auto-heal only when this
     // exact active profile previously applied the current env.
     // NOTE: we gate on hasCompleteProviderSelection (flag + concrete config)

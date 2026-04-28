@@ -1,6 +1,7 @@
 import { c as _c } from "react-compiler-runtime";
 import * as React from 'react';
 import { BLACK_CIRCLE } from '../constants/figures.js';
+import { t } from '../i18n/index.js';
 import { Box, Text } from '../ink.js';
 import type { Screen } from '../screens/REPL.js';
 import type { NormalizedUserMessage } from '../types/message.js';
@@ -38,14 +39,14 @@ export function CompactSummary(t0) {
     }
     let t3;
     if ($[3] === Symbol.for("react.memo_cache_sentinel")) {
-      t3 = <Text bold={true}>Summarized conversation</Text>;
+      t3 = <Text bold={true}>{t('compact_summary_summarized_conv') as string}</Text>;
       $[3] = t3;
     } else {
       t3 = $[3];
     }
     let t4;
     if ($[4] !== isTranscriptMode || $[5] !== metadata) {
-      t4 = !isTranscriptMode && <MessageResponse><Box flexDirection="column"><Text dimColor={true}>Summarized {metadata.messagesSummarized} messages{" "}{metadata.direction === "up_to" ? "up to this point" : "from this point"}</Text>{metadata.userContext && <Text dimColor={true}>Context: {"\u201C"}{metadata.userContext}{"\u201D"}</Text>}<Text dimColor={true}><ConfigurableShortcutHint action="app:toggleTranscript" context="Global" fallback="ctrl+o" description="expand history" parens={true} /></Text></Box></MessageResponse>;
+      t4 = !isTranscriptMode && <MessageResponse><Box flexDirection="column"><Text dimColor={true}>{metadata.direction === "up_to" ? t('compact_summary_messages_up_to')(metadata.messagesSummarized) as string : t('compact_summary_messages_from')(metadata.messagesSummarized) as string}</Text>{metadata.userContext && <Text dimColor={true}>{t('compact_summary_context_label') as string} {"\u201C"}{metadata.userContext}{"\u201D"}</Text>}<Text dimColor={true}><ConfigurableShortcutHint action="app:toggleTranscript" context="Global" fallback="ctrl+o" description={t('compact_summary_expand_hint') as string} parens={true} /></Text></Box></MessageResponse>;
       $[4] = isTranscriptMode;
       $[5] = metadata;
       $[6] = t4;
@@ -89,7 +90,7 @@ export function CompactSummary(t0) {
   }
   let t4;
   if ($[16] !== t3) {
-    t4 = <Box flexDirection="row">{t2}<Box flexDirection="column"><Text bold={true}>Compact summary{t3}</Text></Box></Box>;
+    t4 = <Box flexDirection="row">{t2}<Box flexDirection="column"><Text bold={true}>{t('compact_summary_label') as string}{t3}</Text></Box></Box>;
     $[16] = t3;
     $[17] = t4;
   } else {
