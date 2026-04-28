@@ -31,7 +31,9 @@
       "Bash(mkdir -p /home/accadmin/.npm-global/lib/node_modules/@duheso/zerocli/dist/vendor/ripgrep/x64-linux)",
       "Bash(cp dist/vendor/ripgrep/x64-linux/rg /home/accadmin/.npm-global/lib/node_modules/@duheso/zerocli/dist/vendor/ripgrep/x64-linux/rg)",
       "mcp__ide__getDiagnostics",
-      "Bash(find /home/accadmin/workspace/ZeroCLI -path */.git -prune -o -name *.tsx -print)"
+      "Bash(find /home/accadmin/workspace/ZeroCLI -path */.git -prune -o -name *.tsx -print)",
+      "WebSearch",
+      "Bash(npx jest:*)"
     ]
   },
   "prefersReducedMotion": true

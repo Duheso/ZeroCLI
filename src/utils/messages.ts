@@ -310,10 +310,17 @@ export const SYNTHETIC_MESSAGES = new Set([
 ])
 
 export function isSyntheticMessage(message: Message): boolean {
+  if (
+    message.type === 'progress' ||
+    message.type === 'attachment' ||
+    message.type === 'system'
+  ) {
+    return false
+  }
+  if (!('message' in message) || !('content' in message.message)) {
+    return false
+  }
   return (
-    message.type !== 'progress' &&
-    message.type !== 'attachment' &&
-    message.type !== 'system' &&
     Array.isArray(message.message.content) &&
     message.message.content[0]?.type === 'text' &&
     SYNTHETIC_MESSAGES.has(message.message.content[0].text)
@@ -403,7 +410,7 @@ function baseCreateAssistantMessage({
     },
     requestId: undefined,
     apiError,
-    error,
+    error: error as string | undefined,
     errorDetails,
     isApiErrorMessage,
     isVirtual,
@@ -490,7 +497,7 @@ export function createUserMessage({
   timestamp?: string
   imagePasteIds?: number[]
   // For tool_result messages: the UUID of the assistant message containing the matching tool_use
-  sourceToolAssistantUUID?: UUID
+  sourceToolAssistantUUID?: UUID | string
   // Permission mode when message was sent (for rewind restoration)
   permissionMode?: PermissionMode
   summarizeMetadata?: {
@@ -692,32 +699,38 @@ export function isNotEmptyMessage(message: Message): boolean {
   if (
     message.type === 'progress' ||
     message.type === 'attachment' ||
-    message.type === 'system'
+    message.type === 'system' ||
+    message.type === 'tool_use_summary'
   ) {
     return true
   }
 
-  if (typeof message.message.content === 'string') {
-    return message.message.content.trim().length > 0
+  if (!('message' in message && 'content' in (message as AssistantMessage).message)) {
+    return true
   }
 
-  if (message.message.content.length === 0) {
+  const msgContent = ((message as AssistantMessage).message.content as string | BetaContentBlock[])
+  if (typeof msgContent === 'string') {
+    return msgContent.trim().length > 0
+  }
+
+  if (msgContent.length === 0) {
     return false
   }
 
   // Skip multi-block messages for now
-  if (message.message.content.length > 1) {
+  if (msgContent.length > 1) {
     return true
   }
 
-  if (message.message.content[0]!.type !== 'text') {
+  if (msgContent[0]!.type !== 'text') {
     return true
   }
 
   return (
-    message.message.content[0]!.text.trim().length > 0 &&
-    message.message.content[0]!.text !== NO_CONTENT_MESSAGE &&
-    message.message.content[0]!.text !== INTERRUPT_MESSAGE_FOR_TOOL_USE
+    msgContent[0]!.text.trim().length > 0 &&
+    msgContent[0]!.text !== NO_CONTENT_MESSAGE &&
+    msgContent[0]!.text !== INTERRUPT_MESSAGE_FOR_TOOL_USE
   )
 }
 
@@ -748,13 +761,13 @@ export function normalizeMessages(messages: Message[]): NormalizedMessage[] {
   // This flag is set to true once we encounter a message with multiple content blocks,
   // and remains true for all subsequent messages in the normalization process.
   let isNewChain = false
-  return messages.flatMap(message => {
+  const results = messages.flatMap(message => {
     switch (message.type) {
       case 'assistant': {
         isNewChain = isNewChain || message.message.content.length > 1
         return message.message.content.map((_, index) => {
           const uuid = isNewChain
-            ? deriveUUID(message.uuid, index)
+            ? deriveUUID(message.uuid as UUID, index)
             : message.uuid
           return {
             type: 'assistant' as const,
@@ -782,7 +795,7 @@ export function normalizeMessages(messages: Message[]): NormalizedMessage[] {
         return [message]
       case 'user': {
         if (typeof message.message.content === 'string') {
-          const uuid = isNewChain ? deriveUUID(message.uuid, 0) : message.uuid
+          const uuid = isNewChain ? deriveUUID(message.uuid as UUID, 0) : message.uuid
           return [
             {
               ...message,
@@ -816,12 +829,13 @@ export function normalizeMessages(messages: Message[]): NormalizedMessage[] {
               imagePasteIds: imageId !== undefined ? [imageId] : undefined,
               origin: message.origin,
             }),
-            uuid: isNewChain ? deriveUUID(message.uuid, index) : message.uuid,
+            uuid: isNewChain ? deriveUUID(message.uuid as UUID, index) : message.uuid,
           } as NormalizedMessage
         })
       }
     }
   })
+  return results.filter((m): m is NormalizedMessage => Boolean(m))
 }
 
 type ToolUseRequestMessage = NormalizedAssistantMessage & {
@@ -1466,12 +1480,12 @@ export function getToolUseIDs(
   return new Set(
     normalizedMessages
       .filter(
-        (_): _ is NormalizedAssistantMessage<BetaToolUseBlock> =>
+        (_): _ is NormalizedAssistantMessage =>
           _.type === 'assistant' &&
           Array.isArray(_.message.content) &&
           _.message.content[0]?.type === 'tool_use',
       )
-      .map(_ => _.message.content[0].id),
+      .map(_ => (_.message.content[0] as BetaToolUseBlock).id),
   )
 }
 
@@ -3014,7 +3028,8 @@ export function handleMessageFromStream(
         onSetStreamMode('responding')
         return
       }
-      switch (message.event.content_block.type) {
+      const contentBlock = message.event.content_block as { type: string }
+      switch (contentBlock.type) {
         case 'thinking':
         case 'redacted_thinking':
           onSetStreamMode('thinking')
@@ -3024,8 +3039,8 @@ export function handleMessageFromStream(
           return
         case 'tool_use': {
           onSetStreamMode('tool-input')
-          const contentBlock = message.event.content_block
-          const index = message.event.index
+          const contentBlock = message.event.content_block as BetaToolUseBlock
+          const index = message.event.index as number
           onStreamingToolUses(_ => [
             ..._,
             {
@@ -3052,16 +3067,17 @@ export function handleMessageFromStream(
       }
       return
     case 'content_block_delta':
-      switch (message.event.delta.type) {
+      const delta = message.event.delta as { type: string }
+      switch (delta.type) {
         case 'text_delta': {
-          const deltaText = message.event.delta.text
+          const deltaText = (message.event.delta as any).text
           onUpdateLength(deltaText)
           onStreamingText?.(text => (text ?? '') + deltaText)
           return
         }
         case 'input_json_delta': {
-          const delta = message.event.delta.partial_json
-          const index = message.event.index
+          const delta = (message.event.delta as any).partial_json
+          const index = message.event.index as number
           onUpdateLength(delta)
           onStreamingToolUses(_ => {
             const element = _.find(_ => _.index === index)
@@ -3079,7 +3095,7 @@ export function handleMessageFromStream(
           return
         }
         case 'thinking_delta':
-          onUpdateLength(message.event.delta.thinking)
+          onUpdateLength((delta as any).thinking ?? '')
           return
         case 'signature_delta':
           // Signatures are cryptographic authentication strings, not model
@@ -4036,7 +4052,7 @@ You have exited auto mode. The user may now want to interact more directly. You 
       ]
     }
     case 'async_hook_response': {
-      const response = attachment.response
+      const response = attachment.response as Record<string, any>
       const messages: UserMessage[] = []
 
       // Handle systemMessage
@@ -4422,6 +4438,7 @@ export function createStopHookSummaryMessage(
   return {
     type: 'system',
     subtype: 'stop_hook_summary',
+    isMeta: true,
     hookCount,
     hookInfos,
     hookErrors,
@@ -5120,8 +5137,10 @@ export function createToolUseSummaryMessage(
 ): ToolUseSummaryMessage {
   return {
     type: 'tool_use_summary',
+    content: summary,
     summary,
     precedingToolUseIds,
+    toolUseIDs: precedingToolUseIds,
     uuid: randomUUID(),
     timestamp: new Date().toISOString(),
   }

@@ -197,11 +197,13 @@ export type SDKStatus = 'compacting' | null
 
 /** SDK compact boundary message. */
 export type SDKCompactBoundaryMessage = {
-  type: 'compact_boundary'
+  type: 'system'
+  subtype: 'compact_boundary'
   uuid: string
   session_id: string
   preTokens: number
   trigger: 'manual' | 'auto'
+  compact_metadata?: unknown
 }
 
 /** SDK status message. */

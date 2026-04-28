@@ -748,7 +748,7 @@ async function* queryLoop(
               // These partial messages (especially thinking blocks) have invalid signatures
               // that would cause "thinking blocks cannot be modified" API errors.
               for (const msg of assistantMessages) {
-                yield { type: 'tombstone' as const, message: msg }
+                yield { type: 'tombstone' as const, message: msg, uuid: msg.uuid, timestamp: msg.timestamp }
               }
               logEvent('tengu_orphaned_messages_tombstoned', {
                 orphanedMessageCount: assistantMessages.length,
@@ -1112,7 +1112,7 @@ async function* queryLoop(
       // prevents a spiral and the error surfaces.
       const isWithheldMedia =
         mediaRecoveryEnabled &&
-        reactiveCompact?.isWithheldMediaSizeError(lastMessage)
+        reactiveCompact?.isWithheldMediaSizeError(lastMessage!)
       if (isWithheld413) {
         // First: drain all staged context-collapses. Gated on the PREVIOUS
         // transition not being collapse_drain_retry — if we already drained
@@ -1203,15 +1203,15 @@ async function* queryLoop(
         // so hooks have nothing meaningful to evaluate. Running stop hooks
         // on prompt-too-long creates a death spiral: error → hook blocking
         // → retry → error → … (the hook injects more tokens each cycle).
-        yield lastMessage
-        void executeStopFailureHooks(lastMessage, toolUseContext)
+        yield lastMessage!
+        void executeStopFailureHooks(lastMessage!, toolUseContext)
         return { reason: isWithheldMedia ? 'image_error' : 'prompt_too_long' }
       } else if (feature('CONTEXT_COLLAPSE') && isWithheld413) {
         // reactiveCompact compiled out but contextCollapse withheld and
         // couldn't recover (staged queue empty/stale). Surface. Same
         // early-return rationale — don't fall through to stop hooks.
-        yield lastMessage
-        void executeStopFailureHooks(lastMessage, toolUseContext)
+        yield lastMessage!
+        void executeStopFailureHooks(lastMessage!, toolUseContext)
         return { reason: 'prompt_too_long' }
       }
 
@@ -1405,8 +1405,8 @@ async function* queryLoop(
         const lastAssistant = assistantMessages.at(-1)
         if (lastAssistant?.type === 'assistant') {
           const lastText = lastAssistant.message.content
-            .filter((b): b is { type: 'text'; text: string } => b.type === 'text')
-            .map(b => b.text)
+            .filter(b => b.type === 'text')
+            .map(b => (b as { type: 'text'; text: string }).text)
             .join(' ')
             .toLowerCase()
 

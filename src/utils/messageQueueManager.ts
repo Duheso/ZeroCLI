@@ -1,12 +1,8 @@
 import { feature } from 'bun:bundle'
 import type { ContentBlockParam } from '@anthropic-ai/sdk/resources/messages.mjs'
-import type { Permutations } from 'src/types/utils.js'
 import { getSessionId } from '../bootstrap/state.js'
 import type { AppState } from '../state/AppState.js'
-import type {
-  QueueOperation,
-  QueueOperationMessage,
-} from '../types/messageQueueTypes.js'
+import type { QueueOperationMessage } from '../types/message.js'
 import type {
   EditablePromptInputMode,
   PromptInputMode,
@@ -25,10 +21,10 @@ export type SetAppState = (f: (prev: AppState) => AppState) => void
 // Logging helper
 // ============================================================================
 
-function logOperation(operation: QueueOperation, content?: string): void {
+function logOperation(operation: string, content?: string): void {
   const sessionId = getSessionId()
   const queueOp: QueueOperationMessage = {
-    type: 'queue-operation',
+    type: 'queue_operation',
     operation,
     timestamp: new Date().toISOString(),
     sessionId,
@@ -342,7 +338,7 @@ export function resetCommandQueue(): void {
 
 const NON_EDITABLE_MODES = new Set<PromptInputMode>([
   'task-notification',
-] satisfies Permutations<Exclude<PromptInputMode, EditablePromptInputMode>>)
+] satisfies readonly PromptInputMode[])
 
 export function isPromptInputModeEditable(
   mode: PromptInputMode,

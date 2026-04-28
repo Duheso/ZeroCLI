@@ -16,10 +16,29 @@ declare module 'qrcode' {
  * Build-time constants injected by Bun.define in scripts/build.ts.
  * Replaced with string literals at bundle time; declared here for TypeScript.
  */
+declare module 'image-processor-napi' {
+  export function getNativeModule(): {
+    hasClipboardImage?: () => boolean
+    readClipboardImage?: (
+      maxWidth: number,
+      maxHeight: number,
+    ) => {
+      png: Buffer
+      originalWidth: number
+      originalHeight: number
+      width: number
+      height: number
+    } | null
+  } | null
+  const __stub?: boolean
+  const sharp: unknown
+  export default sharp
+}
+
 declare const MACRO: {
-  /** Internal compat version (always "99.0.0" in open build). */
+  /** Internal compat version (always "0.7.2" in open build). */
   VERSION: string
-  /** Human-readable display version (e.g. "0.6.5"). */
+  /** Human-readable display version (e.g. "0.7.2"). */
   DISPLAY_VERSION?: string
   /** ISO timestamp of the build. */
   BUILD_TIME: string
@@ -29,4 +48,6 @@ declare const MACRO: {
   PACKAGE_URL: string
   /** Native package URL, if any. */
   NATIVE_PACKAGE_URL?: string
+  /** Bundled version changelog string (newlines-separated commits). */
+  VERSION_CHANGELOG?: string
 }

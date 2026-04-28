@@ -22,13 +22,17 @@ export type SystemMessageLevel = 'error' | 'warning' | 'info' | 'success' | 'deb
 
 /** How a user message was produced (undefined = keyboard input). */
 export type MessageOrigin =
-  | 'hook'
-  | 'voice'
-  | 'script'
-  | 'bridge'
-  | 'scheduled'
-  | 'api'
-  | 'ide'
+  | { kind: 'human' }
+  | { kind: 'task-notification' }
+  | { kind: 'coordinator' }
+  | { kind: 'channel'; server: string }
+  | { kind: 'hook' }
+  | { kind: 'voice' }
+  | { kind: 'script' }
+  | { kind: 'bridge' }
+  | { kind: 'scheduled' }
+  | { kind: 'api' }
+  | { kind: 'ide' }
 
 export type PartialCompactDirection = 'older' | 'newer' | 'both'
 
@@ -52,7 +56,7 @@ export type UserMessage = {
     structuredContent?: Record<string, unknown>
   }
   imagePasteIds?: number[]
-  sourceToolAssistantUUID?: UUID
+  sourceToolAssistantUUID?: UUID | string
   permissionMode?: PermissionMode
   summarizeMetadata?: {
     messagesSummarized: number
@@ -73,6 +77,7 @@ export type SDKAssistantMessageError =
   | 'server_error'
   | 'unknown'
   | 'max_output_tokens'
+  | { [key: string]: unknown; type: 'error'; error: string }
   | string
 
 export type AssistantMessage = {
@@ -92,7 +97,7 @@ export type AssistantMessage = {
     context_management: unknown
   }
   requestId?: string
-  apiError?: Record<string, unknown>
+  apiError?: Record<string, unknown> | 'max_output_tokens'
   error?: SDKAssistantMessageError
   errorDetails?: string
   isApiErrorMessage?: boolean
@@ -244,6 +249,7 @@ export type SystemCompactBoundaryMessage = SystemMessageBase & {
     preTokens: number
     userContext?: string
     messagesSummarized?: number
+    preservedSegment?: { startUuid: string; endUuid: string; tailUuid: string }
   }
   logicalParentUuid?: UUID
 }
@@ -258,6 +264,11 @@ export type SystemMicrocompactBoundaryMessage = SystemMessageBase & {
     tokensSaved: number
     compactedToolIds: string[]
     clearedAttachmentUUIDs: string[]
+  }
+  preservedSegment?: {
+    startUuid: string
+    endUuid: string
+    tailUuid: string
   }
 }
 
@@ -302,6 +313,7 @@ export type CompactMetadata = {
   preTokens: number
   userContext?: string
   messagesSummarized?: number
+  preservedSegment?: { startUuid: string; endUuid: string; tailUuid: string }
 }
 
 // ─── Tombstone / summary messages ────────────────────────────────────────────
@@ -310,6 +322,7 @@ export type TombstoneMessage = {
   type: 'tombstone'
   uuid: UUID | string
   timestamp: string
+  message: AssistantMessage
   toolUseID?: string
 }
 
@@ -318,6 +331,8 @@ export type ToolUseSummaryMessage = {
   uuid: UUID | string
   timestamp: string
   content: string
+  summary: string
+  precedingToolUseIds: string[]
   toolUseIDs: string[]
   isMeta?: boolean
 }
@@ -330,6 +345,7 @@ export type NormalizedUserMessage = UserMessage & {
   message: UserMessage['message'] & {
     content: ContentBlockParam[]
   }
+  sourceToolUseID?: string
 }
 
 export type NormalizedAssistantMessage = AssistantMessage
@@ -359,9 +375,11 @@ export type CollapsedReadSearchGroup = {
 
 export type QueueOperationMessage = {
   type: 'queue_operation'
-  uuid: UUID | string
+  uuid?: UUID | string
   timestamp: string
   operation: string
+  sessionId?: string
+  content?: string
 }
 
 export type RenderableMessage =
@@ -379,12 +397,14 @@ export type StreamEvent = {
   type: 'stream_event'
   uuid: UUID | string
   timestamp: string
+  event: Record<string, unknown>
+  ttftMs?: number
 }
 
 export type RequestStartEvent = {
-  type: 'request_start'
-  uuid: UUID | string
-  timestamp: string
+  type: 'stream_request_start'
+  uuid?: UUID | string
+  timestamp?: string
 }
 
 // ─── Main Message union ───────────────────────────────────────────────────────

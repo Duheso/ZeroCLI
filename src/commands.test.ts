@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'bun:test'
 import { formatDescriptionWithSource } from './commands.js'
 
 describe('formatDescriptionWithSource', () => {

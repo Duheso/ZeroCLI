@@ -39,7 +39,7 @@ import type { AppState } from './state/AppState.js'
 import { type Tools, type ToolUseContext, toolMatchesName } from './Tool.js'
 import type { AgentDefinition } from './tools/AgentTool/loadAgentsDir.js'
 import { SYNTHETIC_OUTPUT_TOOL_NAME } from './tools/SyntheticOutputTool/SyntheticOutputTool.js'
-import type { Message } from './types/message.js'
+import type { CompactMetadata, Message } from './types/message.js'
 import type { OrphanedPermission } from './types/textInputTypes.js'
 import { createAbortController } from './utils/abortController.js'
 import type { AttributionState } from './utils/commitAttribution.js'
@@ -294,7 +294,7 @@ export class QueryEngine {
       tools,
       mainLoopModel: initialMainLoopModel,
       additionalWorkingDirectories: Array.from(
-        initialAppState.toolPermissionContext.additionalWorkingDirectories.keys(),
+        (initialAppState.toolPermissionContext.additionalWorkingDirectories as Map<string, unknown>).keys(),
       ),
       mcpClients,
       customSystemPrompt: customPrompt,
@@ -592,7 +592,7 @@ export class QueryEngine {
           (msg.content.includes(`<${LOCAL_COMMAND_STDOUT_TAG}>`) ||
             msg.content.includes(`<${LOCAL_COMMAND_STDERR_TAG}>`))
         ) {
-          yield localCommandOutputToSDKAssistantMessage(msg.content, msg.uuid)
+          yield localCommandOutputToSDKAssistantMessage(msg.content, msg.uuid as unknown as import('crypto').UUID)
         }
 
         if (msg.type === 'system' && msg.subtype === 'compact_boundary') {
@@ -601,7 +601,11 @@ export class QueryEngine {
             subtype: 'compact_boundary' as const,
             session_id: getSessionId(),
             uuid: msg.uuid,
-            compact_metadata: toSDKCompactMetadata(msg.compactMetadata),
+            preTokens: msg.compactMetadata?.preTokens ?? 0,
+            trigger: msg.compactMetadata?.trigger ?? 'auto',
+            compact_metadata: msg.compactMetadata
+              ? toSDKCompactMetadata(msg.compactMetadata)
+              : undefined,
           } as SDKCompactBoundaryMessage
         }
       }
@@ -650,7 +654,7 @@ export class QueryEngine {
                 fileHistory: updater(prev.fileHistory),
               }))
             },
-            message.uuid,
+            message.uuid as unknown as import('crypto').UUID,
           )
         })
     }
@@ -706,7 +710,7 @@ export class QueryEngine {
           message.type === 'system' &&
           message.subtype === 'compact_boundary'
         ) {
-          const tailUuid = message.compactMetadata?.preservedSegment?.tailUuid
+          const tailUuid = (message.compactMetadata as CompactMetadata)?.preservedSegment?.tailUuid
           if (tailUuid) {
             const tailIdx = this.mutableMessages.findLastIndex(
               m => m.uuid === tailUuid,
@@ -717,7 +721,7 @@ export class QueryEngine {
               transcriptMessage = {
                 ...message,
                 compactMetadata: {
-                  ...message.compactMetadata,
+                  ...(message.compactMetadata as CompactMetadata),
                   preservedSegment: undefined,
                 },
               }
@@ -797,7 +801,7 @@ export class QueryEngine {
           break
         case 'user':
           this.mutableMessages.push(message)
-          yield* normalizeMessage(message)
+          yield* normalizeMessage(message as Message)
           break
         case 'stream_event':
           if (message.event.type === 'message_start') {
@@ -805,20 +809,20 @@ export class QueryEngine {
             currentMessageUsage = EMPTY_USAGE
             currentMessageUsage = updateUsage(
               currentMessageUsage,
-              message.event.message.usage,
+              (message.event as any).message?.usage,
             )
           }
           if (message.event.type === 'message_delta') {
             currentMessageUsage = updateUsage(
               currentMessageUsage,
-              message.event.usage,
+              (message.event as any).usage,
             )
             // Capture stop_reason from message_delta. The assistant message
             // is yielded at content_block_stop with stop_reason=null; the
             // real value only arrives here (see claude.ts message_delta
             // handler). Without this, result.stop_reason is always null.
-            if (message.event.delta.stop_reason != null) {
-              lastStopReason = message.event.delta.stop_reason
+            if ((message.event as any).delta?.stop_reason != null) {
+              lastStopReason = (message.event as any).delta.stop_reason
             }
           }
           if (message.event.type === 'message_stop') {

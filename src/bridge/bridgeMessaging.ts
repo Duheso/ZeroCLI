@@ -103,7 +103,7 @@ export function isEligibleBridgeMessage(m: Message): boolean {
 export function extractTitleText(m: Message): string | undefined {
   if (m.type !== 'user' || m.isMeta || m.toolUseResult || m.isCompactSummary)
     return undefined
-  if (m.origin && !['bridge', 'ide', 'voice'].includes(m.origin)) return undefined
+  if (m.origin && !['bridge', 'ide', 'voice'].includes(m.origin.kind)) return undefined
   const content = m.message.content
   let raw: string | undefined
   if (typeof content === 'string') {
