@@ -7,6 +7,7 @@ import { McpParsingWarnings } from 'src/components/mcp/McpParsingWarnings.js';
 import { getModelMaxOutputTokens } from 'src/utils/context.js';
 import { getClaudeConfigHomeDir } from 'src/utils/envUtils.js';
 import type { SettingSource } from 'src/utils/settings/constants.js';
+import type { AgentDefinitionsResult } from '../tools/AgentTool/loadAgentsDir.js';
 import { getOriginalCwd } from '../bootstrap/state.js';
 import type { CommandResultDisplay } from '../commands.js';
 import { Pane } from '../components/design-system/Pane.js';
@@ -54,12 +55,14 @@ type VersionLockInfo = {
   locksDir: string;
   staleLocksCleaned: number;
 };
-function DistTagsDisplay(t0) {
+function DistTagsDisplay(t0: {
+  promise: Promise<NpmDistTags>;
+}) {
   const $ = _c(8);
   const {
     promise
   } = t0;
-  const distTags = use(promise);
+  const distTags = use(promise) as NpmDistTags;
   if (!distTags.latest) {
     let t1;
     if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
@@ -97,7 +100,9 @@ function DistTagsDisplay(t0) {
   }
   return t3;
 }
-export function Doctor(t0) {
+export function Doctor(t0: {
+  onDone?: () => void;
+}) {
   const $ = _c(84);
   const {
     onDone
@@ -116,10 +121,10 @@ export function Doctor(t0) {
     t1 = $[1];
   }
   const tools = t1;
-  const [diagnostic, setDiagnostic] = useState(null);
-  const [agentInfo, setAgentInfo] = useState(null);
-  const [contextWarnings, setContextWarnings] = useState(null);
-  const [versionLockInfo, setVersionLockInfo] = useState(null);
+  const [diagnostic, setDiagnostic] = useState<DiagnosticInfo | null>(null);
+  const [agentInfo, setAgentInfo] = useState<{ activeAgents: { agentType: string; source: string }[]; userAgentsDir: string; projectAgentsDir: string; userDirExists: boolean; projectDirExists: boolean; failedFiles?: { path: string; error: string }[] } | null>(null);
+  const [contextWarnings, setContextWarnings] = useState<ContextWarnings | null>(null);
+  const [versionLockInfo, setVersionLockInfo] = useState<VersionLockInfo | null>(null);
   const validationErrors = useSettingsErrors();
   let t2;
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
@@ -171,7 +176,7 @@ export function Doctor(t0) {
           activeAgents,
           allAgents,
           failedFiles
-        } = agentDefinitions;
+        } = agentDefinitions as AgentDefinitionsResult;
         const [userDirExists, projectDirExists] = await Promise.all([pathExists(userAgentsDir), pathExists(projectAgentsDir)]);
         const agentInfoData = {
           activeAgents: activeAgents.map(_temp0),
@@ -222,7 +227,7 @@ export function Doctor(t0) {
   let t7;
   if ($[11] !== onDone) {
     t7 = () => {
-      onDone("ZeroCLI diagnostics dismissed", {
+      (onDone as Function)?.call(null, "ZeroCLI diagnostics dismissed", {
         display: "system"
       });
     };
@@ -500,57 +505,57 @@ export function Doctor(t0) {
   }
   return t41;
 }
-function _temp18(detail_2, i_8) {
+function _temp18(detail_2: string, i_8: number) {
   return <Text key={i_8} dimColor={true}>{"    "}└ {detail_2}</Text>;
 }
-function _temp17(detail_1, i_7) {
+function _temp17(detail_1: string, i_7: number) {
   return <Text key={i_7} dimColor={true}>{"    "}└ {detail_1}</Text>;
 }
-function _temp16(detail_0, i_6) {
+function _temp16(detail_0: string, i_6: number) {
   return <Text key={i_6} dimColor={true}>{"    "}└ {detail_0}</Text>;
 }
-function _temp15(detail, i_5) {
+function _temp15(detail: string, i_5: number) {
   return <Text key={i_5} dimColor={true}>{"  "}└ {detail}</Text>;
 }
-function _temp14(error_0, i_4) {
-  return <Text key={i_4} dimColor={true}>{"  "}└ {error_0.source || "unknown"}{"plugin" in error_0 && error_0.plugin ? ` [${error_0.plugin}]` : ""}:{" "}{getPluginErrorMessage(error_0)}</Text>;
+function _temp14(error_0: { source?: string; plugin?: string }, i_4: number) {
+  return <Text key={i_4} dimColor={true}>{"  "}└ {error_0.source || "unknown"}{"plugin" in error_0 && error_0.plugin ? ` [${error_0.plugin}]` : ""}:{" "}{getPluginErrorMessage(error_0 as any)}</Text>;
 }
-function _temp13(file, i_3) {
+function _temp13(file: { path: string; error: string }, i_3: number) {
   return <Text key={i_3} dimColor={true}>{"  "}└ {file.path}: {file.error}</Text>;
 }
-function _temp12(lock, i_2) {
+function _temp12(lock: { version: string; pid: string | number; isProcessRunning: boolean }, i_2: number) {
   return <Text key={i_2}>└ {lock.version}: PID {lock.pid}{" "}{lock.isProcessRunning ? <Text>(running)</Text> : <Text color="warning">(stale)</Text>}</Text>;
 }
-function _temp11(validation, i_1) {
+function _temp11(validation: { name: string; status: string; message: string }, i_1: number) {
   return <Text key={i_1}>└ {validation.name}:{" "}<Text color={validation.status === "capped" ? "warning" : "error"}>{validation.message}</Text></Text>;
 }
-function _temp10(warning, i_0) {
+function _temp10(warning: { issue: string; fix: string }, i_0: number) {
   return <Box key={i_0} flexDirection="column"><Text color="warning">Warning: {warning.issue}</Text><Text>Fix: {warning.fix}</Text></Box>;
 }
-function _temp1(install, i) {
+function _temp1(install: { type: string; path: string }, i: number) {
   return <Text key={i}>└ {install.type} at {install.path}</Text>;
 }
-function _temp0(a) {
+function _temp0(a: { agentType: string; source: string }) {
   return {
     agentType: a.agentType,
     source: a.source
   };
 }
-function _temp9(v_0) {
+function _temp9(v_0: { status: string }) {
   return v_0.status !== "valid";
 }
-function _temp8(v) {
+function _temp8(v: { name: string; default: string | number; upperLimit: string | number }) {
   const value = process.env[v.name];
-  const result = validateBoundedIntEnvVar(v.name, value, v.default, v.upperLimit);
+  const result = validateBoundedIntEnvVar(v.name, value, v.default as number, v.upperLimit as number);
   return {
     name: v.name,
     ...result
   };
 }
-function _temp7(error) {
+function _temp7(error: { mcpErrorMetadata?: unknown }) {
   return error.mcpErrorMetadata === undefined;
 }
-function _temp6(diag) {
+function _temp6(diag: DiagnosticInfo) {
   const fetchDistTags = diag.installationType === "native" ? getGcsDistTags : getNpmDistTags;
   if (diag.installationType === "development") {
     return { latest: null, stable: null };
@@ -563,15 +568,15 @@ function _temp5() {
     stable: null
   };
 }
-function _temp4(s_2) {
+function _temp4(s_2: any) {
   return s_2.plugins.errors;
 }
-function _temp3(s_1) {
+function _temp3(s_1: any) {
   return s_1.toolPermissionContext;
 }
-function _temp2(s_0) {
+function _temp2(s_0: any) {
   return s_0.mcp.tools;
 }
-function _temp(s) {
+function _temp(s: any) {
   return s.agentDefinitions;
 }

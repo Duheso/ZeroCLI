@@ -108,7 +108,7 @@ export function Login(props: {
       title="Login"
       onCancel={() => props.onDone({ type: 'cancel' }, mainLoopModel)}
       color="permission"
-      inputGuide={exitState =>
+      inputGuide={(exitState: { pending: boolean; keyName: string }) =>
         exitState.pending ? (
           <Text>Press {exitState.keyName} again to exit</Text>
         ) : (

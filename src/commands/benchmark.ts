@@ -1,16 +1,14 @@
-import type { ToolUseContext } from '../Tool.js'
-import type { Command } from '../types/command.js'
 import {
   benchmarkModel,
   benchmarkMultipleModels,
   formatBenchmarkResults,
   isBenchmarkSupported,
 } from '../utils/model/benchmark.js'
-import { getOllamaModelOptions } from '../utils/model/ollamaModels.js'
+import { getCachedOllamaModelOptions } from '../utils/model/ollamaModels.js'
 
 async function runBenchmark(
   model?: string,
-  context?: ToolUseContext,
+  context?: { stdout?: { write: (s: string) => void } },
 ): Promise<void> {
   if (!isBenchmarkSupported()) {
     context?.stdout?.write(
@@ -25,15 +23,14 @@ async function runBenchmark(
   if (model) {
     modelsToBenchmark = [model]
   } else {
-    const ollamaModels = getOllamaModelOptions()
-    modelsToBenchmark = ollamaModels.slice(0, 3).map((m) => m.value)
+    modelsToBenchmark = getCachedOllamaModelOptions().slice(0, 3).map((m) => String(m.value))
   }
 
   context?.stdout?.write(`Benchmarking ${modelsToBenchmark.length} model(s)...\n`)
 
   const results = await benchmarkMultipleModels(
     modelsToBenchmark,
-    (completed, total, result) => {
+    (completed: number, total: number, result: { model: string; success: boolean; tokensPerSecond: number }) => {
       context?.stdout?.write(
         `[${completed}/${total}] ${result.model}: ` +
           `${result.success ? result.tokensPerSecond.toFixed(1) + ' tps' : 'FAILED'}\n`,
@@ -44,13 +41,15 @@ async function runBenchmark(
   context?.stdout?.write('\n' + formatBenchmarkResults(results) + '\n')
 }
 
-export const benchmark: Command = {
+export const benchmark = {
   name: 'benchmark',
-
-  async onExecute(context: ToolUseContext): Promise<void> {
-    const args = context.args ?? {}
-    const model = args.model as string | undefined
-
-    await runBenchmark(model, context)
-  },
+  type: 'local' as const,
+  supportsNonInteractive: true,
+  description: 'Run model benchmarks',
+  load: async () => ({
+    call: async (args: string) => {
+      const parsed = (args || '').trim()
+      await runBenchmark(parsed || undefined)
+    },
+  }),
 }

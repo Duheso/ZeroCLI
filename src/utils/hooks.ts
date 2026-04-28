@@ -70,8 +70,6 @@ import {
   type HookCallbackMatcher,
   type PromptRequest,
   type PromptResponse,
-  isAsyncHookJSONOutput,
-  isSyncHookJSONOutput,
   type PermissionRequestResult,
 } from '../types/hooks.js'
 import type {
@@ -104,14 +102,51 @@ import type {
   ElicitationHookInput,
   ElicitationResultHookInput,
   PermissionUpdate,
-  ExitReason,
-  SyncHookJSONOutput,
-  AsyncHookJSONOutput,
-} from 'src/entrypoints/agentSdkTypes.js'
-import type { StatusLineCommandInput } from '../types/statusLine.js'
+} from '../entrypoints/sdk/coreTypes.js'
 import type { ElicitResult } from '@modelcontextprotocol/sdk/types.js'
-import type { FileSuggestionCommandInput } from '../types/fileSuggestion.js'
-import type { HookResultMessage } from 'src/types/message.js'
+import type { HookResultMessage } from '../types/message.js'
+
+// Missing types that were in agentSdkTypes.js but not in coreTypes.ts
+// AsyncHookJSONOutput doesn't exist in the SDK types -- it's the same shape as HookJSONOutput
+type AsyncHookJSONOutput = HookJSONOutput
+
+// Local type aliases to break circular dependency (SyncHookJSONOutput is defined
+// in src/types/hooks.ts which imports from the SDK, but coreTypes.ts re-exports
+// it back — creating a cycle). These shapes mirror the original types.
+type LocalSyncHookJSONOutput = HookJSONOutput & {
+  async?: false
+  hookSpecificOutput?: any
+  systemMessage?: string
+  decision?: string
+  continue?: boolean
+  stopReason?: string
+}
+
+type LocalAsyncHookJSONOutput = HookJSONOutput & {
+  async: true
+}
+
+// Local type guards that avoid the circular import
+function isLocalSyncHook(json: HookJSONOutput): json is LocalSyncHookJSONOutput {
+  return !('async' in json && json.async === true)
+}
+
+function isLocalAsyncHook(json: HookJSONOutput): json is LocalAsyncHookJSONOutput {
+  return 'async' in json && json.async === true
+}
+
+// ExitReason is an empty placeholder type (used for session end hooks)
+type ExitReason = string
+
+// StatusLineCommandInput - opaque input passed to status line hooks
+type StatusLineCommandInput = Record<string, unknown>
+
+// StatusLineConfig - not used in this file, but was imported from non-existent module
+type StatusLineConfig = { enabled: boolean }
+
+// FileSuggestionCommandInput - opaque input passed to file suggestion hooks
+type FileSuggestionCommandInput = Record<string, unknown>
+
 import chalk from 'chalk'
 import type {
   HookMatcher,
@@ -639,7 +674,7 @@ function processHookJSONOutput({
   exitCode,
   durationMs,
 }: {
-  json: SyncHookJSONOutput
+  json: LocalSyncHookJSONOutput
   command: string
   hookName: string
   toolUseID: string
@@ -1265,7 +1300,7 @@ async function execCommandHook(
         logForDebugging(
           `Hooks: Parsed initial response: ${jsonStringify(parsed)}`,
         )
-        if (isAsyncHookJSONOutput(parsed) && !forceSyncExecution) {
+        if (isLocalAsyncHook(parsed) && !forceSyncExecution) {
           const processId = `async_hook_${child.pid}`
           logForDebugging(
             `Hooks: Detected async hook, backgrounding process ${processId}`,
@@ -1290,7 +1325,7 @@ async function execCommandHook(
               status: 0,
             })
           }
-        } else if (isAsyncHookJSONOutput(parsed) && forceSyncExecution) {
+        } else if (isLocalAsyncHook(parsed) && forceSyncExecution) {
           logForDebugging(
             `Hooks: Detected async hook but forceSyncExecution is true, waiting for completion`,
           )
@@ -1541,8 +1576,8 @@ async function prepareIfConditionMatcher(
     return undefined
   }
 
-  const toolName = normalizeLegacyToolName(hookInput.tool_name)
-  const tool = tools && findToolByName(tools, hookInput.tool_name)
+  const toolName = normalizeLegacyToolName(hookInput.tool_name ?? '')
+  const tool = tools && findToolByName(tools, hookInput.tool_name ?? '')
   const input = tool?.inputSchema.safeParse(hookInput.tool_input)
   const patternMatcher =
     input?.success && tool?.preparePermissionMatcher
@@ -1804,7 +1839,7 @@ export async function getMatchingHooks(
         matchQuery = hookInput.load_reason
         break
       case 'FileChanged':
-        matchQuery = basename(hookInput.file_path)
+        matchQuery = hookInput.file_path ? basename(hookInput.file_path) : undefined
         break
       default:
         break
@@ -2532,7 +2567,7 @@ async function* executeHooks({
           return
         }
 
-        if (httpJson && isAsyncHookJSONOutput(httpJson)) {
+        if (httpJson && isLocalAsyncHook(httpJson)) {
           // Async response: treat as success (no further processing)
           emitHookResponse({
             hookId,
@@ -2673,7 +2708,7 @@ async function* executeHooks({
 
       if (json) {
         // Async responses were already backgrounded during execution
-        if (isAsyncHookJSONOutput(json)) {
+        if (isLocalAsyncHook(json)) {
           yield {
             outcome: 'success' as const,
             hook,
@@ -2697,7 +2732,7 @@ async function* executeHooks({
 
         // Handle suppressOutput (skip for async responses)
         if (
-          isSyncHookJSONOutput(json) &&
+          isLocalSyncHook(json) &&
           !json.suppressOutput &&
           plainText &&
           result.status === 0
@@ -3243,7 +3278,7 @@ async function executeHooksOutsideREPL({
 
           cleanup?.()
 
-          if (isAsyncHookJSONOutput(json)) {
+          if (isLocalAsyncHook(json)) {
             logForDebugging(
               `${hookName} [callback] returned async response, returning empty output`,
             )
@@ -3257,12 +3292,12 @@ async function executeHooksOutsideREPL({
 
           const output =
             hookEvent === 'WorktreeCreate' &&
-            isSyncHookJSONOutput(json) &&
+            isLocalSyncHook(json) &&
             json.hookSpecificOutput?.hookEventName === 'WorktreeCreate'
               ? json.hookSpecificOutput.worktreePath
               : json.systemMessage || ''
           const blocked =
-            isSyncHookJSONOutput(json) && json.decision === 'block'
+            isLocalSyncHook(json) && json.decision === 'block'
 
           logForDebugging(`${hookName} [callback] completed successfully`)
 
@@ -3369,7 +3404,7 @@ async function executeHooksOutsideREPL({
           if (httpValidationError) {
             throw new Error(httpValidationError)
           }
-          if (httpJson && !isAsyncHookJSONOutput(httpJson)) {
+          if (httpJson && !isLocalAsyncHook(httpJson)) {
             logForDebugging(
               `Parsed JSON output from HTTP hook: ${jsonStringify(httpJson)}`,
               { level: 'verbose' },
@@ -3377,8 +3412,8 @@ async function executeHooksOutsideREPL({
           }
           const jsonBlocked =
             httpJson &&
-            !isAsyncHookJSONOutput(httpJson) &&
-            isSyncHookJSONOutput(httpJson) &&
+            !isLocalAsyncHook(httpJson) &&
+            isLocalSyncHook(httpJson) &&
             httpJson.decision === 'block'
 
           // WorktreeCreate's consumer reads `output` as the bare filesystem
@@ -3389,7 +3424,7 @@ async function executeHooksOutsideREPL({
           const output =
             hookEvent === 'WorktreeCreate'
               ? httpJson &&
-                isSyncHookJSONOutput(httpJson) &&
+                isLocalSyncHook(httpJson) &&
                 httpJson.hookSpecificOutput?.hookEventName === 'WorktreeCreate'
                 ? httpJson.hookSpecificOutput.worktreePath
                 : ''
@@ -3459,7 +3494,7 @@ async function executeHooksOutsideREPL({
           // Validation error is logged via logForDebugging and returned in output
           throw new Error(validationError)
         }
-        if (json && !isAsyncHookJSONOutput(json)) {
+        if (json && !isLocalAsyncHook(json)) {
           logForDebugging(
             `Parsed JSON output from hook: ${jsonStringify(json)}`,
             { level: 'verbose' },
@@ -3469,8 +3504,8 @@ async function executeHooksOutsideREPL({
         // Blocked if exit code 2 or JSON decision: 'block'
         const jsonBlocked =
           json &&
-          !isAsyncHookJSONOutput(json) &&
-          isSyncHookJSONOutput(json) &&
+          !isLocalAsyncHook(json) &&
+          isLocalSyncHook(json) &&
           json.decision === 'block'
         const blocked = result.status === 2 || !!jsonBlocked
 
@@ -3480,14 +3515,14 @@ async function executeHooksOutsideREPL({
 
         const watchPaths =
           json &&
-          isSyncHookJSONOutput(json) &&
+          isLocalSyncHook(json) &&
           json.hookSpecificOutput &&
           'watchPaths' in json.hookSpecificOutput
             ? json.hookSpecificOutput.watchPaths
             : undefined
 
         const systemMessage =
-          json && isSyncHookJSONOutput(json) ? json.systemMessage : undefined
+          json && isLocalSyncHook(json) ? json.systemMessage : undefined
 
         return {
           command: hook.command,
@@ -4161,7 +4196,7 @@ export async function executePreCompactHooks(
     ...createBaseHookInput(undefined),
     hook_event_name: 'PreCompact',
     trigger: compactData.trigger,
-    custom_instructions: compactData.customInstructions,
+    custom_instructions: compactData.customInstructions ?? undefined,
   }
 
   const results = await executeHooksOutsideREPL({
@@ -4602,10 +4637,10 @@ function parseElicitationHookOutput(
 
   try {
     const parsed = hookJSONOutputSchema().parse(JSON.parse(trimmed))
-    if (isAsyncHookJSONOutput(parsed)) {
+    if (isLocalAsyncHook(parsed)) {
       return {}
     }
-    if (!isSyncHookJSONOutput(parsed)) {
+    if (!isLocalSyncHook(parsed)) {
       return {}
     }
 
@@ -5056,7 +5091,7 @@ async function executeHookCallback({
     hookIndex,
     context,
   )
-  if (isAsyncHookJSONOutput(json)) {
+  if (isLocalAsyncHook(json)) {
     return {
       outcome: 'success',
       hook,

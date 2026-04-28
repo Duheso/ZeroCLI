@@ -249,10 +249,10 @@ export type HookInput = {
   permission_mode?: string
   agent_id?: string
   agent_type?: string
-  hook_event_name: string
+  hook_event_name: HookEvent
   // Common optional fields used by hook subtypes
   tool_name?: string
-  tool_input?: Record<string, unknown>
+  tool_input?: unknown
   tool_output?: unknown
   tool_use_id?: string
   tool_response?: unknown
@@ -261,6 +261,12 @@ export type HookInput = {
   prompt?: string
   file_path?: string
   stop_reason?: string
+  source?: string
+  trigger?: string
+  notification_type?: string
+  reason?: string
+  load_reason?: string
+  mcp_server_name?: string
 }
 
 /** Output of a hook invocation in JSON mode. */
@@ -273,36 +279,38 @@ export type HookJSONOutput = {
   updatedInput?: Record<string, unknown>
   additionalContext?: string
   initialUserMessage?: string
+  hookEventName?: string
   [key: string]: unknown
 }
 
 
 // Hook input types (stubs for open-source mirror)
-export type SessionStartHookInput = HookInput & { hook_event_name: 'SessionStart' }
-export type SessionEndHookInput = HookInput & { hook_event_name: 'SessionEnd' }
-export type StopHookInput = HookInput & { hook_event_name: 'Stop'; stop_reason?: string }
-export type PreToolUseHookInput = HookInput & { hook_event_name: 'PreToolUse'; tool_name?: string; tool_input?: Record<string, unknown> }
-export type PostToolUseHookInput = HookInput & { hook_event_name: 'PostToolUse'; tool_name?: string; tool_output?: unknown }
-export type PostToolUseFailureHookInput = HookInput & { hook_event_name: 'PostToolUseFailure'; tool_name?: string; error?: string }
-export type NotificationHookInput = HookInput & { hook_event_name: 'Notification'; message?: string }
-export type UserPromptSubmitHookInput = HookInput & { hook_event_name: 'UserPromptSubmit'; prompt?: string }
-export type PermissionDeniedHookInput = HookInput & { hook_event_name: 'PermissionDenied'; tool_name?: string }
-export type PermissionRequestHookInput = HookInput & { hook_event_name: 'PermissionRequest'; tool_name?: string }
-export type PreCompactHookInput = HookInput & { hook_event_name: 'PreCompact' }
-export type PostCompactHookInput = HookInput & { hook_event_name: 'PostCompact' }
-export type SubagentStartHookInput = HookInput & { hook_event_name: 'SubagentStart' }
-export type SubagentStopHookInput = HookInput & { hook_event_name: 'SubagentStop' }
-export type StopFailureHookInput = HookInput & { hook_event_name: 'StopFailure' }
-export type TaskCreatedHookInput = HookInput & { hook_event_name: 'TaskCreated' }
-export type TaskCompletedHookInput = HookInput & { hook_event_name: 'TaskCompleted' }
-export type TeammateIdleHookInput = HookInput & { hook_event_name: 'TeammateIdle' }
-export type InstructionsLoadedHookInput = HookInput & { hook_event_name: 'InstructionsLoaded' }
-export type FileChangedHookInput = HookInput & { hook_event_name: 'FileChanged'; file_path?: string }
-export type CwdChangedHookInput = HookInput & { hook_event_name: 'CwdChanged'; cwd?: string }
-export type ConfigChangeHookInput = HookInput & { hook_event_name: 'ConfigChange' }
-export type SetupHookInput = HookInput & { hook_event_name: 'Setup' }
-export type ElicitationHookInput = HookInput & { hook_event_name: 'Elicitation' }
-export type ElicitationResultHookInput = HookInput & { hook_event_name: 'ElicitationResult' }
+type HookInputExt = HookInput & { tool_input?: unknown; title?: string; error_details?: unknown; teammate_name?: string; team_name?: string; task_id?: string; task_subject?: string; task_description?: unknown; model?: string; custom_instructions?: string; compact_summary?: string; old_cwd?: string; new_cwd?: string; event?: string; memory_type?: string; globs?: string[]; mode?: string; elicitation_id?: string; action?: string; url?: string; matchQuery?: unknown; last_assistant_message?: string; stop_hook_active?: boolean; agent_id?: unknown; agent_transcript_path?: string; agent_type?: string; is_interrupt?: boolean; permission_suggestions?: unknown[]; trigger_file_path?: string; parent_file_path?: string; requested_schema?: unknown; content?: unknown }
+export type SessionStartHookInput = HookInputExt
+export type SessionEndHookInput = HookInputExt
+export type StopHookInput = HookInputExt
+export type PreToolUseHookInput = HookInputExt
+export type PostToolUseHookInput = HookInputExt
+export type PostToolUseFailureHookInput = HookInputExt
+export type NotificationHookInput = HookInputExt
+export type UserPromptSubmitHookInput = HookInputExt
+export type PermissionDeniedHookInput = HookInputExt
+export type PermissionRequestHookInput = HookInputExt
+export type PreCompactHookInput = HookInputExt
+export type PostCompactHookInput = HookInputExt
+export type SubagentStartHookInput = HookInputExt
+export type SubagentStopHookInput = HookInputExt
+export type StopFailureHookInput = HookInputExt
+export type TaskCreatedHookInput = HookInputExt
+export type TaskCompletedHookInput = HookInputExt
+export type TeammateIdleHookInput = HookInputExt
+export type InstructionsLoadedHookInput = HookInputExt
+export type FileChangedHookInput = HookInputExt
+export type CwdChangedHookInput = HookInputExt
+export type ConfigChangeHookInput = HookInputExt
+export type SetupHookInput = HookInputExt
+export type ElicitationHookInput = HookInputExt
+export type ElicitationResultHookInput = HookInputExt
 
 // Additional SDK message types
 export type SDKAssistantMessageError = string | { type: 'error'; error: string; [key: string]: unknown }
