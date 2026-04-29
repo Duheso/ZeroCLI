@@ -70,6 +70,15 @@ export type REPLToolProgress = {
   message: string
 }
 
+// SDK workflow progress (used by sdkEventQueue + sdkProgress)
+export type SdkWorkflowProgress = {
+  type: 'sdk_workflow_progress'
+  phaseIndex?: number
+  status?: string
+  description?: string
+  [key: string]: unknown
+}
+
 // Union of all tool progress data types
 export type ToolProgressData =
   | BashProgress
