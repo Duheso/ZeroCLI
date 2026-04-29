@@ -15,10 +15,15 @@ type Props = {
   shimmerColor: keyof Theme;
   stalledIntensity?: number;
 };
-const ERROR_RED = {
-  r: 171,
-  g: 43,
-  b: 63
+const STALL_PURPLE = {
+  r: 110,
+  g: 30,
+  b: 180
+};
+const STALL_PURPLE_SHIMMER = {
+  r: 155,
+  g: 75,
+  b: 225
 };
 export function GlimmerMessage(t0) {
   const $ = _c(75);
@@ -86,19 +91,29 @@ export function GlimmerMessage(t0) {
       }
       if (stalledIntensity > 0) {
         const baseColorStr = theme[messageColor];
+        const shimmerColorStr = theme[shimmerColor];
         const baseRGB = baseColorStr ? parseRGB(baseColorStr) : null;
+        const shimRGB = shimmerColorStr ? parseRGB(shimmerColorStr) : null;
         if (baseRGB) {
-          const interpolated = interpolateColor(baseRGB, ERROR_RED, stalledIntensity);
-          const color = toRGBColor(interpolated);
-          let t5;
-          if ($[17] !== color) {
-            t5 = <Text color={color}> </Text>;
-            $[17] = color;
-            $[18] = t5;
+          const stallBase = toRGBColor(interpolateColor(baseRGB, STALL_PURPLE, stalledIntensity));
+          const stallShimmer = shimRGB
+            ? toRGBColor(interpolateColor(shimRGB, STALL_PURPLE_SHIMMER, stalledIntensity))
+            : stallBase;
+          const sStart = glimmerIndex - 1;
+          const sEnd = glimmerIndex + 1;
+          if (sStart < messageWidth && sEnd >= 0) {
+            const clamped = Math.max(0, sStart);
+            let cPos = 0; let sBefore = ''; let sShim = ''; let sAfter = '';
+            for (const { segment: seg, width: w } of segments) {
+              if (cPos + w <= clamped) { sBefore += seg; }
+              else if (cPos > sEnd) { sAfter += seg; }
+              else { sShim += seg; }
+              cPos += w;
+            }
+            t2 = <>{sBefore && <Text color={stallBase}>{sBefore}</Text>}<Text color={stallShimmer}>{sShim}</Text>{sAfter && <Text color={stallBase}>{sAfter}</Text>}<Text color={stallBase}> </Text></>;
           } else {
-            t5 = $[18];
+            t2 = <><Text color={stallBase}>{message}</Text><Text color={stallBase}> </Text></>;
           }
-          t2 = <><Text color={color}>{message}</Text>{t5}</>;
           break bb0;
         }
         const color_0 = stalledIntensity > 0.5 ? "error" : messageColor;

@@ -136,7 +136,7 @@ export function SpinnerAnimationRow({
   const glimmerMessageWidth = useMemo(() => stringWidth(message), [message]);
   const cycleLength = glimmerMessageWidth + 20;
   const cyclePosition = Math.floor(time / glimmerSpeed);
-  const glimmerIndex = reducedMotion ? -100 : isStalled ? -100 : mode === 'requesting' ? cyclePosition % cycleLength - 10 : glimmerMessageWidth + 10 - cyclePosition % cycleLength;
+  const glimmerIndex = reducedMotion ? -100 : mode === 'requesting' ? cyclePosition % cycleLength - 10 : glimmerMessageWidth + 10 - cyclePosition % cycleLength;
   const flashOpacity = reducedMotion ? 0 : mode === 'tool-use' ? (Math.sin(time / 1000 * Math.PI) + 1) / 2 : 0;
 
   // === Token counter animation (smooth increment, driven by 50ms clock) ===
