@@ -30,15 +30,15 @@ declare module 'image-processor-napi' {
       height: number
     } | null
   } | null
-  const __stub?: boolean
-  const sharp: unknown
+  export const __stub: boolean | undefined 
+  export const sharp: unknown
   export default sharp
 }
 
 declare const MACRO: {
-  /** Internal compat version (always "0.7.2" in open build). */
+  /** Internal compat version (always "0.7.3" in open build). */
   VERSION: string
-  /** Human-readable display version (e.g. "0.7.2"). */
+  /** Human-readable display version (e.g. "0.7.3"). */
   DISPLAY_VERSION?: string
   /** ISO timestamp of the build. */
   BUILD_TIME: string

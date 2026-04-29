@@ -17,9 +17,3 @@ export function isSnipRuntimeEnabled(): boolean {
 }
 
 export const SNIP_NUDGE_TEXT = ''
-
-export function isSnipRuntimeEnabled(): boolean {
-  return false
-}
-
-export const SNIP_NUDGE_TEXT = ''

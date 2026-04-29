@@ -470,7 +470,7 @@ export async function countTokensViaHaikuFallback(
 export function roughTokenCountEstimationForMessages(
   messages: readonly {
     type: string
-    message?: { content?: unknown }
+    message?: { content?: unknown } | Record<string, unknown>
     attachment?: Attachment
   }[],
 ): number {
@@ -483,7 +483,7 @@ export function roughTokenCountEstimationForMessages(
 
 export function roughTokenCountEstimationForMessage(message: {
   type: string
-  message?: { content?: unknown }
+  message?: { content?: unknown } | Record<string, unknown>
   attachment?: Attachment
 }): number {
   if (
@@ -554,7 +554,9 @@ function roughTokenCountEstimationForBlock(
     return 2000
   }
   if (block.type === 'tool_result') {
-    return roughTokenCountEstimationForContent(block.content)
+    return roughTokenCountEstimationForContent(
+      block.content as string | Anthropic.ContentBlockParam[] | undefined,
+    )
   }
   if (block.type === 'tool_use') {
     // input is the JSON the model generated — arbitrarily large (bash

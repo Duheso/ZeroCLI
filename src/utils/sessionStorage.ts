@@ -57,12 +57,13 @@ import {
 import type {
   AssistantMessage,
   AttachmentMessage,
+  CompactMetadata,
   Message,
   SystemCompactBoundaryMessage,
   SystemMessage,
   UserMessage,
 } from '../types/message.js'
-import type { QueueOperationMessage } from '../types/messageQueueTypes.js'
+import type { QueueOperationMessage } from '../types/message.js'
 import { uniq } from './array.js'
 import { registerCleanup } from './cleanupRegistry.js'
 import { updateSessionName } from './concurrentSessions.js'
@@ -1033,10 +1034,10 @@ class Project {
           'sourceToolAssistantUUID' in message &&
           message.sourceToolAssistantUUID
         ) {
-          effectiveParentUuid = message.sourceToolAssistantUUID
+          effectiveParentUuid = message.sourceToolAssistantUUID as UUID
         }
 
-        const transcriptMessage: TranscriptMessage = {
+        const transcriptMessage = {
           parentUuid: isCompactBoundary ? null : effectiveParentUuid,
           logicalParentUuid: isCompactBoundary ? parentUuid : undefined,
           isSidechain,
@@ -1061,10 +1062,10 @@ class Project {
           version: VERSION,
           gitBranch,
           slug,
-        }
+        } as TranscriptMessage
         await this.appendEntry(transcriptMessage)
         if (isChainParticipant(message)) {
-          parentUuid = message.uuid
+          parentUuid = message.uuid as UUID
         }
       }
 
@@ -1445,7 +1446,7 @@ export async function recordTranscript(
   // already in messageSet). Progress is skipped — it's written to the JSONL
   // but nothing chains TO it (see isChainParticipant).
   const lastRecorded = newMessages.findLast(isChainParticipant)
-  return (lastRecorded?.uuid as UUID | undefined) ?? startingParentUuid ?? null
+  return ((lastRecorded?.uuid) ?? startingParentUuid ?? null) as UUID | null
 }
 
 export async function recordSidechainTranscript(
@@ -1837,27 +1838,28 @@ export function removeExtraFields(
  * Mutates the Map in place.
  */
 function applyPreservedSegmentRelinks(
-  messages: Map<UUID, TranscriptMessage>,
+  messages: Map<string, TranscriptMessage>,
 ): {
   relinkFailed: boolean
 } {
   let relinkFailed = false
-  type Seg = NonNullable<
-    SystemCompactBoundaryMessage['compactMetadata']['preservedSegment']
-  >
+  type Seg = NonNullable<CompactMetadata['preservedSegment']> & {
+    headUuid?: string
+    anchorUuid?: string
+  }
 
   // Find the absolute-last boundary and the last seg-boundary (can differ:
   // manual /compact after reactive compact → seg is stale).
   let lastSeg: Seg | undefined
   let lastSegBoundaryIdx = -1
   let absoluteLastBoundaryIdx = -1
-  const entryIndex = new Map<UUID, number>()
+  const entryIndex = new Map<string, number>()
   let i = 0
   for (const entry of messages.values()) {
     entryIndex.set(entry.uuid, i)
     if (isCompactBoundaryMessage(entry)) {
       absoluteLastBoundaryIdx = i
-      const seg = entry.compactMetadata?.preservedSegment
+      const seg = (entry.compactMetadata as CompactMetadata)?.preservedSegment
       if (seg) {
         lastSeg = seg
         lastSegBoundaryIdx = i
@@ -1875,12 +1877,12 @@ function applyPreservedSegmentRelinks(
   // Validate tail→head BEFORE mutating so malformed metadata never keeps
   // the full pre-compact history alive on resume. If the walk breaks, mark
   // the relink as failed and fall through to absolute-boundary pruning.
-  const preservedUuids = new Set<UUID>()
+  const preservedUuids = new Set<string>()
   if (segIsLive) {
-    const walkSeen = new Set<UUID>()
+    const walkSeen = new Set<string>()
     const tailInTranscript = messages.has(lastSeg.tailUuid)
-    const headInTranscript = messages.has(lastSeg.headUuid)
-    const anchorInTranscript = messages.has(lastSeg.anchorUuid)
+    const headInTranscript = lastSeg.headUuid ? messages.has(lastSeg.headUuid) : false
+    const anchorInTranscript = lastSeg.anchorUuid ? messages.has(lastSeg.anchorUuid) : false
     let cur = messages.get(lastSeg.tailUuid)
     let reachedHead = false
     let failureKind:
@@ -1889,9 +1891,9 @@ function applyPreservedSegmentRelinks(
       | 'null_parent_before_head'
       | 'cycle_before_head'
       | 'missing_anchor' = 'missing_tail'
-    let lastSeenUuid: UUID | undefined
+    let lastSeenUuid: string | undefined
     let lastSeenType: TranscriptMessage['type'] | undefined
-    let breakParentUuid: UUID | null | undefined
+    let breakParentUuid: string | null | undefined
 
     while (cur) {
       if (walkSeen.has(cur.uuid)) {
@@ -1906,7 +1908,7 @@ function applyPreservedSegmentRelinks(
         reachedHead = true
         break
       }
-      breakParentUuid = cur.parentUuid
+      breakParentUuid = cur.parentUuid as string | null
       if (!breakParentUuid) {
         failureKind = 'null_parent_before_head'
         break
@@ -1937,9 +1939,9 @@ function applyPreservedSegmentRelinks(
         walkSteps: walkSeen.size,
         transcriptSize: messages.size,
         tailIndex: entryIndex.get(lastSeg.tailUuid),
-        headIndex: entryIndex.get(lastSeg.headUuid),
-        anchorIndex: entryIndex.get(lastSeg.anchorUuid),
-        lastSeenType,
+        headIndex: lastSeg.headUuid ? entryIndex.get(lastSeg.headUuid) : undefined,
+        anchorIndex: lastSeg.anchorUuid ? entryIndex.get(lastSeg.anchorUuid) : undefined,
+        lastSeenType: lastSeenType as unknown as number,
         breakParentInTranscript: Boolean(
           breakParentUuid && messages.has(breakParentUuid),
         ),
@@ -1960,18 +1962,18 @@ function applyPreservedSegmentRelinks(
   }
 
   if (segIsLive && !relinkFailed) {
-    const head = messages.get(lastSeg.headUuid)
-    if (head) {
+    const head = lastSeg.headUuid ? messages.get(lastSeg.headUuid) : undefined
+    if (head && lastSeg.headUuid && lastSeg.anchorUuid) {
       messages.set(lastSeg.headUuid, {
         ...head,
-        parentUuid: lastSeg.anchorUuid,
+        parentUuid: lastSeg.anchorUuid as UUID,
       })
     }
     // Tail-splice: anchor's other children → tail. No-op if already pointing
     // at tail (the useLogMessages race case).
     for (const [uuid, msg] of messages) {
       if (msg.parentUuid === lastSeg.anchorUuid && uuid !== lastSeg.headUuid) {
-        messages.set(uuid, { ...msg, parentUuid: lastSeg.tailUuid })
+        messages.set(uuid, { ...msg, parentUuid: lastSeg.tailUuid as UUID })
       }
     }
     // Zero stale usage: on-disk input_tokens reflect pre-compact context
@@ -1998,7 +2000,7 @@ function applyPreservedSegmentRelinks(
 
   // Prune everything physically before the absolute-last boundary that
   // isn't preserved. preservedUuids empty when !segIsLive → full prune.
-  const toDelete: UUID[] = []
+  const toDelete: string[] = []
   for (const [uuid] of messages) {
     const idx = entryIndex.get(uuid)
     if (
@@ -2230,12 +2232,12 @@ function forEachParsedJSONLBufferEntry<T>(
  *
  * Mutates the Map in place.
  */
-function applySnipRemovals(messages: Map<UUID, TranscriptMessage>): void {
+function applySnipRemovals(messages: Map<string, TranscriptMessage>): void {
   // Structural check — snipMetadata only exists on the boundary subtype.
   // Avoids the subtype literal which is in excluded-strings.txt
   // (HISTORY_SNIP is internal-only; the literal must not leak into external builds).
   type WithSnipMeta = { snipMetadata?: { removedUuids?: UUID[] } }
-  const toDelete = new Set<UUID>()
+  const toDelete = new Set<string>()
   for (const entry of messages.values()) {
     const removedUuids = (entry as WithSnipMeta).snipMetadata?.removedUuids
     if (!removedUuids) continue
@@ -2248,7 +2250,7 @@ function applySnipRemovals(messages: Map<UUID, TranscriptMessage>): void {
   // (already absent, e.g. from a prior compact_boundary prune) contribute no
   // link; the relink walk will stop at the gap and pick up null (chain-root
   // behavior — same as if compact truncated there, which it did).
-  const deletedParent = new Map<UUID, UUID | null>()
+  const deletedParent = new Map<string, UUID | null>()
   let removedCount = 0
   for (const uuid of toDelete) {
     const entry = messages.get(uuid)
@@ -2318,11 +2320,11 @@ function findLatestMessage<T extends { timestamp: string }>(
  * @returns Array of messages from root to leaf
  */
 export function buildConversationChain(
-  messages: Map<UUID, TranscriptMessage>,
+  messages: Map<string, TranscriptMessage>,
   leafMessage: TranscriptMessage,
 ): TranscriptMessage[] {
   const transcript: TranscriptMessage[] = []
-  const seen = new Set<UUID>()
+  const seen = new Set<string>()
   let currentMsg: TranscriptMessage | undefined = leafMessage
   while (currentMsg) {
     if (seen.has(currentMsg.uuid)) {
@@ -2367,9 +2369,9 @@ export function buildConversationChain(
  * this recovery pass handles them.
  */
 function recoverOrphanedParallelToolResults(
-  messages: Map<UUID, TranscriptMessage>,
+  messages: Map<string, TranscriptMessage>,
   chain: TranscriptMessage[],
-  seen: Set<UUID>,
+  seen: Set<string>,
 ): TranscriptMessage[] {
   type ChainAssistant = Extract<TranscriptMessage, { type: 'assistant' }>
   const chainAssistants = chain.filter(
@@ -2388,7 +2390,7 @@ function recoverOrphanedParallelToolResults(
   // TRs indexed by parentUuid — insertMessageChain:~894 already wrote that
   // as the srcUUID, and --fork-session strips srcUUID but keeps parentUuid.
   const siblingsByMsgId = new Map<string, TranscriptMessage[]>()
-  const toolResultsByAsst = new Map<UUID, TranscriptMessage[]>()
+  const toolResultsByAsst = new Map<string, TranscriptMessage[]>()
   for (const m of messages.values()) {
     if (m.type === 'assistant' && m.message.id) {
       const group = siblingsByMsgId.get(m.message.id)
@@ -2411,7 +2413,7 @@ function recoverOrphanedParallelToolResults(
   // member so the group stays contiguous for normalizeMessagesForAPI's merge
   // and every TR lands after its tool_use.
   const processedGroups = new Set<string>()
-  const inserts = new Map<UUID, TranscriptMessage[]>()
+  const inserts = new Map<string, TranscriptMessage[]>()
   let recoveredCount = 0
   for (const asst of chainAssistants) {
     const msgId = asst.message.id
@@ -2497,7 +2499,7 @@ export function checkResumeConsistency(chain: Message[]): void {
  * Builds a filie history snapshot chain from the conversation
  */
 function buildFileHistorySnapshotChain(
-  fileHistorySnapshots: Map<UUID, FileHistorySnapshotMessage>,
+  fileHistorySnapshots: Map<string, FileHistorySnapshotMessage>,
   conversation: TranscriptMessage[],
 ): FileHistorySnapshot[] {
   const snapshots: FileHistorySnapshot[] = []
@@ -2529,7 +2531,7 @@ function buildFileHistorySnapshotChain(
  * cumulative state that should be restored on session resume.
  */
 function buildAttributionSnapshotChain(
-  attributionSnapshots: Map<UUID, AttributionSnapshotMessage>,
+  attributionSnapshots: Map<string, AttributionSnapshotMessage>,
   _conversation: TranscriptMessage[],
 ): AttributionSnapshotMessage[] {
   // Return all attribution snapshots - they will be merged during restore
@@ -2762,7 +2764,7 @@ function convertToLogOption(
     teamName: firstMessage.teamName,
     agentName: firstMessage.agentName,
     agentSetting,
-    leafUuid: lastMessage.uuid,
+    leafUuid: lastMessage.uuid as UUID,
     summary,
     customTitle,
     tag,
@@ -3277,7 +3279,7 @@ export async function loadFullLog(log: LogOption): Promise<LogOption> {
       gitBranch: mostRecentLeaf?.gitBranch ?? log.gitBranch,
       isSidechain: transcript[0]?.isSidechain ?? log.isSidechain,
       teamName: transcript[0]?.teamName ?? log.teamName,
-      leafUuid: mostRecentLeaf?.uuid ?? log.leafUuid,
+      leafUuid: (mostRecentLeaf?.uuid ?? log.leafUuid) as UUID,
       fileHistorySnapshots: buildFileHistorySnapshotChain(
         fileHistorySnapshots,
         transcript,
@@ -3333,7 +3335,7 @@ export async function searchSessionsByCustomTitle(
 
   // Deduplicate by sessionId - multiple logs can have the same sessionId
   // if they're different branches of the same conversation. Keep most recent.
-  const sessionIdToLog = new Map<UUID, LogOption>()
+  const sessionIdToLog = new Map<string, LogOption>()
   for (const log of matchingLogs) {
     const sessionId = getSessionIdFromLog(log)
     if (sessionId) {
@@ -3724,41 +3726,41 @@ export async function loadTranscriptFile(
   filePath: string,
   opts?: { keepAllLeaves?: boolean },
 ): Promise<{
-  messages: Map<UUID, TranscriptMessage>
-  summaries: Map<UUID, string>
-  customTitles: Map<UUID, string>
-  tags: Map<UUID, string>
-  agentNames: Map<UUID, string>
-  agentColors: Map<UUID, string>
-  agentSettings: Map<UUID, string>
-  prNumbers: Map<UUID, number>
-  prUrls: Map<UUID, string>
-  prRepositories: Map<UUID, string>
-  modes: Map<UUID, string>
-  worktreeStates: Map<UUID, PersistedWorktreeSession | null>
-  fileHistorySnapshots: Map<UUID, FileHistorySnapshotMessage>
-  attributionSnapshots: Map<UUID, AttributionSnapshotMessage>
-  contentReplacements: Map<UUID, ContentReplacementRecord[]>
+  messages: Map<string, TranscriptMessage>
+  summaries: Map<string, string>
+  customTitles: Map<string, string>
+  tags: Map<string, string>
+  agentNames: Map<string, string>
+  agentColors: Map<string, string>
+  agentSettings: Map<string, string>
+  prNumbers: Map<string, number>
+  prUrls: Map<string, string>
+  prRepositories: Map<string, string>
+  modes: Map<string, string>
+  worktreeStates: Map<string, PersistedWorktreeSession | null>
+  fileHistorySnapshots: Map<string, FileHistorySnapshotMessage>
+  attributionSnapshots: Map<string, AttributionSnapshotMessage>
+  contentReplacements: Map<string, ContentReplacementRecord[]>
   agentContentReplacements: Map<AgentId, ContentReplacementRecord[]>
   contextCollapseCommits: ContextCollapseCommitEntry[]
   contextCollapseSnapshot: ContextCollapseSnapshotEntry | undefined
-  leafUuids: Set<UUID>
+  leafUuids: Set<string>
 }> {
-  const messages = new Map<UUID, TranscriptMessage>()
-  const summaries = new Map<UUID, string>()
-  const customTitles = new Map<UUID, string>()
-  const tags = new Map<UUID, string>()
-  const agentNames = new Map<UUID, string>()
-  const agentColors = new Map<UUID, string>()
-  const agentSettings = new Map<UUID, string>()
-  const prNumbers = new Map<UUID, number>()
-  const prUrls = new Map<UUID, string>()
-  const prRepositories = new Map<UUID, string>()
-  const modes = new Map<UUID, string>()
-  const worktreeStates = new Map<UUID, PersistedWorktreeSession | null>()
-  const fileHistorySnapshots = new Map<UUID, FileHistorySnapshotMessage>()
-  const attributionSnapshots = new Map<UUID, AttributionSnapshotMessage>()
-  const contentReplacements = new Map<UUID, ContentReplacementRecord[]>()
+  const messages = new Map<string, TranscriptMessage>()
+  const summaries = new Map<string, string>()
+  const customTitles = new Map<string, string>()
+  const tags = new Map<string, string>()
+  const agentNames = new Map<string, string>()
+  const agentColors = new Map<string, string>()
+  const agentSettings = new Map<string, string>()
+  const prNumbers = new Map<string, number>()
+  const prUrls = new Map<string, string>()
+  const prRepositories = new Map<string, string>()
+  const modes = new Map<string, string>()
+  const worktreeStates = new Map<string, PersistedWorktreeSession | null>()
+  const fileHistorySnapshots = new Map<string, FileHistorySnapshotMessage>()
+  const attributionSnapshots = new Map<string, AttributionSnapshotMessage>()
+  const contentReplacements = new Map<string, ContentReplacementRecord[]>()
   const agentContentReplacements = new Map<
     AgentId,
     ContentReplacementRecord[]
@@ -3873,7 +3875,7 @@ export async function loadTranscriptFile(
     // append-only (parents before children), we record each progress→parent link
     // as we see it, chain-resolving through consecutive progress entries, then
     // rewrite any subsequent message whose parentUuid lands in the bridge.
-    const progressBridge = new Map<UUID, UUID | null>()
+    const progressBridge = new Map<string, UUID | null>()
 
     forEachParsedJSONLBufferEntry<Entry>(buf, entry => {
       // Legacy progress check runs before the Entry-typed else-if chain —
@@ -3979,15 +3981,15 @@ export async function loadTranscriptFile(
   )
 
   // Find all terminal messages (messages with no children)
-  const terminalMessages = allMessages.filter(msg => !parentUuids.has(msg.uuid))
+  const terminalMessages = allMessages.filter(msg => !parentUuids.has(msg.uuid as UUID))
 
-  const leafUuids = new Set<UUID>()
+  const leafUuids = new Set<string>()
   let hasCycle = false
 
   if (getFeatureValue_CACHED_MAY_BE_STALE('tengu_pebble_leaf_prune', false)) {
     // Build a set of UUIDs that have user/assistant children
     // (these are mid-conversation nodes, not dead ends)
-    const hasUserAssistantChild = new Set<UUID>()
+    const hasUserAssistantChild = new Set<string>()
     for (const msg of allMessages) {
       if (msg.parentUuid && (msg.type === 'user' || msg.type === 'assistant')) {
         hasUserAssistantChild.add(msg.parentUuid)
@@ -3999,7 +4001,7 @@ export async function loadTranscriptFile(
     // nodes where the conversation continued (e.g., an assistant tool_use message whose
     // progress child is terminal, but whose tool_result child continues the conversation).
     for (const terminal of terminalMessages) {
-      const seen = new Set<UUID>()
+      const seen = new Set<string>()
       let current: TranscriptMessage | undefined = terminal
       while (current) {
         if (seen.has(current.uuid)) {
@@ -4022,7 +4024,7 @@ export async function loadTranscriptFile(
     // Original leaf computation: walk back from terminal messages to find
     // the nearest user/assistant ancestor unconditionally
     for (const terminal of terminalMessages) {
-      const seen = new Set<UUID>()
+      const seen = new Set<string>()
       let current: TranscriptMessage | undefined = terminal
       while (current) {
         if (seen.has(current.uuid)) {
@@ -4072,15 +4074,15 @@ export async function loadTranscriptFile(
  * Loads all messages, summaries, file history snapshots, and attribution snapshots from a specific session file.
  */
 async function loadSessionFile(sessionId: UUID): Promise<{
-  messages: Map<UUID, TranscriptMessage>
-  summaries: Map<UUID, string>
-  customTitles: Map<UUID, string>
-  tags: Map<UUID, string>
-  agentSettings: Map<UUID, string>
-  worktreeStates: Map<UUID, PersistedWorktreeSession | null>
-  fileHistorySnapshots: Map<UUID, FileHistorySnapshotMessage>
-  attributionSnapshots: Map<UUID, AttributionSnapshotMessage>
-  contentReplacements: Map<UUID, ContentReplacementRecord[]>
+  messages: Map<string, TranscriptMessage>
+  summaries: Map<string, string>
+  customTitles: Map<string, string>
+  tags: Map<string, string>
+  agentSettings: Map<string, string>
+  worktreeStates: Map<string, PersistedWorktreeSession | null>
+  fileHistorySnapshots: Map<string, FileHistorySnapshotMessage>
+  attributionSnapshots: Map<string, AttributionSnapshotMessage>
+  contentReplacements: Map<string, ContentReplacementRecord[]>
   contextCollapseCommits: ContextCollapseCommitEntry[]
   contextCollapseSnapshot: ContextCollapseSnapshotEntry | undefined
 }> {
@@ -4096,7 +4098,7 @@ async function loadSessionFile(sessionId: UUID): Promise<{
  * Memoized to avoid re-reading the same session file multiple times.
  */
 const getSessionMessages = memoize(
-  async (sessionId: UUID): Promise<Set<UUID>> => {
+  async (sessionId: UUID): Promise<Set<string>> => {
     const { messages } = await loadSessionFile(sessionId)
     return new Set(messages.keys())
   },
@@ -4463,7 +4465,7 @@ export async function getAgentTranscript(agentId: AgentId): Promise<{
     }
 
     // Find the most recent leaf message with this agentId
-    const parentUuids = new Set(agentMessages.map(msg => msg.parentUuid))
+    const parentUuids = new Set<string>(agentMessages.map(msg => msg.parentUuid as string))
     const leafMessage = findLatestMessage(
       agentMessages,
       msg => !parentUuids.has(msg.uuid),
@@ -4877,7 +4879,7 @@ export async function loadAllLogsFromSessionFile(
 
   const leafMessages: TranscriptMessage[] = []
   // Build parentUuid → children index once (O(n)), so trailing-message lookup is O(1) per leaf
-  const childrenByParent = new Map<UUID, TranscriptMessage[]>()
+  const childrenByParent = new Map<string, TranscriptMessage[]>()
   for (const msg of messages.values()) {
     if (leafUuids.has(msg.uuid)) {
       leafMessages.push(msg)
@@ -4921,7 +4923,7 @@ export async function loadAllLogsFromSessionFile(
       messageCount: countVisibleMessages(chain),
       isSidechain: firstMessage.isSidechain ?? false,
       sessionId,
-      leafUuid: leafMessage.uuid,
+      leafUuid: leafMessage.uuid as UUID,
       summary: summaries.get(leafMessage.uuid),
       customTitle: customTitles.get(sessionId),
       tag: tags.get(sessionId),

@@ -649,13 +649,13 @@ async function performPostCreationSetup(
       .then(m =>
         m
           .installPrepareCommitMsgHook(worktreePath, worktreeHooksDir)
-          .catch(error => {
+          .catch((error: unknown) => {
             logForDebugging(
               `Failed to install attribution hook in worktree: ${error}`,
             )
           }),
       )
-      .catch(error => {
+      .catch((error: unknown) => {
         // Dynamic import() itself rejected (module load failure). The inner
         // .catch above only handles installPrepareCommitMsgHook rejection —
         // without this outer handler an import failure would surface as an

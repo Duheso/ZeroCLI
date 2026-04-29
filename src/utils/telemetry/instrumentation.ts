@@ -630,8 +630,8 @@ export async function initializeTelemetry() {
     if (traceExporters.length > 0) {
       // Create span processors for each exporter
       const spanProcessors = traceExporters.map(
-        exporter =>
-          new BatchSpanProcessor(exporter, {
+        (exporter) =>
+          new BatchSpanProcessor(exporter as any, {
             scheduledDelayMillis: parseInt(
               process.env.OTEL_TRACES_EXPORT_INTERVAL ||
                 DEFAULT_TRACES_EXPORT_INTERVAL_MS.toString(),

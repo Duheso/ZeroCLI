@@ -12,6 +12,7 @@ import type { ContentBlockParam } from '@anthropic-ai/sdk/resources/index.mjs'
 import type { APIError } from '@anthropic-ai/sdk'
 import type { UUID } from 'crypto'
 import type { Progress } from '../Tool.js'
+import type { BranchAction, CommitKind, PrAction } from '../tools/shared/gitOperationTracking.js'
 import type { HookEvent } from '../entrypoints/agentSdkTypes.js'
 import type { Attachment } from '../utils/attachments.js'
 import type { PermissionMode } from './permissions.js'
@@ -174,6 +175,7 @@ export type StopHookInfo = {
   command: string
   promptText?: string
   statusMessage?: string
+  durationMs?: number
 }
 
 export type SystemStopHookSummaryMessage = SystemMessageBase & {
@@ -249,7 +251,7 @@ export type SystemCompactBoundaryMessage = SystemMessageBase & {
     preTokens: number
     userContext?: string
     messagesSummarized?: number
-    preservedSegment?: { startUuid: string; endUuid: string; tailUuid: string }
+    preservedSegment?: { startUuid: UUID; endUuid: UUID; tailUuid: UUID }
   }
   logicalParentUuid?: UUID
 }
@@ -362,8 +364,10 @@ export type GroupedToolUseMessage = {
   type: 'grouped_tool_use'
   uuid: UUID | string
   timestamp: string
+  toolName: string
   toolUseIDs: string[]
   messages: NormalizedAssistantMessage[]
+  displayMessage: NormalizedAssistantMessage
 }
 
 export type CollapsedReadSearchGroup = {
@@ -371,6 +375,38 @@ export type CollapsedReadSearchGroup = {
   uuid: UUID | string
   timestamp: string
   messages: NormalizedMessage[]
+  searchCount: number
+  readCount: number
+  listCount: number
+  replCount: number
+  memorySearchCount: number
+  memoryReadCount: number
+  memoryWriteCount: number
+  readFilePaths: string[]
+  searchArgs: string[]
+  displayMessage: CollapsibleMessage
+  latestDisplayHint?: string
+  // Memory recall (absorbed from relevant_memories attachments)
+  relevantMemories?: string[]
+  // Bash command counts (fullscreen)
+  bashCount?: number
+  gitOpBashCount?: number
+  // Git operations (fullscreen)
+  commits?: (CommitKind & { commitHash: string })[]
+  pushes?: { ref: string }[]
+  branches?: { action: BranchAction; branch: string }[]
+  prs?: { action: PrAction; url: string }[]
+  // MCP
+  mcpCallCount?: number
+  mcpServerNames?: string[]
+  // Hooks
+  hookCount?: number
+  hookTotalMs?: number
+  hookInfos?: StopHookInfo[]
+  // Team memory
+  teamMemorySearchCount?: number
+  teamMemoryReadCount?: number
+  teamMemoryWriteCount?: number
 }
 
 export type QueueOperationMessage = {

@@ -315,7 +315,7 @@ function getCollapsibleToolInfo(
     const firstContent = msg.messages[0]?.message.content[0]
     const info = getSearchOrReadFromContent(
       firstContent
-        ? { type: 'tool_use', name: msg.toolName, input: firstContent.input }
+        ? { type: 'tool_use', name: msg.toolName, input: firstContent as { input?: Record<string, unknown> } }
         : undefined,
       tools,
     )
@@ -331,7 +331,7 @@ function getCollapsibleToolInfo(
  */
 function isTextBreaker(msg: RenderableMessage): boolean {
   if (msg.type === 'assistant') {
-    const content = msg.message.content[0]
+    const content = msg.message.content[0] as { type: string; text: string } | undefined
     if (content?.type === 'text' && content.text.trim().length > 0) {
       return true
     }
@@ -402,12 +402,12 @@ function shouldSkipMessage(msg: RenderableMessage): boolean {
 }
 
 /**
- * Type predicate: Check if a message is a collapsible tool use.
+ * Check if a message is a collapsible tool use.
  */
 function isCollapsibleToolUse(
   msg: RenderableMessage,
   tools: Tools,
-): msg is CollapsibleMessage {
+): boolean {
   if (msg.type === 'assistant') {
     const content = msg.message.content[0]
     return (
@@ -426,13 +426,13 @@ function isCollapsibleToolUse(
 }
 
 /**
- * Type predicate: Check if a message is a tool result for collapsible tools.
+ * Check if a message is a tool result for collapsible tools.
  * Returns true if ALL tool results in the message are for tracked collapsible tools.
  */
 function isCollapsibleToolResult(
   msg: RenderableMessage,
   collapsibleToolUseIds: Set<string>,
-): msg is CollapsibleMessage {
+): boolean {
   if (msg.type === 'user') {
     const toolResults = msg.message.content.filter(
       (c): c is { type: 'tool_result'; tool_use_id: string } =>
@@ -500,7 +500,7 @@ export function hasAnyToolInProgress(
  */
 export function getDisplayMessageFromCollapsed(
   message: CollapsedReadSearchGroup,
-): Exclude<CollapsibleMessage, { type: 'grouped_tool_use' }> {
+): RenderableMessage {
   const firstMsg = message.displayMessage
   if (firstMsg.type === 'grouped_tool_use') {
     return firstMsg.displayMessage
@@ -554,13 +554,12 @@ function getFilePathsFromReadMessage(msg: RenderableMessage): string[] {
  * in bashCommands (non-search/read bash).
  */
 function scanBashResultForGitOps(
-  msg: CollapsibleMessage,
+  msg: RenderableMessage,
   group: GroupAccumulator,
 ): void {
   if (msg.type !== 'user') return
-  const out = msg.toolUseResult as
-    | { stdout?: string; stderr?: string }
-    | undefined
+  const toolUseResult = msg.message as { toolUseResult?: { stdout?: string; stderr?: string } }
+  const out = toolUseResult.toolUseResult
   if (!out?.stdout && !out?.stderr) return
   // git push writes the ref update to stderr — scan both streams.
   const combined = (out.stdout ?? '') + '\n' + (out.stderr ?? '')
@@ -696,7 +695,7 @@ function createCollapsedGroup(
     ? (group.teamMemoryWriteCount ?? 0)
     : 0
   const result: CollapsedReadSearchGroup = {
-    type: 'collapsed_read_search',
+    type: 'collapsed_read_search_group',
     // Subtract memory + team memory counts so regular counts only reflect non-memory operations
     searchCount: Math.max(
       0,

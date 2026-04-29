@@ -101,7 +101,9 @@ export class ExitPlanModeScanner {
   ingest(newEvents: SDKMessage[]): ScanResult {
     for (const m of newEvents) {
       if (m.type === 'assistant') {
-        for (const block of m.message.content) {
+        const message = m.message as { content: unknown[] }
+        for (const block of message.content) {
+          if (typeof block !== 'object' || block === null || !('type' in block)) continue
           if (block.type !== 'tool_use') continue
           const tu = block as ToolUseBlock
           if (tu.name === EXIT_PLAN_MODE_V2_TOOL_NAME) {
@@ -109,11 +111,16 @@ export class ExitPlanModeScanner {
           }
         }
       } else if (m.type === 'user') {
-        const content = m.message.content
+        const message = m.message as { content: unknown }
+        const content = message.content
         if (!Array.isArray(content)) continue
         for (const block of content) {
+          if (typeof block !== 'object' || block === null || !('type' in block)) continue
           if (block.type === 'tool_result') {
-            this.results.set(block.tool_use_id, block)
+            this.results.set(
+              (block as { tool_use_id: string }).tool_use_id,
+              block as ToolResultBlockParam,
+            )
           }
         }
       } else if (m.type === 'result' && m.subtype !== 'success') {
@@ -123,7 +130,7 @@ export class ExitPlanModeScanner {
         // the browser and reach ExitPlanMode in a later turn.
         // Only error subtypes (error_during_execution, error_max_turns,
         // etc.) mean the session is actually dead.
-        this.terminated = { subtype: m.subtype }
+        this.terminated = { subtype: m.subtype as string }
       }
     }
 
