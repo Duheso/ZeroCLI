@@ -121,6 +121,7 @@ const OPENAI_CONTEXT_WINDOWS: Record<string, number> = {
   'google/gemma-3-27b-it': 131_072,
   'google/gemma-3-12b-it': 131_072,
   'google/gemma-3-4b-it': 131_072,
+  'gemma4-26b': 262_144,
   // DeepSeek via NVIDIA NIM
   'deepseek-ai/deepseek-r1': 128_000,
   'deepseek-ai/deepseek-v3': 128_000,
@@ -131,6 +132,7 @@ const OPENAI_CONTEXT_WINDOWS: Record<string, number> = {
   'qwen/qwen2.5-7b-instruct': 32_768,
   // Qwen3.6 via vLLM (local OpenAI-compatible server)
   'qwen3.6-27b': 262_144,
+  'qwen3.6-35b': 262_144,
   // Mistral via NVIDIA NIM
   'mistralai/mistral-large-3-675b-instruct-2512': 256_000,
   'mistralai/mistral-large-2-instruct': 256_000,
@@ -351,6 +353,7 @@ const OPENAI_MAX_OUTPUT_TOKENS: Record<string, number> = {
   'gemini-2.5-flash':              65_536,
   'gemini-3.1-pro':                65_536,
   'gemini-3.1-flash-lite-preview': 65_536,
+  'gemma4-26b':                    65_536,
 
   // Ollama local models (conservative safe defaults)
   'llama3.3:70b':               4_096,
@@ -385,6 +388,8 @@ const OPENAI_MAX_OUTPUT_TOKENS: Record<string, number> = {
   'qwen/qwen2.5-7b-instruct': 8_192,
   // Qwen3.6 via vLLM (local OpenAI-compatible server)
   'qwen3.6-27b': 65_536,
+  'qwen3.6-35b': 65_536,
+
   'mistralai/mistral-large-3-675b-instruct-2512': 32_768,
   'mistralai/mixtral-8x7b-instruct-v0.1': 8_192,
   'microsoft/phi-4-mini-instruct': 4_096,
