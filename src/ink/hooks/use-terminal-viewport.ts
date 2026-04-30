@@ -43,11 +43,25 @@ export function useTerminalViewport(): [
   // to avoid cascading re-renders during the commit phase.
   // Walks the DOM ancestor chain fresh each time to avoid holding stale
   // references after yoga tree rebuilds.
+  //
+  // In SSH/remote environments (detected via env vars or when yoga layout
+  // fails), force isVisible=true so animations keep running. Remote sessions
+  // often have unreliable yoga geometry, but spinners are almost always
+  // rendered in the active viewport.
   useLayoutEffect(() => {
     const element = elementRef.current
     if (!element?.yogaNode || !terminalSize) {
+      // Likely SSH/remote with incomplete yoga setup — keep animations running
+      if (entryRef.current.isVisible !== true) {
+        entryRef.current = { isVisible: true }
+      }
       return
     }
+
+    // Check for SSH/remote environment (env vars not forwarded over SSH)
+    const isLikelySSH = typeof process !== 'undefined' && 
+      process.env && 
+      (!process.env.TERM_PROGRAM || process.env.SSH_CONNECTION || process.env.SSH_CLIENT)
 
     const height = element.yogaNode.getComputedHeight()
     const rows = terminalSize.rows
@@ -85,7 +99,12 @@ export function useTerminalViewport(): [
     const cursorRestoreScroll = screenHeight > rows ? 1 : 0
     const viewportY = Math.max(0, screenHeight - rows) + cursorRestoreScroll
     const viewportBottom = viewportY + rows
-    const visible = bottom > viewportY && absoluteTop < viewportBottom
+    let visible = bottom > viewportY && absoluteTop < viewportBottom
+
+    // Force visible=true in SSH environments where yoga values may be unreliable
+    if (isLikelySSH && (height === 0 || root.getComputedHeight() === 0)) {
+      visible = true
+    }
 
     if (visible !== entryRef.current.isVisible) {
       entryRef.current = { isVisible: visible }

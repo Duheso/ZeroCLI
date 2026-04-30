@@ -594,6 +594,10 @@ export interface TranslationKeys {
 
   // Spinner tips (static, localizable)
   spinnerTips: Record<string, string>
+
+  // Away summary (while-you-were-away recap)
+  awaySummaryMemoryBlock: (memory: string) => string
+  awaySummaryPrompt: string
 }
 
 // English (default) locale
@@ -1227,4 +1231,10 @@ export const en: TranslationKeys = {
     'clear': 'Use /clear to start fresh when switching topics and free up context',
     'btw': "Use /btw to ask a quick side question without interrupting Claude's current work",
   },
+
+  // Away summary (while-you-were-away recap)
+  awaySummaryMemoryBlock: (memory: string) =>
+    `Session memory (broader context):\n${memory}\n\n`,
+  awaySummaryPrompt:
+    'The user stepped away and is coming back. Write exactly 1-3 short sentences. Start by stating the high-level task — what they are building or debugging, not implementation details. Next: the concrete next step. Skip status reports and commit recaps.',
 }

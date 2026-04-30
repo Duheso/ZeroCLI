@@ -10,16 +10,15 @@ import { getSmallFastModel } from '../utils/model/model.js'
 import { asSystemPrompt } from '../utils/systemPromptType.js'
 import { queryModelWithoutStreaming } from './api/claude.js'
 import { getSessionMemoryContent } from './SessionMemory/sessionMemoryUtils.js'
+import { t } from '../i18n/index.js'
 
 // Recap only needs recent context — truncate to avoid "prompt too long" on
 // large sessions. 30 messages ≈ ~15 exchanges, plenty for "where we left off."
 const RECENT_MESSAGE_WINDOW = 30
 
 function buildAwaySummaryPrompt(memory: string | null): string {
-  const memoryBlock = memory
-    ? `Session memory (broader context):\n${memory}\n\n`
-    : ''
-  return `${memoryBlock}The user stepped away and is coming back. Write exactly 1-3 short sentences. Start by stating the high-level task — what they are building or debugging, not implementation details. Next: the concrete next step. Skip status reports and commit recaps.`
+  const memoryBlock = memory ? t('awaySummaryMemoryBlock')(memory) : ''
+  return `${memoryBlock}${t('awaySummaryPrompt')}`
 }
 
 /**

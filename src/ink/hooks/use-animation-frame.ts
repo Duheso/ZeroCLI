@@ -34,7 +34,14 @@ export function useAnimationFrame(
   const [viewportRef, { isVisible }] = useTerminalViewport()
   const [time, setTime] = useState(() => clock?.now() ?? 0)
 
-  const active = isVisible && intervalMs !== null
+  // In SSH/remote environments or when yoga layout fails, viewport detection
+  // may return false even when the element is actually visible. Default to true
+  // for spinners and interactive elements — it's safer to animate off-screen
+  // than to disable animation when it should be visible. Spinners are typically
+  // rendered in the active viewport, so false positives are rare.
+  const effectiveIsVisible = isVisible !== false ? true : isVisible
+
+  const active = effectiveIsVisible && intervalMs !== null
 
   useEffect(() => {
     if (!clock || !active) return

@@ -640,4 +640,10 @@ export const ptBR: TranslationKeys = {
     'clear': 'Use /clear para limpar a conversa ao trocar de assunto e liberar contexto',
     'btw': 'Use /btw para fazer uma pergunta rápida sem interromper o trabalho atual do ZeroCLI',
   },
+
+  // Resumo de ausência (away-summary)
+  awaySummaryMemoryBlock: (memory: string) =>
+    `Memória da sessão (contexto mais amplo):\n${memory}\n\n`,
+  awaySummaryPrompt:
+    'O usuário se afastou e está voltando. Escreva exatamente 1-3 frases curtas. Comece afirmando a tarefa de alto nível — o que ele está construindo ou depurando, não detalhes de implementação. Depois: o próximo passo concreto. Pule relatórios de status e recaps de commits.',
 }
