@@ -33,8 +33,20 @@
       "mcp__ide__getDiagnostics",
       "Bash(find /home/accadmin/workspace/ZeroCLI -path */.git -prune -o -name *.tsx -print)",
       "WebSearch",
-      "Bash(npx jest:*)"
+      "Bash(npx jest:*)",
+      "Skill(firecrawl:firecrawl-cli)",
+      "Read(//home/accadmin/.claude/**)",
+      "Read(//tmp/**)",
+      "Bash(find /home/accadmin/.claude -name *.jsonl -newer /home/accadmin/.claude/sessions)",
+      "Bash(whois acessoeficiente.com.br)",
+      "Bash(curl -s --max-time 10 http://acessoeficiente.com.br)",
+      "WebFetch(domain:mcp.exa.ai)",
+      "WebFetch(domain:g1.globo.com)",
+      "WebFetch(domain:www.espn.com.br)"
     ]
   },
+  "enabledMcpjsonServers": [
+    "exa-websets"
+  ],
   "prefersReducedMotion": true
 }
