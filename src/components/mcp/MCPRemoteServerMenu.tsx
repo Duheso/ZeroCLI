@@ -582,7 +582,7 @@ export function MCPRemoteServerMenu({
           </Box>}
 
         {menuOptions.length > 0 && <Box marginTop={1}>
-            <Select options={menuOptions} onChange={async value_0 => {
+            <Select options={menuOptions} onChange={async (value_0: string) => {
           switch (value_0) {
             case 'tools':
               onViewTools();

@@ -551,7 +551,7 @@ export function extractDiscoveredToolNames(messages: Message[]): Set<string> {
     // check rather than isCompactBoundaryMessage — utils/messages.ts imports
     // from this file, so importing back would be circular.
     if (msg.type === 'system' && msg.subtype === 'compact_boundary') {
-      const carried = msg.compactMetadata?.preCompactDiscoveredTools
+      const carried = (msg.compactMetadata as { preCompactDiscoveredTools?: string[] } | undefined)?.preCompactDiscoveredTools
       if (carried) {
         for (const name of carried) discoveredTools.add(name)
         carriedFromBoundary += carried.length

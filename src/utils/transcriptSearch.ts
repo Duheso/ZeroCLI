@@ -101,12 +101,12 @@ function computeSearchText(msg: RenderableMessage): string {
       }
       break
     }
-    case 'collapsed_read_search': {
+    case 'collapsed_read_search_group': {
       // relevant_memories attachments are absorbed into collapse groups
       // (collapseReadSearch.ts); their content is visible in transcript mode
       // via CollapsedReadSearchContent, so mirror it here for / search.
       if (msg.relevantMemories) {
-        raw = msg.relevantMemories.map(m => m.content).join('\n')
+        raw = msg.relevantMemories.join('\n')
       }
       break
     }

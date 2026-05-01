@@ -282,8 +282,8 @@ describe('applyActiveProviderProfileFromConfig', () => {
     } as any)
 
     expect(applied?.id).toBe('saved_moonshot')
-    expect(process.env.OPENAI_BASE_URL).toBe('https://api.moonshot.ai/v1')
-    expect(process.env.OPENAI_MODEL).toBe('kimi-k2.6')
+    expect(process.env.OPENAI_BASE_URL as unknown as string).toBe('https://api.moonshot.ai/v1')
+    expect(process.env.OPENAI_MODEL as unknown as string).toBe('kimi-k2.6')
   })
 
   test('still respects complete shell selection with USE flag + BASE_URL', async () => {
@@ -845,7 +845,7 @@ describe('setActiveProviderProfile model cache', () => {
     setActiveProviderProfile('multi_provider')
 
     const cache = getActiveOpenAIModelOptionsCache()
-    const cacheValues = cache.map(opt => opt.value)
+    const cacheValues = cache.map((opt: {value: string}) => opt.value)
     expect(cacheValues).toContain('glm-4.7')
     expect(cacheValues).toContain('glm-4.7-flash')
     expect(cacheValues).toContain('glm-4.7-plus')

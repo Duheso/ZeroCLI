@@ -6,6 +6,7 @@ import {
 } from 'src/bootstrap/state.js'
 import type { SDKMessage } from 'src/entrypoints/agentSdkTypes.js'
 import type { CanUseToolFn } from '../hooks/useCanUseTool.js'
+import type { PermissionDecision } from '../types/permissions.js'
 import { runTools } from '../services/tools/toolOrchestration.js'
 import { findToolByName, type Tool, type Tools } from '../Tool.js'
 import { BASH_TOOL_NAME } from '../tools/BashTool/toolName.js'
@@ -16,7 +17,7 @@ import {
   FILE_UNCHANGED_STUB,
 } from '../tools/FileReadTool/prompt.js'
 import { FILE_WRITE_TOOL_NAME } from '../tools/FileWriteTool/prompt.js'
-import type { Message } from '../types/message.js'
+import type { Message, NormalizedAssistantMessage, NormalizedMessage } from '../types/message.js'
 import type { OrphanedPermission } from '../types/textInputTypes.js'
 import { logForDebugging } from './debug.js'
 import { isEnvTruthy } from './envUtils.js'
@@ -122,7 +123,7 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
         message.data.type === 'agent_progress' ||
         message.data.type === 'skill_progress'
       ) {
-        for (const _ of normalizeMessages([message.data.message])) {
+        for (const _ of normalizeMessages([message.data.message]) as (NormalizedMessage | NormalizedAssistantMessage)[]) {
           switch (_.type) {
             case 'assistant':
               // Skip empty messages (e.g., "(no content)") that shouldn't be output to SDK
@@ -229,7 +230,7 @@ export async function* handleOrphanedPermission(
 ): AsyncGenerator<SDKMessage, void, unknown> {
   const persistSession = !isSessionPersistenceDisabled()
   const { permissionResult, assistantMessage } = orphanedPermission
-  const { toolUseID } = permissionResult
+  const toolUseID = 'toolUseID' in permissionResult ? permissionResult.toolUseID : undefined
 
   if (!toolUseID) {
     return
@@ -275,13 +276,18 @@ export async function* handleOrphanedPermission(
     input: finalInput,
   }
 
-  const canUseTool: CanUseToolFn = async () => ({
-    ...permissionResult,
-    decisionReason: {
-      type: 'mode',
-      mode: 'default' as const,
-    },
-  })
+  const canUseTool: CanUseToolFn = async (): Promise<PermissionDecision<Record<string, unknown>>> => {
+    const base = {
+      decisionReason: { type: 'mode' as const, mode: 'default' as const },
+    }
+    if (permissionResult.behavior === 'allow') {
+      return { ...base, behavior: 'allow' as const, updatedInput: permissionResult.updatedInput }
+    }
+    if (permissionResult.behavior === 'deny') {
+      return { ...base, behavior: 'deny' as const, message: 'Denied' }
+    }
+    return { ...base, behavior: 'ask' as const, message: 'Ask' }
+  }
 
   // Add the assistant message with tool_use to messages BEFORE executing
   // so the conversation history is complete (tool_use -> tool_result).

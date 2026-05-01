@@ -48,7 +48,7 @@ function getFailureWarning(
   result: ReturnType<typeof execaSync> | null,
   fallback: string,
 ): string {
-  const stderr = result?.stderr?.trim()
+  const stderr = typeof result?.stderr === 'string' ? result.stderr.trim() : ''
   if (stderr) {
     return stderr
   }
@@ -76,7 +76,7 @@ function readLegacyPasswordVault(): SecureStorageData | null {
   `
 
   const result = runPowerShell(script)
-  if (result?.exitCode === 0 && result.stdout) {
+  if (result?.exitCode === 0 && typeof result.stdout === 'string') {
     try {
       return jsonParse(result.stdout)
     } catch {
@@ -126,7 +126,7 @@ export const windowsCredentialStorage: SecureStorage = {
     `
 
     const result = runPowerShell(script)
-    if (result?.exitCode === 0 && result.stdout) {
+    if (result?.exitCode === 0 && typeof result.stdout === 'string') {
       try {
         return jsonParse(result.stdout)
       } catch {

@@ -152,8 +152,8 @@ describe('applyProviderFlag - ollama', () => {
     const result = applyProviderFlag('ollama', [])
     expect(result.error).toBeUndefined()
     expect(process.env.CLAUDE_CODE_USE_OPENAI).toBe('1')
-    expect(process.env.OPENAI_BASE_URL).toBe('http://localhost:11434/v1')
-    expect(process.env.OPENAI_API_KEY).toBe('ollama')
+    expect(process.env.OPENAI_BASE_URL as unknown as string).toBe('http://localhost:11434/v1')
+    expect(process.env.OPENAI_API_KEY as unknown as string).toBe('ollama')
   })
 
   test('sets OPENAI_MODEL when --model is provided', () => {
@@ -200,9 +200,9 @@ describe('applyProviderFlagFromArgs', () => {
 
     expect(result?.error).toBeUndefined()
     expect(process.env.CLAUDE_CODE_USE_OPENAI).toBe('1')
-    expect(process.env.OPENAI_BASE_URL).toBe('http://localhost:11434/v1')
-    expect(process.env.OPENAI_API_KEY).toBe('ollama')
-    expect(process.env.OPENAI_MODEL).toBe('qwen2.5:3b')
+    expect(process.env.OPENAI_BASE_URL as unknown as string).toBe('http://localhost:11434/v1')
+    expect(process.env.OPENAI_API_KEY as unknown as string).toBe('ollama')
+    expect(process.env.OPENAI_MODEL as unknown as string).toBe('qwen2.5:3b')
   })
 
   test('returns undefined when --provider is absent', () => {
