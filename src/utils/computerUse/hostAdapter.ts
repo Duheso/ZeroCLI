@@ -1,7 +1,5 @@
-import type {
-  ComputerUseHostAdapter,
-  Logger,
-} from '@ant/computer-use-mcp/types'
+// @ts-expect-error @ant/computer-use-mcp/types is only available in internal builds
+import type { ComputerUseHostAdapter, Logger } from '@ant/computer-use-mcp/types'
 import { format } from 'util'
 import { logForDebugging } from '../debug.js'
 import { COMPUTER_USE_MCP_SERVER_NAME } from './common.js'

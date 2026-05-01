@@ -1,7 +1,5 @@
-import type {
-  ComputerUseInput,
-  ComputerUseInputAPI,
-} from '@ant/computer-use-input'
+// @ts-expect-error @ant/computer-use-input is only available in internal builds
+import type { ComputerUseInput, ComputerUseInputAPI } from '@ant/computer-use-input'
 
 let cached: ComputerUseInputAPI | undefined
 

@@ -27,6 +27,7 @@
  * Clipboard via `pbcopy`/`pbpaste`. No Electron `clipboard` module.
  */
 
+
 import type {
   ComputerExecutor,
   DisplayGeometry,
@@ -35,8 +36,10 @@ import type {
   ResolvePrepareCaptureResult,
   RunningApp,
   ScreenshotResult,
+  // @ts-expect-error @ant/computer-use-mcp is only available in internal builds
 } from '@ant/computer-use-mcp'
 
+// @ts-expect-error @ant/computer-use-mcp is only available in internal builds
 import { API_RESIZE_PARAMS, targetImageSize } from '@ant/computer-use-mcp'
 import { logForDebugging } from '../debug.js'
 import { errorMessage } from '../errors.js'

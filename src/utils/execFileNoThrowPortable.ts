@@ -1,5 +1,5 @@
-import { type Options as ExecaOptions, execaSync } from 'execa'
-import { getCwd } from '../utils/cwd.js'
+import { type SyncOptions as ExecaOptions, execaSync } from 'execa'
+import { getCwd } from './cwd.js'
 import { slowLogging } from './slowOperations.js'
 
 const MS_IN_SECOND = 1000
@@ -82,7 +82,7 @@ export function execSyncWithDefaults_DEPRECATED(
     if (!result.stdout) {
       return null
     }
-    return result.stdout.trim() || null
+    return typeof result.stdout === 'string' ? result.stdout.trim() || null : null
   } catch {
     return null
   }

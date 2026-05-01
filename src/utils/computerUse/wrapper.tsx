@@ -16,6 +16,7 @@
  * GrowthBook gate `tengu_malort_pedway` (see gates.ts).
  */
 
+// @ts-expect-error @ant/computer-use-mcp is only available in internal builds
 import { bindSessionContext, type ComputerUseSessionContext, type CuCallToolResult, type CuPermissionRequest, type CuPermissionResponse, DEFAULT_GRANT_FLAGS, type ScreenshotDims } from '@ant/computer-use-mcp';
 import * as React from 'react';
 import { getSessionId } from '../../bootstrap/state.js';
@@ -81,9 +82,9 @@ export function buildSessionContext(): ComputerUseSessionContext {
     // dismissal) is irrelevant here: `setToolJSX` blocks the tool call, so
     // the dialog can't outlive it. Ctrl+C is what matters, and
     // `runPermissionDialog` wires that from the per-call ref's abortController.
-    onPermissionRequest: (req, _dialogSignal) => runPermissionDialog(req),
+    onPermissionRequest: (req: CuPermissionRequest, _dialogSignal: unknown) => runPermissionDialog(req),
     // Package does the merge (dedupe + truthy-only flags). We just persist.
-    onAllowedAppsChanged: (apps, flags) => tuc().setAppState(prev => {
+    onAllowedAppsChanged: (apps: { bundleId: string }[], flags: typeof DEFAULT_GRANT_FLAGS) => tuc().setAppState(prev => {
       const cu = prev.computerUseMcpState;
       const prevApps = cu?.allowedApps;
       const prevFlags = cu?.grantFlags;
@@ -92,23 +93,23 @@ export function buildSessionContext(): ComputerUseSessionContext {
       return sameApps && sameFlags ? prev : {
         ...prev,
         computerUseMcpState: {
-          ...cu,
-          allowedApps: [...apps],
+          ...(cu ?? {}),
+          allowedApps: apps as unknown as typeof prevApps,
           grantFlags: flags
         }
       };
     }),
-    onAppsHidden: ids => {
+    onAppsHidden: (ids: string[]) => {
       if (ids.length === 0) return;
       tuc().setAppState(prev => {
         const cu = prev.computerUseMcpState;
         const existing = cu?.hiddenDuringTurn;
-        if (existing && ids.every(id => existing.has(id))) return prev;
+        if (existing && ids.every((id: string) => existing.has(id))) return prev;
         return {
           ...prev,
           computerUseMcpState: {
-            ...cu,
-            hiddenDuringTurn: new Set([...(existing ?? []), ...ids])
+            ...(cu ?? {}),
+            hiddenDuringTurn: new Set<string>([...(existing ?? []), ...ids])
           }
         };
       });
@@ -117,15 +118,15 @@ export function buildSessionContext(): ComputerUseSessionContext {
     // (pinned display unplugged) — the pin is semantically dead, so clear it
     // and the app-set key so the chase chain runs next time. When autoResolve
     // was true, onDisplayResolvedForApps re-sets the key in the same tick.
-    onResolvedDisplayUpdated: id => tuc().setAppState(prev => {
+    onResolvedDisplayUpdated: (id: number) => tuc().setAppState(prev => {
       const cu = prev.computerUseMcpState;
-      if (cu?.selectedDisplayId === id && !cu.displayPinnedByModel && cu.displayResolvedForApps === undefined) {
+      if (cu?.selectedDisplayId === id && !cu?.displayPinnedByModel && cu?.displayResolvedForApps === undefined) {
         return prev;
       }
       return {
         ...prev,
         computerUseMcpState: {
-          ...cu,
+          ...(cu ?? {}),
           selectedDisplayId: id,
           displayPinnedByModel: false,
           displayResolvedForApps: undefined
@@ -134,7 +135,7 @@ export function buildSessionContext(): ComputerUseSessionContext {
     }),
     // switch_display(name) pins; switch_display("auto") unpins and clears the
     // app-set key so the next screenshot auto-resolves fresh.
-    onDisplayPinned: id => tuc().setAppState(prev => {
+    onDisplayPinned: (id: number) => tuc().setAppState(prev => {
       const cu = prev.computerUseMcpState;
       const pinned = id !== undefined;
       const nextResolvedFor = pinned ? cu?.displayResolvedForApps : undefined;
@@ -144,25 +145,25 @@ export function buildSessionContext(): ComputerUseSessionContext {
       return {
         ...prev,
         computerUseMcpState: {
-          ...cu,
+          ...(cu ?? {}),
           selectedDisplayId: id,
           displayPinnedByModel: pinned,
           displayResolvedForApps: nextResolvedFor
         }
       };
     }),
-    onDisplayResolvedForApps: key => tuc().setAppState(prev => {
+    onDisplayResolvedForApps: (key: string) => tuc().setAppState(prev => {
       const cu = prev.computerUseMcpState;
       if (cu?.displayResolvedForApps === key) return prev;
       return {
         ...prev,
         computerUseMcpState: {
-          ...cu,
+          ...(cu ?? {}),
           displayResolvedForApps: key
         }
       };
     }),
-    onScreenshotCaptured: dims => tuc().setAppState(prev => {
+    onScreenshotCaptured: (dims: ScreenshotDims) => tuc().setAppState(prev => {
       const cu = prev.computerUseMcpState;
       const p = cu?.lastScreenshotDims;
       return p?.width === dims.width && p?.height === dims.height && p?.displayWidth === dims.displayWidth && p?.displayHeight === dims.displayHeight && p?.displayId === dims.displayId && p?.originX === dims.originX && p?.originY === dims.originY ? prev : {
@@ -265,7 +266,7 @@ export function getComputerUseMCPToolOverrides(toolName: string): ComputerUseMCP
     // shape just maps to the API's base64-source shape. The package's result
     // type admits audio/resource too, but CU's handleToolCall never emits
     // those; the fallthrough coerces them to empty text.
-    const data = Array.isArray(result.content) ? result.content.map(item => item.type === 'image' ? {
+    const data = Array.isArray(result.content) ? result.content.map((item: { type: string; mimeType?: string; data?: string; text?: string }) => item.type === 'image' ? {
       type: 'image' as const,
       source: {
         type: 'base64' as const,

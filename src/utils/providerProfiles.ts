@@ -14,6 +14,7 @@ import {
   buildOpenAIProfileEnv,
   type ProviderProfile as ProviderProfileStartup,
 } from './providerProfile.js'
+import { normalizeRecommendationGoal } from './providerRecommendation.js'
 
 export type ProviderPreset =
   | 'anthropic'
@@ -877,13 +878,6 @@ export function setActiveProviderProfile(
 
   applyProviderProfileToProcessEnv(activeProfile)
 
-  // Keep startup persisted provider profile in sync so initial startup
-  // uses the selected provider/model.
-  const persistedProfile = (() => {
-    if (activeProfile.provider === 'anthropic') return 'openai' as const
-    return activeProfile.provider
-  })()
-
   const profileEnv = (() => {
     switch (activeProfile.provider) {
       case 'gemini':
@@ -909,6 +903,7 @@ export function setActiveProviderProfile(
         // anthropic and all openai-compatible providers
         return (
           buildOpenAIProfileEnv({
+            goal: normalizeRecommendationGoal(process.env.ZERO_PROFILE_GOAL),
             model: activeProfile.model,
             baseUrl: activeProfile.baseUrl,
             apiKey: activeProfile.apiKey,

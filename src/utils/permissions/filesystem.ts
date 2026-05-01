@@ -679,7 +679,7 @@ export function allWorkingDirectories(
 ): Set<string> {
   return new Set([
     getOriginalCwd(),
-    ...context.additionalWorkingDirectories.keys(),
+    ...(context.additionalWorkingDirectories as Map<string, unknown>).keys(),
   ])
 }
 

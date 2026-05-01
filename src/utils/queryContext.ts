@@ -14,6 +14,7 @@ import { getSystemPrompt } from '../constants/prompts.js'
 import { getSystemContext, getUserContext } from '../context.js'
 import type { MCPServerConnection } from '../services/mcp/types.js'
 import type { AppState } from '../state/AppStateStore.js'
+import type { AdditionalWorkingDirectory } from '../types/permissions.js'
 import type { Tools, ToolUseContext } from '../Tool.js'
 import type { AgentDefinition } from '../tools/AgentTool/loadAgentsDir.js'
 import type { Message } from '../types/message.js'
@@ -118,7 +119,7 @@ export async function buildSideQuestionFallbackParams({
       tools,
       mainLoopModel,
       additionalWorkingDirectories: Array.from(
-        appState.toolPermissionContext.additionalWorkingDirectories.keys(),
+        (appState.toolPermissionContext.additionalWorkingDirectories as Map<string, AdditionalWorkingDirectory>).keys(),
       ),
       mcpClients,
       customSystemPrompt,

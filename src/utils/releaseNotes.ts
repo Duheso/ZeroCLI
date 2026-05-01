@@ -1,14 +1,13 @@
 import axios from 'axios'
 import { mkdir, readFile, writeFile } from 'fs/promises'
 import { dirname, join } from 'path'
-import { coerce } from 'semver'
 import { getIsNonInteractiveSession } from '../bootstrap/state.js'
 import { getGlobalConfig, saveGlobalConfig } from './config.js'
 import { getClaudeConfigHomeDir } from './envUtils.js'
 import { toError } from './errors.js'
 import { logError } from './log.js'
 import { isEssentialTrafficOnly } from './privacyLevel.js'
-import { gt } from './semver.js'
+import { coerce, gt } from './semver.js'
 
 const MAX_RELEASE_NOTES_SHOWN = 5
 

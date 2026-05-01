@@ -442,7 +442,5 @@ export async function connectRemoteControl(
   throw new Error('not implemented')
 }
 
-// add exit reason types for removing the error within gracefulShutdown file 
-export type ExitReason = {
-  
-}
+// ExitReason type for graceful shutdown — callers pass strings like 'other', 'logout', 'prompt_input_exit', etc.
+export type ExitReason = string

@@ -12,7 +12,10 @@ import {
   resolveGeminiCredential,
 } from './geminiAuth.js'
 import { PROFILE_FILE_NAME } from './providerProfile.js'
-import { redactSecretValueForDisplay } from './providerSecrets.js'
+import {
+  redactSecretValueForDisplay,
+  type SecretValueSource,
+} from './providerSecrets.js'
 
 function isEnvTruthy(value: string | undefined): boolean {
   if (!value) return false
@@ -84,7 +87,7 @@ export async function getProviderValidationError(
     ) => Promise<GeminiResolvedCredential>
   },
 ): Promise<string | null> {
-  const secretSource = env
+  const secretSource: SecretValueSource = { OPENAI_API_KEY: env.OPENAI_API_KEY }
   const useOpenAI = isEnvTruthy(env.CLAUDE_CODE_USE_OPENAI)
   const useGithub = isEnvTruthy(env.CLAUDE_CODE_USE_GITHUB)
 

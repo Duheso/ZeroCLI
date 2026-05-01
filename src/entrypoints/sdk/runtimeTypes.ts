@@ -23,6 +23,6 @@ export type ListSessionsOptions = { [key: string]: unknown }
 export type McpSdkServerConfigWithInstance = { name: string; [key: string]: unknown }
 export type Options = { [key: string]: unknown }
 export type Query = AsyncIterable<unknown>
-export type SdkMcpToolDefinition = { name: string; description?: string; [key: string]: unknown }
+export type SdkMcpToolDefinition<T extends AnyZodRawShape = AnyZodRawShape> = { name: string; description?: string; inputSchema?: T; [key: string]: unknown }
 export type SessionMessage = { role: string; content: unknown; [key: string]: unknown }
 export type SessionMutationOptions = { [key: string]: unknown }

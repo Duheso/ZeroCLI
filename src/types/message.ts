@@ -316,6 +316,7 @@ export type CompactMetadata = {
   userContext?: string
   messagesSummarized?: number
   preservedSegment?: { startUuid: string; endUuid: string; tailUuid: string }
+  preCompactDiscoveredTools?: string[]
 }
 
 // ─── Tombstone / summary messages ────────────────────────────────────────────

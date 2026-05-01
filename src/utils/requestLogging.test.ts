@@ -77,8 +77,9 @@ describe('requestLogging', () => {
           100,
           50,
           true,
-          'error message',
-          { provider: 'openai' },
+          undefined,  // firstTokenMs
+          undefined,  // totalChunks
+          'error message',  // error
         ),
       ).not.toThrow()
     })

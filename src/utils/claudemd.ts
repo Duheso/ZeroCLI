@@ -40,6 +40,7 @@ import {
   relative,
   sep,
 } from 'path'
+// @ts-expect-error picomatch lacks type declarations
 import picomatch from 'picomatch'
 import { logEvent } from 'src/services/analytics/index.js'
 import {

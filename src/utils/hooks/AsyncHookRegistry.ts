@@ -1,8 +1,13 @@
 import type {
-  AsyncHookJSONOutput,
   HookEvent,
   SyncHookJSONOutput,
 } from 'src/entrypoints/agentSdkTypes.js'
+
+// Mirrors AsyncHookJSONOutputSchema from the SDK (not exported as a type yet)
+type AsyncHookJSONOutput = {
+  async: true
+  asyncTimeout?: number
+}
 import { logForDebugging } from '../debug.js'
 import type { ShellCommand } from '../ShellCommand.js'
 import { invalidateSessionEnvCache } from '../sessionEnvironment.js'

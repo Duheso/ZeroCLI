@@ -1,7 +1,5 @@
-import {
-  buildComputerUseTools,
-  createComputerUseMcpServer,
-} from '@ant/computer-use-mcp'
+// @ts-expect-error @ant/computer-use-mcp is only available in internal builds
+import { buildComputerUseTools, createComputerUseMcpServer } from '@ant/computer-use-mcp'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js'
 import { homedir } from 'os'

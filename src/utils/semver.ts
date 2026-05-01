@@ -57,3 +57,11 @@ export function order(a: string, b: string): -1 | 0 | 1 {
   }
   return getNpmSemver().compare(a, b, { loose: true })
 }
+
+export function coerce(
+  version: string,
+): { version: string } | null {
+  const result = getNpmSemver().coerce(version, { loose: true })
+  if (!result) return null
+  return { version: result.version }
+}

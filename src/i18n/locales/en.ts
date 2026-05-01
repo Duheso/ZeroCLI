@@ -595,9 +595,34 @@ export interface TranslationKeys {
   // Spinner tips (static, localizable)
   spinnerTips: Record<string, string>
 
-  // Away summary (while-you-were-away recap)
+  // Away summary (while-you-you-were-away recap)
   awaySummaryMemoryBlock: (memory: string) => string
   awaySummaryPrompt: string
+
+  // MCP List Panel
+  mcp_scope_project: string
+  mcp_scope_user: string
+  mcp_scope_local: string
+  mcp_scope_enterprise: string
+  mcp_scope_dynamic: string
+  mcp_alwaysAvailable: string
+  mcp_status_disabled: string
+  mcp_status_connected: string
+  mcp_status_reconnecting: (count: number) => string
+  mcp_status_connecting: string
+  mcp_status_needsAuth: string
+  mcp_status_failed: string
+  mcp_mayNeedAuth: string
+  mcp_agentOnly: string
+  mcp_dismissed: string
+  mcp_manageTitle: string
+  mcp_debugInline: string
+  mcp_debugRunFlag: string
+  mcp_hintNavigate: string
+  mcp_hintConfirm: string
+  mcp_hintCancel: string
+  mcp_agentHeading: string
+  mcp_forHelp: string
 }
 
 // English (default) locale
@@ -1237,4 +1262,29 @@ export const en: TranslationKeys = {
     `Session memory (broader context):\n${memory}\n\n`,
   awaySummaryPrompt:
     'The user stepped away and is coming back. Write exactly 1-3 short sentences. Start by stating the high-level task — what they are building or debugging, not implementation details. Next: the concrete next step. Skip status reports and commit recaps.',
+
+  // MCP List Panel
+  mcp_scope_project: 'Project MCPs',
+  mcp_scope_user: 'User MCPs',
+  mcp_scope_local: 'Local MCPs',
+  mcp_scope_enterprise: 'Enterprise MCPs',
+  mcp_scope_dynamic: 'Built-in MCPs',
+  mcp_alwaysAvailable: 'always available',
+  mcp_status_disabled: 'disabled',
+  mcp_status_connected: 'connected',
+  mcp_status_reconnecting: (count: number) => `reconnecting (${count})`,
+  mcp_status_connecting: 'connecting\u2026',
+  mcp_status_needsAuth: 'needs authentication',
+  mcp_status_failed: 'failed',
+  mcp_mayNeedAuth: 'may need auth',
+  mcp_agentOnly: 'agent-only',
+  mcp_dismissed: 'MCP dialog dismissed',
+  mcp_manageTitle: 'Manage MCP servers',
+  mcp_debugInline: '\u27E1 Error logs shown inline with --debug',
+  mcp_debugRunFlag: '\u27E1 Run claude --debug to see error logs',
+  mcp_hintNavigate: 'navigate',
+  mcp_hintConfirm: 'confirm',
+  mcp_hintCancel: 'cancel',
+  mcp_agentHeading: 'Agent MCPs',
+  mcp_forHelp: 'for help',
 }

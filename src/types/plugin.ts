@@ -1,3 +1,4 @@
+// @ts-expect-error ../services/lsp/types.js is only available in some configurations
 import type { LspServerConfig } from '../services/lsp/types.js'
 import type { McpServerConfig } from '../services/mcp/types.js'
 import type { BundledSkillDefinition } from '../skills/bundledSkills.js'

@@ -28,7 +28,7 @@ export type Property = {
 };
 export type Diagnostic = React.ReactNode;
 export function buildSandboxProperties(): Property[] {
-  if ("external" !== 'ant') {
+  if (process.env.USER_TYPE !== 'ant') {
     return [];
   }
   const isSandboxed = SandboxManager.isSandboxingEnabled();
@@ -252,6 +252,8 @@ export function buildAPIProviderProperties(): Property[] {
       gemini: 'Google Gemini',
       github: 'GitHub Models',
       mistral: 'Mistral',
+      'nvidia-nim': 'NVIDIA NIM',
+      minimax: 'MiniMax',
     }[apiProvider];
     properties.push({
       label: 'API provider',
@@ -328,11 +330,12 @@ export function buildAPIProviderProperties(): Property[] {
       });
     }
   } else if (apiProvider === 'openai') {
+    const _openaiSecrets = { OPENAI_API_KEY: process.env.OPENAI_API_KEY, CODEX_API_KEY: process.env.CODEX_API_KEY };
     const openaiBaseUrl = process.env.OPENAI_BASE_URL;
     if (openaiBaseUrl) {
       properties.push({
         label: 'OpenAI base URL',
-        value: redactSecretValueForDisplay(openaiBaseUrl, process.env) ?? openaiBaseUrl
+        value: redactSecretValueForDisplay(openaiBaseUrl, _openaiSecrets) ?? openaiBaseUrl
       });
     }
     const openaiModel = process.env.OPENAI_MODEL;
@@ -351,15 +354,16 @@ export function buildAPIProviderProperties(): Property[] {
       }
       properties.push({
         label: 'Model',
-        value: redactSecretValueForDisplay(modelDisplay, process.env) ?? modelDisplay
+        value: redactSecretValueForDisplay(modelDisplay, _openaiSecrets) ?? modelDisplay
       });
     }
   } else if (apiProvider === 'codex') {
+    const _codexSecrets = { OPENAI_API_KEY: process.env.OPENAI_API_KEY, CODEX_API_KEY: process.env.CODEX_API_KEY };
     const codexBaseUrl = process.env.OPENAI_BASE_URL;
     if (codexBaseUrl) {
       properties.push({
         label: 'Codex base URL',
-        value: redactSecretValueForDisplay(codexBaseUrl, process.env) ?? codexBaseUrl
+        value: redactSecretValueForDisplay(codexBaseUrl, _codexSecrets) ?? codexBaseUrl
       });
     }
     const openaiModel = process.env.OPENAI_MODEL;
@@ -378,37 +382,39 @@ export function buildAPIProviderProperties(): Property[] {
       }
       properties.push({
         label: 'Model',
-        value: redactSecretValueForDisplay(modelDisplay, process.env) ?? modelDisplay
+        value: redactSecretValueForDisplay(modelDisplay, _codexSecrets) ?? modelDisplay
       });
     }
   } else if (apiProvider === 'gemini') {
+    const _geminiSecrets = { GEMINI_API_KEY: process.env.GEMINI_API_KEY, GOOGLE_API_KEY: process.env.GOOGLE_API_KEY };
     const geminiBaseUrl = process.env.GEMINI_BASE_URL;
     if (geminiBaseUrl) {
       properties.push({
         label: 'Gemini base URL',
-        value: redactSecretValueForDisplay(geminiBaseUrl, process.env) ?? geminiBaseUrl
+        value: redactSecretValueForDisplay(geminiBaseUrl, _geminiSecrets) ?? geminiBaseUrl
       });
     }
     const geminiModel = process.env.GEMINI_MODEL;
     if (geminiModel) {
       properties.push({
         label: 'Model',
-        value: redactSecretValueForDisplay(geminiModel, process.env) ?? geminiModel
+        value: redactSecretValueForDisplay(geminiModel, _geminiSecrets) ?? geminiModel
       });
     }
   } else if (apiProvider === 'mistral') {
+    const _mistralSecrets = { MISTRAL_API_KEY: process.env.MISTRAL_API_KEY };
     const mistralBaseUrl = process.env.MISTRAL_BASE_URL;
     if (mistralBaseUrl) {
       properties.push({
         label: 'Mistral base URL',
-        value: redactSecretValueForDisplay(mistralBaseUrl, process.env) ?? mistralBaseUrl
+        value: redactSecretValueForDisplay(mistralBaseUrl, _mistralSecrets) ?? mistralBaseUrl
       })
     }
     const mistralModel = process.env.MISTRAL_MODEL;
     if (mistralModel) {
       properties.push({
         label: 'Model',
-        value: redactSecretValueForDisplay(mistralModel, process.env) ?? mistralModel
+        value: redactSecretValueForDisplay(mistralModel, _mistralSecrets) ?? mistralModel
       })
     }
   }

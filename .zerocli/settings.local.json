@@ -42,7 +42,8 @@
       "Bash(curl -s --max-time 10 http://acessoeficiente.com.br)",
       "WebFetch(domain:mcp.exa.ai)",
       "WebFetch(domain:g1.globo.com)",
-      "WebFetch(domain:www.espn.com.br)"
+      "WebFetch(domain:www.espn.com.br)",
+      "Bash(bun x:*)"
     ]
   },
   "enabledMcpjsonServers": [

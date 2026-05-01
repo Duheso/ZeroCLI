@@ -1,3 +1,4 @@
+// @ts-expect-error @ant/computer-use-swift is only available in internal builds
 import type { ComputerUseAPI } from '@ant/computer-use-swift'
 
 let cached: ComputerUseAPI | undefined
