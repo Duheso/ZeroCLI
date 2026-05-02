@@ -127,12 +127,12 @@ export function MemoryFileSelector(t0) {
       t1 = $[0];
     }
     folderOptions.push(t1);
-    if (feature("TEAMMEM") && teamMemPaths.isTeamMemoryEnabled()) {
+    if (feature("TEAMMEM") && teamMemPaths?.isTeamMemoryEnabled()) {
       let t2;
       if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
         t2 = {
           label: "Open team memory folder",
-          value: `${OPEN_FOLDER_PREFIX}${teamMemPaths.getTeamMemPath()}`,
+          value: `${OPEN_FOLDER_PREFIX}${teamMemPaths?.getTeamMemPath()}`,
           description: ""
         };
         $[1] = t2;

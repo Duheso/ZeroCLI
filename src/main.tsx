@@ -3315,7 +3315,7 @@ async function run(): Promise<CommanderCommand> {
       setUserMsgOptIn(true);
       setIsRemoteMode(true);
       const remoteSessionConfig = createRemoteSessionConfig(targetSessionId, getAccessToken, apiCreds.orgUUID, /* hasInitialPrompt */false, /* viewerOnly */true);
-      const infoMessage = createSystemMessage(`Attached to assistant session ${targetSessionId.slice(0, 8)}…`, 'info');
+      const infoMessage = createSystemMessage(`Attached to assistant session ${targetSessionId!.slice(0, 8)}…`, 'info');
       const assistantInitialState: AppState = {
         ...initialState,
         isBriefOnly: true,

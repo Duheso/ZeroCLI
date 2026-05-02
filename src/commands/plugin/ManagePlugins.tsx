@@ -770,7 +770,7 @@ export function ManagePlugins({
       pluginGroups.sort((a_0, b_0) => a_0[0]!.name.localeCompare(b_0[0]!.name));
 
       // Sort standalone MCPs by name
-      standaloneMcpsInScope.sort((a_1, b_1) => a_1.name.localeCompare(b_1.name));
+      standaloneMcpsInScope.sort((a_1, b_1) => (a_1.name ?? '').localeCompare(b_1.name ?? ''));
 
       // Build final list: plugins (with their children) first, then standalone MCPs
       for (const group_0 of pluginGroups) {
@@ -794,7 +794,7 @@ export function ManagePlugins({
   const filteredItems = useMemo(() => {
     if (!searchQuery) return unifiedItems;
     const lowerQuery = searchQuery.toLowerCase();
-    return unifiedItems.filter(item_5 => item_5.name.toLowerCase().includes(lowerQuery) || 'description' in item_5 && item_5.description?.toLowerCase().includes(lowerQuery));
+    return unifiedItems.filter(item_5 => item_5.name?.toLowerCase().includes(lowerQuery) || 'description' in item_5 && item_5.description?.toLowerCase().includes(lowerQuery));
   }, [unifiedItems, searchQuery]);
 
   // Selection state
@@ -1203,7 +1203,7 @@ export function ManagePlugins({
         setPendingToggles(newPending);
       }
     } else if (item_7?.type === 'mcp') {
-      void toggleMcpServer(item_7.client.name);
+      if (item_7.client) void toggleMcpServer(item_7.client.name);
     }
   }, [selectedIndex, filteredItems, pendingToggles, pluginStates, toggleMcpServer]);
 
