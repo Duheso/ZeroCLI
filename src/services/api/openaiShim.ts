@@ -1894,7 +1894,7 @@ class OpenAIShimMessages {
             }
           }
 
-          let responsesResponse: Response
+          let responsesResponse!: Response
           try {
             responsesResponse = await fetchWithProxyRetry(responsesUrl, {
               method: 'POST',

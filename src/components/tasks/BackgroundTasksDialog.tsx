@@ -549,6 +549,8 @@ function toListItem(task: BackgroundTaskState): ListItem {
         task
       };
   }
+  // Exhaustive check: should never reach here if BackgroundTaskState union is complete
+  return undefined as never;
 }
 function Item(t0) {
   const $ = _c(14);

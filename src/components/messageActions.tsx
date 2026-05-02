@@ -61,6 +61,7 @@ export function isNavigableMessage(msg: NavigableMessage): boolean {
       }
       return false;
   }
+  return false;
 }
 type PrimaryInput = {
   label: string;
@@ -437,6 +438,8 @@ export function copyTextOf(msg: NavigableMessage): string {
         }
         return `[${a.type}]`;
       }
+    default:
+      return '';
   }
 }
 function toolResultText(r: NormalizedUserMessage): string {

@@ -831,5 +831,7 @@ export function shouldRenderStatically(message: RenderableMessage, streamingTool
         // (In transcript mode, we already returned true at the top of this function)
         return false;
       }
+    default:
+      return false;
   }
 }
