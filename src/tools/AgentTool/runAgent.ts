@@ -515,7 +515,7 @@ export async function* runAgent({
     : resolveAgentTools(agentDefinition, availableTools, isAsync).resolvedTools
 
   const additionalWorkingDirectories = Array.from(
-    appState.toolPermissionContext.additionalWorkingDirectories.keys(),
+    (appState.toolPermissionContext.additionalWorkingDirectories as Map<string, unknown>).keys(),
   )
 
   const agentSystemPrompt = override?.systemPrompt
