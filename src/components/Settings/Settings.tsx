@@ -134,3 +134,5 @@ function _temp2() {
 function _temp() {
   return [];
 }
+// Stub for internal-only Gates component (disabled via feature flag)
+function Gates(_: { onOwnsEscChange: (v: boolean) => void; contentHeight: number }) { return null; }

@@ -205,6 +205,7 @@ import type { SandboxAskCallback, NetworkHostPattern } from '../utils/sandbox/sa
 import { type IDEExtensionInstallationStatus, closeOpenDiffs, getConnectedIdeClient, type IdeType } from '../utils/ide.js';
 import { useIDEIntegration } from '../hooks/useIDEIntegration.js';
 import exit from '../commands/exit/index.js';
+import { launchUltraplan } from '../commands/ultraplan.js';
 import { ExitFlow } from '../components/ExitFlow.js';
 import { getCurrentWorktreeSession } from '../utils/worktree.js';
 import { popAllEditable, enqueue, type SetAppState, getCommandQueue, getCommandQueueLength, removeByFilter } from '../utils/messageQueueManager.js';
@@ -5029,3 +5030,6 @@ export function REPL({
   }
   return mainReturn;
 }
+// Stubs for internal-only ULTRAPLAN components (disabled via feature flag in external builds)
+function UltraplanChoiceDialog(_: Record<string, unknown>) { return null; }
+function UltraplanLaunchDialog(_: Record<string, unknown>) { return null; }

@@ -515,3 +515,5 @@ function getSpinnerHintParts(isLoading: boolean, escShortcut: string, todosShort
 function isPrStatusEnabled(): boolean {
   return getGlobalConfig().prStatusFooterEnabled ?? true;
 }
+// Stub for internal-only TungstenPill component (disabled via feature flag)
+function TungstenPill(_: { selected: boolean }) { return null; }

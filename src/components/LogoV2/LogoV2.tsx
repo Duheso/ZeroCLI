@@ -542,3 +542,6 @@ function _temp2(s_0) {
 function _temp(s) {
   return s.agent;
 }
+// Stubs for internal-only components (disabled via feature flags)
+function GateOverridesWarning() { return null; }
+function ExperimentEnrollmentNotice() { return null; }
