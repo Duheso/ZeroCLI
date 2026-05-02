@@ -9,11 +9,10 @@ import { c as _c } from "react-compiler-runtime";
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNotifications } from '../context/notifications.js';
-import type { InputEvent } from '../ink/events/input-event.js';
 // ChordInterceptor intentionally uses useInput to intercept all keystrokes before
 // other handlers process them - this is required for chord sequence support
 // eslint-disable-next-line custom-rules/prefer-use-keybindings
-import { type Key, useInput } from '../ink.js';
+import { type Key, type InputEvent, useInput } from '../ink.js';
 import { count } from '../utils/array.js';
 import { logForDebugging } from '../utils/debug.js';
 import { plural } from '../utils/stringUtils.js';
@@ -56,7 +55,7 @@ type Props = {
  * Display keybinding warnings to the user via notifications.
  * Shows a brief message pointing to /doctor for details.
  */
-function useKeybindingWarnings(warnings, isReload) {
+function useKeybindingWarnings(warnings: KeybindingWarning[], isReload: boolean) {
   const $ = _c(9);
   const {
     addNotification,
@@ -110,10 +109,10 @@ function useKeybindingWarnings(warnings, isReload) {
   }
   useEffect(t0, t1);
 }
-function _temp2(w_0) {
+function _temp2(w_0: KeybindingWarning) {
   return w_0.severity === "warning";
 }
-function _temp(w) {
+function _temp(w: KeybindingWarning) {
   return w.severity === "error";
 }
 export function KeybindingSetup({
@@ -223,7 +222,13 @@ type HandlerRegistration = {
   context: KeybindingContextName;
   handler: () => void;
 };
-function ChordInterceptor(t0) {
+function ChordInterceptor(t0: {
+  bindings: ParsedBinding[];
+  pendingChordRef: React.RefObject<ParsedKeystroke[] | null>;
+  setPendingChord: (p: ParsedKeystroke[] | null) => void;
+  activeContexts: Set<KeybindingContextName>;
+  handlerRegistryRef: React.RefObject<Map<string, Set<{ action: string; context: KeybindingContextName; handler: () => void; }>>>;
+}) {
   const $ = _c(6);
   const {
     bindings,
@@ -234,12 +239,12 @@ function ChordInterceptor(t0) {
   } = t0;
   let t1;
   if ($[0] !== activeContexts || $[1] !== bindings || $[2] !== handlerRegistryRef || $[3] !== pendingChordRef || $[4] !== setPendingChord) {
-    t1 = (input, key, event) => {
+    t1 = (input: string, key: Key, event: InputEvent) => {
       if ((key.wheelUp || key.wheelDown) && pendingChordRef.current === null) {
         return;
       }
       const registry = handlerRegistryRef.current;
-      const handlerContexts = new Set();
+      const handlerContexts = new Set<KeybindingContextName>();
       if (registry) {
         for (const handlers of registry.values()) {
           for (const registration of handlers) {
@@ -247,7 +252,7 @@ function ChordInterceptor(t0) {
           }
         }
       }
-      const contexts = [...handlerContexts, ...activeContexts, "Global"];
+      const contexts: KeybindingContextName[] = [...handlerContexts, ...activeContexts, "Global"];
       const wasInChord = pendingChordRef.current !== null;
       const result = resolveKeyWithChordState(input, key, contexts, bindings, pendingChordRef.current);
       bb23: switch (result.type) {

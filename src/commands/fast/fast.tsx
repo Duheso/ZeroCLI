@@ -44,8 +44,8 @@ export function FastModePicker(t0: { onDone: LocalJSXCommandOnDone; unavailableR
     onDone,
     unavailableReason
   } = t0;
-  const model = useAppState(_temp);
-  const initialFastMode = useAppState(_temp2);
+  const model = useAppState((s: AppState) => s.mainLoopModel);
+  const initialFastMode = useAppState((s_0: AppState) => s_0.fastMode);
   const setAppState = useSetAppState();
   const [enableFastMode, setEnableFastMode] = useState(initialFastMode ?? false);
   let t1;
@@ -82,7 +82,7 @@ export function FastModePicker(t0: { onDone: LocalJSXCommandOnDone; unavailableR
         const modelUpdated = !isFastModeSupportedByModel(model) ? ` · model set to ${FAST_MODE_MODEL_DISPLAY}` : "";
         onDone(`${fastIcon} Fast mode ON${modelUpdated} · ${pricing}`);
       } else {
-        setAppState(_temp3);
+        setAppState((prev: AppState): AppState => ({ ...prev, fastMode: false }));
         onDone("Fast mode OFF");
       }
     };

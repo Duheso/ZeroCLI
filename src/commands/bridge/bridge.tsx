@@ -14,7 +14,7 @@ import { useRegisterOverlay } from '../../context/overlayContext.js';
 import { Box, Text } from '../../ink.js';
 import { useKeybindings } from '../../keybindings/useKeybinding.js';
 import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from '../../services/analytics/index.js';
-import { useAppState, useSetAppState } from '../../state/AppState.js';
+import { type AppState, useAppState, useSetAppState } from '../../state/AppState.js';
 import type { ToolUseContext } from '../../Tool.js';
 import type { LocalJSXCommandContext, LocalJSXCommandOnDone } from '../../types/command.js';
 import { logForDebugging } from '../../utils/debug.js';
@@ -193,7 +193,7 @@ function BridgeDisconnectDialog(t0: { onDone: LocalJSXCommandOnDone }) {
   let t3;
   if ($[4] !== onDone || $[5] !== setAppState) {
     t3 = function handleDisconnect() {
-      setAppState(_temp7);
+      setAppState((prev: AppState): AppState => ({ ...prev, ..._temp7(prev) }));
       logEvent("tengu_bridge_command", {
         action: "disconnect" as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
       });

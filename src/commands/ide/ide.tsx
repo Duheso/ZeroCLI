@@ -11,7 +11,7 @@ import { Box, Text } from '../../ink.js';
 import { t } from '../../i18n/index.js';
 import { clearServerCache } from '../../services/mcp/client.js';
 import type { ScopedMcpServerConfig } from '../../services/mcp/types.js';
-import { useAppState, useSetAppState } from '../../state/AppState.js';
+import { type AppState, useAppState, useSetAppState } from '../../state/AppState.js';
 import { getCwd } from '../../utils/cwd.js';
 import { execFileNoThrow } from '../../utils/execFileNoThrow.js';
 import { type DetectedIDEInfo, detectIDEs, detectRunningIDEs, type IdeType, isJetBrainsIde, isSupportedJetBrainsTerminal, isSupportedTerminal, toIDEDisplayName } from '../../utils/ide.js';
@@ -511,7 +511,7 @@ function IDECommandFlow({
   onDone
 }: IDECommandFlowProps): React.ReactNode {
   const [connectingIDE, setConnectingIDE] = useState<DetectedIDEInfo | null>(null);
-  const ideClient = useAppState((s: { mcp: { clients: { name: string; type?: string; client?: { onclose: (() => void) | null }; config?: Record<string, unknown> }[] } }) => s.mcp.clients.find((c: { name: string }) => c.name === 'ide'));
+  const ideClient = useAppState((s: AppState) => s.mcp.clients.find((c: { name: string }) => c.name === 'ide'));
   const setAppState = useSetAppState();
   const isFirstCheckRef = useRef(true);
 

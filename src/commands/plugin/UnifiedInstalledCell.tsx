@@ -1,6 +1,5 @@
 import { c as _c } from "react-compiler-runtime";
 import figures from 'figures';
-import * as React from 'react';
 import { Box, color, Text, useTheme } from '../../ink.js';
 import { plural } from '../../utils/stringUtils.js';
 import type { UnifiedInstalledItem } from './unifiedTypes.js';
@@ -8,7 +7,7 @@ type Props = {
   item: UnifiedInstalledItem;
   isSelected: boolean;
 };
-export function UnifiedInstalledCell(t0) {
+export function UnifiedInstalledCell(t0: Props) {
   const $ = _c(142);
   const {
     item,
@@ -30,7 +29,8 @@ export function UnifiedInstalledCell(t0) {
       statusIcon = t1;
       statusText = item.pendingToggle === "will-enable" ? "will enable" : "will disable";
     } else {
-      if (item.errorCount > 0) {
+      const ec = item.errorCount ?? 0;
+      if (ec > 0) {
         let t1;
         if ($[2] !== theme) {
           t1 = color("error", theme)(figures.cross);
@@ -40,11 +40,11 @@ export function UnifiedInstalledCell(t0) {
           t1 = $[3];
         }
         statusIcon = t1;
-        const t2 = item.errorCount;
+        const t2 = ec;
         let t3;
-        if ($[4] !== item.errorCount) {
-          t3 = plural(item.errorCount, "error");
-          $[4] = item.errorCount;
+        if ($[4] !== ec) {
+          t3 = plural(ec, "error");
+          $[4] = ec;
           $[5] = t3;
         } else {
           t3 = $[5];
@@ -344,6 +344,9 @@ export function UnifiedInstalledCell(t0) {
       t17 = $[86];
     }
     return t17;
+  }
+  if (item.type !== "mcp") {
+    return null;
   }
   let statusIcon_2;
   let statusText_1;

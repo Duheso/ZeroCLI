@@ -558,7 +558,7 @@ export function DiscoverPlugins({
         <Box marginBottom={1}>
           <Text bold>Discover plugins</Text>
         </Box>
-        <EmptyStateMessage reason={emptyReason} />
+        <EmptyStateMessage reason={emptyReason!} />
         <Box marginTop={1}>
           <Text dimColor italic>
             Esc to go back
@@ -648,7 +648,10 @@ export function DiscoverPlugins({
       <DiscoverPluginsKeyHint hasSelection={selectedForInstall.size > 0} canToggle={selectedIndex < filteredPlugins.length && !filteredPlugins[selectedIndex]?.isInstalled} />
     </Box>;
 }
-function DiscoverPluginsKeyHint(t0) {
+function DiscoverPluginsKeyHint(t0: {
+  hasSelection: boolean;
+  canToggle: boolean;
+}) {
   const $ = _c(10);
   const {
     hasSelection,
@@ -703,7 +706,7 @@ function DiscoverPluginsKeyHint(t0) {
 /**
  * Context-aware empty state message for the Discover screen
  */
-function EmptyStateMessage(t0) {
+function EmptyStateMessage(t0: { reason: EmptyMarketplaceReason }) {
   const $ = _c(6);
   const {
     reason

@@ -52,7 +52,7 @@ type Props = {
   onSave: (config: PluginOptionValues) => void;
   onCancel: () => void;
 };
-export function PluginOptionsDialog(t0) {
+export function PluginOptionsDialog(t0: Props) {
   const $ = _c(70);
   const {
     title,
@@ -73,7 +73,7 @@ export function PluginOptionsDialog(t0) {
   const fields = t1;
   let t2;
   if ($[2] !== configSchema || $[3] !== initialValues) {
-    t2 = key => {
+    t2 = (key: string) => {
       if (configSchema[key]?.sensitive === true) {
         return "";
       }
@@ -122,7 +122,7 @@ export function PluginOptionsDialog(t0) {
   if ($[10] !== currentField || $[11] !== currentFieldIndex || $[12] !== currentInput || $[13] !== fields || $[14] !== initialFor) {
     t6 = () => {
       if (currentFieldIndex < fields.length - 1 && currentField) {
-        setValues(prev => ({
+        setValues((prev: Record<string, string>) => ({
           ...prev,
           [currentField]: currentInput
         }));
@@ -198,13 +198,13 @@ export function PluginOptionsDialog(t0) {
   useKeybindings(t8, t9);
   let t10;
   if ($[30] === Symbol.for("react.memo_cache_sentinel")) {
-    t10 = (char, key_0) => {
+    t10 = (char: string, key_0: { backspace?: boolean; delete?: boolean; ctrl?: boolean; meta?: boolean; tab?: boolean; return?: boolean }) => {
       if (key_0.backspace || key_0.delete) {
         setCurrentInput(_temp3);
         return;
       }
       if (char && !key_0.ctrl && !key_0.meta && !key_0.tab && !key_0.return) {
-        setCurrentInput(prev_3 => prev_3 + char);
+        setCurrentInput((prev_3: string) => prev_3 + char);
       }
     };
     $[30] = t10;
@@ -345,12 +345,12 @@ export function PluginOptionsDialog(t0) {
   }
   return t26;
 }
-function _temp3(prev_2) {
+function _temp3(prev_2: string) {
   return prev_2.slice(0, -1);
 }
-function _temp2(prev_1) {
+function _temp2(prev_1: number) {
   return prev_1 + 1;
 }
-function _temp(prev_0) {
+function _temp(prev_0: number) {
   return prev_0 + 1;
 }

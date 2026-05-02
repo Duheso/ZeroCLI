@@ -49,12 +49,16 @@ export type MCPProgress = {
 }
 
 // Web search progress
-export type WebSearchProgress = {
-  type: 'web_search_progress'
-  query: string
-  status: 'searching' | 'complete' | 'failed'
-  resultsCount?: number
-}
+export type WebSearchProgress =
+  | {
+      type: 'query_update'
+      query: string
+    }
+  | {
+      type: 'search_results_received'
+      resultCount: number
+      query: string
+    }
 
 // Task output progress
 export type TaskOutputProgress = {

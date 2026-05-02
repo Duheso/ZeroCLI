@@ -218,13 +218,14 @@ function addCodexSource(
   sourceMap: Map<string, { title: string; url: string }>,
   source: unknown,
 ): void {
-  if (typeof source?.url !== 'string' || !source.url) return
-  sourceMap.set(source.url, {
+  const s = source as Record<string, unknown>
+  if (typeof s?.url !== 'string' || !s.url) return
+  sourceMap.set(s.url, {
     title:
-      typeof source.title === 'string' && source.title
-        ? source.title
-        : source.url,
-    url: source.url,
+      typeof s.title === 'string' && s.title
+        ? s.title
+        : s.url,
+    url: s.url,
   })
 }
 
@@ -750,7 +751,7 @@ export const WebSearchTool = buildTool({
         event.type === 'stream_event' &&
         event.event?.type === 'content_block_start'
       ) {
-        const contentBlock = event.event.content_block
+        const contentBlock = event.event.content_block as { type: string; id: string } | undefined
         if (contentBlock && contentBlock.type === 'server_tool_use') {
           currentToolUseId = contentBlock.id
           currentToolUseJson = ''
@@ -764,7 +765,7 @@ export const WebSearchTool = buildTool({
         event.type === 'stream_event' &&
         event.event?.type === 'content_block_delta'
       ) {
-        const delta = event.event.delta
+        const delta = event.event.delta as { type: string; partial_json?: string } | undefined
         if (delta?.type === 'input_json_delta' && delta.partial_json) {
           currentToolUseJson += delta.partial_json
 
@@ -804,7 +805,7 @@ export const WebSearchTool = buildTool({
         event.type === 'stream_event' &&
         event.event?.type === 'content_block_start'
       ) {
-        const contentBlock = event.event.content_block
+        const contentBlock = event.event.content_block as { type: string; tool_use_id: string; content: unknown } | undefined
         if (contentBlock && contentBlock.type === 'web_search_tool_result') {
           const toolUseId = contentBlock.tool_use_id
           const actualQuery = toolUseQueries.get(toolUseId) || query
