@@ -1244,13 +1244,13 @@ export function ManagePlugins({
           id: item_8.id,
           name: item_8.name,
           marketplace: item_8.marketplace,
-          errors: item_8.errors,
-          scope: item_8.scope
+          errors: item_8.errors as PluginError[],
+          scope: item_8.scope as PersistablePluginScope
         }
       });
       setDetailsMenuIndex(0);
       setProcessError(null);
-    } else if (item_8?.type === 'mcp') {
+    } else if (item_8?.type === 'mcp' && item_8.client) {
       setViewState({
         type: 'mcp-detail',
         client: item_8.client
@@ -1473,11 +1473,10 @@ export function ManagePlugins({
             for (const source of editableSources) {
               const settings = getSettingsForSource(source);
               if (settings?.enabledPlugins?.[pluginId_7] !== undefined) {
+                const newEnabled = { ...settings.enabledPlugins };
+                delete newEnabled[pluginId_7];
                 updateSettingsForSource(source, {
-                  enabledPlugins: {
-                    ...settings.enabledPlugins,
-                    [pluginId_7]: undefined
-                  }
+                  enabledPlugins: newEnabled
                 });
                 success = true;
               }
