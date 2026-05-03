@@ -20,6 +20,8 @@ import {
   convertSDKMessage,
   isSessionEndMessage,
 } from '../remote/sdkMessageAdapter.js'
+import type { SDKMessage } from '../entrypoints/sdk/coreTypes.js'
+import type { SDKControlPermissionRequest } from '../entrypoints/sdk/controlTypes.js'
 import type { SSHSession } from '../ssh/createSSHSession.js'
 import type { SSHSessionManager } from '../ssh/SSHSessionManager.js'
 import type { Tool } from '../Tool.js'
@@ -70,7 +72,7 @@ export function useSSHSession({
     logForDebugging('[useSSHSession] wiring SSH session manager')
 
     const manager = session.createManager({
-      onMessage: sdkMessage => {
+      onMessage: (sdkMessage: SDKMessage) => {
         if (isSessionEndMessage(sdkMessage)) {
           setIsLoading(false)
         }
@@ -88,7 +90,7 @@ export function useSSHSession({
           setMessages(prev => [...prev, converted.message])
         }
       },
-      onPermissionRequest: (request, requestId) => {
+      onPermissionRequest: (request: SDKControlPermissionRequest, requestId: string) => {
         logForDebugging(
           `[useSSHSession] permission request: ${request.tool_name}`,
         )
@@ -159,7 +161,7 @@ export function useSSHSession({
         logForDebugging('[useSSHSession] connected')
         isConnectedRef.current = true
       },
-      onReconnecting: (attempt, max) => {
+      onReconnecting: (attempt: number, max: number) => {
         logForDebugging(
           `[useSSHSession] ssh dropped, reconnecting (${attempt}/${max})`,
         )

@@ -43,12 +43,13 @@ export type SkillToolProgress = {
 // MCP progress
 export type MCPProgress = {
   type: 'mcp_progress'
-  status: 'started' | 'completed' | 'failed'
+  status: 'started' | 'completed' | 'failed' | 'progress'
   serverName: string
   toolName: string
   progress?: number
   total?: number
   progressMessage?: string
+  elapsedTimeMs?: number
 }
 
 // Web search progress

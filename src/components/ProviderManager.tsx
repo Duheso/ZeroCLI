@@ -1655,7 +1655,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
         </Text>
         <Select
           options={selectOptions}
-          onChange={onSelect}
+          onChange={(v) => onSelect(v as string)}
           onCancel={() => returnToMenu()}
           visibleOptionCount={Math.min(10, Math.max(2, selectOptions.length))}
         />

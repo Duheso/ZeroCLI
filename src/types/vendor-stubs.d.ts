@@ -10,7 +10,17 @@ declare module '@ant/claude-for-chrome-mcp' {
   export type Logger = { info(msg: string): void; error(msg: string): void; };
   export type PermissionMode = 'always' | 'ask' | 'never';
   export class ClaudeForChromeContext {}
-  export function createClaudeForChromeMcpServer(): any;
+  export function createClaudeForChromeMcpServer(ctx?: any): any;
+}
+
+declare module 'ws' {
+  class WebSocket {
+    constructor(url: string, protocols: string[], options: Record<string, unknown>);
+    on(event: string, callback: (...args: any[]) => void): void;
+    send(data: any): void;
+    close(): void;
+  }
+  export default WebSocket;
 }
 
 declare module '@ant/computer-use-mcp' {
