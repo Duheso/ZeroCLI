@@ -37,6 +37,7 @@ import { isMcpbSource, loadMcpbFile, type McpbNeedsConfigResult, type UserConfig
 import { getPluginDataDirSize, pluginDataDirPath } from '../../utils/plugins/pluginDirectories.js';
 import { getFlaggedPlugins, markFlaggedPluginsSeen, removeFlaggedPlugin } from '../../utils/plugins/pluginFlagging.js';
 import { type PersistablePluginScope, parsePluginIdentifier } from '../../utils/plugins/pluginIdentifier.js';
+import type { PluginScope } from '../../utils/plugins/schemas.js';
 import { loadAllPlugins } from '../../utils/plugins/pluginLoader.js';
 import { loadPluginOptions, type PluginOptionSchema, savePluginOptions } from '../../utils/plugins/pluginOptionsStorage.js';
 import { isPluginBlockedByPolicy } from '../../utils/plugins/pluginPolicy.js';
@@ -695,7 +696,7 @@ export function ManagePlugins({
 
     // Add standalone MCPs to their respective scope groups
     for (const mcp of standaloneMcps) {
-      const scope_1 = mcp.scope;
+      const scope_1 = mcp.type === 'mcp' ? mcp.scope : 'user';
       if (!itemsByScope.has(scope_1)) {
         itemsByScope.set(scope_1, []);
       }
@@ -704,7 +705,7 @@ export function ManagePlugins({
 
     // Add failed plugins to their respective scope groups
     for (const failedPlugin of failedPluginItems) {
-      const scope_2 = failedPlugin.scope;
+      const scope_2 = failedPlugin.type === 'failed-plugin' ? failedPlugin.scope : 'user';
       if (!itemsByScope.has(scope_2)) {
         itemsByScope.set(scope_2, []);
       }
@@ -767,7 +768,11 @@ export function ManagePlugins({
       }
 
       // Sort plugin groups by the plugin name (first item in each group)
-      pluginGroups.sort((a_0, b_0) => a_0[0]!.name.localeCompare(b_0[0]!.name));
+      pluginGroups.sort((a_0, b_0) => {
+          const aName = a_0[0]?.type === 'plugin' ? (a_0[0]?.name ?? '') : (a_0[0]?.type === 'failed-plugin' ? a_0[0]?.name ?? '' : '');
+          const bName = b_0[0]?.type === 'plugin' ? (b_0[0]?.name ?? '') : (b_0[0]?.type === 'failed-plugin' ? b_0[0]?.name ?? '' : '');
+          return aName.localeCompare(bName);
+        });
 
       // Sort standalone MCPs by name
       standaloneMcpsInScope.sort((a_1, b_1) => (a_1.name ?? '').localeCompare(b_1.name ?? ''));

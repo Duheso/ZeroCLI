@@ -378,7 +378,7 @@ Questions asked and answers provided:\n${questionsWithAnswers_0}`;
           interviewPhaseEnabled: isInPlanMode && isPlanModeInterviewPhaseEnabled()
         });
       }
-      const annotations = {};
+      const annotations: Record<string, any> = {};
       for (const q_3 of questions) {
         const answer_1 = answersToSubmit[q_3.question];
         const notes = questionStates[q_3.question]?.textInputValue;
@@ -550,7 +550,7 @@ Questions asked and answers provided:\n${questionsWithAnswers_0}`;
     }
     let t25;
     if ($[83] !== currentQuestion.question) {
-      t25 = id_0 => onRemoveImage(currentQuestion.question, id_0);
+      t25 = (id_0: number) => onRemoveImage(currentQuestion.question, id_0);
       $[83] = currentQuestion.question;
       $[84] = t25;
     } else {
@@ -605,7 +605,7 @@ Questions asked and answers provided:\n${questionsWithAnswers_0}`;
   }
   return null;
 }
-function _temp6(c_1) {
+function _temp6(c_1: PastedContent) {
   return c_1.type === "image";
 }
 function _temp5(c_0: any) {
