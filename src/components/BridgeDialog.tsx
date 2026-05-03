@@ -10,7 +10,7 @@ import { useRegisterOverlay } from '../context/overlayContext.js';
 // eslint-disable-next-line custom-rules/prefer-use-keybindings -- raw 'd' key for disconnect, not a configurable keybinding action
 import { Box, Text, useInput } from '../ink.js';
 import { useKeybindings } from '../keybindings/useKeybinding.js';
-import { useAppState, useSetAppState } from '../state/AppState.js';
+import { type AppState, useAppState, useSetAppState } from '../state/AppState.js';
 import { saveGlobalConfig } from '../utils/config.js';
 import { getBranch } from '../utils/git.js';
 import { Dialog } from './design-system/Dialog.js';
@@ -46,7 +46,7 @@ export function BridgeDialog(t0: Props) {
   }
   const repoName = t1;
   let t2;
-  let t3;
+  let t3: never[];
   if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = () => {
       getBranch().then(setBranchName).catch(_temp1);
@@ -116,7 +116,7 @@ export function BridgeDialog(t0: Props) {
   useKeybindings(t7, t8);
   let t9;
   if ($[11] !== explicit || $[12] !== onDone || $[13] !== setAppState) {
-    t9 = input => {
+    t9 = (input: string) => {
       if (input === "d") {
         if (explicit) {
           saveGlobalConfig(_temp11);

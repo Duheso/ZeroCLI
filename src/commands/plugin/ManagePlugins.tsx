@@ -416,10 +416,10 @@ export function ManagePlugins({
   }
   function getIdForItem(item: UnifiedInstalledItem): string {
     if (item.type === 'plugin' || item.type === 'failed-plugin') {
-      return item.id;
+      return item.id ?? '';
     }
     if (item.type === 'mcp') {
-      return item.id;
+      return item.id ?? '';
     }
     return '';
   }
