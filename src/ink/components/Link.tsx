@@ -8,7 +8,7 @@ export type Props = {
   readonly url: string;
   readonly fallback?: ReactNode;
 };
-export default function Link(t0) {
+export default function Link(t0: Props) {
   const $ = _c(5);
   const {
     children,
@@ -19,7 +19,7 @@ export default function Link(t0) {
   if (supportsHyperlinks()) {
     let t1;
     if ($[0] !== content || $[1] !== url) {
-      t1 = <Text><ink-link href={url}>{content}</ink-link></Text>;
+      t1 = <Text>{React.createElement('ink-link', { href: url }, content) as unknown as ReactNode}</Text>;
       $[0] = content;
       $[1] = url;
       $[2] = t1;

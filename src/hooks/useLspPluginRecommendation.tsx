@@ -108,7 +108,7 @@ export function useLspPluginRecommendation() {
   React.useEffect(t1, t2);
   let t3;
   if ($[5] !== addNotification || $[6] !== clearRecommendation || $[7] !== recommendation) {
-    t3 = response => {
+    t3 = (response: 'yes' | 'no' | 'never' | 'disable') => {
       if (!recommendation) {
         return;
       }
@@ -179,7 +179,7 @@ export function useLspPluginRecommendation() {
   }
   return t4;
 }
-function _temp2(current) {
+function _temp2(current: import('../utils/config.js').GlobalConfig): import('../utils/config.js').GlobalConfig {
   if (current.lspRecommendationDisabled) {
     return current;
   }
@@ -188,6 +188,6 @@ function _temp2(current) {
     lspRecommendationDisabled: true
   };
 }
-function _temp(s) {
+function _temp(s: import('../state/AppState.js').AppState) {
   return s.fileHistory.trackedFiles;
 }

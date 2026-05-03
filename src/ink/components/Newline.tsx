@@ -12,7 +12,7 @@ export type Props = {
 /**
  * Adds one or more newline (\n) characters. Must be used within <Text> components.
  */
-export default function Newline(t0) {
+export default function Newline(t0: Props) {
   const $ = _c(4);
   const {
     count: t1
@@ -28,6 +28,7 @@ export default function Newline(t0) {
   }
   let t3;
   if ($[2] !== t2) {
+    // @ts-expect-error ink-text is a runtime virtual element registered by Ink
     t3 = <ink-text>{t2}</ink-text>;
     $[2] = t2;
     $[3] = t3;

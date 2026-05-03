@@ -47,7 +47,7 @@ export type Props = Except<Styles, 'textWrap'> & {
 /**
  * `<Box>` is an essential Ink component to build your layout. It's like `<div style="display: flex">` in the browser.
  */
-function BoxInner(t0, ref: React.ForwardedRef<DOMElement>) {
+function BoxInner(t0: PropsWithChildren<Props>, ref: React.ForwardedRef<DOMElement>) {
   const $ = _c(42);
   let autoFocus;
   let children;
@@ -183,6 +183,7 @@ function BoxInner(t0, ref: React.ForwardedRef<DOMElement>) {
   }
   let t4;
   if ($[27] !== autoFocus || $[28] !== children || $[29] !== onBlur || $[30] !== onBlurCapture || $[31] !== onClick || $[32] !== onFocus || $[33] !== onFocusCapture || $[34] !== onKeyDown || $[35] !== onKeyDownCapture || $[36] !== onMouseEnter || $[37] !== onMouseLeave || $[38] !== ref || $[39] !== t3 || $[40] !== tabIndex) {
+    // @ts-expect-error ink-box closing tag - JSX.IntrinsicElements augmentation
     t4 = <ink-box ref={ref} tabIndex={tabIndex} autoFocus={autoFocus} onClick={onClick} onFocus={onFocus} onFocusCapture={onFocusCapture} onBlur={onBlur} onBlurCapture={onBlurCapture} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onKeyDown={onKeyDown} onKeyDownCapture={onKeyDownCapture} style={t3}>{children}</ink-box>;
     $[27] = autoFocus;
     $[28] = children;
