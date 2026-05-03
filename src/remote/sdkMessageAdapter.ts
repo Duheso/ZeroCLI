@@ -28,7 +28,7 @@ import { createUserMessage } from '../utils/messages.js'
 /**
  * Convert an SDKAssistantMessage to an AssistantMessage
  */
-function convertAssistantMessage(msg: SDKMessage & { type: 'assistant' }): AssistantMessage {
+function convertAssistantMessage(msg: any): AssistantMessage {
   return {
     type: 'assistant',
     message: msg.message,
@@ -45,7 +45,7 @@ function convertAssistantMessage(msg: SDKMessage & { type: 'assistant' }): Assis
 function convertStreamEvent(msg: SDKPartialAssistantMessage): StreamEvent {
   return {
     type: 'stream_event',
-    event: msg.event,
+    event: msg.event as Record<string, unknown>,
   }
 }
 

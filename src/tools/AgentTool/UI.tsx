@@ -252,7 +252,7 @@ function VerboseAgentTranscript(t0: VerboseAgentTranscriptProps) {
   } = t0;
   let t1;
   if ($[0] !== progressMessages) {
-    t1 = buildSubagentLookups(progressMessages.filter(_temp2).map(_temp3));
+    t1 = buildSubagentLookups(progressMessages.filter(_temp2).map(_temp3) as AgentToolProgress[]);
     $[0] = progressMessages;
     $[1] = t1;
   } else {
@@ -306,7 +306,7 @@ function _temp4(pm_1: ProgressMessage<Progress>) {
   }
   return true;
 }
-function _temp3(pm_0: ProgressMessage<AgentToolProgress>) {
+function _temp3(pm_0: ProgressMessage<Progress>) {
   return pm_0.data;
 }
 function _temp2(pm: ProgressMessage<Progress>) {
@@ -638,7 +638,7 @@ function calculateAgentStats(progressMessages: ProgressMessage<Progress>[]): {
   const latestAssistant = progressMessages.findLast((msg): msg is ProgressMessage<AgentToolProgress> => hasProgressMessage(msg.data) && (msg.data.message.type as string) === 'assistant');
   let tokens = null;
   if ((latestAssistant?.data.message.type as string) === 'assistant') {
-    const usage = (latestAssistant.data.message as any).message.usage;
+    const usage = (latestAssistant!.data.message as any).message.usage;
     tokens = (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0) + usage.input_tokens + usage.output_tokens;
   }
   return {

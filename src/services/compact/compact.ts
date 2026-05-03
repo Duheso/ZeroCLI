@@ -1,5 +1,5 @@
 import { feature } from 'bun:bundle'
-import type { UUID } from '../../types/UUID.js'
+type UUID = `${string}-${string}-${string}-${string}-${string}`
 
 type LegacyPartialCompactDirection = 'from' | 'up_to'
 import uniqBy from 'lodash-es/uniqBy.js'
@@ -364,9 +364,9 @@ export function annotateBoundaryWithPreservedSegment(
     compactMetadata: {
       ...boundary.compactMetadata,
       preservedSegment: {
-        headUuid: keep[0]!.uuid,
+        headUuid: keep[0]!.uuid as UUID,
         anchorUuid,
-        tailUuid: keep.at(-1)!.uuid,
+        tailUuid: keep.at(-1)!.uuid as UUID,
       },
     },
   }

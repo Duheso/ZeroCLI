@@ -213,7 +213,7 @@ export function CollapsedReadSearchContent({
   if (isActiveGroup) {
     for (const id_0 of toolUseIds) {
       if (!inProgressToolUseIDs.has(id_0)) continue;
-      const latest = lookups.progressMessagesByToolUseID.get(id_0)?.at(-1)?.data as (Progress & {
+      const latest = lookups.progressMessagesByToolUseID.get(id_0)?.at(-1)?.data as (any & {
         phase?: string;
         toolInput?: unknown;
         toolName?: string;
@@ -232,16 +232,16 @@ export function CollapsedReadSearchContent({
 
   // In verbose mode, render each tool use with its 1-line result summary
   if (verbose) {
-    const toolUses: NormalizedAssistantMessage[] = [];
-    for (const msg of groupMessages) {
+    const toolUses: (NormalizedAssistantMessage & { message: { content: Array<{ id: string; type: string }> } })[] = [];
+    for (const msg of groupMessages as any) {
       if (msg.type === 'assistant') {
         toolUses.push(msg);
-      } else if (msg.type === 'grouped_tool_use') {
+      } else if ((msg.type as string) === 'grouped_tool_use') {
         toolUses.push(...msg.messages);
       }
     }
     return <Box flexDirection="column">
-        {toolUses.map(msg_0 => {
+        {toolUses.map((msg_0: any) => {
         const content = msg_0.message.content[0];
         if (content?.type !== 'tool_use') return null;
         return <VerboseToolUse key={content.id} content={content} tools={tools} lookups={lookups} inProgressToolUseIDs={inProgressToolUseIDs} shouldAnimate={shouldAnimate} theme={theme} />;
@@ -257,7 +257,7 @@ export function CollapsedReadSearchContent({
                 {info.command} ({formatSecondsShort(info.durationMs ?? 0)})
               </Text>)}
           </>}
-        {message.relevantMemories?.map(m => <Box key={m.path} flexDirection="column" marginTop={1}>
+        {(message.relevantMemories as { path: string; content: string; mtimeMs?: number }[])?.map(m => <Box key={m.path} flexDirection="column" marginTop={1}>
             <Text dimColor>
               {'  ⎿  '}{t('summary_recalled_cap')} {basename(m.path)}
             </Text>

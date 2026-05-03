@@ -249,7 +249,7 @@ export function SystemTextMessage(t0: Props) {
   }
   return t4;
 }
-function StopHookSummaryMessage(t0) {
+function StopHookSummaryMessage(t0: StopHookSummaryMessageProps) {
   const $ = _c(47);
   const {
     message,
