@@ -199,7 +199,7 @@ export function SystemTextMessage(t0: Props) {
     return t6;
   }
   const isStopHookSummary = message.subtype === "stop_hook_summary";
-  if (!isStopHookSummary && !verbose && message.level === "info") {
+  if (!isStopHookSummary && !verbose && (message as any).level === "info") {
     return null;
   }
   if (message.subtype === "api_error") {
@@ -228,13 +228,13 @@ export function SystemTextMessage(t0: Props) {
     }
     return t1;
   }
-  const content = message.content;
+  const content = (message as any).content;
   if (typeof content !== "string") {
     return null;
   }
-  const t1 = message.level !== "info";
-  const t2 = message.level === "warning" ? "warning" : undefined;
-  const t3 = message.level === "info";
+  const t1 = (message as any).level !== "info";
+  const t2 = (message as any).level === "warning" ? "warning" : undefined;
+  const t3 = (message as any).level === "info";
   let t4;
   if ($[45] !== addMargin || $[46] !== content || $[47] !== t1 || $[48] !== t2 || $[49] !== t3) {
     t4 = <Box flexDirection="row" width="100%"><SystemTextMessageInner content={content} addMargin={addMargin} dot={t1} color={t2} dimColor={t3} /></Box>;
@@ -249,7 +249,7 @@ export function SystemTextMessage(t0: Props) {
   }
   return t4;
 }
-type StopHookSummaryMessageProps = { message: SystemStopHookSummaryMessage; addMargin?: boolean; verbose: boolean; isTranscriptMode: boolean };
+type StopHookSummaryMessageProps = { message: SystemStopHookSummaryMessage; addMargin: boolean; verbose: boolean; isTranscriptMode: boolean };
 function StopHookSummaryMessage(t0: StopHookSummaryMessageProps) {
   const $ = _c(47);
   const {

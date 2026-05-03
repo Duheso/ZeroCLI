@@ -25,11 +25,14 @@ import { handleSwarmWorkerPermission } from './toolPermission/handlers/swarmWork
 import { createPermissionContext, createPermissionQueueOps } from './toolPermission/PermissionContext.js';
 import { logPermissionDecision } from './toolPermission/permissionLogging.js';
 export type CanUseToolFn<Input extends Record<string, unknown> = Record<string, unknown>> = (tool: ToolType, input: Input, toolUseContext: ToolUseContext, assistantMessage: AssistantMessage, toolUseID: string, forceDecision?: PermissionDecision<Input>) => Promise<PermissionDecision<Input>>;
-function useCanUseTool(setToolUseConfirmQueue, setToolPermissionContext) {
+function useCanUseTool(
+  setToolUseConfirmQueue: React.Dispatch<React.SetStateAction<ToolUseConfirm[]>>,
+  setToolPermissionContext: (context: ToolPermissionContext) => void,
+) {
   const $ = _c(3);
-  let t0;
+  let t0: CanUseToolFn;
   if ($[0] !== setToolPermissionContext || $[1] !== setToolUseConfirmQueue) {
-    t0 = async (tool, input, toolUseContext, assistantMessage, toolUseID, forceDecision) => new Promise(resolve => {
+    t0 = async (tool: ToolType, input: Record<string, unknown>, toolUseContext: ToolUseContext, assistantMessage: AssistantMessage, toolUseID: string, forceDecision?: PermissionDecision<Record<string, unknown>>) => new Promise(resolve => {
       const ctx = createPermissionContext(tool, input, toolUseContext, assistantMessage, toolUseID, setToolPermissionContext, createPermissionQueueOps(setToolUseConfirmQueue));
       if (ctx.resolveIfAborted(resolve)) {
         return;
@@ -128,7 +131,7 @@ function useCanUseTool(setToolUseConfirmQueue, setToolPermissionContext) {
                   command: string;
                 }).command);
                 if (speculativePromise) {
-                  const raceResult = await Promise.race([speculativePromise.then(_temp), new Promise(_temp2)]);
+                  const raceResult = await Promise.race([speculativePromise.then(_temp), new Promise(_temp2)]) as any;
                   if (ctx.resolveIfAborted(resolve)) {
                     return;
                   }

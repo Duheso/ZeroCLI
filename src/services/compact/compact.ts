@@ -368,7 +368,7 @@ export function annotateBoundaryWithPreservedSegment(
         anchorUuid,
         tailUuid: keep.at(-1)!.uuid as UUID,
       } as unknown as { startUuid: UUID; endUuid: UUID; tailUuid: UUID },
-    },
+    } as NonNullable<SystemCompactBoundaryMessage['compactMetadata']>,
   }
 }
 

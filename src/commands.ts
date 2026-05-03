@@ -5,7 +5,9 @@ import autofixPr from './commands/autofix-pr/index.js'
 // @ts-expect-error no type declarations
 import backfillSessions from './commands/backfill-sessions/index.js'
 import btw from './commands/btw/index.js'
+// @ts-expect-error no type declarations
 import goodClaude from './commands/good-claude/index.js'
+// @ts-expect-error no type declarations
 import issue from './commands/issue/index.js'
 import feedback from './commands/feedback/index.js'
 import clear from './commands/clear/index.js'
@@ -20,6 +22,7 @@ import { context, contextNonInteractive } from './commands/context/index.js'
 import cost from './commands/cost/index.js'
 import diff from './commands/diff/index.js'
 import dream from './commands/dream/index.js'
+// @ts-expect-error no type declarations
 import ctx_viz from './commands/ctx_viz/index.js'
 import doctor from './commands/doctor/index.js'
 import onboardGithub from './commands/onboard-github/index.js'
@@ -33,10 +36,12 @@ import login from './commands/login/index.js'
 import logout from './commands/logout/index.js'
 import installGitHubApp from './commands/install-github-app/index.js'
 import installSlackApp from './commands/install-slack-app/index.js'
+// @ts-expect-error no type declarations
 import breakCache from './commands/break-cache/index.js'
 import cacheProbe from './commands/cache-probe/index.js'
 import mcp from './commands/mcp/index.js'
 import mobile from './commands/mobile/index.js'
+// @ts-expect-error no type declarations
 import onboarding from './commands/onboarding/index.js'
 import pr_comments from './commands/pr_comments/index.js'
 import releaseNotes from './commands/release-notes/index.js'
@@ -44,10 +49,12 @@ import rename from './commands/rename/index.js'
 import resume from './commands/resume/index.js'
 import review, { ultrareview } from './commands/review.js'
 import session from './commands/session/index.js'
+// @ts-expect-error no type declarations
 import share from './commands/share/index.js'
 import skills from './commands/skills/index.js'
 import status from './commands/status/index.js'
 import tasks from './commands/tasks/index.js'
+// @ts-expect-error no type declarations
 import teleport from './commands/teleport/index.js'
 /* eslint-disable @typescript-eslint/no-require-imports */
 const agentsPlatform =
@@ -56,6 +63,7 @@ const agentsPlatform =
     : null
 /* eslint-enable @typescript-eslint/no-require-imports */
 import securityReview from './commands/security-review.js'
+// @ts-expect-error no type declarations
 import bughunter from './commands/bughunter/index.js'
 import terminalSetup from './commands/terminalSetup/index.js'
 import usage from './commands/usage/index.js'
@@ -144,16 +152,21 @@ import plugin from './commands/plugin/index.js'
 import reloadPlugins from './commands/reload-plugins/index.js'
 import rewind from './commands/rewind/index.js'
 import heapDump from './commands/heapdump/index.js'
+// @ts-expect-error no type declarations
 import mockLimits from './commands/mock-limits/index.js'
 import bridgeKick from './commands/bridge-kick.js'
 import version from './commands/version.js'
 import wiki from './commands/wiki/index.js'
+// @ts-expect-error no type declarations
 import summary from './commands/summary/index.js'
 import {
   resetLimits,
   resetLimitsNonInteractive,
+// @ts-expect-error no type declarations
 } from './commands/reset-limits/index.js'
+// @ts-expect-error no type declarations
 import antTrace from './commands/ant-trace/index.js'
+// @ts-expect-error no type declarations
 import perfIssue from './commands/perf-issue/index.js'
 import sandboxToggle from './commands/sandbox-toggle/index.js'
 import chrome from './commands/chrome/index.js'
@@ -179,6 +192,7 @@ import {
 import memoize from 'lodash-es/memoize.js'
 import { isUsing3PServices, isClaudeAISubscriber } from './utils/auth.js'
 import { isFirstPartyAnthropicBaseUrl } from './utils/model/providers.js'
+// @ts-expect-error no type declarations
 import env from './commands/env/index.js'
 import exit from './commands/exit/index.js'
 import exportCommand from './commands/export/index.js'
@@ -210,7 +224,9 @@ const usageReport: Command = {
     return real.getPromptForCommand(args, context)
   },
 }
+// @ts-expect-error no type declarations
 import oauthRefresh from './commands/oauth-refresh/index.js'
+// @ts-expect-error no type declarations
 import debugToolCall from './commands/debug-tool-call/index.js'
 import { getSettingSourceName } from './utils/settings/constants.js'
 import {
