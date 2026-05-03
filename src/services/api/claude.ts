@@ -2324,9 +2324,9 @@ async function* queryModel(
 
         yield {
           type: 'stream_event',
-          event: part,
+          event: part as unknown as Record<string, unknown>,
           ...(part.type === 'message_start' ? { ttftMs } : undefined),
-        }
+        } as StreamEvent
       }
       // Clear the idle timeout watchdog now that the stream loop has exited
       clearStreamIdleTimers()
@@ -3176,7 +3176,7 @@ export function addCacheBreakpoints(
           }
           insertBlockAfterToolResults(msg.content, dedupedNewEdits)
           // Pin so this block is re-sent at the same position in future calls
-          pinCacheEdits(i, newCacheEdits as unknown as CacheEditsBlock)
+          pinCacheEdits(i, newCacheEdits as unknown as import('../compact/cachedMicrocompact.js').CacheEditsBlock)
 
           logForDebugging(
             `Added cache_edits block with ${dedupedNewEdits.edits.length} deletion(s) to message[${i}]: ${dedupedNewEdits.edits.map(e => e.cache_reference).join(', ')}`,

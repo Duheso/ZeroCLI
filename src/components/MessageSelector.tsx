@@ -74,7 +74,7 @@ export function MessageSelector({
   useEffect(() => {
     if (!preselectedMessage || !isFileHistoryEnabled) return;
     let cancelled = false;
-    void fileHistoryGetDiffStats(fileHistory, preselectedMessage.uuid).then(stats => {
+    void fileHistoryGetDiffStats(fileHistory, preselectedMessage.uuid as UUID).then(stats => {
       if (!cancelled) setDiffStatsForRestore(stats);
     });
     return () => {
@@ -118,6 +118,7 @@ export function MessageSelector({
       ...summarizeInputProps,
       onChange: setSummarizeFromFeedback
     });
+    // @ts-expect-error -- intentional compile-time gate (always false)
     if ("external" === 'ant') {
       baseOptions.push({
         value: 'summarize_up_to',
@@ -170,7 +171,7 @@ export function MessageSelector({
       await restoreConversationDirectly(message_0);
       return;
     }
-    const diffStats = await fileHistoryGetDiffStats(fileHistory, message_0.uuid);
+    const diffStats = await fileHistoryGetDiffStats(fileHistory, message_0.uuid as UUID);
     setMessageToRestore(message_0);
     setDiffStatsForRestore(diffStats);
   }
@@ -192,8 +193,8 @@ export function MessageSelector({
       setRestoringOption(option);
       setError(undefined);
       try {
-        const direction = option === 'summarize_up_to' ? 'up_to' : 'from';
-        const feedback = (direction === 'up_to' ? summarizeUpToFeedback : summarizeFromFeedback).trim() || undefined;
+        const direction: PartialCompactDirection = option === 'summarize_up_to' ? 'newer' : 'older';
+        const feedback = (option === 'summarize_up_to' ? summarizeUpToFeedback : summarizeFromFeedback).trim() || undefined;
         await onSummarize(messageToRestore, feedback, direction);
         setIsRestoring(false);
         setRestoringOption(null);
@@ -291,9 +292,9 @@ export function MessageSelector({
       // Load file snapshot metadata
       void Promise.all(messageOptions.map(async (userMessage, itemIndex) => {
         if (userMessage.uuid !== currentUUID) {
-          const canRestore = fileHistoryCanRestore(fileHistory, userMessage.uuid);
+          const canRestore = fileHistoryCanRestore(fileHistory, userMessage.uuid as UUID);
           const nextUserMessage = messageOptions.at(itemIndex + 1);
-          const diffStats_0 = canRestore ? computeDiffStatsBetweenMessages(messages, userMessage.uuid, nextUserMessage?.uuid !== currentUUID ? nextUserMessage?.uuid : undefined) : undefined;
+          const diffStats_0 = canRestore ? computeDiffStatsBetweenMessages(messages, userMessage.uuid as UUID, nextUserMessage?.uuid !== currentUUID ? nextUserMessage?.uuid : undefined) : undefined;
           if (diffStats_0 !== undefined) {
             setFileHistoryMetadata(prev_1 => ({
               ...prev_1,
@@ -413,7 +414,7 @@ function getRestoreOptionConversationText(option: RestoreOption): string {
       return 'The conversation will be unchanged.';
   }
 }
-function RestoreOptionDescription(t0) {
+function RestoreOptionDescription(t0: { selectedRestoreOption: RestoreOption; canRestoreCode: boolean; diffStatsForRestore?: DiffStats }) {
   const $ = _c(11);
   const {
     selectedRestoreOption,

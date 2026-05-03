@@ -241,7 +241,7 @@ type TeamDetailViewProps = {
   selectedIndex: number;
   onCancel: () => void;
 };
-function TeamDetailView(t0) {
+function TeamDetailView(t0: TeamDetailViewProps) {
   const $ = _c(13);
   const {
     teamName,
@@ -296,7 +296,7 @@ type TeammateListItemProps = {
   teammate: TeammateStatus;
   isSelected: boolean;
 };
-function TeammateListItem(t0) {
+function TeammateListItem(t0: TeammateListItemProps) {
   const $ = _c(21);
   const {
     teammate,
@@ -375,7 +375,7 @@ type TeammateDetailViewProps = {
   teamName: string;
   onCancel: () => void;
 };
-function TeammateDetailView(t0) {
+function TeammateDetailView(t0: TeammateDetailViewProps) {
   const $ = _c(39);
   const {
     teammate,
@@ -385,14 +385,14 @@ function TeammateDetailView(t0) {
   const [promptExpanded, setPromptExpanded] = useState(false);
   const cycleModeShortcut = useShortcutDisplay("confirm:cycleMode", "Confirmation", "shift+tab");
   const themeColor = teammate.color ? AGENT_COLOR_TO_THEME_COLOR[teammate.color as keyof typeof AGENT_COLOR_TO_THEME_COLOR] : undefined;
-  let t1;
+  let t1: Task[];
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = [];
     $[0] = t1;
   } else {
     t1 = $[0];
   }
-  const [teammateTasks, setTeammateTasks] = useState(t1);
+  const [teammateTasks, setTeammateTasks] = useState<Task[]>(t1);
   let t2;
   let t3;
   if ($[1] !== teamName || $[2] !== teammate.agentId || $[3] !== teammate.name) {
@@ -421,7 +421,7 @@ function TeammateDetailView(t0) {
   useEffect(t2, t3);
   let t4;
   if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-    t4 = input => {
+    t4 = (input: string) => {
       if (input === "p") {
         setPromptExpanded(_temp);
       }
@@ -539,10 +539,10 @@ function TeammateDetailView(t0) {
   }
   return t13;
 }
-function _temp2(task_0) {
+function _temp2(task_0: Task) {
   return <Text key={task_0.id} color={task_0.status === "completed" ? "success" : undefined}>{task_0.status === "completed" ? figures.tick : "\u25FC"}{" "}{task_0.subject}</Text>;
 }
-function _temp(prev) {
+function _temp(prev: unknown) {
   return !prev;
 }
 async function killTeammate(paneId: string, backendType: PaneBackendType | undefined, teamName: string, teammateId: string, teammateName: string, setAppState: (f: (prev: AppState) => AppState) => void): Promise<void> {

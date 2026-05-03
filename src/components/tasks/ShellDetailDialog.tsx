@@ -8,6 +8,7 @@ import { Box, Text } from '../../ink.js';
 import { useKeybindings } from '../../keybindings/useKeybinding.js';
 import type { LocalShellTaskState } from '../../tasks/LocalShellTask/guards.js';
 import { formatDuration, formatFileSize, truncateToWidth } from '../../utils/format.js';
+import type { ExitState } from '../../hooks/useExitOnCtrlCDWithKeybindings.js';
 import { tailFile } from '../../utils/fsOperations.js';
 import { getTaskOutputPath } from '../../utils/task/diskOutput.js';
 import { Byline } from '../design-system/Byline.js';
@@ -46,7 +47,7 @@ async function getTaskOutput(shell: DeepImmutable<LocalShellTaskState>): Promise
     };
   }
 }
-export function ShellDetailDialog(t0) {
+export function ShellDetailDialog(t0: Props) {
   const $ = _c(57);
   const {
     shell,
@@ -124,7 +125,7 @@ export function ShellDetailDialog(t0) {
   useKeybindings(t5, t6);
   let t7;
   if ($[12] !== onBack || $[13] !== onDone || $[14] !== onKillShell || $[15] !== shell.status) {
-    t7 = e => {
+    t7 = (e: KeyboardEvent) => {
       if (e.key === " ") {
         e.preventDefault();
         onDone("Shell details dismissed", {
@@ -164,7 +165,7 @@ export function ShellDetailDialog(t0) {
   const t9 = isMonitor ? "Monitor details" : "Shell details";
   let t10;
   if ($[19] !== onBack || $[20] !== onKillShell || $[21] !== shell.status) {
-    t10 = exitState => exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline>{onBack && <KeyboardShortcutHint shortcut={"\u2190"} action="go back" />}<KeyboardShortcutHint shortcut="Esc/Enter/Space" action="close" />{shell.status === "running" && onKillShell && <KeyboardShortcutHint shortcut="x" action="stop" />}</Byline>;
+    t10 = (exitState: ExitState) => exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline>{onBack && <KeyboardShortcutHint shortcut={"\u2190"} action="go back" />}<KeyboardShortcutHint shortcut="Esc/Enter/Space" action="close" />{shell.status === "running" && onKillShell && <KeyboardShortcutHint shortcut="x" action="stop" />}</Byline>;
     $[19] = onBack;
     $[20] = onKillShell;
     $[21] = shell.status;
@@ -294,14 +295,14 @@ export function ShellDetailDialog(t0) {
   }
   return t26;
 }
-function _temp(setOutputPromise_0, shell_0) {
+function _temp(setOutputPromise_0: (p: Promise<TaskOutputResult>) => void, shell_0: DeepImmutable<LocalShellTaskState>) {
   return setOutputPromise_0(getTaskOutput(shell_0));
 }
 type ShellOutputContentProps = {
   outputPromise: Promise<TaskOutputResult>;
   columns: number;
 };
-function ShellOutputContent(t0) {
+function ShellOutputContent(t0: ShellOutputContentProps) {
   const $ = _c(19);
   const {
     outputPromise,
@@ -310,7 +311,7 @@ function ShellOutputContent(t0) {
   const {
     content,
     bytesTotal
-  } = use(outputPromise);
+  } = use(outputPromise) as TaskOutputResult;
   if (!content) {
     let t1;
     if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
@@ -398,6 +399,6 @@ function ShellOutputContent(t0) {
   }
   return t7;
 }
-function _temp2(line_0, i_1) {
+function _temp2(line_0: string, i_1: number) {
   return <Text key={i_1} wrap="truncate-end">{line_0}</Text>;
 }
