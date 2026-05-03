@@ -1,7 +1,7 @@
 import type { ToolUseBlock } from '@anthropic-ai/sdk/resources';
 import { getRemoteSessionUrl } from '../../constants/product.js';
 import { OUTPUT_FILE_TAG, REMOTE_REVIEW_PROGRESS_TAG, REMOTE_REVIEW_TAG, STATUS_TAG, SUMMARY_TAG, TASK_ID_TAG, TASK_NOTIFICATION_TAG, TASK_TYPE_TAG, TOOL_USE_ID_TAG, ULTRAPLAN_TAG } from '../../constants/xml.js';
-import type { SDKAssistantMessage, SDKMessage } from '../../entrypoints/agentSdkTypes.js';
+import type { SDKMessage } from '../../entrypoints/agentSdkTypes.js';
 import type { SetAppState, Task, TaskContext, TaskStateBase } from '../../Task.js';
 import { createTaskStateBase, generateTaskId } from '../../Task.js';
 import { TodoWriteTool } from '../../tools/TodoWriteTool/TodoWriteTool.js';
@@ -19,6 +19,10 @@ import { fetchSession } from '../../utils/teleport/api.js';
 import { archiveRemoteSession, pollRemoteSessionEvents } from '../../utils/teleport.js';
 import type { TodoList } from '../../utils/todo/types.js';
 import type { UltraplanPhase } from '../../utils/ultraplan/ccrSession.js';
+type SDKAssistantMessage = SDKMessage & {
+  type: 'assistant';
+  message: { content: ReadonlyArray<{ type: string; [key: string]: unknown }> };
+};
 export type RemoteAgentTaskState = TaskStateBase & {
   type: 'remote_agent';
   remoteTaskType: RemoteTaskType;
@@ -188,7 +192,7 @@ function enqueueRemoteNotification(taskId: string, title: string, status: 'compl
  */
 function markTaskNotified(taskId: string, setAppState: SetAppState): boolean {
   let shouldEnqueue = false;
-  updateTaskState(taskId, setAppState, task => {
+  updateTaskState<RemoteAgentTaskState>(taskId, setAppState, task => {
     if (task.notified) {
       return task;
     }
@@ -210,7 +214,7 @@ export function extractPlanFromLog(log: SDKMessage[]): string | null {
   for (let i = log.length - 1; i >= 0; i--) {
     const msg = log[i];
     if (msg?.type !== 'assistant') continue;
-    const fullText = extractTextContent(msg.message.content, '\n');
+    const fullText = extractTextContent((msg.message as { content: readonly { type: string }[] }).content, '\n');
     const plan = extractTag(fullText, ULTRAPLAN_TAG);
     if (plan?.trim()) return plan.trim();
   }
@@ -265,7 +269,7 @@ function extractReviewFromLog(log: SDKMessage[]): string | null {
   for (let i = log.length - 1; i >= 0; i--) {
     const msg = log[i];
     if (msg?.type !== 'assistant') continue;
-    const fullText = extractTextContent(msg.message.content, '\n');
+    const fullText = extractTextContent((msg.message as { content: readonly { type: string }[] }).content, '\n');
     const tagged = extractTag(fullText, REMOTE_REVIEW_TAG);
     if (tagged?.trim()) return tagged.trim();
   }

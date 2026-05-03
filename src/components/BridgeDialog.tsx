@@ -11,7 +11,7 @@ import { useRegisterOverlay } from '../context/overlayContext.js';
 import { Box, Text, useInput } from '../ink.js';
 import { useKeybindings } from '../keybindings/useKeybinding.js';
 import { type AppState, useAppState, useSetAppState } from '../state/AppState.js';
-import { saveGlobalConfig } from '../utils/config.js';
+import { getGlobalConfig, saveGlobalConfig, type GlobalConfig } from '../utils/config.js';
 import { getBranch } from '../utils/git.js';
 import { Dialog } from './design-system/Dialog.js';
 type Props = {
@@ -340,13 +340,13 @@ export function BridgeDialog(t0: Props) {
   }
   return t21;
 }
-function _temp14(line, i) {
+function _temp14(line: string, i: number) {
   return <Text key={i}>{line}</Text>;
 }
-function _temp13(l) {
+function _temp13(l: string) {
   return l.length > 0;
 }
-function _temp12(prev_0) {
+function _temp12(prev_0: AppState) {
   if (!prev_0.replBridgeEnabled) {
     return prev_0;
   }
@@ -355,7 +355,7 @@ function _temp12(prev_0) {
     replBridgeEnabled: false
   };
 }
-function _temp11(current) {
+function _temp11(current: GlobalConfig) {
   if (current.remoteControlAtStartup === false) {
     return current;
   }
@@ -364,37 +364,37 @@ function _temp11(current) {
     remoteControlAtStartup: false
   };
 }
-function _temp10(prev) {
+function _temp10(prev: boolean) {
   return !prev;
 }
 function _temp1() {}
-function _temp0(s_8) {
+function _temp0(s_8: AppState) {
   return s_8.verbose;
 }
-function _temp9(s_7) {
+function _temp9(s_7: AppState) {
   return s_7.replBridgeSessionId;
 }
-function _temp8(s_6) {
+function _temp8(s_6: AppState) {
   return s_6.replBridgeEnvironmentId;
 }
-function _temp7(s_5) {
+function _temp7(s_5: AppState) {
   return s_5.replBridgeExplicit;
 }
-function _temp6(s_4) {
+function _temp6(s_4: AppState) {
   return s_4.replBridgeError;
 }
-function _temp5(s_3) {
+function _temp5(s_3: AppState) {
   return s_3.replBridgeSessionUrl;
 }
-function _temp4(s_2) {
+function _temp4(s_2: AppState) {
   return s_2.replBridgeConnectUrl;
 }
-function _temp3(s_1) {
+function _temp3(s_1: AppState) {
   return s_1.replBridgeReconnecting;
 }
-function _temp2(s_0) {
+function _temp2(s_0: AppState) {
   return s_0.replBridgeSessionActive;
 }
-function _temp(s) {
+function _temp(s: AppState) {
   return s.replBridgeConnected;
 }

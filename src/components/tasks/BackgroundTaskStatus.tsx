@@ -9,6 +9,8 @@ import { enterTeammateView, exitTeammateView } from 'src/state/teammateViewHelpe
 import { isPanelAgentTask } from 'src/tasks/LocalAgentTask/LocalAgentTask.js';
 import { getPillLabel, pillNeedsCta } from 'src/tasks/pillLabel.js';
 import { type BackgroundTaskState, isBackgroundTask, type TaskState } from 'src/tasks/types.js';
+import type { InProcessTeammateTaskState } from 'src/tasks/InProcessTeammateTask/types.js';
+import type { AppState } from 'src/state/AppStateStore.js';
 import { calculateHorizontalScrollWindow } from 'src/utils/horizontalScroll.js';
 import { Box, Text } from '../../ink.js';
 import { AGENT_COLOR_TO_THEME_COLOR, AGENT_COLORS, type AgentColorName } from '../../tools/AgentTool/agentColorManager.js';
@@ -41,7 +43,7 @@ export function BackgroundTaskStatus(t0: Props) {
   const viewingAgentTaskId = useAppState(_temp2);
   let t3;
   if ($[0] !== tasks) {
-    t3 = (Object.values(tasks ?? {}) as TaskState[]).filter(_temp3);
+    t3 = (Object.values(tasks ?? {}) as TaskState[]).filter((t: TaskState) => isBackgroundTask(t));
     $[0] = tasks;
     $[1] = t3;
   } else {
@@ -232,23 +234,30 @@ export function BackgroundTaskStatus(t0: Props) {
   }
   return t11;
 }
-function _temp1(pill_0, i_0) {
+type Pill = {
+  name: string;
+  color: keyof Theme | undefined;
+  isIdle: boolean;
+  taskId: string | undefined;
+  idx: number;
+};
+function _temp1(pill_0: Pill, i_0: number) {
   const pillText = `@${pill_0.name}`;
   return stringWidth(pillText) + (i_0 > 0 ? 1 : 0);
 }
-function _temp0(pill, i) {
+function _temp0(pill: { name: string; color: keyof Theme | undefined; isIdle: boolean; taskId: string | undefined }, i: number) {
   return {
     ...pill,
     idx: i
   };
 }
-function _temp9(a_0, b_0) {
+function _temp9(a_0: { isIdle: boolean }, b_0: { isIdle: boolean }) {
   if (a_0.isIdle !== b_0.isIdle) {
     return a_0.isIdle ? 1 : -1;
   }
   return 0;
 }
-function _temp8(t_2) {
+function _temp8(t_2: InProcessTeammateTaskState) {
   return {
     name: t_2.identity.agentName,
     color: getAgentThemeColor(t_2.identity.color),
@@ -256,25 +265,25 @@ function _temp8(t_2) {
     taskId: t_2.id
   };
 }
-function _temp7(a, b) {
+function _temp7(a: InProcessTeammateTaskState, b: InProcessTeammateTaskState) {
   return a.identity.agentName.localeCompare(b.identity.agentName);
 }
-function _temp6(t_1) {
+function _temp6(t_1: TaskState) {
   return t_1.type === "in_process_teammate";
 }
-function _temp5(t_0) {
+function _temp5(t_0: TaskState) {
   return t_0.type === "in_process_teammate";
 }
-function _temp4(s_1) {
+function _temp4(s_1: AppState) {
   return s_1.expandedView;
 }
-function _temp3(t) {
+function _temp3(t: TaskState) {
   return isBackgroundTask(t) && !(false && isPanelAgentTask(t));
 }
-function _temp2(s_0) {
+function _temp2(s_0: AppState) {
   return s_0.viewingAgentTaskId;
 }
-function _temp(s) {
+function _temp(s: AppState) {
   return s.tasks;
 }
 type AgentPillProps = {
