@@ -51,7 +51,7 @@ function ClassifierCheckingSubtitle() {
   }
   let t1;
   if ($[1] !== glimmerIndex) {
-    t1 = <Text>{t0.map((char, i) => <ShimmerChar key={i} char={char} index={i} glimmerIndex={glimmerIndex} messageColor="inactive" shimmerColor="subtle" />)}</Text>;
+    t1 = <Text>{t0.map((char: string, i: number) => <ShimmerChar key={i} char={char} index={i} glimmerIndex={glimmerIndex} messageColor="inactive" shimmerColor="subtle" />)}</Text>;
     $[1] = glimmerIndex;
     $[2] = t1;
   } else {
@@ -68,7 +68,7 @@ function ClassifierCheckingSubtitle() {
   }
   return t2;
 }
-export function BashPermissionRequest(props) {
+export function BashPermissionRequest(props: PermissionRequestProps) {
   const $ = _c(21);
   const {
     toolUseConfirm,
@@ -466,7 +466,7 @@ function BashPermissionRequestInner({
             <Select options={feature('BASH_CLASSIFIER') ? toolUseConfirm.classifierAutoApproved ? options.map(o => ({
           ...o,
           disabled: true
-        })) : options : options} isDisabled={feature('BASH_CLASSIFIER') ? toolUseConfirm.classifierAutoApproved : false} inlineDescriptions onChange={onSelect} onCancel={() => handleReject()} onFocus={handleFocus} onInputModeToggle={handleInputModeToggle} />
+        })) : options : options} isDisabled={feature('BASH_CLASSIFIER') ? toolUseConfirm.classifierAutoApproved : false} inlineDescriptions onChange={onSelect as (value: unknown) => void} onCancel={() => handleReject()} onFocus={handleFocus as (value: unknown) => void} onInputModeToggle={handleInputModeToggle as (value: unknown) => void} />
           </Box>
           <Box justifyContent="space-between" marginTop={1}>
             <Text dimColor>

@@ -169,7 +169,7 @@ function ReviewRainbowLine(t0: { session: DeepImmutable<import('src/tasks/Remote
   }
   return t6;
 }
-export function RemoteSessionProgress(t0) {
+export function RemoteSessionProgress(t0: { session: DeepImmutable<import('src/tasks/RemoteAgentTask/RemoteAgentTask.js').RemoteAgentTaskState> }) {
   const $ = _c(11);
   const {
     session
@@ -237,6 +237,6 @@ export function RemoteSessionProgress(t0) {
   }
   return t2;
 }
-function _temp(_) {
+function _temp(_: { status: string }) {
   return _.status === "completed";
 }

@@ -436,7 +436,6 @@ function TaskOutputResultDisplay(t0: { content: string | TaskOutputToolOutput; v
         let t5;
         if ($[15] !== task.result || $[16] !== theme) {
           t5 = task.result && <Box marginTop={1}><AgentResponseDisplay content={[{
-              type: "text",
               text: task.result
             }]} theme={theme} /></Box>;
           $[15] = task.result;

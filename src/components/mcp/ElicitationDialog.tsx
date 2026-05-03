@@ -2,6 +2,7 @@ import { c as _c } from "react-compiler-runtime";
 import type { ElicitRequestFormParams, ElicitRequestURLParams, ElicitResult, PrimitiveSchemaDefinition } from '@modelcontextprotocol/sdk/types.js';
 import figures from 'figures';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type ExitState } from '../../hooks/useExitOnCtrlCDWithKeybindings.js';
 import { useRegisterOverlay } from '../../context/overlayContext.js';
 import { useNotifyAfterTimeout } from '../../hooks/useNotifyAfterTimeout.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
@@ -49,8 +50,8 @@ function resetTypeahead(ta: {
 function ResolvingSpinner() {
   const $ = _c(4);
   const [frame, setFrame] = useState(0);
-  let t0;
-  let t1;
+  let t0: () => () => void;
+  let t1: never[];
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t0 = () => {
       const timer = setInterval(setFrame, 80, advanceSpinnerFrame);
@@ -109,7 +110,7 @@ function formatDateDisplay(isoValue: string, schema: PrimitiveSchemaDefinition):
     return isoValue;
   }
 }
-export function ElicitationDialog(t0) {
+export function ElicitationDialog(t0: Props) {
   const $ = _c(7);
   const {
     event,
