@@ -17,6 +17,7 @@ import { t } from '../../../i18n/index.js';
 import { Dialog } from '../../design-system/Dialog.js';
 import { KeyboardShortcutHint } from '../../design-system/KeyboardShortcutHint.js';
 import { PromptInputFooterSuggestions, type SuggestionItem } from '../../PromptInput/PromptInputFooterSuggestions.js';
+import type { ExitState } from '../../../hooks/useExitOnCtrlCDWithKeybindings.js';
 type Props = {
   onAddDirectory: (path: string, remember?: boolean) => void;
   onCancel: () => void;
@@ -48,7 +49,7 @@ function PermissionDescription() {
   }
   return t0;
 }
-function DirectoryDisplay(t0) {
+function DirectoryDisplay(t0: { path: string }) {
   const $ = _c(5);
   const {
     path
@@ -78,7 +79,7 @@ function DirectoryDisplay(t0) {
   }
   return t3;
 }
-function DirectoryInput(t0) {
+function DirectoryInput(t0: { value: string; onChange: (v: string) => void; onSubmit: (v: string) => void; error: string | null; suggestions: SuggestionItem[]; selectedSuggestion: number }) {
   const $ = _c(14);
   const {
     value,
@@ -135,7 +136,7 @@ function DirectoryInput(t0) {
   return t5;
 }
 function _temp() {}
-export function AddWorkspaceDirectory(t0) {
+export function AddWorkspaceDirectory(t0: Props) {
   const $ = _c(34);
   const {
     onAddDirectory,
@@ -144,19 +145,19 @@ export function AddWorkspaceDirectory(t0) {
     directoryPath
   } = t0;
   const [directoryInput, setDirectoryInput] = useState("");
-  const [error, setError] = useState(null);
-  let t1;
+  const [error, setError] = useState<string | null>(null);
+  let t1: SuggestionItem[];
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = [];
     $[0] = t1;
   } else {
     t1 = $[0];
   }
-  const [suggestions, setSuggestions] = useState(t1);
+  const [suggestions, setSuggestions] = useState<SuggestionItem[]>(t1);
   const [selectedSuggestion, setSelectedSuggestion] = useState(0);
   let t2;
   if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
-    t2 = async path => {
+    t2 = async (path: string) => {
       if (!path) {
         setSuggestions([]);
         setSelectedSuggestion(0);
@@ -190,7 +191,7 @@ export function AddWorkspaceDirectory(t0) {
   useEffect(t3, t4);
   let t5;
   if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = suggestion => {
+    t5 = (suggestion: SuggestionItem) => {
       const newPath = suggestion.id + "/";
       setDirectoryInput(newPath);
       setError(null);
@@ -202,7 +203,7 @@ export function AddWorkspaceDirectory(t0) {
   const applySuggestion = t5;
   let t6;
   if ($[7] !== onAddDirectory || $[8] !== permissionContext) {
-    t6 = async newPath_0 => {
+    t6 = async (newPath_0: string) => {
       const result = await validateDirectoryForWorkspace(newPath_0, permissionContext);
       if (result.resultType === "success") {
         onAddDirectory(result.absolutePath, false);
@@ -229,7 +230,7 @@ export function AddWorkspaceDirectory(t0) {
   useKeybinding("confirm:no", onCancel, t7);
   let t8;
   if ($[11] !== handleSubmit || $[12] !== selectedSuggestion || $[13] !== suggestions) {
-    t8 = e => {
+    t8 = (e: KeyboardEvent) => {
       if (suggestions.length > 0) {
         if (e.key === "tab") {
           e.preventDefault();
@@ -269,7 +270,7 @@ export function AddWorkspaceDirectory(t0) {
   const handleKeyDown = t8;
   let t9;
   if ($[15] !== directoryPath || $[16] !== onAddDirectory || $[17] !== onCancel) {
-    t9 = value => {
+    t9 = (value: RememberDirectoryOption) => {
       if (!directoryPath) {
         return;
       }
@@ -335,6 +336,6 @@ export function AddWorkspaceDirectory(t0) {
   }
   return t13;
 }
-function _temp2(exitState) {
+function _temp2(exitState: ExitState) {
   return exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline><KeyboardShortcutHint shortcut="Tab" action="complete" /><KeyboardShortcutHint shortcut="Enter" action="add" /><ConfigurableShortcutHint action="confirm:no" context="Settings" fallback="Esc" description="cancel" /></Byline>;
 }

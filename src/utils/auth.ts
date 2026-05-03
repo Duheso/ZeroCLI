@@ -1,5 +1,16 @@
 import chalk from 'chalk'
 import { exec } from 'child_process'
+
+declare const MACRO: {
+  VERSION: string
+  DISPLAY_VERSION?: string
+  BUILD_TIME: string
+  ISSUES_EXPLAINER: string
+  PACKAGE_URL: string
+  NATIVE_PACKAGE_URL?: string
+  VERSION_CHANGELOG?: string
+  FEEDBACK_CHANNEL: string
+}
 import { execa } from 'execa'
 import { mkdir, stat } from 'fs/promises'
 import memoize from 'lodash-es/memoize.js'

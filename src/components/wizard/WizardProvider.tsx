@@ -5,10 +5,10 @@ import type { WizardContextValue, WizardProviderProps } from './types.js';
 
 // Use any here for the context since it will be cast properly when used
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const WizardContext = createContext<WizardContextValue<any> | null>(null);
+export const WizardContext = createContext<WizardContextValue | null>(null);
 // T is the generic data type for the wizard, lost in react-compiler output
 type T = object;
-export function WizardProvider(t0) {
+export function WizardProvider(t0: WizardProviderProps) {
   const $ = _c(38);
   const {
     steps,
@@ -29,17 +29,17 @@ export function WizardProvider(t0) {
   }
   const initialData = t3;
   const showStepCounter = t2 === undefined ? true : t2;
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [wizardData, setWizardData] = useState(initialData);
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
+  const [wizardData, setWizardData] = useState<T>(initialData);
   const [isCompleted, setIsCompleted] = useState(false);
-  let t4;
+  let t4: number[];
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
     t4 = [];
     $[2] = t4;
   } else {
     t4 = $[2];
   }
-  const [navigationHistory, setNavigationHistory] = useState(t4);
+  const [navigationHistory, setNavigationHistory] = useState<number[]>(t4);
   useExitOnCtrlCDWithKeybindings();
   let t5;
   let t6;
@@ -66,7 +66,7 @@ export function WizardProvider(t0) {
     t7 = () => {
       if (currentStepIndex < steps.length - 1) {
         if (navigationHistory.length > 0) {
-          setNavigationHistory(prev => [...prev, currentStepIndex]);
+          setNavigationHistory((prev: number[]) => [...prev, currentStepIndex]);
         }
         setCurrentStepIndex(_temp);
       } else {
@@ -110,9 +110,9 @@ export function WizardProvider(t0) {
   const goBack = t8;
   let t9;
   if ($[16] !== currentStepIndex || $[17] !== steps.length) {
-    t9 = index => {
+    t9 = (index: number) => {
       if (index >= 0 && index < steps.length) {
-        setNavigationHistory(prev_3 => [...prev_3, currentStepIndex]);
+        setNavigationHistory((prev_3: number[]) => [...prev_3, currentStepIndex]);
         setCurrentStepIndex(index);
       }
     };
@@ -139,8 +139,8 @@ export function WizardProvider(t0) {
   const cancel = t10;
   let t11;
   if ($[21] === Symbol.for("react.memo_cache_sentinel")) {
-    t11 = updates => {
-      setWizardData(prev_4 => ({
+    t11 = (updates: Partial<T>) => {
+      setWizardData((prev_4: T) => ({
         ...prev_4,
         ...updates
       }));

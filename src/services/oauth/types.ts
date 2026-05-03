@@ -48,8 +48,8 @@ export interface OAuthProfileResponse {
 // Tokens stored in config
 export interface OAuthTokens {
   accessToken: string
-  refreshToken: string
-  expiresAt: number
+  refreshToken: string | null
+  expiresAt: number | null
   scopes: string[]
   subscriptionType: SubscriptionType | null
   rateLimitTier: RateLimitTier | null

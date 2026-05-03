@@ -108,14 +108,14 @@ type ListItem = {
 // bundler can dead-code-eliminate the branch.
 /* eslint-disable @typescript-eslint/no-require-imports */
 const WorkflowDetailDialog = feature('WORKFLOW_SCRIPTS') ? (require('./WorkflowDetailDialog.js') as typeof import('./WorkflowDetailDialog.js')).WorkflowDetailDialog : null;
-const workflowTaskModule = feature('WORKFLOW_SCRIPTS') ? require('src/tasks/LocalWorkflowTask/LocalWorkflowTask.js') as typeof import('src/tasks/LocalWorkflowTask/LocalWorkflowTask.js') : null;
+const workflowTaskModule = feature('WORKFLOW_SCRIPTS') ? require('src/tasks/LocalWorkflowTask/LocalWorkflowTask.js') as any : null;
 const killWorkflowTask = workflowTaskModule?.killWorkflowTask ?? null;
 const skipWorkflowAgent = workflowTaskModule?.skipWorkflowAgent ?? null;
 const retryWorkflowAgent = workflowTaskModule?.retryWorkflowAgent ?? null;
 // Relative path, not `src/...` path-mapping — Bun's DCE can statically
 // resolve + eliminate `./` requires, but path-mapped strings stay opaque
 // and survive as dead literals in the bundle. Matches tasks.ts pattern.
-const monitorMcpModule = feature('MONITOR_TOOL') ? require('../../tasks/MonitorMcpTask/MonitorMcpTask.js') as typeof import('../../tasks/MonitorMcpTask/MonitorMcpTask.js') : null;
+const monitorMcpModule = feature('MONITOR_TOOL') ? require('../../tasks/MonitorMcpTask/MonitorMcpTask.js') as any : null;
 const killMonitorMcp = monitorMcpModule?.killMonitorMcp ?? null;
 const MonitorMcpDetailDialog = feature('MONITOR_TOOL') ? (require('./MonitorMcpDetailDialog.js') as typeof import('./MonitorMcpDetailDialog.js')).MonitorMcpDetailDialog : null;
 /* eslint-enable @typescript-eslint/no-require-imports */
@@ -389,7 +389,7 @@ export function BackgroundTasksDialog({
         } : undefined} key={`teammate-${task_0.id}`} />;
       case 'local_workflow':
         if (!WorkflowDetailDialog) return null;
-        return <WorkflowDetailDialog workflow={task_0} onDone={onDone} onKill={task_0.status === 'running' && killWorkflowTask ? () => killWorkflowTask(task_0.id, setAppState) : undefined} onSkipAgent={task_0.status === 'running' && skipWorkflowAgent ? agentId => skipWorkflowAgent(task_0.id, agentId, setAppState) : undefined} onRetryAgent={task_0.status === 'running' && retryWorkflowAgent ? agentId_0 => retryWorkflowAgent(task_0.id, agentId_0, setAppState) : undefined} onBack={goBackToList} key={`workflow-${task_0.id}`} />;
+        return <WorkflowDetailDialog workflow={task_0} onDone={onDone} onKill={task_0.status === 'running' && killWorkflowTask ? () => killWorkflowTask(task_0.id, setAppState) : undefined} onSkipAgent={task_0.status === 'running' && skipWorkflowAgent ? (agentId: string) => skipWorkflowAgent(task_0.id, agentId, setAppState) : undefined} onRetryAgent={task_0.status === 'running' && retryWorkflowAgent ? (agentId_0: string) => retryWorkflowAgent(task_0.id, agentId_0, setAppState) : undefined} onBack={goBackToList} key={`workflow-${task_0.id}`} />;
       case 'monitor_mcp':
         if (!MonitorMcpDetailDialog) return null;
         return <MonitorMcpDetailDialog task={task_0} onKill={task_0.status === 'running' && killMonitorMcp ? () => killMonitorMcp(task_0.id, setAppState) : undefined} onBack={goBackToList} key={`monitor-mcp-${task_0.id}`} />;
@@ -552,7 +552,7 @@ function toListItem(task: BackgroundTaskState): ListItem {
   // Exhaustive check: should never reach here if BackgroundTaskState union is complete
   return undefined as never;
 }
-function Item(t0) {
+function Item(t0: { item: ListItem; isSelected: boolean }) {
   const $ = _c(14);
   const {
     item,
@@ -583,9 +583,10 @@ function Item(t0) {
   }
   const t5 = isSelected && !useGreyPointer ? "suggestion" : undefined;
   let t6;
-  if ($[4] !== item.task || $[5] !== item.type || $[6] !== maxActivityWidth) {
-    t6 = item.type === "leader" ? <Text>@{TEAM_LEAD_NAME}</Text> : <BackgroundTaskComponent task={item.task} maxActivityWidth={maxActivityWidth} />;
-    $[4] = item.task;
+  const itemTask = (item as any).task;
+  if ($[4] !== itemTask || $[5] !== item.type || $[6] !== maxActivityWidth) {
+    t6 = item.type === "leader" ? <Text>@{TEAM_LEAD_NAME}</Text> : <BackgroundTaskComponent task={itemTask} maxActivityWidth={maxActivityWidth} />;
+    $[4] = itemTask;
     $[5] = item.type;
     $[6] = maxActivityWidth;
     $[7] = t6;
@@ -612,7 +613,7 @@ function Item(t0) {
   }
   return t8;
 }
-function TeammateTaskGroups(t0) {
+function TeammateTaskGroups(t0: { teammateTasks: ListItem[]; currentSelectionId: string | null }) {
   const $ = _c(3);
   const {
     teammateTasks,
@@ -636,7 +637,7 @@ function TeammateTaskGroups(t0) {
     t1 = <>{teamEntries.map(t2 => {
         const [teamName_0, items] = t2;
         const memberCount = items.length + leaderItems.length;
-        return <Box key={teamName_0} flexDirection="column"><Text dimColor={true}>{"  "}Team: {teamName_0} ({memberCount})</Text>{leaderItems.map(item_0 => <Item key={`${item_0.id}-${teamName_0}`} item={item_0} isSelected={item_0.id === currentSelectionId} />)}{items.map(item_1 => <Item key={item_1.id} item={item_1} isSelected={item_1.id === currentSelectionId} />)}</Box>;
+        return <Box key={teamName_0} flexDirection="column"><Text dimColor={true}>{"  "}Team: {teamName_0} ({memberCount})</Text>{leaderItems.map((item_0: ListItem) => <Item key={`${item_0.id}-${teamName_0}`} item={item_0} isSelected={item_0.id === currentSelectionId} />)}{items.map((item_1: ListItem) => <Item key={item_1.id} item={item_1} isSelected={item_1.id === currentSelectionId} />)}</Box>;
       })}</>;
     $[0] = currentSelectionId;
     $[1] = teammateTasks;
@@ -646,9 +647,9 @@ function TeammateTaskGroups(t0) {
   }
   return t1;
 }
-function _temp2(i_0) {
+function _temp2(i_0: ListItem) {
   return i_0.type === "in_process_teammate";
 }
-function _temp(i) {
+function _temp(i: ListItem) {
   return i.type === "leader";
 }
