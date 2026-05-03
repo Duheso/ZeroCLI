@@ -1127,7 +1127,7 @@ export const AgentTool = buildTool({
                   onProgress({
                     toolUseID: `agent_${assistantMessage.message.id}`,
                     data: {
-                      message: m,
+                      message: m as NormalizedUserMessage,
                       type: 'agent_progress',
                       // prompt only needed on first progress message (UI.tsx:624
                       // reads progressMessages[0]). Omit here to avoid duplication.
@@ -1299,7 +1299,7 @@ export const AgentTool = buildTool({
     // Only route through auto mode classifier when in auto mode
     // In all other modes, auto-approve sub-agent generation
     // Note: "external" === 'ant' guard enables dead code elimination for external builds
-    if ("external" === 'ant' && appState.toolPermissionContext.mode === 'auto') {
+    if (("external" as string) === 'ant' && appState.toolPermissionContext.mode === 'auto') {
       return {
         behavior: 'passthrough',
         message: 'Agent tool requires permission to spawn sub-agents.'

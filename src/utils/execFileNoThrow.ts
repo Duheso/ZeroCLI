@@ -19,7 +19,7 @@ const spawn = require('cross-spawn') as (
   stderr: NodeJS.ReadableStream | null
   stdin: NodeJS.WritableStream | null
   kill: () => void
-  once: (event: string, handler: (...args: unknown[]) => void) => void
+  once: (event: string, handler: Function) => void
 }
 import path from 'node:path'
 import { getCwd } from '../utils/cwd.js'
