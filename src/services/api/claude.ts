@@ -1217,7 +1217,7 @@ async function* queryModel(
     cachedMCEnabled = featureEnabled && modelSupported
     const config = getCachedMCConfig()
     logForDebugging(
-      `Cached MC gate: enabled=${featureEnabled} modelSupported=${modelSupported} model=${options.model} supportedModels=${jsonStringify(config?.supportedModels)}`,
+      `Cached MC gate: enabled=${featureEnabled} modelSupported=${modelSupported} model=${options.model} supportedModels=${jsonStringify((config as { supportedModels?: unknown })?.supportedModels)}`,
     )
   }
 
@@ -1729,8 +1729,8 @@ async function* queryModel(
         enablePromptCaching,
         options.querySource,
         useCachedMC,
-        consumedCacheEdits,
-        consumedPinnedEdits,
+        consumedCacheEdits as CachedMCEditsBlock | null | undefined,
+        consumedPinnedEdits as unknown as CachedMCPinnedEdits[],
         options.skipCacheWrite,
       ),
       tools: allTools,
@@ -2155,7 +2155,7 @@ async function* queryModel(
                     feature('CONNECTOR_TEXT') &&
                     contentBlock.type === 'connector_text'
                   ) {
-                    contentBlock.signature = delta.signature
+                    (contentBlock as ConnectorTextBlock & { signature?: string }).signature = delta.signature
                     break
                   }
                   if (contentBlock.type !== 'thinking') {

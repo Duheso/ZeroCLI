@@ -46,6 +46,8 @@ function convertStreamEvent(msg: SDKPartialAssistantMessage): StreamEvent {
   return {
     type: 'stream_event',
     event: msg.event as Record<string, unknown>,
+    uuid: (msg as { uuid?: string }).uuid ?? '',
+    timestamp: (msg as { timestamp?: string }).timestamp ?? new Date().toISOString(),
   }
 }
 
@@ -174,7 +176,7 @@ export function convertSDKMessage(
       return { type: 'message', message: convertAssistantMessage(msg) }
 
     case 'user': {
-      const content = msg.message?.content
+      const content = (msg.message as { content?: unknown })?.content
       // Tool result messages from the remote server need to be converted so
       // they render and collapse like local tool results. Detect via content
       // shape (tool_result blocks) — parent_tool_use_id is NOT reliable: the
@@ -189,7 +191,7 @@ export function convertSDKMessage(
             content,
             toolUseResult: msg.tool_use_result,
             uuid: msg.uuid,
-            timestamp: msg.timestamp,
+            timestamp: msg.timestamp as string | undefined,
           }),
         }
       }
@@ -204,7 +206,84 @@ export function convertSDKMessage(
               content,
               toolUseResult: msg.tool_use_result,
               uuid: msg.uuid,
-              timestamp: msg.timestamp,
+              timestamp: msg.timestamp as string | undefined,
+            }),
+          }
+        }
+      }
+      // User-typed messages (string content) are already added locally by REPL.
+      // In CCR mode, all user messages are ignored (tool results handled differently).
+      return { type: 'ignored' }
+    }
+
+    case 'stream_event':
+      return { type: 'stream_event', event: convertStreamEvent(msg as SDKPartialAssistantMessage) }
+
+    case 'result':
+      // Only show result messages for errors. Success results are noise
+      // in multi-turn sessions (isLoading=false is sufficient signal).
+      if (msg.subtype !== 'success') {
+        return { type: 'message', message: convertResultMessage(msg as SDKResultMessage) }
+      }
+      return { type: 'ignored' }
+
+    case 'system':
+      if (msg.subtype === 'init') {
+        return { type: 'message', message: convertInitMessage(msg as SDKSystemMessage) }
+      }
+      if (msg.subtype === 'status') {
+        const statusMsg = convertStatusMessage(msg as SDKStatusMessage)
+        return statusMsg
+          ? { type: 'message', message: statusMsg }
+          : { type: 'ignored' }
+      }
+      if (msg.subtype === 'compact_boundary') {
+        return {
+          type: 'message',
+          message: convertCompactBoundaryMessage(msg as SDKCompactBoundaryMessage),
+        }
+      }
+      // hook_response and other subtypes
+      logForDebugging(
+        `[sdkMessageAdapter] Ignoring system message subtype: ${msg.subtype}`,
+      )
+      return { type: 'ignored' }
+
+    case 'tool_progress':
+      return { type: 'message', message: convertToolProgressMessage(msg as SDKToolProgressMessage) }
+
+    case 'user': {
+      const content = (msg.message as { content?: unknown })?.content
+      // Tool result messages from the remote server need to be converted so
+      // they render and collapse like local tool results. Detect via content
+      // shape (tool_result blocks) — parent_tool_use_id is NOT reliable: the
+      // agent-side normalizeMessage() hardcodes it to null for top-level
+      // tool results, so it can't distinguish tool results from prompt echoes.
+      const isToolResult =
+        Array.isArray(content) && content.some(b => b.type === 'tool_result')
+      if (opts?.convertToolResults && isToolResult) {
+        return {
+          type: 'message',
+          message: createUserMessage({
+            content,
+            toolUseResult: msg.tool_use_result,
+            uuid: msg.uuid,
+            timestamp: msg.timestamp as string | undefined,
+          }),
+        }
+      }
+      // When converting historical events, user-typed messages need to be
+      // rendered (they weren't added locally by the REPL). Skip tool_results
+      // here — already handled above.
+      if (opts?.convertUserTextMessages && !isToolResult) {
+        if (typeof content === 'string' || Array.isArray(content)) {
+          return {
+            type: 'message',
+            message: createUserMessage({
+              content,
+              toolUseResult: msg.tool_use_result,
+              uuid: msg.uuid,
+              timestamp: msg.timestamp as string | undefined,
             }),
           }
         }
