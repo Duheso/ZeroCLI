@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Box, Text } from '../../ink.js';
 import { getDynamicConfig_CACHED_MAY_BE_STALE } from '../../services/analytics/growthbook.js';
 import { logEvent } from '../../services/analytics/index.js';
-import { getGlobalConfig, saveGlobalConfig } from '../../utils/config.js';
+import { getGlobalConfig, saveGlobalConfig, type GlobalConfig } from '../../utils/config.js';
 import { Select } from '../CustomSelect/select.js';
 import { DesktopHandoff } from '../DesktopHandoff.js';
 import { PermissionDialog } from '../permissions/PermissionDialog.js';
@@ -34,13 +34,13 @@ type DesktopUpsellSelection = 'try' | 'not-now' | 'never';
 type Props = {
   onDone: () => void;
 };
-export function DesktopUpsellStartup(t0) {
+export function DesktopUpsellStartup(t0: Props) {
   const $ = _c(14);
   const {
     onDone
   } = t0;
   const [showHandoff, setShowHandoff] = useState(false);
-  let t1;
+  let t1: Array<any>;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = [];
     $[0] = t1;
@@ -61,7 +61,7 @@ export function DesktopUpsellStartup(t0) {
   }
   let t2;
   if ($[3] !== onDone) {
-    t2 = function handleSelect(value) {
+    t2 = function handleSelect(value: DesktopUpsellSelection) {
       switch (value) {
         case "try":
           {
@@ -144,7 +144,7 @@ export function DesktopUpsellStartup(t0) {
   }
   return t8;
 }
-function _temp2(prev_0) {
+function _temp2(prev_0: GlobalConfig) {
   if (prev_0.desktopUpsellDismissed) {
     return prev_0;
   }

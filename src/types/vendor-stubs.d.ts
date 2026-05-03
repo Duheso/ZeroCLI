@@ -18,8 +18,10 @@ declare module 'ws' {
     constructor(url: string, options?: Record<string, unknown>);
     constructor(url: string, protocols: string[], options?: Record<string, unknown>);
     on(event: string, callback: (...args: any[]) => void): void;
-    send(data: any): void;
-    close(): void;
+    off(event: string, callback: (...args: any[]) => void): void;
+    ping?(): void;
+    send(data: any, callback?: (error: Error) => void): void;
+    close(code?: number, reason?: string): void;
     readonly readyState: number;
     static readonly CONNECTING: number;
     static readonly OPEN: number;
