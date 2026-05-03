@@ -417,18 +417,18 @@ function StopHookSummaryMessage(t0: StopHookSummaryMessageProps) {
   }
   return t15;
 }
-function _temp3(info_0, idx_0) {
+function _temp3(info_0: StopHookInfo, idx_0: number) {
   const durationStr_0 = false && info_0.durationMs !== undefined ? ` (${formatSecondsShort(info_0.durationMs)})` : "";
   return <Text key={`cmd-${idx_0}`} dimColor={true}>⎿  {info_0.command === "prompt" ? `prompt: ${info_0.promptText || ""}` : info_0.command}{durationStr_0}</Text>;
 }
-function _temp2(info, idx) {
+function _temp2(info: StopHookInfo, idx: number) {
   const durationStr = false && info.durationMs !== undefined ? ` (${formatSecondsShort(info.durationMs)})` : "";
   return <Text key={`cmd-${idx}`} dimColor={true}>{"     \u23BF "}{info.command === "prompt" ? `prompt: ${info.promptText || ""}` : info.command}{durationStr}</Text>;
 }
-function _temp(sum, h) {
+function _temp(sum: number, h: StopHookInfo) {
   return sum + (h.durationMs ?? 0);
 }
-function SystemTextMessageInner(t0) {
+function SystemTextMessageInner(t0: { content: string; addMargin?: boolean; dot: boolean; color?: string; dimColor: boolean }) {
   const $ = _c(18);
   const {
     content,
@@ -493,7 +493,7 @@ function SystemTextMessageInner(t0) {
   }
   return t7;
 }
-function TurnDurationMessage(t0) {
+function TurnDurationMessage(t0: { message: SystemTurnDurationMessage; addMargin?: boolean }) {
   const $ = _c(17);
   const {
     message,
@@ -593,7 +593,7 @@ function TurnDurationMessage(t0) {
 function _temp4() {
   return sample(getTurnCompletionVerbs()) ?? "Worked";
 }
-function MemorySavedMessage(t0) {
+function MemorySavedMessage(t0: { message: SystemMemorySavedMessage; addMargin?: boolean }) {
   const $ = _c(16);
   const {
     message,
@@ -665,10 +665,10 @@ function MemorySavedMessage(t0) {
   }
   return t11;
 }
-function _temp5(p) {
+function _temp5(p: string) {
   return <MemoryFileRow key={p} path={p} />;
 }
-function MemoryFileRow(t0) {
+function MemoryFileRow(t0: { path: string }) {
   const $ = _c(16);
   const {
     path

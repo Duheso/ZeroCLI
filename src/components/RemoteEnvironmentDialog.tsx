@@ -22,13 +22,13 @@ const SETUP_HINT = `Configure environments at: https://claude.ai/code`;
 type Props = {
   onDone: (message?: string) => void;
 };
-type LoadingState = 'loading' | 'updating' | null;
+type _LoadingState = 'loading' | 'updating' | null;
 export function RemoteEnvironmentDialog(t0: Props) {
   const $ = _c(27);
   const {
     onDone
   } = t0;
-  const [loadingState, setLoadingState] = useState<LoadingStateType>("loading");
+  const [loadingState, setLoadingState] = useState<_LoadingState>("loading");
   let t1: EnvironmentResource[];
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = [];
@@ -82,7 +82,7 @@ export function RemoteEnvironmentDialog(t0: Props) {
   useEffect(t2, t3);
   let t4;
   if ($[3] !== environments || $[4] !== onDone) {
-    t4 = function handleSelect(value) {
+    t4 = function handleSelect(value: string) {
       if (value === "cancel") {
         onDone();
         return;
@@ -190,7 +190,7 @@ export function RemoteEnvironmentDialog(t0: Props) {
   }
   return t5;
 }
-function EnvironmentLabel(t0) {
+function EnvironmentLabel(t0: { environment: EnvironmentResource }) {
   const $ = _c(7);
   const {
     environment
@@ -222,7 +222,7 @@ function EnvironmentLabel(t0) {
   }
   return t3;
 }
-function SingleEnvironmentContent(t0) {
+function SingleEnvironmentContent(t0: { environment: EnvironmentResource; onDone: (message?: string) => void }) {
   const $ = _c(6);
   const {
     environment,
@@ -257,7 +257,7 @@ function SingleEnvironmentContent(t0) {
   }
   return t3;
 }
-function MultipleEnvironmentsContent(t0) {
+function MultipleEnvironmentsContent(t0: { environments: EnvironmentResource[]; selectedEnvironment: EnvironmentResource; selectedEnvironmentSource: SettingSource | null; loadingState: string; onSelect: (value: string) => void; onCancel: (message?: string) => void }) {
   const $ = _c(18);
   const {
     environments,
@@ -331,7 +331,7 @@ function MultipleEnvironmentsContent(t0) {
   }
   return t7;
 }
-function _temp(env) {
+function _temp(env: EnvironmentResource) {
   return {
     label: <Text>{env.name} <Text dimColor={true}>({env.environment_id})</Text></Text>,
     value: env.environment_id
