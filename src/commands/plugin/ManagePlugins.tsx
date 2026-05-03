@@ -2011,7 +2011,7 @@ export function ManagePlugins({
         client: client_3,
         scope: scope_5,
         transport: 'claudeai-proxy',
-        isAuthenticated: undefined,
+        isAuthenticated: false,
         config: client_3.config as McpClaudeAIProxyServerConfig
       };
       return <MCPRemoteServerMenu server={server_2} serverToolsCount={serverToolsCount} onViewTools={handleMcpViewTools} onCancel={handleMcpCancel} onComplete={handleMcpComplete} borderless />;
@@ -2062,9 +2062,9 @@ export function ManagePlugins({
         client: client_4,
         scope: scope_6,
         transport: 'claudeai-proxy',
-        isAuthenticated: undefined,
+        isAuthenticated: false,
         config: client_4.config as McpClaudeAIProxyServerConfig
-      };
+      } as ClaudeAIServerInfo;
     }
     return <MCPToolListView server={server_3} onSelectTool={(tool: Tool) => {
       setViewState({
@@ -2121,9 +2121,9 @@ export function ManagePlugins({
         client: client_5,
         scope: scope_7,
         transport: 'claudeai-proxy',
-        isAuthenticated: undefined,
+        isAuthenticated: false,
         config: client_5.config as McpClaudeAIProxyServerConfig
-      };
+      } as ClaudeAIServerInfo;
     }
     return <MCPToolDetailView tool={tool_0} server={server_4} onBack={() => setViewState({
       type: 'mcp-tools',
@@ -2156,7 +2156,7 @@ export function ManagePlugins({
 
       // Check if we need to show a scope header
       const prevItem = visibleIndex > 0 ? visibleItems[visibleIndex - 1] : null;
-      const showScopeHeader = !prevItem || prevItem.scope !== item_10.scope;
+      const showScopeHeader = !prevItem || getScopeForItem(prevItem) !== getScopeForItem(item_10);
 
       // Get scope label
       const getScopeLabel = (scope_8: string): string => {
