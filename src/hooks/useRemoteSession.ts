@@ -21,6 +21,7 @@ import type { Tool } from '../Tool.js'
 import { findToolByName } from '../Tool.js'
 import type { Message as MessageType } from '../types/message.js'
 import type { PermissionAskDecision } from '../types/permissions.js'
+import type { PermissionUpdate } from '../utils/permissions/PermissionUpdateSchema.js'
 import { logForDebugging } from '../utils/debug.js'
 import { truncateToWidth } from '../utils/format.js'
 import {
@@ -158,7 +159,7 @@ export function useRemoteSession({
         const parts = [`type=${sdkMessage.type}`]
         if ('subtype' in sdkMessage) parts.push(`subtype=${sdkMessage.subtype}`)
         if (sdkMessage.type === 'user') {
-          const c = sdkMessage.message?.content
+          const c = (sdkMessage.message as { content?: unknown } | undefined)?.content
           parts.push(
             `content=${Array.isArray(c) ? c.map(b => b.type).join(',') : typeof c}`,
           )
@@ -195,10 +196,11 @@ export function useRemoteSession({
           sdkMessage.subtype === 'init' &&
           onInit
         ) {
+          const slashCommands = (sdkMessage as { slash_commands?: string[] }).slash_commands
           logForDebugging(
-            `[useRemoteSession] Init received with ${sdkMessage.slash_commands.length} slash commands`,
+            `[useRemoteSession] Init received with ${slashCommands?.length ?? 0} slash commands`,
           )
-          onInit(sdkMessage.slash_commands)
+          onInit(slashCommands ?? [])
         }
 
         // Track remote subagent lifecycle for the "N in background" counter.
@@ -207,12 +209,14 @@ export function useRemoteSession({
         // Return early — these are status signals, not renderable messages.
         if (sdkMessage.type === 'system') {
           if (sdkMessage.subtype === 'task_started') {
-            runningTaskIdsRef.current.add(sdkMessage.task_id)
+            const taskId = (sdkMessage as { task_id?: string }).task_id
+            if (taskId) runningTaskIdsRef.current.add(taskId)
             writeTaskCount()
             return
           }
           if (sdkMessage.subtype === 'task_notification') {
-            runningTaskIdsRef.current.delete(sdkMessage.task_id)
+            const taskId2 = (sdkMessage as { task_id?: string }).task_id
+            if (taskId2) runningTaskIdsRef.current.delete(taskId2)
             writeTaskCount()
             return
           }
@@ -248,7 +252,7 @@ export function useRemoteSession({
         // and inProcessRunner.ts; without this the set grows unbounded for the
         // session lifetime (BQ: CCR cohort shows 5.2x higher RSS slope).
         if (setInProgressToolUseIDs && sdkMessage.type === 'user') {
-          const content = sdkMessage.message?.content
+          const content = (sdkMessage.message as { content?: unknown } | undefined)?.content
           if (Array.isArray(content)) {
             const resultIds: string[] = []
             for (const block of content) {
@@ -333,9 +337,10 @@ export function useRemoteSession({
         )
 
         // Look up the Tool object by name, or create a stub for unknown tools
+        const toolName: string = (request as { tool_name?: string }).tool_name ?? 'unknown'
         const tool =
-          findToolByName(toolsRef.current, request.tool_name) ??
-          createToolStub(request.tool_name)
+          findToolByName(toolsRef.current, toolName) ??
+          createToolStub(toolName)
 
         const syntheticMessage = createSyntheticAssistantMessage(
           request,
@@ -345,8 +350,8 @@ export function useRemoteSession({
         const permissionResult: PermissionAskDecision = {
           behavior: 'ask',
           message:
-            request.description ?? `${request.tool_name} requires permission`,
-          suggestions: request.permission_suggestions,
+            request.description ?? `${toolName} requires permission`,
+          suggestions: (request.permission_suggestions as PermissionUpdate[] | undefined) ?? undefined,
           blockedPath: request.blocked_path,
         }
 
@@ -354,10 +359,10 @@ export function useRemoteSession({
           assistantMessage: syntheticMessage,
           tool,
           description:
-            request.description ?? `${request.tool_name} requires permission`,
-          input: request.input,
+            request.description ?? `${toolName} requires permission`,
+          input: request.input as ToolUseConfirm['input'],
           toolUseContext: {} as ToolUseConfirm['toolUseContext'],
-          toolUseID: request.tool_use_id,
+          toolUseID: request.tool_use_id as string,
           permissionResult,
           permissionPromptStartTimeMs: Date.now(),
           onUserInteraction() {

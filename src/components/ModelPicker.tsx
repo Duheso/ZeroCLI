@@ -10,7 +10,8 @@ import { useKeybindings } from '../keybindings/useKeybinding.js';
 import { useAppState, useSetAppState } from '../state/AppState.js';
 import { convertEffortValueToLevel, type EffortLevel, getDefaultEffortForModel, modelSupportsEffort, modelSupportsMaxEffort, resolvePickerEffortPersistence, toPersistableEffort } from '../utils/effort.js';
 import { getDefaultMainLoopModel, type ModelSetting, modelDisplayString, parseUserSpecifiedModel } from '../utils/model/model.js';
-import { getModelOptions } from '../utils/model/modelOptions.js';
+import { getModelOptions, type ModelOption } from '../utils/model/modelOptions.js';
+import type { AppState } from '../state/AppStateStore.js';
 import { getSettingsForSource, updateSettingsForSource } from '../utils/settings/settings.js';
 import { ConfigurableShortcutHint } from './ConfigurableShortcutHint.js';
 import { Select } from './CustomSelect/index.js';
@@ -36,7 +37,7 @@ export type Props = {
   skipSettingsWrite?: boolean;
 };
 const NO_PREFERENCE = '__NO_PREFERENCE__';
-export function ModelPicker(t0) {
+export function ModelPicker(t0: Props) {
   const $ = _c(82);
   const {
     initial,
@@ -76,7 +77,7 @@ export function ModelPicker(t0) {
   const modelOptions = t3;
   let t4;
   bb0: {
-    if (initial !== null && !modelOptions.some(opt => opt.value === initial)) {
+    if (initial !== null && !modelOptions.some((opt: ModelOption) => opt.value === initial)) {
       let t5;
       if ($[4] !== initial) {
         t5 = modelDisplayString(initial);
@@ -124,7 +125,7 @@ export function ModelPicker(t0) {
   const selectOptions = t5;
   let t6;
   if ($[14] !== initialValue || $[15] !== selectOptions) {
-    t6 = selectOptions.some(_ => _.value === initialValue) ? initialValue : selectOptions[0]?.value ?? undefined;
+    t6 = selectOptions.some((_1: { value: string }) => _1.value === initialValue) ? initialValue : selectOptions[0]?.value ?? undefined;
     $[14] = initialValue;
     $[15] = selectOptions;
     $[16] = t6;
@@ -136,7 +137,7 @@ export function ModelPicker(t0) {
   const hiddenCount = Math.max(0, selectOptions.length - visibleCount);
   let t7;
   if ($[17] !== focusedValue || $[18] !== selectOptions) {
-    t7 = selectOptions.find(opt_1 => opt_1.value === focusedValue)?.label;
+    t7 = selectOptions.find((opt_1: { value: string; label: string }) => opt_1.value === focusedValue)?.label;
     $[17] = focusedValue;
     $[18] = selectOptions;
     $[19] = t7;
@@ -170,7 +171,7 @@ export function ModelPicker(t0) {
   const displayEffort = effort === "max" && !focusedSupportsMax ? "high" : effort;
   let t10;
   if ($[25] !== effortValue || $[26] !== hasToggledEffort) {
-    t10 = value => {
+    t10 = (value: string) => {
       setFocusedValue(value);
       if (!hasToggledEffort && effortValue === undefined) {
         setEffort(getDefaultEffortLevelForOption(value));
@@ -185,11 +186,11 @@ export function ModelPicker(t0) {
   const handleFocus = t10;
   let t11;
   if ($[28] !== focusedDefaultEffort || $[29] !== focusedSupportsEffort || $[30] !== focusedSupportsMax) {
-    t11 = direction => {
+    t11 = (direction: 'left' | 'right') => {
       if (!focusedSupportsEffort) {
         return;
       }
-      setEffort(prev => cycleEffortLevel(prev ?? focusedDefaultEffort, direction, focusedSupportsMax));
+      setEffort((prev: EffortLevel | undefined) => cycleEffortLevel(prev ?? focusedDefaultEffort, direction, focusedSupportsMax));
       setHasToggledEffort(true);
     };
     $[28] = focusedDefaultEffort;
@@ -223,7 +224,7 @@ export function ModelPicker(t0) {
   useKeybindings(t12, t13);
   let t14;
   if ($[35] !== effort || $[36] !== hasToggledEffort || $[37] !== onSelect || $[38] !== setAppState || $[39] !== skipSettingsWrite) {
-    t14 = function handleSelect(value_0) {
+    t14 = function handleSelect(value_0: string) {
       logEvent("tengu_model_command_menu_effort", {
         effort: effort as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
       });
@@ -386,23 +387,23 @@ export function ModelPicker(t0) {
   return t29;
 }
 function _temp4() {}
-function _temp3(opt_0) {
+function _temp3(opt_0: ModelOption) {
   return {
     ...opt_0,
     value: opt_0.value === null ? NO_PREFERENCE : opt_0.value
   };
 }
-function _temp2(s_0) {
-  return s_0.effortValue;
+function _temp2(s_0: AppState): number | undefined {
+  return s_0.effortValue as number | undefined;
 }
-function _temp(s) {
+function _temp(s: AppState) {
   return isFastModeEnabled() ? s.fastMode : false;
 }
 function resolveOptionModel(value?: string): string | undefined {
   if (!value) return undefined;
   return value === NO_PREFERENCE ? getDefaultMainLoopModel() : parseUserSpecifiedModel(value);
 }
-function EffortLevelIndicator(t0) {
+function EffortLevelIndicator(t0: { effort: EffortLevel | undefined }) {
   const $ = _c(5);
   const {
     effort

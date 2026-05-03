@@ -1,6 +1,8 @@
 /* eslint-disable custom-rules/no-top-level-side-effects */
 
 import { appendFileSync } from 'fs'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error react-reconciler has no declaration file
 import createReconciler from 'react-reconciler'
 import { getYogaCounters } from 'src/native-ts/yoga-layout/index.js'
 import { isEnvTruthy } from '../utils/envUtils.js'
@@ -250,7 +252,7 @@ const reconciler = createReconciler<
   },
   preparePortalMount: () => null,
   clearContainer: () => false,
-  resetAfterCommit(rootNode) {
+  resetAfterCommit(rootNode: DOMElement) {
     _lastCommitMs = _commitStart > 0 ? performance.now() - _commitStart : 0
     _commitStart = 0
     if (COMMIT_LOG) {
@@ -375,19 +377,19 @@ const reconciler = createReconciler<
     return createTextNode(text)
   },
   resetTextContent() {},
-  hideTextInstance(node) {
+  hideTextInstance(node: TextNode) {
     setTextNodeValue(node, '')
   },
-  unhideTextInstance(node, text) {
+  unhideTextInstance(node: TextNode, text: string) {
     setTextNodeValue(node, text)
   },
-  getPublicInstance: (instance): DOMElement => instance as DOMElement,
-  hideInstance(node) {
+  getPublicInstance: (instance: DOMElement): DOMElement => instance as DOMElement,
+  hideInstance(node: DOMElement) {
     node.isHidden = true
     node.yogaNode?.setDisplay(LayoutDisplay.None)
     markDirty(node)
   },
-  unhideInstance(node) {
+  unhideInstance(node: DOMElement) {
     node.isHidden = false
     node.yogaNode?.setDisplay(LayoutDisplay.Flex)
     markDirty(node)
@@ -496,7 +498,7 @@ const reconciler = createReconciler<
   commitTextUpdate(node: TextNode, _oldText: string, newText: string): void {
     setTextNodeValue(node, newText)
   },
-  removeChild(node, removeNode) {
+  removeChild(node: DOMElement, removeNode: DOMElement) {
     removeChildNode(node, removeNode)
     cleanupYogaNode(removeNode)
     if (removeNode.nodeName !== '#text') {

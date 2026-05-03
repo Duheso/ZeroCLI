@@ -29,7 +29,7 @@ function hasMessageAfterBoundary(messages: Message[], boundaryUuid: string): boo
   }
   return false;
 }
-export function usePostCompactSurvey(messages, isLoading, t0, t1) {
+export function usePostCompactSurvey(messages: Message[], isLoading: boolean, t0: boolean | undefined, t1: { enabled?: boolean } | undefined) {
   const $ = _c(23);
   const hasActivePrompt = t0 === undefined ? false : t0;
   let t2;
@@ -44,7 +44,7 @@ export function usePostCompactSurvey(messages, isLoading, t0, t1) {
     enabled: t3
   } = t2;
   const enabled = t3 === undefined ? true : t3;
-  const [gateEnabled, setGateEnabled] = useState(null);
+  const [gateEnabled, setGateEnabled] = useState<boolean | null>(null);
   let t4;
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
     t4 = new Set();
@@ -53,7 +53,7 @@ export function usePostCompactSurvey(messages, isLoading, t0, t1) {
     t4 = $[2];
   }
   const seenCompactBoundaries = useRef(t4);
-  const pendingCompactBoundaryUuid = useRef(null);
+  const pendingCompactBoundaryUuid = useRef<string | null>(null);
   const onOpen = _temp;
   const onSelect = _temp2;
   let t5;
@@ -169,13 +169,13 @@ export function usePostCompactSurvey(messages, isLoading, t0, t1) {
   }
   return t11;
 }
-function _temp4(msg_0) {
+function _temp4(msg_0: Message) {
   return msg_0.uuid;
 }
-function _temp3(msg) {
+function _temp3(msg: Message) {
   return isCompactBoundaryMessage(msg);
 }
-function _temp2(appearanceId_0, selected) {
+function _temp2(appearanceId_0: string, selected: FeedbackSurveyResponse) {
   const smCompactionEnabled_0 = shouldUseSessionMemoryCompaction();
   logEvent("tengu_post_compact_survey_event", {
     event_type: "responded" as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -190,7 +190,7 @@ function _temp2(appearanceId_0, selected) {
     survey_type: "post_compact"
   });
 }
-function _temp(appearanceId) {
+function _temp(appearanceId: string) {
   const smCompactionEnabled = shouldUseSessionMemoryCompaction();
   logEvent("tengu_post_compact_survey_event", {
     event_type: "appeared" as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
