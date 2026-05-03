@@ -60,7 +60,7 @@ function AskUserQuestionWithHighlight(props: PermissionRequestProps) {
   } else {
     t0 = $[0];
   }
-  const highlight = use(t0);
+  const highlight = use(t0) as CliHighlight | null;
   let t1;
   if ($[1] !== highlight || $[2] !== props) {
     t1 = <AskUserQuestionPermissionRequestBody {...props} highlight={highlight} />;
@@ -172,10 +172,10 @@ function AskUserQuestionPermissionRequestBody(t0: PermissionRequestProps & { hig
   const nextPasteIdRef = useRef(0);
   let t7;
   if ($[16] === Symbol.for("react.memo_cache_sentinel")) {
-    t7 = function onImagePaste(questionText, base64Image, mediaType, filename, dimensions, _sourcePath) {
+    t7 = function onImagePaste(questionText: string, base64Image: string, mediaType: string, filename: string, dimensions: ImageDimensions, _sourcePath: string) {
       nextPasteIdRef.current = nextPasteIdRef.current + 1;
       const pasteId = nextPasteIdRef.current;
-      const newContent = {
+      const newContent: PastedContent = {
         id: pasteId,
         type: "image",
         content: base64Image,
@@ -200,7 +200,7 @@ function AskUserQuestionPermissionRequestBody(t0: PermissionRequestProps & { hig
   const onImagePaste = t7;
   let t8;
   if ($[17] === Symbol.for("react.memo_cache_sentinel")) {
-    t8 = (questionText_0, id) => {
+    t8 = (questionText_0: string, id: number) => {
       setPastedContentsByQuestion(prev_0 => {
         const questionContents = {
           ...(prev_0[questionText_0] ?? {})
@@ -253,7 +253,7 @@ function AskUserQuestionPermissionRequestBody(t0: PermissionRequestProps & { hig
   const isInSubmitView = currentQuestionIndex === (questions?.length || 0);
   let t11;
   if ($[22] !== answers || $[23] !== questions) {
-    t11 = questions?.every(q_0 => q_0?.question && !!answers[q_0.question]) ?? false;
+    t11 = questions?.every((q_0: Question) => q_0?.question && !!answers[q_0.question]) ?? false;
     $[22] = answers;
     $[23] = questions;
     $[24] = t11;
@@ -291,7 +291,7 @@ function AskUserQuestionPermissionRequestBody(t0: PermissionRequestProps & { hig
   let t13;
   if ($[32] !== allImageAttachments || $[33] !== answers || $[34] !== isInPlanMode || $[35] !== metadataSource || $[36] !== onDone || $[37] !== questions || $[38] !== toolUseConfirm) {
     t13 = async () => {
-      const questionsWithAnswers = questions.map(q_1 => {
+      const questionsWithAnswers = questions.map((q_1: Question) => {
         const answer = answers[q_1.question];
         if (answer) {
           return `- "${q_1.question}"\n  Answer: ${answer}`;
@@ -331,7 +331,7 @@ function AskUserQuestionPermissionRequestBody(t0: PermissionRequestProps & { hig
   let t14;
   if ($[40] !== allImageAttachments || $[41] !== answers || $[42] !== isInPlanMode || $[43] !== metadataSource || $[44] !== onDone || $[45] !== questions || $[46] !== toolUseConfirm) {
     t14 = async () => {
-      const questionsWithAnswers_0 = questions.map(q_2 => {
+      const questionsWithAnswers_0 = questions.map((q_2: Question) => {
         const answer_0 = answers[q_2.question];
         if (answer_0) {
           return `- "${q_2.question}"\n  Answer: ${answer_0}`;

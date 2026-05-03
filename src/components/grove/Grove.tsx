@@ -141,7 +141,7 @@ function PostGracePeriodContentBody() {
   }
   return t6;
 }
-export function GroveDialog(t0) {
+export function GroveDialog(t0: Props) {
   const $ = _c(34);
   const {
     showIfAlreadyViewed,
@@ -191,7 +191,7 @@ export function GroveDialog(t0) {
   }
   let t3;
   if ($[5] !== groveConfig?.notice_is_grace_period || $[6] !== onDone) {
-    t3 = async function onChange(value) {
+    t3 = async function onChange(value: GroveDecision) {
       bb21: switch (value) {
         case "accept_opt_in":
           {
@@ -318,7 +318,7 @@ export function GroveDialog(t0) {
   }
   let t12;
   if ($[24] !== onChange) {
-    t12 = value_0 => onChange(value_0 as 'accept_opt_in' | 'accept_opt_out' | 'defer');
+    t12 = (value_0: 'accept_opt_in' | 'accept_opt_out' | 'defer') => onChange(value_0);
     $[24] = onChange;
     $[25] = t12;
   } else {
@@ -346,7 +346,7 @@ export function GroveDialog(t0) {
   }
   return t14;
 }
-function _temp(exitState) {
+function _temp(exitState: { pending: boolean; keyName: string }) {
   return exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline><KeyboardShortcutHint shortcut="Enter" action="confirm" /><KeyboardShortcutHint shortcut="Esc" action="cancel" /></Byline>;
 }
 type PrivacySettingsDialogProps = {
@@ -354,7 +354,7 @@ type PrivacySettingsDialogProps = {
   domainExcluded?: boolean;
   onDone(): void;
 };
-export function PrivacySettingsDialog(t0) {
+export function PrivacySettingsDialog(t0: PrivacySettingsDialogProps) {
   const $ = _c(17);
   const {
     settings,
@@ -362,7 +362,7 @@ export function PrivacySettingsDialog(t0) {
     onDone
   } = t0;
   const [groveEnabled, setGroveEnabled] = useState(settings.grove_enabled);
-  let t1;
+  let t1: [];
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = [];
     $[0] = t1;

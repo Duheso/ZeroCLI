@@ -107,7 +107,7 @@ export type TreeSelectProps<T> = {
  * It handles expand/collapse state, keyboard navigation, and renders the tree as a flat list
  * using the Select component.
  */
-export function TreeSelect(t0) {
+export function TreeSelect<T>(t0: TreeSelectProps<T>) {
   const $ = _c(48);
   const {
     nodes,
@@ -131,7 +131,7 @@ export function TreeSelect(t0) {
   const hideIndexes = t3 === undefined ? false : t3;
   let t4;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t4 = new Set();
+    t4 = new Set<string | number>();
     $[0] = t4;
   } else {
     t4 = $[0];
@@ -141,7 +141,7 @@ export function TreeSelect(t0) {
   const lastFocusedIdRef = React.useRef(null);
   let t5;
   if ($[1] !== internalExpandedIds || $[2] !== isNodeExpanded) {
-    t5 = nodeId => {
+    t5 = (nodeId: string | number) => {
       if (isNodeExpanded) {
         return isNodeExpanded(nodeId);
       }
@@ -154,10 +154,10 @@ export function TreeSelect(t0) {
     t5 = $[3];
   }
   const isExpanded = t5;
-  let result;
+  let result: FlattenedNode<T>[];
   if ($[4] !== isExpanded || $[5] !== nodes) {
     result = [];
-    function traverse(node, depth, parentId) {
+    function traverse(node: TreeNode<T>, depth: number, parentId?: string | number) {
       const hasChildren = !!node.children && node.children.length > 0;
       const nodeIsExpanded = isExpanded(node.id);
       result.push({
@@ -174,7 +174,7 @@ export function TreeSelect(t0) {
       }
     }
     for (const node_0 of nodes) {
-      traverse(node_0, 0);
+      traverse(node_0, 0, undefined);
     }
     $[4] = isExpanded;
     $[5] = nodes;
@@ -189,7 +189,7 @@ export function TreeSelect(t0) {
   const childPrefixFn = getChildPrefix ?? defaultGetChildPrefix;
   let t6;
   if ($[7] !== childPrefixFn || $[8] !== parentPrefixFn) {
-    t6 = flatNode => {
+    t6 = (flatNode: FlattenedNode<T>) => {
       let prefix = "";
       if (flatNode.hasChildren) {
         prefix = parentPrefixFn(flatNode.isExpanded);
@@ -209,7 +209,7 @@ export function TreeSelect(t0) {
   const buildLabel = t6;
   let t7;
   if ($[10] !== buildLabel || $[11] !== flattenedNodes) {
-    t7 = flattenedNodes.map(flatNode_0 => ({
+    t7 = flattenedNodes.map((flatNode_0: FlattenedNode<T>) => ({
       label: buildLabel(flatNode_0),
       description: flatNode_0.node.description,
       dimDescription: flatNode_0.node.dimDescription ?? true,
@@ -222,10 +222,10 @@ export function TreeSelect(t0) {
     t7 = $[12];
   }
   const options = t7;
-  let map;
+  let map: Map<string | number, TreeNode<T>>;
   if ($[13] !== flattenedNodes) {
-    map = new Map();
-    flattenedNodes.forEach(fn => map.set(fn.node.id, fn.node));
+    map = new Map<string | number, TreeNode<T>>();
+    flattenedNodes.forEach((fn: FlattenedNode<T>) => map.set(fn.node.id, fn.node));
     $[13] = flattenedNodes;
     $[14] = map;
   } else {
@@ -234,7 +234,7 @@ export function TreeSelect(t0) {
   const nodeMap = map;
   let t8;
   if ($[15] !== flattenedNodes) {
-    t8 = nodeId_0 => flattenedNodes.find(fn_0 => fn_0.node.id === nodeId_0);
+    t8 = (nodeId_0: string | number) => flattenedNodes.find((fn_0: FlattenedNode<T>) => fn_0.node.id === nodeId_0);
     $[15] = flattenedNodes;
     $[16] = t8;
   } else {
