@@ -11,14 +11,14 @@ const CHROME_PERMISSIONS_URL = 'https://clau.de/chrome/permissions';
 type Props = {
   onDone(): void;
 };
-export function ClaudeInChromeOnboarding(t0) {
+export function ClaudeInChromeOnboarding(t0: Props) {
   const $ = _c(20);
   const {
     onDone
   } = t0;
   const [isExtensionInstalled, setIsExtensionInstalled] = React.useState(false);
-  let t1;
-  let t2;
+  let t1: () => void;
+  let t2: never[];
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = () => {
       logEvent("tengu_claude_in_chrome_onboarding_shown", {});
@@ -29,13 +29,13 @@ export function ClaudeInChromeOnboarding(t0) {
     $[0] = t1;
     $[1] = t2;
   } else {
-    t1 = $[0];
-    t2 = $[1];
+    t1 = $[0] as () => void;
+    t2 = $[1] as never[];
   }
   React.useEffect(t1, t2);
   let t3;
   if ($[2] !== onDone) {
-    t3 = (_input, key) => {
+    t3 = (_input: string, key: { return?: boolean }) => {
       if (key.return) {
         onDone();
       }
@@ -43,7 +43,7 @@ export function ClaudeInChromeOnboarding(t0) {
     $[2] = onDone;
     $[3] = t3;
   } else {
-    t3 = $[3];
+    t3 = $[3] as ((_input: string, key: { return?: boolean }) => void);
   }
   useInput(t3);
   let t4;
@@ -112,7 +112,7 @@ export function ClaudeInChromeOnboarding(t0) {
   }
   return t11;
 }
-function _temp(current) {
+function _temp(current: Record<string, any>) {
   return {
     ...current,
     hasCompletedClaudeInChromeOnboarding: true
