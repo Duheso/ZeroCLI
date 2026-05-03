@@ -4,7 +4,7 @@ import type { Command } from '../commands.js';
 import { Box } from '../ink.js';
 import type { Screen } from '../screens/REPL.js';
 import type { Tools } from '../Tool.js';
-import type { RenderableMessage } from '../types/message.js';
+import type { NormalizedAssistantMessage, NormalizedMessage, RenderableMessage } from '../types/message.js';
 import { getDisplayMessageFromCollapsed, getToolSearchOrReadInfo, getToolUseIdsFromCollapsedGroup, hasAnyToolInProgress } from '../utils/collapseReadSearch.js';
 import { type buildMessageLookups, EMPTY_STRING_SET, getProgressMessagesFromLookup, getSiblingToolUseIDsFromLookup, getToolUseID } from '../utils/messages.js';
 import { hasThinkingContent, Message } from './Message.js';
@@ -81,7 +81,7 @@ export function hasContentAfterIndex(messages: RenderableMessage[], index: numbe
     // Collapsible grouped_tool_use messages arrive transiently before being
     // merged into the current collapsed group on the next render cycle
     if (msg?.type === 'grouped_tool_use') {
-      const firstInput = msg.messages[0]?.message.content[0]?.input;
+      const firstInput = (msg.messages[0]?.message.content[0] as unknown as Record<string, unknown>)?.input;
       if (getToolSearchOrReadInfo(msg.toolName, firstInput, tools).isCollapsible) {
         continue;
       }
@@ -90,7 +90,7 @@ export function hasContentAfterIndex(messages: RenderableMessage[], index: numbe
   }
   return false;
 }
-function MessageRowImpl(t0) {
+function MessageRowImpl(t0: Props) {
   const $ = _c(64);
   const {
     message: msg,
@@ -112,7 +112,7 @@ function MessageRowImpl(t0) {
   } = t0;
   const isTranscriptMode = screen === "transcript";
   const isGrouped = msg.type === "grouped_tool_use";
-  const isCollapsed = msg.type === "collapsed_read_search";
+  const isCollapsed = msg.type === "collapsed_read_search_group";
   let t1;
   if ($[0] !== hasContentAfter || $[1] !== inProgressToolUseIDs || $[2] !== isCollapsed || $[3] !== isLoading || $[4] !== msg) {
     t1 = isCollapsed && (hasAnyToolInProgress(msg, inProgressToolUseIDs) || isLoading && !hasContentAfter);
@@ -139,7 +139,7 @@ function MessageRowImpl(t0) {
   const displayMsg = t2;
   let t3;
   if ($[10] !== isCollapsed || $[11] !== isGrouped || $[12] !== lookups || $[13] !== msg) {
-    t3 = isGrouped || isCollapsed ? [] : getProgressMessagesFromLookup(msg, lookups);
+    t3 = isGrouped || isCollapsed ? [] : getProgressMessagesFromLookup(msg as NormalizedMessage, lookups);
     $[10] = isCollapsed;
     $[11] = isGrouped;
     $[12] = lookups;
@@ -151,7 +151,7 @@ function MessageRowImpl(t0) {
   const progressMessagesForMessage = t3;
   let t4;
   if ($[15] !== inProgressToolUseIDs || $[16] !== isCollapsed || $[17] !== isGrouped || $[18] !== lookups || $[19] !== msg || $[20] !== screen || $[21] !== streamingToolUseIDs) {
-    const siblingToolUseIDs = isGrouped || isCollapsed ? EMPTY_STRING_SET : getSiblingToolUseIDsFromLookup(msg, lookups);
+    const siblingToolUseIDs = isGrouped || isCollapsed ? EMPTY_STRING_SET : getSiblingToolUseIDsFromLookup(msg as NormalizedMessage, lookups);
     t4 = shouldRenderStatically(msg, streamingToolUseIDs, inProgressToolUseIDs, siblingToolUseIDs, screen, lookups);
     $[15] = inProgressToolUseIDs;
     $[16] = isCollapsed;
@@ -172,7 +172,7 @@ function MessageRowImpl(t0) {
       if ($[23] !== inProgressToolUseIDs || $[24] !== msg.messages) {
         let t6;
         if ($[26] !== inProgressToolUseIDs) {
-          t6 = m => {
+          t6 = (m: NormalizedAssistantMessage) => {
             const content = m.message.content[0];
             return content?.type === "tool_use" && inProgressToolUseIDs.has(content.id);
           };
@@ -204,7 +204,7 @@ function MessageRowImpl(t0) {
       } else {
         let t5;
         if ($[31] !== inProgressToolUseIDs || $[32] !== msg) {
-          const toolUseID = getToolUseID(msg);
+          const toolUseID = getToolUseID(msg as NormalizedMessage);
           t5 = !toolUseID || inProgressToolUseIDs.has(toolUseID);
           $[31] = inProgressToolUseIDs;
           $[32] = msg;
@@ -290,7 +290,7 @@ function MessageRowImpl(t0) {
  * Checks if a message is "streaming" - i.e., its content may still be changing.
  * Exported for testing.
  */
-function _temp(c) {
+function _temp(c: Record<string, unknown>) {
   return c.type === "text";
 }
 export function isMessageStreaming(msg: RenderableMessage, streamingToolUseIDs: Set<string>): boolean {
@@ -300,11 +300,11 @@ export function isMessageStreaming(msg: RenderableMessage, streamingToolUseIDs: 
       return content?.type === 'tool_use' && streamingToolUseIDs.has(content.id);
     });
   }
-  if (msg.type === 'collapsed_read_search') {
+  if (msg.type === 'collapsed_read_search_group') {
     const toolIds = getToolUseIdsFromCollapsedGroup(msg);
     return toolIds.some(id => streamingToolUseIDs.has(id));
   }
-  const toolUseID = getToolUseID(msg);
+  const toolUseID = getToolUseID(msg as NormalizedMessage);
   return !!toolUseID && streamingToolUseIDs.has(toolUseID);
 }
 
@@ -319,7 +319,7 @@ export function allToolsResolved(msg: RenderableMessage, resolvedToolUseIDs: Set
       return content?.type === 'tool_use' && resolvedToolUseIDs.has(content.id);
     });
   }
-  if (msg.type === 'collapsed_read_search') {
+  if (msg.type === 'collapsed_read_search_group') {
     const toolIds = getToolUseIdsFromCollapsedGroup(msg);
     return toolIds.every(id => resolvedToolUseIDs.has(id));
   }
@@ -329,7 +329,7 @@ export function allToolsResolved(msg: RenderableMessage, resolvedToolUseIDs: Set
       return resolvedToolUseIDs.has(block.id);
     }
   }
-  const toolUseID = getToolUseID(msg);
+  const toolUseID = getToolUseID(msg as NormalizedMessage);
   return !toolUseID || resolvedToolUseIDs.has(toolUseID);
 }
 
@@ -350,7 +350,7 @@ export function areMessageRowPropsEqual(prev: Props, next: Props): boolean {
   if (prev.verbose !== next.verbose) return false;
 
   // collapsed_read_search is never static in prompt mode (matches shouldRenderStatically)
-  if (prev.message.type === 'collapsed_read_search' && next.screen !== 'transcript') {
+  if (prev.message.type === 'collapsed_read_search_group' && next.screen !== 'transcript') {
     return false;
   }
 
