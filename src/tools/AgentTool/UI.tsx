@@ -63,7 +63,7 @@ function getSearchOrReadInfo(progressMessage: ProgressMessage<Progress>, tools: 
   const message = progressMessage.data.message;
 
   // Check tool_use (assistant message)
-  if (message.type === 'assistant') {
+  if ((message.type as string) === 'assistant') {
     return getSearchOrReadFromContent(message.message.content[0], tools);
   }
 
@@ -99,7 +99,7 @@ type ProcessedMessage = {
  */
 function processProgressMessages(messages: ProgressMessage<Progress>[], tools: Tools, isAgentRunning: boolean): ProcessedMessage[] {
   // Only process for ants
-  if ("external" !== 'ant') {
+  if (("external" as string) !== 'ant') {
     return messages.filter((m): m is ProgressMessage<AgentToolProgress> => hasProgressMessage(m.data) && m.data.message.type !== 'user').map(m => ({
       type: 'original',
       message: m
@@ -131,7 +131,7 @@ function processProgressMessages(messages: ProgressMessage<Progress>[], tools: T
   const toolUseByID = new Map<string, ToolUseBlockParam>();
   for (const msg of agentMessages) {
     // Track tool_use blocks as we see them
-    if (msg.data.message.type === 'assistant') {
+    if ((msg.data.message.type as string) === 'assistant') {
       for (const c of msg.data.message.message.content) {
         if (c.type === 'tool_use') {
           toolUseByID.set(c.id, c as ToolUseBlockParam);
@@ -267,7 +267,7 @@ function VerboseAgentTranscript(t0: any) {
     const filteredMessages = progressMessages.filter(_temp4);
     let t3;
     if ($[8] !== agentLookups || $[9] !== inProgressToolUseIDs || $[10] !== tools || $[11] !== verbose) {
-      t3 = progressMessage => <MessageResponse key={progressMessage.uuid} height={1}><MessageComponent message={progressMessage.data.message} lookups={agentLookups} addMargin={false} tools={tools} commands={[]} verbose={verbose} inProgressToolUseIDs={inProgressToolUseIDs} progressMessagesForMessage={[]} shouldAnimate={false} shouldShowDot={false} isTranscriptMode={false} isStatic={true} /></MessageResponse>;
+      t3 = (progressMessage: ProgressMessage<Progress>) => <MessageResponse key={progressMessage.uuid} height={1}><MessageComponent message={progressMessage.data.message} lookups={agentLookups} addMargin={false} tools={tools} commands={[]} verbose={verbose} inProgressToolUseIDs={inProgressToolUseIDs} progressMessagesForMessage={[]} shouldAnimate={false} shouldShowDot={false} isTranscriptMode={false} isStatic={true} /></MessageResponse>;
       $[8] = agentLookups;
       $[9] = inProgressToolUseIDs;
       $[10] = tools;
@@ -296,7 +296,7 @@ function VerboseAgentTranscript(t0: any) {
   }
   return t3;
 }
-function _temp4(pm_1) {
+function _temp4(pm_1: ProgressMessage<Progress>) {
   if (!hasProgressMessage(pm_1.data)) {
     return false;
   }
@@ -306,10 +306,10 @@ function _temp4(pm_1) {
   }
   return true;
 }
-function _temp3(pm_0) {
+function _temp3(pm_0: ProgressMessage<AgentToolProgress>) {
   return pm_0.data;
 }
-function _temp2(pm) {
+function _temp2(pm: ProgressMessage<Progress>) {
   return hasProgressMessage(pm.data);
 }
 export function renderToolResultMessage(data: Output, progressMessagesForMessage: ProgressMessage<Progress>[], {
@@ -385,7 +385,7 @@ export function renderToolResultMessage(data: Output, progressMessagesForMessage
     }
   });
   return <Box flexDirection="column">
-      {"external" === 'ant' && <MessageResponse>
+      {("external" as string) === 'ant' && <MessageResponse>
           <Text color="warning">
             [internal] API calls: {getDisplayPath(getDumpPromptsPath(agentId))}
           </Text>
