@@ -25,7 +25,7 @@ const STALL_PURPLE_SHIMMER = {
   g: 75,
   b: 225
 };
-export function GlimmerMessage(t0) {
+export function GlimmerMessage(t0: Props) {
   const $ = _c(75);
   const {
     message,

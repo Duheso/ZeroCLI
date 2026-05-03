@@ -14,7 +14,7 @@ type Props = {
   onCancel: () => void;
   emptyMessage?: string;
 };
-export function Commands(t0) {
+export function Commands(t0: Props) {
   const $ = _c(14);
   const {
     commands,
@@ -35,7 +35,7 @@ export function Commands(t0) {
     const seen = new Set();
     let t2;
     if ($[3] !== maxWidth) {
-      t2 = cmd_0 => ({
+      t2 = (cmd_0: Command) => ({
         label: `/${cmd_0.name}`,
         value: cmd_0.name,
         description: truncate(formatDescriptionWithSource(cmd_0), maxWidth, true)
@@ -45,7 +45,7 @@ export function Commands(t0) {
     } else {
       t2 = $[4];
     }
-    t1 = commands.filter(cmd => {
+    t1 = commands.filter((cmd: Command) => {
       if (seen.has(cmd.name)) {
         return false;
       }
@@ -76,6 +76,6 @@ export function Commands(t0) {
   }
   return t2;
 }
-function _temp(a, b) {
+function _temp(a: Command, b: Command) {
   return a.name.localeCompare(b.name);
 }
