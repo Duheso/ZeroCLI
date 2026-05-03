@@ -29,7 +29,7 @@ type Props = {
     display?: CommandResultDisplay;
   }) => void;
 };
-export function AgentsMenu(t0) {
+export function AgentsMenu(t0: Props) {
   const $ = _c(157);
   const {
     tools,
@@ -54,7 +54,7 @@ export function AgentsMenu(t0) {
     allAgents,
     activeAgents: agents
   } = agentDefinitions;
-  let t2;
+  let t2: string[];
   if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = [];
     $[1] = t2;
@@ -147,8 +147,8 @@ export function AgentsMenu(t0) {
   const agentsBySource = t10;
   let t11;
   if ($[25] === Symbol.for("react.memo_cache_sentinel")) {
-    t11 = message => {
-      setChanges(prev => [...prev, message]);
+    t11 = (message: string) => {
+      setChanges((prev: string[]) => [...prev, message]);
       setModeState({
         mode: "list-agents",
         source: "all"
@@ -161,7 +161,7 @@ export function AgentsMenu(t0) {
   const handleAgentCreated = t11;
   let t12;
   if ($[26] !== setAppState) {
-    t12 = async agent => {
+    t12 = async (agent: AgentDefinition) => {
       ;
       try {
         await deleteAgentFromFile(agent);
@@ -176,7 +176,7 @@ export function AgentsMenu(t0) {
             }
           };
         });
-        setChanges(prev_0 => [...prev_0, t('agents_deleted_msg')(chalk.bold(agent.agentType))]);
+        setChanges((prev_0: string[]) => [...prev_0, t('agents_deleted_msg')(chalk.bold(agent.agentType))]);
         setModeState({
           mode: "list-agents",
           source: "all"
@@ -232,7 +232,7 @@ export function AgentsMenu(t0) {
         }
         let t16;
         if ($[37] !== modeState) {
-          t16 = agent_0 => setModeState({
+          t16 = (agent_0: AgentDefinition) => setModeState({
             mode: "agent-menu",
             agent: agent_0,
             previousMode: modeState
@@ -309,7 +309,7 @@ export function AgentsMenu(t0) {
         if ($[53] !== allAgents || $[54] !== modeState.agent.agentType || $[55] !== modeState.agent.source) {
           let t14;
           if ($[57] !== modeState.agent.agentType || $[58] !== modeState.agent.source) {
-            t14 = a_9 => a_9.agentType === modeState.agent.agentType && a_9.source === modeState.agent.source;
+            t14 = (a_9: AgentDefinition) => a_9.agentType === modeState.agent.agentType && a_9.source === modeState.agent.source;
             $[57] = modeState.agent.agentType;
             $[58] = modeState.agent.source;
             $[59] = t14;
