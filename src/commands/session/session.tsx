@@ -7,7 +7,7 @@ import { Box, Text } from '../../ink.js';
 import { useKeybinding } from '../../keybindings/useKeybinding.js';
 import { useAppState } from '../../state/AppState.js';
 import type { LocalJSXCommandCall } from '../../types/command.js';
-import { logForDebugging } from '../../utils/debug.js';
+import { logForDebugging, type DebugLogLevel } from '../../utils/debug.js';
 type Props = {
   onDone: () => void;
 };
@@ -129,7 +129,7 @@ function _temp3(line: string) {
   return line.length > 0;
 }
 function _temp2(e: unknown) {
-  logForDebugging("QR code generation failed", e as { level: string } | undefined);
+  logForDebugging("QR code generation failed", e as { level: DebugLogLevel } | undefined);
 }
 function _temp(s: { remoteSessionUrl?: string }) {
   return s.remoteSessionUrl;

@@ -5,6 +5,7 @@ import { logEvent } from 'src/services/analytics/index.js';
 import { Box, Link, Newline, Text, useInput } from '../ink.js';
 import { isChromeExtensionInstalled } from '../utils/claudeInChrome/setup.js';
 import { saveGlobalConfig } from '../utils/config.js';
+import type { GlobalConfig } from '../utils/config.js';
 import { Dialog } from './design-system/Dialog.js';
 const CHROME_EXTENSION_URL = 'https://claude.ai/chrome';
 const CHROME_PERMISSIONS_URL = 'https://clau.de/chrome/permissions';
@@ -112,7 +113,7 @@ export function ClaudeInChromeOnboarding(t0: Props) {
   }
   return t11;
 }
-function _temp(current: Record<string, any>) {
+function _temp(current: GlobalConfig): GlobalConfig {
   return {
     ...current,
     hasCompletedClaudeInChromeOnboarding: true
