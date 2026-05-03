@@ -108,7 +108,7 @@ async function countTokensWithFallback(
   }
 }
 
-interface ContextCategory {
+export interface ContextCategory {
   name: string
   tokens: number
   color: keyof Theme
@@ -116,7 +116,7 @@ interface ContextCategory {
   isDeferred?: boolean
 }
 
-interface GridSquare {
+export interface GridSquare {
   color: keyof Theme
   isFilled: boolean
   categoryName: string
@@ -125,13 +125,13 @@ interface GridSquare {
   squareFullness: number // 0-1 representing how full this individual square is
 }
 
-interface MemoryFile {
+export interface MemoryFile {
   path: string
   type: string
   tokens: number
 }
 
-interface McpTool {
+export interface McpTool {
   name: string
   serverName: string
   tokens: number
@@ -154,7 +154,7 @@ export interface SystemPromptSectionDetail {
   tokens: number
 }
 
-interface Agent {
+export interface Agent {
   agentType: string
   source: SettingSource | 'built-in' | 'plugin'
   tokens: number
@@ -167,7 +167,7 @@ interface SlashCommandInfo {
 }
 
 /** Individual skill detail for context display */
-interface SkillFrontmatter {
+export interface SkillFrontmatter {
   name: string
   source: SettingSource | 'plugin'
   tokens: number

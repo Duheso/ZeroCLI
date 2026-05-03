@@ -4,8 +4,8 @@ import figures from 'figures';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAppState, useSetAppState } from 'src/state/AppState.js';
+import type { PermissionUpdate, PermissionUpdateDestination } from 'src/types/permissions.js';
 import { applyPermissionUpdate, persistPermissionUpdate } from 'src/utils/permissions/PermissionUpdate.js';
-import type { PermissionUpdateDestination } from 'src/utils/permissions/PermissionUpdateSchema.js';
 import type { CommandResultDisplay } from '../../../commands.js';
 import { Select } from '../../../components/CustomSelect/select.js';
 import { useExitOnCtrlCDWithKeybindings } from '../../../hooks/useExitOnCtrlCDWithKeybindings.js';
@@ -34,7 +34,7 @@ type TabType = 'recent' | 'allow' | 'ask' | 'deny' | 'workspace';
 type RuleSourceTextProps = {
   rule: PermissionRule;
 };
-function RuleSourceText(t0) {
+function RuleSourceText(t0: RuleSourceTextProps) {
   const $ = _c(4);
   const {
     rule
@@ -72,7 +72,7 @@ function getRuleBehaviorLabel(ruleBehavior: PermissionBehavior): string {
 }
 
 // Component for showing tool details and managing the interactive deletion workflow
-function RuleDetails(t0) {
+function RuleDetails(t0: { rule: PermissionRule; onDelete: () => void; onCancel: () => void }) {
   const $ = _c(42);
   const {
     rule,
@@ -202,7 +202,7 @@ function RuleDetails(t0) {
   }
   let t11;
   if ($[28] !== onCancel || $[29] !== onDelete) {
-    t11 = _ => _ === "yes" ? onDelete() : onCancel();
+    t11 = (_: string) => _ === "yes" ? onDelete() : onCancel();
     $[28] = onCancel;
     $[29] = onDelete;
     $[30] = t11;
@@ -265,7 +265,7 @@ type RulesTabContentProps = {
 };
 
 // Component for rendering rules tab content with full width support
-function RulesTabContent(props) {
+function RulesTabContent(props: RulesTabContentProps) {
   const $ = _c(26);
   const {
     options,
@@ -361,7 +361,7 @@ function RulesTabContent(props) {
 }
 
 // Composes the subtitle + search + Select for a single allow/ask/deny tab.
-function PermissionRulesTab(t0) {
+function PermissionRulesTab(t0: { tab: TabType; getRulesOptions: (tab: TabType, query?: string) => { options: Option[]; rulesByKey: Map<string, PermissionRule> }; handleToolSelect: (value: string, tab: TabType) => void; searchQuery: string; isSearchMode: boolean; isFocused: boolean; onCancel: () => void; lastFocusedRuleKey: string | undefined; cursorOffset?: number; onHeaderFocusChange?: (focused: boolean) => void }) {
   const $ = _c(27);
   let T0;
   let T1;
@@ -429,7 +429,7 @@ function PermissionRulesTab(t0) {
   }
   let t5;
   if ($[13] !== handleToolSelect || $[14] !== tab) {
-    t5 = v => handleToolSelect(v, tab);
+    t5 = (v: string) => handleToolSelect(v, tab);
     $[13] = handleToolSelect;
     $[14] = tab;
     $[15] = t5;
@@ -470,7 +470,7 @@ type Props = {
   initialTab?: TabType;
   onRetryDenials?: (commands: string[]) => void;
 };
-export function PermissionRuleList(t0) {
+export function PermissionRuleList(t0: Props) {
   const $ = _c(113);
   const {
     onExit,
@@ -486,14 +486,14 @@ export function PermissionRuleList(t0) {
   }
   const hasDenials = t1.length > 0;
   const defaultTab = initialTab ?? (hasDenials ? "recent" : "allow");
-  let t2;
+  let t2: string[];
   if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = [];
     $[1] = t2;
   } else {
     t2 = $[1];
   }
-  const [changes, setChanges] = useState(t2);
+  const [changes, setChanges] = useState<string[]>(t2);
   const toolPermissionContext = useAppState(_temp);
   const setAppState = useSetAppState();
   const isTerminalFocused = useTerminalFocus();
@@ -511,7 +511,7 @@ export function PermissionRuleList(t0) {
   const denialStateRef = useRef(t3);
   let t4;
   if ($[3] === Symbol.for("react.memo_cache_sentinel")) {
-    t4 = s_0 => {
+    t4 = (s_0: typeof denialStateRef.current) => {
       denialStateRef.current = s_0;
     };
     $[3] = t4;
@@ -519,17 +519,17 @@ export function PermissionRuleList(t0) {
     t4 = $[3];
   }
   const handleDenialStateChange = t4;
-  const [selectedRule, setSelectedRule] = useState();
-  const [lastFocusedRuleKey, setLastFocusedRuleKey] = useState();
-  const [addingRuleToTab, setAddingRuleToTab] = useState(null);
-  const [validatedRule, setValidatedRule] = useState(null);
+  const [selectedRule, setSelectedRule] = useState<PermissionRule | undefined>(undefined);
+  const [lastFocusedRuleKey, setLastFocusedRuleKey] = useState<string | undefined>(undefined);
+  const [addingRuleToTab, setAddingRuleToTab] = useState<TabType | null>(null);
+  const [validatedRule, setValidatedRule] = useState<{ ruleValue: PermissionRuleValue; ruleBehavior: PermissionBehavior } | null>(null);
   const [isAddingWorkspaceDirectory, setIsAddingWorkspaceDirectory] = useState(false);
-  const [removingDirectory, setRemovingDirectory] = useState(null);
+  const [removingDirectory, setRemovingDirectory] = useState<string | null>(null);
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [headerFocused, setHeaderFocused] = useState(true);
   let t5;
   if ($[4] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = focused => {
+    t5 = (focused: boolean) => {
       setHeaderFocused(focused);
     };
     $[4] = t5;
@@ -537,10 +537,10 @@ export function PermissionRuleList(t0) {
     t5 = $[4];
   }
   const handleHeaderFocusChange = t5;
-  let map;
+  let map: Map<string, PermissionRule>;
   if ($[5] !== toolPermissionContext) {
     map = new Map();
-    getAllowRules(toolPermissionContext).forEach(rule => {
+    getAllowRules(toolPermissionContext).forEach((rule: PermissionRule) => {
       map.set(jsonStringify(rule), rule);
     });
     $[5] = toolPermissionContext;
@@ -549,10 +549,10 @@ export function PermissionRuleList(t0) {
     map = $[6];
   }
   const allowRulesByKey = map;
-  let map_0;
+  let map_0: Map<string, PermissionRule>;
   if ($[7] !== toolPermissionContext) {
     map_0 = new Map();
-    getDenyRules(toolPermissionContext).forEach(rule_0 => {
+    getDenyRules(toolPermissionContext).forEach((rule_0: PermissionRule) => {
       map_0.set(jsonStringify(rule_0), rule_0);
     });
     $[7] = toolPermissionContext;
@@ -561,10 +561,10 @@ export function PermissionRuleList(t0) {
     map_0 = $[8];
   }
   const denyRulesByKey = map_0;
-  let map_1;
+  let map_1: Map<string, PermissionRule>;
   if ($[9] !== toolPermissionContext) {
     map_1 = new Map();
-    getAskRules(toolPermissionContext).forEach(rule_1 => {
+    getAskRules(toolPermissionContext).forEach((rule_1: PermissionRule) => {
       map_1.set(jsonStringify(rule_1), rule_1);
     });
     $[9] = toolPermissionContext;
@@ -575,9 +575,9 @@ export function PermissionRuleList(t0) {
   const askRulesByKey = map_1;
   let t6;
   if ($[11] !== allowRulesByKey || $[12] !== askRulesByKey || $[13] !== denyRulesByKey) {
-    t6 = (tab, t7) => {
+    t6 = (tab: TabType, t7: string | undefined) => {
       const query = t7 === undefined ? "" : t7;
-      const rulesByKey = (() => {
+      const rulesByKey: Map<string, PermissionRule> = (() => {
         switch (tab) {
           case "allow":
             {
@@ -672,7 +672,7 @@ export function PermissionRuleList(t0) {
   } = useSearchInput(t9);
   let t10;
   if ($[18] !== isSearchMode || $[19] !== isSearchModeActive || $[20] !== setSearchQuery) {
-    t10 = e => {
+    t10 = (e: { key: string; ctrl?: boolean; meta?: boolean; preventDefault: () => void }) => {
       if (!isSearchModeActive) {
         return;
       }
@@ -704,7 +704,7 @@ export function PermissionRuleList(t0) {
   const handleKeyDown = t10;
   let t11;
   if ($[22] !== getRulesOptions) {
-    t11 = (selectedValue, tab_0) => {
+    t11 = (selectedValue: string, tab_0: TabType) => {
       const {
         rulesByKey: rulesByKey_0
       } = getRulesOptions(tab_0);
@@ -734,7 +734,7 @@ export function PermissionRuleList(t0) {
   const handleRuleInputCancel = t12;
   let t13;
   if ($[25] === Symbol.for("react.memo_cache_sentinel")) {
-    t13 = (ruleValue, ruleBehavior) => {
+    t13 = (ruleValue: PermissionRuleValue, ruleBehavior: PermissionBehavior) => {
       setValidatedRule({
         ruleValue,
         ruleBehavior
@@ -748,7 +748,7 @@ export function PermissionRuleList(t0) {
   const handleRuleInputSubmit = t13;
   let t14;
   if ($[26] === Symbol.for("react.memo_cache_sentinel")) {
-    t14 = (rules, unreachable) => {
+    t14 = (rules: PermissionRule[], unreachable: UnreachableRule[]) => {
       setValidatedRule(null);
       for (const rule_3 of rules) {
         setChanges(prev => [...prev, `Added ${rule_3.ruleBehavior} rule ${chalk.bold(permissionRuleValueToString(rule_3.ruleValue))}`]);
@@ -785,7 +785,7 @@ export function PermissionRuleList(t0) {
   const handleRequestAddDirectory = t16;
   let t17;
   if ($[29] === Symbol.for("react.memo_cache_sentinel")) {
-    t17 = path => setRemovingDirectory(path);
+    t17 = (path: string) => setRemovingDirectory(path);
     $[29] = t17;
   } else {
     t17 = $[29];
@@ -795,7 +795,7 @@ export function PermissionRuleList(t0) {
   if ($[30] !== changes || $[31] !== onExit || $[32] !== onRetryDenials) {
     t18 = () => {
       const s_1 = denialStateRef.current;
-      const denialsFor = set => Array.from(set).map(idx => s_1.denials[idx]).filter(_temp2);
+      const denialsFor = (set: Set<number>) => Array.from(set).map((idx: number) => s_1.denials[idx]).filter(_temp2);
       const retryDenials = denialsFor(s_1.retry);
       if (retryDenials.length > 0) {
         const commands = retryDenials.map(_temp3);
@@ -923,10 +923,10 @@ export function PermissionRuleList(t0) {
     }
     let t23;
     if ($[49] !== setAppState) {
-      t23 = toolPermissionContext_1 => {
+      t23 = (toolPermissionContext_1: string) => {
         setAppState(prev_3 => ({
           ...prev_3,
-          toolPermissionContext: toolPermissionContext_1
+          toolPermissionContext: toolPermissionContext_1 as any
         }));
       };
       $[49] = setAppState;
@@ -950,12 +950,12 @@ export function PermissionRuleList(t0) {
   if (isAddingWorkspaceDirectory) {
     let t22;
     if ($[56] !== setAppState || $[57] !== toolPermissionContext) {
-      t22 = (path_0, remember) => {
+      t22 = (path_0: string, remember: boolean) => {
         const destination = remember ? "localSettings" : "session";
         const permissionUpdate = {
           type: "addDirectories" as const,
           directories: [path_0],
-          destination
+          destination: destination as PermissionUpdateDestination
         };
         const updatedContext = applyPermissionUpdate(toolPermissionContext, permissionUpdate);
         setAppState(prev_4 => ({
@@ -1013,10 +1013,10 @@ export function PermissionRuleList(t0) {
     }
     let t24;
     if ($[66] !== setAppState) {
-      t24 = toolPermissionContext_2 => {
+      t24 = (toolPermissionContext_2: string) => {
         setAppState(prev_7 => ({
           ...prev_7,
-          toolPermissionContext: toolPermissionContext_2
+          toolPermissionContext: toolPermissionContext_2 as any
         }));
       };
       $[66] = setAppState;
@@ -1158,21 +1158,21 @@ export function PermissionRuleList(t0) {
   }
   return t33;
 }
-function _temp6(opt_0) {
+function _temp6(opt_0: { value: string }) {
   return opt_0.value;
 }
-function _temp5(opt) {
+function _temp5(opt: { value: string }) {
   return opt.value !== "add-new-rule";
 }
-function _temp4(d_1) {
+function _temp4(d_1: { display: string }) {
   return chalk.bold(d_1.display);
 }
-function _temp3(d_0) {
+function _temp3(d_0: { display: string }) {
   return d_0.display;
 }
-function _temp2(d) {
+function _temp2(d: { display: string } | undefined) {
   return d !== undefined;
 }
-function _temp(s) {
+function _temp(s: any) {
   return s.toolPermissionContext;
 }

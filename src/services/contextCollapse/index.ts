@@ -30,3 +30,6 @@ export function recoverFromOverflow(
 ) {
   return { messages: [], committed: 0 }
 }
+export function resetContextCollapse(): void {
+  // No-op stub — feature gated behind CONTEXT_COLLAPSE
+}

@@ -37,14 +37,14 @@ export function QuickOpenDialog(t0) {
     rows
   } = useTerminalSize();
   const visibleResults = Math.min(VISIBLE_RESULTS, Math.max(4, rows - 14));
-  let t1;
+  let t1: string[];
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = [];
     $[0] = t1;
   } else {
     t1 = $[0];
   }
-  const [results, setResults] = useState(t1);
+  const [results, setResults] = useState<string[]>(t1);
   const [query, setQuery] = useState("");
   const [focusedPath, setFocusedPath] = useState(undefined);
   const [preview, setPreview] = useState(null);

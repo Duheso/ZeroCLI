@@ -20,7 +20,7 @@ type Props = {
   onCreateNew?: () => void;
   changes?: string[];
 };
-export function AgentsList(t0) {
+export function AgentsList(t0: Props) {
   const $ = _c(96);
   const {
     source,
@@ -30,7 +30,7 @@ export function AgentsList(t0) {
     onCreateNew,
     changes
   } = t0;
-  const [selectedAgent, setSelectedAgent] = React.useState(null);
+  const [selectedAgent, setSelectedAgent] = React.useState<ResolvedAgent | null>(null);
   const [isCreateNewSelected, setIsCreateNewSelected] = React.useState(true);
   let t1;
   if ($[0] !== agents) {
@@ -53,7 +53,7 @@ export function AgentsList(t0) {
   const renderCreateNewOption = t2;
   let t3;
   if ($[4] !== isCreateNewSelected || $[5] !== selectedAgent?.agentType || $[6] !== selectedAgent?.source) {
-    t3 = agent_0 => {
+    t3 = (agent_0: ResolvedAgent) => {
       const isBuiltIn = agent_0.source === "built-in";
       const isSelected = !isBuiltIn && !isCreateNewSelected && selectedAgent?.agentType === agent_0.agentType && selectedAgent?.source === agent_0.source;
       const {
@@ -82,7 +82,7 @@ export function AgentsList(t0) {
           const {
             source: groupSource
           } = t5;
-          return nonBuiltIn.filter(a_0 => a_0.source === groupSource);
+          return nonBuiltIn.filter((a_0: ResolvedAgent) => a_0.source === groupSource);
         });
         break bb0;
       }
@@ -121,7 +121,7 @@ export function AgentsList(t0) {
   React.useEffect(t5, t6);
   let t7;
   if ($[17] !== isCreateNewSelected || $[18] !== onCreateNew || $[19] !== onSelect || $[20] !== selectableAgentsInOrder || $[21] !== selectedAgent) {
-    t7 = e => {
+    t7 = (e: KeyboardEvent) => {
       if (e.key === "return") {
         e.preventDefault();
         if (isCreateNewSelected && onCreateNew) {
