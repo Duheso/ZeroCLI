@@ -803,13 +803,15 @@ export async function getAttachments(
         skillSearchModules &&
         !options?.skipSkillDiscovery
           ? [
-              maybe('skill_discovery', () =>
-                skillSearchModules.prefetch.getTurnZeroSkillDiscovery(
+              maybe('skill_discovery', () => {
+                // @ts-expect-error — property may not exist on the type-only import
+                return skillSearchModules.prefetch.getTurnZeroSkillDiscovery(
                   input,
                   messages ?? [],
                   context,
-                ),
-              ),
+                )
+              },
+            ),
             ]
           : []),
       ]
@@ -1000,7 +1002,9 @@ export async function getAttachments(
     ...userAttachmentResults.flat(),
     ...threadAttachmentResults.flat(),
     ...mainThreadAttachmentResults.flat(),
-  ].filter(a => a !== undefined && a !== null)
+  ].filter(
+    (a): a is Attachment => a !== undefined && a !== null,
+  )
 }
 
 async function maybe<A>(label: string, f: () => Promise<A[]>): Promise<A[]> {
@@ -3988,9 +3992,9 @@ export function getContextEfficiencyAttachment(
   }
   // Gate must match SnipTool.isEnabled() — don't nudge toward a tool that
   // isn't in the tool list. Lazy require keeps this file snip-string-free.
-  const { isSnipRuntimeEnabled, shouldNudgeForSnips } =
+  const { isSnipRuntimeEnabled, shouldNudgeForSnips }: { isSnipRuntimeEnabled: () => boolean; shouldNudgeForSnips: (m: Message[]) => boolean } =
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require('../services/compact/snipCompact.js') as typeof import('../services/compact/snipCompact.js')
+    require('../services/compact/snipCompact.js')
   if (!isSnipRuntimeEnabled()) {
     return []
   }

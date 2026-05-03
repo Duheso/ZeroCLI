@@ -89,9 +89,11 @@ export function clearWebFetchCache(): void {
 // calls (construction builds 15 rule objects; .turndown() is stateless).
 // @types/turndown ships only `export =` (no .d.mts), so TS types the import
 // as the class itself while Bun wraps CJS in { default } — hence the cast.
+// @ts-expect-error turndown lacks .d.mts; CJS interop handled at runtime
 type TurndownCtor = typeof import('turndown')
 let turndownServicePromise: Promise<InstanceType<TurndownCtor>> | undefined
 function getTurndownService(): Promise<InstanceType<TurndownCtor>> {
+  // @ts-expect-error turndown lacks .d.mts; CJS interop handled at runtime
   return (turndownServicePromise ??= import('turndown').then(m => {
     const Turndown = (m as unknown as { default: TurndownCtor }).default
     return new Turndown()
@@ -336,7 +338,9 @@ export async function getWithPermittedRedirects(
           data: new Uint8Array(arrayBuffer),
           status: fetchResponse.status,
           statusText: fetchResponse.statusText,
-          headers: Object.fromEntries(fetchResponse.headers.entries()),
+          headers: Object.fromEntries(
+            (fetchResponse.headers as unknown as { entries(): Iterable<[string, string]> }).entries()
+          ),
           config: axiosConfig,
           request: undefined,
         } as unknown as AxiosResponse<ArrayBuffer>

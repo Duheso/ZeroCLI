@@ -11,6 +11,7 @@ import type {
   LogOption,
   PersistedWorktreeSession,
   SerializedMessage,
+  TranscriptMessage,
 } from '../types/logs.js'
 import type {
   Message,
@@ -479,7 +480,7 @@ export async function loadMessagesFromJsonlPath(path: string): Promise<{
   sessionId: UUID | undefined
 }> {
   const { messages: byUuid, leafUuids } = await loadTranscriptFile(path)
-  let tip: (typeof byUuid extends Map<UUID, infer T> ? T : never) | null = null
+  let tip: TranscriptMessage | null = null
   let tipTs = 0
   for (const m of byUuid.values()) {
     if (m.isSidechain || !leafUuids.has(m.uuid)) continue
@@ -555,7 +556,7 @@ export async function loadConversationForResume(
           const { listAllLiveSessions } = await import('./udsClient.js')
           const live = await listAllLiveSessions()
           skip = new Set(
-            live.flatMap(s =>
+            live.flatMap((s: { kind?: string; sessionId?: string }) =>
               s.kind && s.kind !== 'interactive' && s.sessionId
                 ? [s.sessionId]
                 : [],

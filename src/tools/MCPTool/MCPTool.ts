@@ -1,3 +1,4 @@
+import type { ToolResultBlockParam } from '@anthropic-ai/sdk/resources/index.mjs'
 import { Ajv } from 'ajv'
 import { z } from 'zod/v4'
 import { buildTool, type ToolDef, type ValidationResult } from '../../Tool.js'
@@ -100,7 +101,9 @@ export const MCPTool = buildTool({
   // Overridden in mcpClient.ts
   userFacingName: () => 'mcp',
   renderToolUseProgressMessage,
-  renderToolResultMessage,
+  renderToolResultMessage(content, progressMessages, options) {
+    return renderToolResultMessage(content as never, progressMessages, options)
+  },
   isResultTruncated(output: Output): boolean {
     if (typeof output === 'string') {
       return isOutputLineTruncated(output)
@@ -119,8 +122,8 @@ export const MCPTool = buildTool({
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
-      type: 'tool_result',
-      content,
+      type: 'tool_result' as const,
+      content: content as ToolResultBlockParam['content'],
     }
   },
 } satisfies ToolDef<InputSchema, Output>)
