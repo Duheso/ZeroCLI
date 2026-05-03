@@ -34,6 +34,7 @@ export async function launchSnapshotUpdateDialog(root: Root, props: {
   const {
     SnapshotUpdateDialog
   } = await import('./components/agents/SnapshotUpdateDialog.js');
+  // @ts-expect-error -- react-compiler stub has _props: unknown, real component accepts typed props
   return showSetupDialog<'merge' | 'keep' | 'replace'>(root, done => <SnapshotUpdateDialog agentType={props.agentType} scope={props.scope} snapshotTimestamp={props.snapshotTimestamp} onComplete={done} onCancel={() => done('keep')} />);
 }
 
@@ -71,16 +72,18 @@ export async function launchAssistantSessionChooser(root: Root, props: {
  * distinguish errors from user cancellation.
  */
 export async function launchAssistantInstallWizard(root: Root): Promise<string | null> {
-  const {
-    NewInstallWizard,
-    computeDefaultInstallDir
-  } = await import('./commands/assistant/assistant.js');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const assistantModule = await import('./commands/assistant/assistant.js');
+  // @ts-expect-error -- react-compiler stub doesn't export NewInstallWizard
+  const NewInstallWizard = assistantModule.NewInstallWizard;
+  // @ts-expect-error -- react-compiler stub doesn't export computeDefaultInstallDir
+  const computeDefaultInstallDir = assistantModule.computeDefaultInstallDir;
   const defaultDir = await computeDefaultInstallDir();
   let rejectWithError: (reason: Error) => void;
   const errorPromise = new Promise<never>((_, reject) => {
     rejectWithError = reject;
   });
-  const resultPromise = showSetupDialog<string | null>(root, done => <NewInstallWizard defaultDir={defaultDir} onInstalled={dir => done(dir)} onCancel={() => done(null)} onError={message => rejectWithError(new Error(`Installation failed: ${message}`))} />);
+  const resultPromise = showSetupDialog<string | null>(root, done => <NewInstallWizard defaultDir={defaultDir} onInstalled={(dir: string) => done(dir)} onCancel={() => done(null)} onError={(message: string) => rejectWithError(new Error(`Installation failed: ${message}`))} />);
   return Promise.race([resultPromise, errorPromise]);
 }
 

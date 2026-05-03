@@ -18,7 +18,7 @@ type Props = {
  * (hooks-in-conditionals would violate React rules). The parent only
  * renders this when feature('CONTEXT_COLLAPSE') + isContextCollapseEnabled().
  */
-function CollapseLabel(t0) {
+function CollapseLabel(t0: { upgradeMessage: string | undefined }) {
   const $ = _c(8);
   const {
     upgradeMessage
@@ -33,7 +33,7 @@ function CollapseLabel(t0) {
   const {
     getStats,
     subscribe
-  } = t1 as typeof import('../services/contextCollapse/index.js');
+  } = t1 as typeof import('../services/contextCollapse/index.js') & { getStats: () => any, subscribe: (cb: any) => any };
   let t2;
   if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = () => {
@@ -48,7 +48,7 @@ function CollapseLabel(t0) {
   const snapshot = useSyncExternalStore(subscribe, t2);
   let t3;
   if ($[2] !== snapshot) {
-    t3 = snapshot.split("|").map(Number);
+    t3 = (snapshot as string).split("|").map(Number);
     $[2] = snapshot;
     $[3] = t3;
   } else {
@@ -84,7 +84,7 @@ function CollapseLabel(t0) {
   }
   return t5;
 }
-export function TokenWarning(t0) {
+export function TokenWarning(t0: Props) {
   const $ = _c(13);
   const {
     tokenUsage,

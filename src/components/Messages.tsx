@@ -54,7 +54,7 @@ import type { JumpHandle } from './VirtualMessageList.js';
 // and pegs CPU at 100%. Memo on agentDefinitions so a new messages array
 // doesn't invalidate the logo subtree. LogoV2/StatusNotices internally
 // subscribe to useAppState/useSettings for their own updates.
-const LogoHeader = React.memo(function LogoHeader(t0) {
+const LogoHeader = React.memo(function LogoHeader(t0: { agentDefinitions?: AgentDefinitionsResult }) {
   const $ = _c(3);
   const {
     agentDefinitions
@@ -582,7 +582,7 @@ const MessagesImpl = ({
   const lookupsRef = useRef(lookups_0);
   lookupsRef.current = lookups_0;
   const isItemClickable = useCallback((msg_6: RenderableMessage): boolean => {
-    if (msg_6.type === 'collapsed_read_search') return true;
+    if (msg_6.type === 'collapsed_read_search_group') return true;
     if (msg_6.type === 'assistant') {
       const b = msg_6.message.content[0] as unknown as AdvisorBlock | undefined;
       return b != null && isAdvisorBlock(b) && b.type === 'advisor_tool_result' && b.content.type === 'advisor_result';
@@ -621,7 +621,7 @@ const MessagesImpl = ({
     // sibling after this map, so it's never in renderableMessages — OR it
     // in explicitly so the group flips to past tense as soon as text starts
     // streaming instead of waiting for the block to finalize.
-    const hasContentAfter = msg_8.type === 'collapsed_read_search' && (!!streamingText || hasContentAfterIndex(renderableMessages, index, tools, streamingToolUseIDs));
+    const hasContentAfter = msg_8.type === 'collapsed_read_search_group' && (!!streamingText || hasContentAfterIndex(renderableMessages, index, tools, streamingToolUseIDs));
     const k_0 = messageKey(msg_8);
     const row = <MessageRow key={k_0} message={msg_8} isUserContinuation={isUserContinuation} hasContentAfter={hasContentAfter} tools={tools} commands={commands} verbose={verbose || isItemExpanded(msg_8) || cursor?.expanded === true && index === selectedIdx} inProgressToolUseIDs={inProgressToolUseIDs} streamingToolUseIDs={streamingToolUseIDs} screen={screen} canAnimate={canAnimate} onOpenRateLimitOptions={onOpenRateLimitOptions} lastThinkingBlockId={lastThinkingBlockId} latestBashOutputUUID={latestBashOutputUUID} columns={columns} isLoading={isLoading} lookups={lookups_0} />;
 
@@ -825,7 +825,7 @@ export function shouldRenderStatically(message: RenderableMessage, streamingTool
         });
         return allResolved;
       }
-    case 'collapsed_read_search':
+    case 'collapsed_read_search_group':
       {
         // In prompt mode, never mark as static to prevent flicker between API turns
         // (In transcript mode, we already returned true at the top of this function)
