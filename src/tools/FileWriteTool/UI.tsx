@@ -37,7 +37,7 @@ export function countLines(content: string): number {
   const parts = content.split(EOL);
   return content.endsWith(EOL) ? parts.length - 1 : parts.length;
 }
-function FileWriteToolCreatedMessage(t0) {
+function FileWriteToolCreatedMessage(t0: { filePath: string; content: string; verbose: boolean }) {
   const $ = _c(25);
   const {
     filePath,
@@ -206,7 +206,7 @@ type RejectionDiffData = {
 } | {
   type: 'error';
 };
-function WriteRejectionDiff(t0) {
+function WriteRejectionDiff(t0: { filePath: string; content: string; style?: 'condensed'; verbose: boolean }) {
   const $ = _c(20);
   const {
     filePath,
@@ -269,7 +269,7 @@ function WriteRejectionDiff(t0) {
   }
   return t5;
 }
-function WriteRejectionBody(t0) {
+function WriteRejectionBody(t0: { promise: () => Promise<RejectionDiffData> | Promise<RejectionDiffData>; filePath: string; firstLine: string | null; createFallback: React.ReactNode; style?: 'condensed'; verbose: boolean }) {
   const $ = _c(8);
   const {
     promise,
@@ -279,7 +279,7 @@ function WriteRejectionBody(t0) {
     style,
     verbose
   } = t0;
-  const data = use(promise);
+  const data: RejectionDiffData = use(promise);
   if (data.type === "create") {
     return createFallback;
   }

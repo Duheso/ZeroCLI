@@ -54,7 +54,7 @@ function buildSecondarySection({
 export async function buildDiagnostics(): Promise<Diagnostic[]> {
   return [...(await buildInstallationDiagnostics()), ...(await buildInstallationHealthDiagnostics()), ...(await buildMemoryDiagnostics())];
 }
-function PropertyValue(t0) {
+function PropertyValue(t0: { value: unknown }) {
   const $ = _c(8);
   const {
     value
@@ -64,7 +64,7 @@ function PropertyValue(t0) {
     if ($[0] !== value) {
       let t2;
       if ($[2] !== value.length) {
-        t2 = (item, i) => <Text key={i}>{item}{i < value.length - 1 ? "," : ""}</Text>;
+        t2 = (item: unknown, i: number) => <Text key={i}>{String(item)}{i < value.length - 1 ? "," : ""}</Text>;
         $[2] = value.length;
         $[3] = t2;
       } else {
@@ -99,7 +99,7 @@ function PropertyValue(t0) {
   }
   return value;
 }
-export function Status(t0) {
+export function Status(t0: Props) {
   const $ = _c(20);
   const {
     context,
@@ -185,28 +185,28 @@ export function Status(t0) {
   }
   return t8;
 }
-function _temp4(properties, i) {
+function _temp4(properties: Property[], i: number) {
   return properties.length > 0 && <Box key={i} flexDirection="column">{properties.map(_temp3)}</Box>;
 }
-function _temp3(t0, j) {
+function _temp3(t0: Property, j: number) {
   const {
     label,
     value
   } = t0;
   return <Box key={j} flexDirection="row" gap={1} flexShrink={0}>{label !== undefined && <Text bold={true}>{label}:</Text>}<PropertyValue value={value} /></Box>;
 }
-function _temp2(s_0) {
+function _temp2(s_0: AppState) {
   return s_0.mcp;
 }
-function _temp(s) {
+function _temp(s: AppState) {
   return s.mainLoopModel;
 }
-function Diagnostics(t0) {
+function Diagnostics(t0: { promise: Promise<Diagnostic[]> }) {
   const $ = _c(5);
   const {
     promise
   } = t0;
-  const diagnostics = use(promise);
+  const diagnostics = use(promise) as Diagnostic[];
   if (diagnostics.length === 0) {
     return null;
   }
@@ -235,6 +235,6 @@ function Diagnostics(t0) {
   }
   return t3;
 }
-function _temp5(diagnostic, i) {
+function _temp5(diagnostic: Diagnostic, i: number) {
   return <Box key={i} flexDirection="row" gap={1} paddingX={1}><Text color="error">{figures.warning}</Text>{typeof diagnostic === "string" ? <Text wrap="wrap">{diagnostic}</Text> : diagnostic}</Box>;
 }

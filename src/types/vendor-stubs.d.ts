@@ -27,8 +27,34 @@ declare module '@ant/computer-use-mcp' {
 }
 
 declare module '@anthropic-ai/mcpb' {
-  export type McpbManifest = Record<string, unknown>;
-  export type McpbUserConfigurationOption = Record<string, unknown>;
+  export type McpbUserConfigurationOption = {
+    title?: string;
+    type?: string;
+    required?: boolean;
+    multiple?: boolean;
+    sensitive?: boolean;
+    min?: number | null;
+    max?: number | null;
+    [key: string]: unknown;
+  };
+  export type McpbManifest = {
+    name: string;
+    version: string;
+    author: { name: string; [key: string]: unknown };
+    server?: unknown;
+    user_config?: Record<string, McpbUserConfigurationOption>;
+    [key: string]: unknown;
+  };
+  export function getMcpConfigForManifest(args: {
+    manifest: McpbManifest;
+    extensionPath: string;
+    systemDirs: { dataDir: string; cacheDir: string; configDir: string };
+    userConfig?: Record<string, unknown>;
+    pathSeparator: string;
+  }): Promise<unknown>;
+  export const McpbManifestSchema: {
+    safeParse(input: unknown): { success: boolean; data: McpbManifest; error: { flatten: () => { formErrors: unknown[] } } };
+  };
 }
 
 declare module 'asciichart' {

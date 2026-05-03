@@ -981,7 +981,7 @@ export function stripExcessMediaItems(
       if (isMedia(block)) toRemove++
       if (isToolResult(block) && Array.isArray(block.content)) {
         for (const nested of block.content) {
-          if (isMedia(nested)) toRemove++
+          if (isMedia(nested as BetaContentBlockParam)) toRemove++
         }
       }
     }
@@ -1004,7 +1004,7 @@ export function stripExcessMediaItems(
         )
           return block
         const filtered = block.content.filter(n => {
-          if (toRemove > 0 && isMedia(n)) {
+          if (toRemove > 0 && isMedia(n as BetaContentBlockParam)) {
             toRemove--
             return false
           }
@@ -1211,7 +1211,7 @@ async function* queryModel(
       getCachedMCConfig,
     } = await import('../compact/cachedMicrocompact.js')
     const betas = await import('src/constants/betas.js')
-    cacheEditingBetaHeader = betas.CACHE_EDITING_BETA_HEADER
+    cacheEditingBetaHeader = (betas as unknown as { CACHE_EDITING_BETA_HEADER: string }).CACHE_EDITING_BETA_HEADER
     const featureEnabled = isCachedMicrocompactEnabled()
     const modelSupported = isModelSupportedForCacheEditing(options.model)
     cachedMCEnabled = featureEnabled && modelSupported

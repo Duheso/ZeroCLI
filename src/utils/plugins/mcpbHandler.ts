@@ -391,14 +391,16 @@ export function validateUserConfig(
 
     // Number range validation
     if (fieldSchema.type === 'number' && typeof value === 'number') {
-      if (fieldSchema.min !== undefined && value < fieldSchema.min) {
+      const minVal = fieldSchema.min as number | null | undefined
+      if (minVal !== undefined && minVal != null && value < minVal) {
         errors.push(
-          `${fieldSchema.title || key} must be at least ${fieldSchema.min}`,
+          `${fieldSchema.title || key} must be at least ${minVal}`,
         )
       }
-      if (fieldSchema.max !== undefined && value > fieldSchema.max) {
+      const maxVal = fieldSchema.max as number | null | undefined
+      if (maxVal !== undefined && maxVal != null && value > maxVal) {
         errors.push(
-          `${fieldSchema.title || key} must be at most ${fieldSchema.max}`,
+          `${fieldSchema.title || key} must be at most ${maxVal}`,
         )
       }
     }
@@ -421,7 +423,11 @@ async function generateMcpConfig(
   const mcpConfig = await getMcpConfigForManifest({
     manifest,
     extensionPath: extractedPath,
-    systemDirs: getSystemDirectories(),
+    systemDirs: {
+      dataDir: getSystemDirectories().HOME,
+      cacheDir: getSystemDirectories().HOME,
+      configDir: getSystemDirectories().HOME,
+    },
     userConfig,
     pathSeparator: '/',
   })
@@ -736,14 +742,15 @@ export async function loadMcpbFile(
     // Check for user_config requirement
     if (manifest.user_config && Object.keys(manifest.user_config).length > 0) {
       // Server name from DXT manifest
-      const serverName = manifest.name
+      const serverName = manifest.name as string
 
       // Try to load existing config from settings.json or use provided config
       const savedConfig = loadMcpServerUserConfig(pluginId, serverName)
       const userConfig = providedUserConfig || savedConfig || {}
 
       // Validate we have all required fields
-      const validation = validateUserConfig(userConfig, manifest.user_config)
+      const userConfigSchema = manifest.user_config as UserConfigSchema
+      const validation = validateUserConfig(userConfig, userConfigSchema)
 
       // Return needs-config if: forced (reconfiguration) OR validation failed
       if (forceConfigDialog || !validation.valid) {
@@ -752,7 +759,7 @@ export async function loadMcpbFile(
           manifest,
           extractedPath: metadata.extractedPath,
           contentHash: metadata.contentHash,
-          configSchema: manifest.user_config,
+          configSchema: userConfigSchema,
           existingConfig: savedConfig || {},
           validationErrors: validation.valid ? [] : validation.errors,
         }
@@ -764,7 +771,7 @@ export async function loadMcpbFile(
           pluginId,
           serverName,
           providedUserConfig,
-          manifest.user_config ?? {},
+          manifest.user_config as UserConfigSchema,
         )
       }
 
@@ -852,7 +859,7 @@ export async function loadMcpbFile(
   // Parse and validate manifest
   const manifest = await parseAndValidateManifestFromBytes(manifestData)
   logForDebugging(
-    `MCPB manifest: ${manifest.name} v${manifest.version} by ${manifest.author.name}`,
+    `MCPB manifest: ${manifest.name} v${manifest.version} by ${(manifest.author as { name?: string }).name}`,
   )
 
   // Check if manifest has server config
@@ -871,14 +878,15 @@ export async function loadMcpbFile(
   // Check for user_config requirement
   if (manifest.user_config && Object.keys(manifest.user_config).length > 0) {
     // Server name from DXT manifest
-    const serverName = manifest.name
+    const serverName = manifest.name as string
 
     // Try to load existing config from settings.json or use provided config
     const savedConfig = loadMcpServerUserConfig(pluginId, serverName)
     const userConfig = providedUserConfig || savedConfig || {}
 
     // Validate we have all required fields
-    const validation = validateUserConfig(userConfig, manifest.user_config)
+    const userConfigSchema = manifest.user_config as UserConfigSchema
+    const validation = validateUserConfig(userConfig, userConfigSchema)
 
     if (!validation.valid) {
       // Save cache metadata even though config is incomplete
@@ -897,7 +905,7 @@ export async function loadMcpbFile(
         manifest,
         extractedPath: extractPath,
         contentHash,
-        configSchema: manifest.user_config,
+        configSchema: manifest.user_config as UserConfigSchema,
         existingConfig: savedConfig || {},
         validationErrors: validation.errors,
       }
@@ -909,7 +917,7 @@ export async function loadMcpbFile(
         pluginId,
         serverName,
         providedUserConfig,
-        manifest.user_config ?? {},
+        manifest.user_config ?? ({} as UserConfigSchema),
       )
     }
 

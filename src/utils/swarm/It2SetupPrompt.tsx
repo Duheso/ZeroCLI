@@ -8,23 +8,24 @@ import { useExitOnCtrlCDWithKeybindings } from '../../hooks/useExitOnCtrlCDWithK
 import { Box, Text, useInput } from '../../ink.js';
 import { useKeybinding } from '../../keybindings/useKeybinding.js';
 import { detectPythonPackageManager, getPythonApiInstructions, installIt2, markIt2SetupComplete, type PythonPackageManager, setPreferTmuxOverIterm2, verifyIt2Setup } from './backends/it2Setup.js';
+import type { Key } from '../../ink/events/input-event.js';
 type SetupStep = 'initial' | 'installing' | 'install-failed' | 'verify-api' | 'api-instructions' | 'verifying' | 'success' | 'failed';
 type Props = {
   onDone: (result: 'installed' | 'use-tmux' | 'cancelled') => void;
   tmuxAvailable: boolean;
 };
-export function It2SetupPrompt(t0) {
+export function It2SetupPrompt(t0: Props) {
   const $ = _c(44);
   const {
     onDone,
     tmuxAvailable
   } = t0;
-  const [step, setStep] = useState("initial");
-  const [packageManager, setPackageManager] = useState(null);
-  const [error, setError] = useState(null);
+  const [step, setStep] = useState<SetupStep>("initial");
+  const [packageManager, setPackageManager] = useState<PythonPackageManager | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const exitState = useExitOnCtrlCDWithKeybindings();
   let t1;
-  let t2;
+  let t2: readonly never[];
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = () => {
       detectPythonPackageManager().then(pm => {
@@ -38,7 +39,7 @@ export function It2SetupPrompt(t0) {
     t1 = $[0];
     t2 = $[1];
   }
-  useEffect(t1, t2);
+  useEffect(t1, t2 as readonly []);
   let t3;
   if ($[2] !== onDone) {
     t3 = () => {
@@ -65,7 +66,7 @@ export function It2SetupPrompt(t0) {
   useKeybinding("confirm:no", handleCancel, t5);
   let t6;
   if ($[6] !== onDone || $[7] !== step) {
-    t6 = (_input, key) => {
+    t6 = (_input: string, key: Key) => {
       if (step === "api-instructions" && key.return) {
         setStep("verifying");
         verifyIt2Setup().then(result => {
@@ -374,6 +375,6 @@ export function It2SetupPrompt(t0) {
   }
   return t17;
 }
-function _temp(line, i) {
+function _temp(line: string, i: number) {
   return <Text key={i}>{line}</Text>;
 }

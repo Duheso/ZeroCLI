@@ -217,7 +217,7 @@ export function SystemTextMessage(t0: Props) {
   if (message.subtype === "stop_hook_summary") {
     let t1;
     if ($[40] !== addMargin || $[41] !== isTranscriptMode || $[42] !== message || $[43] !== verbose) {
-      t1 = <StopHookSummaryMessage message={message} addMargin={addMargin} verbose={verbose} isTranscriptMode={isTranscriptMode} />;
+      t1 = <StopHookSummaryMessage message={message} addMargin={addMargin} verbose={verbose} isTranscriptMode={isTranscriptMode ?? false} />;
       $[40] = addMargin;
       $[41] = isTranscriptMode;
       $[42] = message;
@@ -418,11 +418,11 @@ function StopHookSummaryMessage(t0: StopHookSummaryMessageProps) {
   return t15;
 }
 function _temp3(info_0: StopHookInfo, idx_0: number) {
-  const durationStr_0 = false && info_0.durationMs !== undefined ? ` (${formatSecondsShort(info_0.durationMs)})` : "";
+  const durationStr_0 = false && info_0.durationMs !== undefined ? ` (${formatSecondsShort(info_0.durationMs as number)})` : "";
   return <Text key={`cmd-${idx_0}`} dimColor={true}>⎿  {info_0.command === "prompt" ? `prompt: ${info_0.promptText || ""}` : info_0.command}{durationStr_0}</Text>;
 }
 function _temp2(info: StopHookInfo, idx: number) {
-  const durationStr = false && info.durationMs !== undefined ? ` (${formatSecondsShort(info.durationMs)})` : "";
+  const durationStr = false && info.durationMs !== undefined ? ` (${formatSecondsShort(info.durationMs as number)})` : "";
   return <Text key={`cmd-${idx}`} dimColor={true}>{"     \u23BF "}{info.command === "prompt" ? `prompt: ${info.promptText || ""}` : info.command}{durationStr}</Text>;
 }
 function _temp(sum: number, h: StopHookInfo) {
@@ -539,8 +539,8 @@ function TurnDurationMessage(t0: { message: SystemTurnDurationMessage; addMargin
       t4 = "";
       break bb0;
     }
-    const tokens = message.budgetTokens;
-    const limit = message.budgetLimit;
+    const tokens = message.budgetTokens as number;
+    const limit = message.budgetLimit as number;
     let t5;
     if ($[5] !== limit || $[6] !== tokens) {
       t5 = tokens >= limit ? `${formatNumber(tokens)} used (${formatNumber(limit)} min ${figures.tick})` : `${formatNumber(tokens)} / ${formatNumber(limit)} (${Math.round(tokens / limit * 100)}%)`;
@@ -551,7 +551,7 @@ function TurnDurationMessage(t0: { message: SystemTurnDurationMessage; addMargin
       t5 = $[7];
     }
     const usage = t5;
-    const nudges = message.budgetNudges > 0 ? ` \u00B7 ${message.budgetNudges} ${message.budgetNudges === 1 ? "nudge" : "nudges"}` : "";
+    const nudges = (message.budgetNudges ?? 0) > 0 ? ` \u00B7 ${message.budgetNudges} ${message.budgetNudges === 1 ? "nudge" : "nudges"}` : "";
     t4 = `${showTurnDuration ? " \xB7 " : ""}${usage}${nudges}`;
   }
   const budgetSuffix = t4;
@@ -732,7 +732,7 @@ function MemoryFileRow(t0: { path: string }) {
   }
   return t8;
 }
-function ThinkingMessage(t0) {
+function ThinkingMessage(t0: { message: SystemThinkingMessage; addMargin?: boolean }) {
   const $ = _c(7);
   const {
     message,
@@ -767,7 +767,7 @@ function ThinkingMessage(t0) {
   }
   return t4;
 }
-function BridgeStatusMessage(t0) {
+function BridgeStatusMessage(t0: { message: SystemBridgeStatusMessage; addMargin?: boolean }) {
   const $ = _c(13);
   const {
     message,

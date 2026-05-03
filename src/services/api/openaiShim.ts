@@ -947,7 +947,7 @@ async function* openaiStreamToAnthropic(
           clearTimeout(timeoutId)
           if (signal && abortCleanup) signal.removeEventListener('abort', abortCleanup)
           if (result.value) lastDataTime = Date.now()
-          resolve(result)
+          resolve(result as ReadableStreamReadResult<Uint8Array>)
         },
         err => {
           clearTimeout(timeoutId)
@@ -1090,7 +1090,7 @@ async function* openaiStreamToAnthropic(
                   // Extract Gemini signature from extra_content
                   ...((tc.extra_content?.google as any)?.thought_signature
                     ? {
-                        signature: (tc.extra_content.google as any)
+                        signature: (tc.extra_content!.google as any)
                           .thought_signature,
                       }
                     : {}),
@@ -1807,6 +1807,15 @@ class OpenAIShimMessages {
         throwClassifiedTransportError(error, chatCompletionsUrl, failure)
       }
 
+      if (!response) {
+        throw APIError.generate(
+          500,
+          undefined,
+          'OpenAI shim: fetch returned no response',
+          new Headers(),
+        )
+      }
+
       if (response.ok) {
         let tokensIn = 0
         let tokensOut = 0
@@ -2068,7 +2077,7 @@ class OpenAIShimMessages {
           ...(tc.extra_content ? { extra_content: tc.extra_content } : {}),
           // Extract Gemini signature from extra_content
           ...((tc.extra_content?.google as any)?.thought_signature
-            ? { signature: (tc.extra_content.google as any).thought_signature }
+            ? { signature: (tc.extra_content!.google as any).thought_signature }
             : {}),
         })
       }

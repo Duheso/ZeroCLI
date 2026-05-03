@@ -192,12 +192,12 @@ function useCanUseTool(
   }
   return t0;
 }
-function _temp2(res) {
+function _temp2(res: any) {
   return setTimeout(res, 2000, {
     type: "timeout" as const
   });
 }
-function _temp(r) {
+function _temp(r: any) {
   return {
     type: "result" as const,
     result: r
