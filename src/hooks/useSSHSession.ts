@@ -114,6 +114,7 @@ export function useSSHSession({
           blockedPath: request.blocked_path,
         }
 
+        const toolUseID = request.tool_use_id ?? ''
         const toolUseConfirm: ToolUseConfirm = {
           assistantMessage: syntheticMessage,
           tool,
@@ -121,7 +122,7 @@ export function useSSHSession({
             request.description ?? `${toolName} requires permission`,
           input: request.input as { [key: string]: unknown },
           toolUseContext: {} as ToolUseConfirm['toolUseContext'],
-          toolUseID: request.tool_use_id ?? '',
+          toolUseID,
           permissionResult,
           permissionPromptStartTimeMs: Date.now(),
           onUserInteraction() {},
@@ -131,7 +132,7 @@ export function useSSHSession({
               message: 'User aborted',
             })
             setToolUseConfirmQueue(q =>
-              q.filter(i => i.toolUseID !== request.tool_use_id),
+              q.filter(i => i.toolUseID !== toolUseID),
             )
           },
           onAllow(updatedInput) {
@@ -140,7 +141,7 @@ export function useSSHSession({
               updatedInput,
             })
             setToolUseConfirmQueue(q =>
-              q.filter(i => i.toolUseID !== request.tool_use_id),
+              q.filter(i => i.toolUseID !== toolUseID),
             )
             setIsLoading(true)
           },
@@ -150,7 +151,7 @@ export function useSSHSession({
               message: feedback ?? 'User denied permission',
             })
             setToolUseConfirmQueue(q =>
-              q.filter(i => i.toolUseID !== request.tool_use_id),
+              q.filter(i => i.toolUseID !== toolUseID),
             )
           },
           async recheckPermission() {},

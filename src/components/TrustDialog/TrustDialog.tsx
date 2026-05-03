@@ -282,9 +282,9 @@ function _temp4(command_0: Command) {
 function _temp3(tool_0: string) {
   return tool_0 === BASH_TOOL_NAME || tool_0.startsWith(BASH_TOOL_NAME + "(");
 }
-function _temp2(command) {
+function _temp2(command: Command) {
   return command.type === "prompt" && command.loadedFrom === "commands_DEPRECATED" && (command.source === "projectSettings" || command.source === "localSettings") && command.allowedTools?.some(_temp);
 }
-function _temp(tool) {
+function _temp(tool: string) {
   return tool === BASH_TOOL_NAME || tool.startsWith(BASH_TOOL_NAME + "(");
 }
