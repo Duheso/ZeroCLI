@@ -12,7 +12,7 @@ type Props = {
   onSelectPath: (path: string) => void;
   onCancel: () => void;
 };
-export function TeleportRepoMismatchDialog(t0) {
+export function TeleportRepoMismatchDialog(t0: Props) {
   const $ = _c(18);
   const {
     targetRepo,
@@ -21,11 +21,11 @@ export function TeleportRepoMismatchDialog(t0) {
     onCancel
   } = t0;
   const [availablePaths, setAvailablePaths] = useState(initialPaths);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [validating, setValidating] = useState(false);
   let t1;
   if ($[0] !== availablePaths || $[1] !== onCancel || $[2] !== onSelectPath || $[3] !== targetRepo) {
-    t1 = async value => {
+    t1 = async (value: string) => {
       if (value === "cancel") {
         onCancel();
         return;
@@ -38,7 +38,7 @@ export function TeleportRepoMismatchDialog(t0) {
         return;
       }
       removePathFromRepo(targetRepo, value);
-      const updatedPaths = availablePaths.filter(p => p !== value);
+      const updatedPaths = availablePaths.filter((p: string) => p !== value);
       setAvailablePaths(updatedPaths);
       setValidating(false);
       setErrorMessage(`${getDisplayPath(value)} no longer contains the correct repository. Select another path.`);
@@ -95,7 +95,7 @@ export function TeleportRepoMismatchDialog(t0) {
   }
   return t4;
 }
-function _temp(path) {
+function _temp(path: string) {
   return {
     label: <Text>Use <Text bold={true}>{getDisplayPath(path)}</Text></Text>,
     value: path

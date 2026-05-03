@@ -135,7 +135,7 @@ export function PermissionPrompt(t0: PermissionPromptProps<string>) {
   const selectOptions = t3;
   let t4;
   if ($[12] !== acceptInputMode || $[13] !== options || $[14] !== rejectInputMode || $[15] !== toolAnalyticsContext?.isMcp || $[16] !== toolAnalyticsContext?.toolName) {
-    t4 = value_0 => {
+    t4 = (value_0: string) => {
       const option = options.find(opt_1 => opt_1.value === value_0);
       if (!option?.feedbackConfig) {
         return;
@@ -181,7 +181,7 @@ export function PermissionPrompt(t0: PermissionPromptProps<string>) {
   const handleInputModeToggle = t4;
   let t5;
   if ($[18] !== acceptFeedback || $[19] !== acceptFeedbackModeEntered || $[20] !== onSelect || $[21] !== options || $[22] !== rejectFeedback || $[23] !== rejectFeedbackModeEntered || $[24] !== toolAnalyticsContext?.isMcp || $[25] !== toolAnalyticsContext?.toolName) {
-    t5 = value_1 => {
+    t5 = (value_1: string) => {
       const option_0 = options.find(opt_2 => opt_2.value === value_1);
       if (!option_0) {
         return;
@@ -225,7 +225,7 @@ export function PermissionPrompt(t0: PermissionPromptProps<string>) {
   const handleSelect = t5;
   let handlers;
   if ($[27] !== handleSelect || $[28] !== options) {
-    handlers = {};
+    handlers = {} as Record<string, () => void>;
     for (const opt_3 of options) {
       if (opt_3.keybinding) {
         handlers[opt_3.keybinding] = () => handleSelect(opt_3.value);
@@ -272,7 +272,7 @@ export function PermissionPrompt(t0: PermissionPromptProps<string>) {
   }
   let t9;
   if ($[36] !== acceptFeedback || $[37] !== acceptInputMode || $[38] !== options || $[39] !== rejectFeedback || $[40] !== rejectInputMode) {
-    t9 = value_2 => {
+    t9 = (value_2: string) => {
       const newOption = options.find(opt_4 => opt_4.value === value_2);
       if (newOption?.feedbackConfig?.type !== "accept" && acceptInputMode && !acceptFeedback.trim()) {
         setAcceptInputMode(false);
@@ -324,7 +324,7 @@ export function PermissionPrompt(t0: PermissionPromptProps<string>) {
   }
   return t13;
 }
-function _temp(prev) {
+function _temp(prev: AppState) {
   return {
     ...prev,
     attribution: {
