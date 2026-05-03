@@ -303,7 +303,7 @@ export function FullscreenLayout(t0: Props) {
   const chromeCtx = t4;
   let t5;
   if ($[1] !== scrollRef) {
-    t5 = (listener: Function) => scrollRef?.current?.subscribe(listener) ?? _temp;
+    t5 = (listener: () => void) => scrollRef?.current?.subscribe(listener) ?? _temp;
     $[1] = scrollRef;
     $[2] = t5;
   } else {
@@ -327,14 +327,14 @@ export function FullscreenLayout(t0: Props) {
     t6 = $[5];
   }
   const pillVisible = useSyncExternalStore(subscribe, t6);
-  let t7;
+  let t7: unknown[];
   if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
     t7 = [];
     $[6] = t7;
   } else {
     t7 = $[6];
   }
-  useLayoutEffect(_temp3, t7);
+  useLayoutEffect(_temp3, t7 as unknown[]);
   if (isFullscreenEnvEnabled()) {
     const sticky = hideSticky ? null : stickyPrompt;
     const headerPrompt = sticky != null && sticky !== "clicked" && overlay == null ? sticky : null;
@@ -478,7 +478,7 @@ function _temp3() {
     ink.onHyperlinkClick = undefined;
   };
 }
-function _temp2(url) {
+function _temp2(url: string) {
   if (url.startsWith("file:")) {
     try {
       openPath(fileURLToPath(url));
@@ -488,7 +488,7 @@ function _temp2(url) {
   }
 }
 function _temp() {}
-function NewMessagesPill(t0) {
+function NewMessagesPill(t0: { count: number; onClick?: () => void }) {
   const $ = _c(10);
   const {
     count,

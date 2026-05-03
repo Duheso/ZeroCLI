@@ -6,8 +6,6 @@ import {
   LOCAL_COMMAND_STDOUT_TAG,
 } from 'src/constants/xml.js'
 import type {
-  SDKAssistantMessage,
-  SDKCompactBoundaryMessage,
   SDKMessage,
   SDKRateLimitInfo,
 } from 'src/entrypoints/agentSdkTypes.js'
@@ -26,7 +24,7 @@ import { getPlan } from '../plans.js'
 export function toInternalMessages(
   messages: readonly DeepImmutable<SDKMessage>[],
 ): Message[] {
-  return messages.flatMap(message => {
+  return messages.flatMap<Message>((message): Message[] => {
     switch (message.type) {
       case 'assistant':
         return [
@@ -59,11 +57,12 @@ export function toInternalMessages(
               level: 'info',
               subtype: 'compact_boundary',
               compactMetadata: fromSDKCompactMetadata(
-                compactMsg.compact_metadata,
+                compactMsg.compact_metadata as SDKCompactMetadata,
               ),
-              uuid: message.uuid,
+              uuid: message.uuid ?? randomUUID(),
               timestamp: new Date().toISOString(),
-            },
+              isMeta: message.isSynthetic ?? false,
+            } as Message,
           ]
         }
         return []
@@ -73,7 +72,19 @@ export function toInternalMessages(
   })
 }
 
-type SDKCompactMetadata = SDKCompactBoundaryMessage['compact_metadata']
+type SDKCompactMetadata = {
+  trigger: 'manual' | 'auto'
+  pre_tokens: number
+  preserved_segment?: { head_uuid: string; anchor_uuid: string; tail_uuid: string }
+}
+
+type SDKAssistantMessage = {
+  type: 'assistant'
+  message: { content: BetaContentBlock[]; [key: string]: unknown }
+  parent_tool_use_id: null | string
+  session_id: string
+  uuid: UUID
+}
 
 export function toSDKCompactMetadata(
   meta: CompactMetadata,
@@ -84,8 +95,8 @@ export function toSDKCompactMetadata(
     pre_tokens: meta.preTokens,
     ...(seg && {
       preserved_segment: {
-        head_uuid: seg.headUuid,
-        anchor_uuid: seg.anchorUuid,
+        head_uuid: seg.startUuid,
+        anchor_uuid: seg.endUuid,
         tail_uuid: seg.tailUuid,
       },
     }),
@@ -104,8 +115,8 @@ export function fromSDKCompactMetadata(
     preTokens: meta.pre_tokens,
     ...(seg && {
       preservedSegment: {
-        headUuid: seg.head_uuid,
-        anchorUuid: seg.anchor_uuid,
+        startUuid: seg.head_uuid,
+        endUuid: seg.anchor_uuid,
         tailUuid: seg.tail_uuid,
       },
     }),
@@ -169,7 +180,7 @@ export function toSDKMessages(messages: Message[]): SDKMessage[] {
           return [
             localCommandOutputToSDKAssistantMessage(
               message.content,
-              message.uuid,
+              message.uuid as UUID,
             ),
           ]
         }

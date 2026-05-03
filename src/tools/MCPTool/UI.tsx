@@ -259,7 +259,7 @@ function _temp2(t0: [string, string]) {
   const [k_0] = t0;
   return stringWidth(k_0);
 }
-function _temp(t0) {
+function _temp(t0: [string, unknown]) {
   const [k, v] = t0;
   return `${k}: ${v}`;
 }
