@@ -57,6 +57,7 @@ import type {
   Message,
   ProgressMessage,
   StopHookInfo,
+  SystemMessageLevel,
 } from '../../types/message.js'
 import { count } from '../../utils/array.js'
 import { createAttachmentMessage } from '../../utils/attachments.js'
@@ -854,6 +855,7 @@ async function checkPermissionsAndCallTool(
             att.durationMs !== undefined
           ) {
             preToolHookInfos.push({
+              hookName: tool.name,
               command: att.command,
               durationMs: att.durationMs,
             })
@@ -913,7 +915,7 @@ async function checkPermissionsAndCallTool(
           false,
           undefined,
           false,
-          'suggestion',
+          'suggestion' as SystemMessageLevel,
           undefined,
           'PreToolUse',
           preToolHookDurationMs,
@@ -1539,6 +1541,7 @@ async function checkPermissionsAndCallTool(
             att.durationMs !== undefined
           ) {
             postToolHookInfos.push({
+              hookName: tool.name,
               command: att.command,
               durationMs: att.durationMs,
             })
@@ -1555,6 +1558,7 @@ async function checkPermissionsAndCallTool(
             att.durationMs !== undefined
           ) {
             postToolHookInfos.push({
+              hookName: tool.name,
               command: att.command,
               durationMs: att.durationMs,
             })
@@ -1586,7 +1590,7 @@ async function checkPermissionsAndCallTool(
             false,
             undefined,
             false,
-            'suggestion',
+            'suggestion' as SystemMessageLevel,
             undefined,
             'PostToolUse',
             postToolHookDurationMs,

@@ -3,6 +3,7 @@
 import type { SDKMessage } from '../entrypoints/agentSdkTypes.js'
 import type {
   SDKControlPermissionRequest,
+  SDKControlRequest,
   StdoutMessage,
 } from '../entrypoints/sdk/controlTypes.js'
 import type { RemotePermissionResponse } from '../remote/RemoteSessionManager.js'
@@ -80,20 +81,21 @@ export class DirectConnectSessionManager {
 
         // Handle control requests (permission requests)
         if (parsed.type === 'control_request') {
-          if (parsed.request.subtype === 'can_use_tool') {
+          const request = parsed.request as SDKControlRequest['request']
+          if (request.subtype === 'can_use_tool') {
             this.callbacks.onPermissionRequest(
-              parsed.request,
-              parsed.request_id,
+              request as unknown as SDKControlPermissionRequest,
+              parsed.request_id as string,
             )
           } else {
             // Send an error response for unrecognized subtypes so the
             // server doesn't hang waiting for a reply that never comes.
             logForDebugging(
-              `[DirectConnect] Unsupported control request subtype: ${parsed.request.subtype}`,
+              `[DirectConnect] Unsupported control request subtype: ${request.subtype}`,
             )
             this.sendErrorResponse(
-              parsed.request_id,
-              `Unsupported control request subtype: ${parsed.request.subtype}`,
+              parsed.request_id as string,
+              `Unsupported control request subtype: ${request.subtype}`,
             )
           }
           continue

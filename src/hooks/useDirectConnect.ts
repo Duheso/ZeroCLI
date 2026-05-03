@@ -90,8 +90,8 @@ export function useDirectConnect({
         )
 
         const tool =
-          findToolByName(toolsRef.current, request.tool_name) ??
-          createToolStub(request.tool_name)
+          findToolByName(toolsRef.current, request.tool_name ?? '') ??
+          createToolStub(request.tool_name ?? '')
 
         const syntheticMessage = createSyntheticAssistantMessage(
           request,
@@ -102,7 +102,7 @@ export function useDirectConnect({
           behavior: 'ask',
           message:
             request.description ?? `${request.tool_name} requires permission`,
-          suggestions: request.permission_suggestions,
+          suggestions: request.permission_suggestions as PermissionAskDecision['suggestions'],
           blockedPath: request.blocked_path,
         }
 
@@ -111,9 +111,9 @@ export function useDirectConnect({
           tool,
           description:
             request.description ?? `${request.tool_name} requires permission`,
-          input: request.input,
+          input: request.input ?? ({} as ToolUseConfirm['input']),
           toolUseContext: {} as ToolUseConfirm['toolUseContext'],
-          toolUseID: request.tool_use_id,
+          toolUseID: request.tool_use_id ?? '',
           permissionResult,
           permissionPromptStartTimeMs: Date.now(),
           onUserInteraction() {
