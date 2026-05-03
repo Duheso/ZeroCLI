@@ -105,7 +105,7 @@ export function BackgroundTaskStatus(t0: Props) {
     const selectedIdx = tasksSelected ? teammateFooterIndex : -1;
     let t8;
     if ($[12] !== teammateEntries || $[13] !== viewingAgentTaskId) {
-      t8 = viewingAgentTaskId ? teammateEntries.findIndex(t_3 => t_3.id === viewingAgentTaskId) + 1 : 0;
+      t8 = viewingAgentTaskId ? teammateEntries.findIndex((t_3: InProcessTeammateTaskState) => t_3.id === viewingAgentTaskId) + 1 : 0;
       $[12] = teammateEntries;
       $[13] = viewingAgentTaskId;
       $[14] = t8;
@@ -152,7 +152,7 @@ export function BackgroundTaskStatus(t0: Props) {
     }
     let t13;
     if ($[25] !== selectedIdx || $[26] !== setAppState || $[27] !== viewedIdx || $[28] !== visiblePills) {
-      t13 = visiblePills.map((pill_1, i_1) => {
+      t13 = visiblePills.map((pill_1: Pill, i_1: number) => {
         const needsSeparator = i_1 > 0;
         return <React.Fragment key={pill_1.name}>{needsSeparator && <Text> </Text>}<AgentPill name={pill_1.name} color={pill_1.color} isSelected={selectedIdx === pill_1.idx} isViewed={viewedIdx === pill_1.idx} isIdle={pill_1.isIdle} onClick={() => pill_1.taskId ? enterTeammateView(pill_1.taskId, setAppState) : exitTeammateView(setAppState)} /></React.Fragment>;
       });
@@ -419,7 +419,7 @@ function SummaryPill(t0: { selected: boolean; onClick?: (taskId?: string) => voi
   }
   let t5;
   if ($[5] !== label || $[6] !== onClick) {
-    t5 = <Box onClick={onClick} onMouseEnter={t3} onMouseLeave={t4}>{label}</Box>;
+    t5 = <Box onClick={onClick as any} onMouseEnter={t3} onMouseLeave={t4}>{label}</Box>;
     $[5] = label;
     $[6] = onClick;
     $[7] = t5;

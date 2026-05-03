@@ -175,7 +175,7 @@ export function AgentsList(t0: Props) {
   const handleKeyDown = t7;
   let t8;
   if ($[23] !== renderAgent || $[24] !== sortedAgents) {
-    t8 = t9 => {
+    t8 = (t9: string | undefined) => {
       const title = t9 === undefined ? t('agents_builtin_always_available_title') : t9;
       const builtInAgents = sortedAgents.filter(_temp4);
       return <Box flexDirection="column" marginBottom={1} paddingLeft={2}><Text bold={true} dimColor={true}>{title}</Text>{builtInAgents.map(renderAgent)}</Box>;
@@ -189,12 +189,12 @@ export function AgentsList(t0: Props) {
   const renderBuiltInAgentsSection = t8;
   let t9;
   if ($[26] !== renderAgent) {
-    t9 = (title_0, groupAgents) => {
+    t9 = (title_0: string, groupAgents: ResolvedAgent[]) => {
       if (!groupAgents.length) {
         return null;
       }
       const folderPath = groupAgents[0]?.baseDir;
-      return <Box flexDirection="column" marginBottom={1}><Box paddingLeft={2}><Text bold={true} dimColor={true}>{title_0}</Text>{folderPath && <Text dimColor={true}> ({folderPath})</Text>}</Box>{groupAgents.map(agent_1 => renderAgent(agent_1))}</Box>;
+      return <Box flexDirection="column" marginBottom={1}><Box paddingLeft={2}><Text bold={true} dimColor={true}>{title_0}</Text>{folderPath && <Text dimColor={true}> ({folderPath})</Text>}</Box>{groupAgents.map((agent_1: ResolvedAgent) => renderAgent(agent_1))}</Box>;
     };
     $[26] = renderAgent;
     $[27] = t9;

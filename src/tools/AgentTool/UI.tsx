@@ -792,7 +792,7 @@ export function extractLastToolInfo(progressMessages: ProgressMessage<Progress>[
     if (!hasProgressMessage(pm.data)) {
       continue;
     }
-    if (pm.data.message.type === 'assistant') {
+    if ((pm.data.message.type as string) === 'assistant') {
       for (const c of pm.data.message.message.content) {
         if (c.type === 'tool_use') {
           toolUseByID.set(c.id, c as ToolUseBlockParam);

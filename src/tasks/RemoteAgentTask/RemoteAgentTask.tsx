@@ -572,7 +572,7 @@ function startRemoteSessionPolling(taskId: string, context: TaskContext): () => 
         accumulatedLog = [...accumulatedLog, ...response.newEvents];
         const deltaText = response.newEvents.map(msg => {
           if (msg.type === 'assistant') {
-            return msg.message.content.filter(block => block.type === 'text').map(block => 'text' in block ? block.text : '').join('\n');
+            return (msg.message.content as readonly { type: string; text?: string }[]).filter(block => block.type === 'text').map(block => 'text' in block ? block.text : '').join('\n');
           }
           return jsonStringify(msg);
         }).join('\n');
@@ -634,7 +634,7 @@ function startRemoteSessionPolling(taskId: string, context: TaskContext): () => 
         const close = `</${REMOTE_REVIEW_PROGRESS_TAG}>`;
         for (const ev of response.newEvents) {
           if (ev.type === 'system' && (ev.subtype === 'hook_progress' || ev.subtype === 'hook_response')) {
-            const s = ev.stdout;
+            const s = ev.stdout as string;
             const closeAt = s.lastIndexOf(close);
             const openAt = closeAt === -1 ? -1 : s.lastIndexOf(open, closeAt);
             if (openAt !== -1 && closeAt > openAt) {
@@ -746,7 +746,7 @@ function startRemoteSessionPolling(taskId: string, context: TaskContext): () => 
           }
 
           // No output or remote error — mark failed with a review-specific message.
-          updateTaskState(taskId, context.setAppState, t => ({
+          updateTaskState<RemoteAgentTaskState>(taskId, context.setAppState, t => ({
             ...t,
             status: 'failed'
           }));
@@ -772,7 +772,7 @@ function startRemoteSessionPolling(taskId: string, context: TaskContext): () => 
         const appState = context.getAppState();
         const task = appState.tasks?.[taskId] as RemoteAgentTaskState | undefined;
         if (task?.isRemoteReview && task.status === 'running' && Date.now() - task.pollStartedAt > REMOTE_REVIEW_TIMEOUT_MS) {
-          updateTaskState(taskId, context.setAppState, t => ({
+          updateTaskState<RemoteAgentTaskState>(taskId, context.setAppState, t => ({
             ...t,
             status: 'failed',
             endTime: Date.now()
