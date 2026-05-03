@@ -12,6 +12,7 @@ import {
   createNode,
   createTextNode,
   type DOMElement,
+  type DOMNode,
   type DOMNodeAttribute,
   type ElementNames,
   insertBeforeNode,
@@ -498,7 +499,7 @@ const reconciler = createReconciler<
   commitTextUpdate(node: TextNode, _oldText: string, newText: string): void {
     setTextNodeValue(node, newText)
   },
-  removeChild(node: DOMElement, removeNode: DOMElement) {
+  removeChild(node: DOMElement, removeNode: DOMNode) {
     removeChildNode(node, removeNode)
     cleanupYogaNode(removeNode)
     if (removeNode.nodeName !== '#text') {

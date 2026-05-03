@@ -2169,7 +2169,7 @@ async function* queryModel(
                     })
                     throw new Error('Content block is not a thinking block')
                   }
-                  contentBlock.signature = delta.signature
+                  (contentBlock as { signature?: string }).signature = delta.signature
                   break
                 case 'thinking_delta':
                   if (contentBlock.type !== 'thinking') {
@@ -2248,7 +2248,7 @@ async function* queryModel(
             ) {
               research = (part as unknown as Record<string, unknown>).research
               for (const msg of newMessages) {
-                msg.research = research
+                (msg as AssistantMessage & { research?: unknown }).research = research
               }
             }
 
@@ -2265,19 +2265,19 @@ async function* queryModel(
             // replacement ({ ...lastMsg.message, usage }) would disconnect
             // the queued reference; direct mutation ensures the transcript
             // captures the final values.
-            stopReason = part.delta.stop_reason
+            stopReason = part.delta.stop_reason as BetaStopReason
 
             const lastMsg = newMessages.at(-1)
             if (lastMsg) {
-              lastMsg.message.usage = usage
+              lastMsg.message.usage = usage as BetaUsage
               lastMsg.message.stop_reason = stopReason
             }
 
             // Update cost
-            const costUSDForPart = calculateUSDCost(resolvedModel, usage)
+            const costUSDForPart = calculateUSDCost(resolvedModel, usage as BetaUsage)
             costUSD += addToTotalSessionCost(
               costUSDForPart,
-              usage,
+              usage as BetaUsage,
               options.model,
             )
 
@@ -2846,7 +2846,7 @@ async function* queryModel(
     if (fallbackMessage) {
       const fallbackUsage = fallbackMessage.message.usage
       usage = updateUsage(EMPTY_USAGE, fallbackUsage)
-      stopReason = fallbackMessage.message.stop_reason
+      stopReason = fallbackMessage.message.stop_reason as BetaStopReason
       const fallbackCost = calculateUSDCost(resolvedModel, fallbackUsage)
       costUSD += addToTotalSessionCost(
         fallbackCost,
@@ -3176,7 +3176,7 @@ export function addCacheBreakpoints(
           }
           insertBlockAfterToolResults(msg.content, dedupedNewEdits)
           // Pin so this block is re-sent at the same position in future calls
-          pinCacheEdits(i, newCacheEdits)
+          pinCacheEdits(i, newCacheEdits as unknown as CacheEditsBlock)
 
           logForDebugging(
             `Added cache_edits block with ${dedupedNewEdits.edits.length} deletion(s) to message[${i}]: ${dedupedNewEdits.edits.map(e => e.cache_reference).join(', ')}`,
