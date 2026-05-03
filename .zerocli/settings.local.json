@@ -44,7 +44,22 @@
       "WebFetch(domain:g1.globo.com)",
       "WebFetch(domain:www.espn.com.br)",
       "Bash(bun x:*)",
-      "Bash(grep -v \"^\\\\s*$\")"
+      "Bash(grep -v \"^\\\\s*$\")",
+      "Bash(head -5 /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-ac8b0146/src/components/Settings/Settings.tsx grep -n \"import\\\\|Gates\" /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-ac8b0146/src/components/Settings/Settings.tsx)",
+      "Bash(head -5 grep -n from.*types src/components/agents/new-agent-creation/*.tsx)",
+      "Read(//home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-a215d7b4/=== What''''''''s imported from types/**)",
+      "Bash(/dev/null __NEW_LINE_81beaad7242affde__ echo echo \"=== What''''s imported from types/notebook.js ===\" grep -n from.*notebook src/components/permissions/NotebookEditPermissionRequest/NotebookEditToolDiff.tsx 2)",
+      "Bash(/dev/null __NEW_LINE_81beaad7242affde__ echo echo '=== cli/handlers content ===' ls src/cli/handlers/ 2)",
+      "Bash(/dev/null __NEW_LINE_81beaad7242affde__ echo echo '=== types/ dir ===' ls src/types/)",
+      "Bash(__NEW_LINE_44716a32d276daf8__ echo:*)",
+      "Bash(cd /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-a215d7b4 __NEW_LINE_fbe719e2cd2f8bcd__ echo \"=== AgentWizardData usage in ColorStep ===\" head -30 src/components/agents/new-agent-creation/wizard-steps/ColorStep.tsx __NEW_LINE_fbe719e2cd2f8bcd__ echo \"\" echo \"=== StatusLineCommandInput usage ===\" grep -n \"StatusLineCommandInput\" src/components/StatusLine.tsx)",
+      "Bash(head -10 grep -n \"additionalWorkingDirectories\\\\.keys\\(\\)\" /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-a026da35/src/tools/AgentTool/resumeAgent.ts grep -n \"additionalWorkingDirectories\\\\.keys\\(\\)\" /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-a026da35/src/tools/AgentTool/runAgent.ts)",
+      "Read(//home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-a215d7b4/**)",
+      "Bash(/dev/null __NEW_LINE_93aaee3bed3ecca6__ echo echo '=== NotebookCellType usage ===' grep -n NotebookCellType src/utils/notebook.ts src/components/permissions/NotebookEditPermissionRequest/NotebookEditToolDiff.tsx)",
+      "Bash(head -5 grep -n \"import.*antModel\\\\|resolveAntModel\\\\|getAntModelOverrideConfig\" /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-ac8b0146/src/utils/model/model.ts)",
+      "Bash(cd /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-a215d7b4 __NEW_LINE_578dc8f9c47de85a__ echo \"=== FeedbackSurveyView to understand FeedbackSurveyResponse ===\" head -30 src/components/FeedbackSurvey/FeedbackSurveyView.tsx __NEW_LINE_578dc8f9c47de85a__ echo \"\" echo \"=== useFeedbackSurvey to understand FeedbackSurveyResponse ===\" head -30 src/components/FeedbackSurvey/useFeedbackSurvey.tsx __NEW_LINE_578dc8f9c47de85a__ echo \"\" echo \"=== notebook.ts types usage context ===\" sed -n '55,130p' src/utils/notebook.ts __NEW_LINE_578dc8f9c47de85a__ echo \"\" echo \"=== NotebookEditToolDiff.tsx usage ===\" cat src/components/permissions/NotebookEditPermissionRequest/NotebookEditToolDiff.tsx)",
+      "Bash(cd /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-a215d7b4 __NEW_LINE_52b1e0b0ad84e461__ grep -n \"FeedbackSurveyType\\\\|surveyType\" src/components/FeedbackSurvey/useFeedbackSurvey.tsx)",
+      "Bash(head -20 grep -rn \"FeedbackSurveyType\\\\|FeedbackSurveyResponse\" src/ --include=*.ts --include=*.tsx)"
     ]
   },
   "enabledMcpjsonServers": [

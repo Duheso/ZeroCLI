@@ -60,3 +60,8 @@ export type KeybindingBlock = {
   context: KeybindingContextName
   bindings: Record<string, string | null>
 }
+
+/**
+ * A named keybinding action (e.g., 'app:toggleTranscript').
+ */
+export type KeybindingAction = string

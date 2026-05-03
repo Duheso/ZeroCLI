@@ -1,0 +1,49 @@
+// Stubs for optional/missing npm packages (ant-internal or unused)
+
+declare module '*.md' {
+  const content: string;
+  export default content;
+}
+
+declare module '@ant/claude-for-chrome-mcp' {
+  export const BROWSER_TOOLS: string[];
+  export type Logger = { info(msg: string): void; error(msg: string): void; };
+  export type PermissionMode = 'always' | 'ask' | 'never';
+  export class ClaudeForChromeContext {}
+  export function createClaudeForChromeMcpServer(): any;
+}
+
+declare module '@ant/computer-use-mcp' {
+  export type Cursor = { x: number; y: number };
+  export type DisplayGeometry = { width: number; height: number };
+  export type FrontmostApp = { name: string };
+  export type RunningApp = { name: string };
+  export type InstalledApp = { name: string };
+  export type ScreenshotResult = { image: Buffer };
+  export type ResolvePrepareCaptureResult = { action: string };
+  export type BROWSER_TOOLS = string[];
+  export class ComputerExecutor {}
+  export function buildComputerUseTools(): any[];
+}
+
+declare module '@anthropic-ai/mcpb' {
+  export type McpbManifest = Record<string, unknown>;
+  export type McpbUserConfigurationOption = Record<string, unknown>;
+}
+
+declare module 'asciichart' {
+  export function plot(series: number[], config?: Record<string, unknown>): string;
+  const asciichart: { plot: typeof plot };
+  export default asciichart;
+}
+
+declare module 'audio-capture-napi' {
+  export class Logger {}
+}
+
+declare module 'plist' {
+  export function parse(xml: string): Record<string, any>;
+  export function build(obj: Record<string, any>, indent?: string): string;
+  const _default: { parse: typeof parse; build: typeof build };
+  export default _default;
+}
