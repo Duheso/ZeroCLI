@@ -79,7 +79,7 @@ const AGENT_VERB = {
   needs_input: 'waiting',
   plan_ready: 'done'
 } as const;
-function UltraplanSessionDetail(t0) {
+function UltraplanSessionDetail(t0: { session: RemoteAgentTaskState; onDone: () => void; onBack?: () => void; onKill?: () => void }) {
   const $ = _c(70);
   const {
     session,
@@ -88,7 +88,7 @@ function UltraplanSessionDetail(t0) {
     onKill
   } = t0;
   const running = session.status === "running" || session.status === "pending";
-  const phase = session.ultraplanPhase;
+  const phase = session.ultraplanPhase as keyof typeof PHASE_LABEL | undefined;
   const statusText = running ? phase ? PHASE_LABEL[phase] : "running" : session.status;
   const elapsedTime = useElapsedTime(session.startTime, running, 1000, 0, session.endTime);
   let spawns = 0;
@@ -98,7 +98,7 @@ function UltraplanSessionDetail(t0) {
     if (msg.type !== "assistant") {
       continue;
     }
-    for (const block of msg.message.content) {
+    for (const block of (msg.message as any).content) {
       if (block.type !== "tool_use") {
         continue;
       }
@@ -148,7 +148,7 @@ function UltraplanSessionDetail(t0) {
   const sessionUrl = t4;
   let t5;
   if ($[8] !== onBack || $[9] !== onDone) {
-    t5 = onBack ?? (() => onDone("Remote session details dismissed", {
+    t5 = onBack ?? (() => (onDone as any)("Remote session details dismissed", {
       display: "system"
     }));
     $[8] = onBack;
@@ -351,7 +351,7 @@ function UltraplanSessionDetail(t0) {
   }
   let t23;
   if ($[54] !== goBackOrClose || $[55] !== onDone || $[56] !== sessionUrl) {
-    t23 = v_0 => {
+    t23 = (v_0: string) => {
       switch (v_0) {
         case "open":
           {
@@ -422,7 +422,7 @@ const STAGE_LABELS: Record<(typeof STAGES)[number], string> = {
 // "Setup" label shows before the orchestrator writes its first progress
 // snapshot (container boot + repo clone), so the 0-found display doesn't
 // look like a hung finder.
-function StagePipeline(t0) {
+function StagePipeline(t0: { stage: "finding" | "verifying" | "synthesizing" | undefined; completed: boolean; hasProgress: boolean }) {
   const $ = _c(15);
   const {
     stage,
@@ -506,7 +506,7 @@ function reviewCountsLine(session: DeepImmutable<RemoteAgentTaskState>): string 
   return formatReviewStageCounts(p.stage, p.bugsFound, verified, refuted);
 }
 type MenuAction = 'open' | 'stop' | 'back' | 'dismiss';
-function ReviewSessionDetail(t0) {
+function ReviewSessionDetail(t0: { session: RemoteAgentTaskState; onDone: () => void; onBack?: () => void; onKill?: () => void }) {
   const $ = _c(56);
   const {
     session,
@@ -520,7 +520,7 @@ function ReviewSessionDetail(t0) {
   const elapsedTime = useElapsedTime(session.startTime, running, 1000, 0, session.endTime);
   let t1;
   if ($[0] !== onDone) {
-    t1 = () => onDone("Remote session details dismissed", {
+    t1 = () => (onDone as any)("Remote session details dismissed", {
       display: "system"
     });
     $[0] = onDone;
@@ -621,7 +621,7 @@ function ReviewSessionDetail(t0) {
   const options = t3;
   let t4;
   if ($[15] !== goBackOrClose || $[16] !== handleClose || $[17] !== onDone || $[18] !== sessionUrl) {
-    t4 = action => {
+    t4 = (action: string) => {
       bb45: switch (action) {
         case "open":
           {
@@ -773,7 +773,7 @@ function ReviewSessionDetail(t0) {
   }
   return t20;
 }
-function _temp(exitState) {
+function _temp(exitState: ExitState) {
   return exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline><KeyboardShortcutHint shortcut="Enter" action="select" /><KeyboardShortcutHint shortcut="Esc" action="go back" /></Byline>;
 }
 export function RemoteSessionDetailDialog({
@@ -796,13 +796,13 @@ export function RemoteSessionDetailDialog({
     return normalizeMessages(toInternalMessages(session.log as SDKMessage[])).filter(_ => _.type !== 'progress').slice(-3);
   }, [session]);
   if (session.isUltraplan) {
-    return <UltraplanSessionDetail session={session} onDone={onDone} onBack={onBack} onKill={onKill} />;
+    return <UltraplanSessionDetail session={session as RemoteAgentTaskState} onDone={onDone} onBack={onBack} onKill={onKill} />;
   }
 
   // Review sessions get the stage-pipeline view; everything else keeps the
   // generic label/value + recent-messages dialog below.
   if (session.isRemoteReview) {
-    return <ReviewSessionDetail session={session} onDone={onDone} onBack={onBack} onKill={onKill} />;
+    return <ReviewSessionDetail session={session as RemoteAgentTaskState} onDone={onDone} onBack={onBack} onKill={onKill} />;
   }
   const handleClose = () => onDone('Remote session details dismissed', {
     display: 'system'
@@ -847,7 +847,7 @@ export function RemoteSessionDetailDialog({
   // Map TaskStatus to display status (handle 'pending')
   const displayStatus = session.status === 'pending' ? 'starting' : session.status;
   return <Box flexDirection="column" tabIndex={0} autoFocus onKeyDown={handleKeyDown}>
-      <Dialog title="Remote session details" onCancel={handleClose} color="background" inputGuide={exitState => exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline>
+      <Dialog title="Remote session details" onCancel={handleClose} color="background" inputGuide={(exitState: ExitState) => exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline>
               {onBack && <KeyboardShortcutHint shortcut="←" action="go back" />}
               <KeyboardShortcutHint shortcut="Esc/Enter/Space" action="close" />
               {!isTeleporting && <KeyboardShortcutHint shortcut="t" action="teleport" />}
