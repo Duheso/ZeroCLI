@@ -404,6 +404,25 @@ export function ManagePlugins({
   targetMarketplace,
   action
 }: Props): React.ReactNode {
+  // Helpers for accessing properties on UnifiedInstalledItem union
+  function getScopeForItem(item: UnifiedInstalledItem): string {
+    if (item.type === 'plugin' || item.type === 'failed-plugin') {
+      return item.scope ?? 'user';
+    }
+    if (item.type === 'mcp') {
+      return item.scope ?? 'user';
+    }
+    return 'user';
+  }
+  function getIdForItem(item: UnifiedInstalledItem): string {
+    if (item.type === 'plugin' || item.type === 'failed-plugin') {
+      return item.id;
+    }
+    if (item.type === 'mcp') {
+      return item.id;
+    }
+    return '';
+  }
   // App state for MCP access
   const mcpClients = useAppState(s => s.mcp.clients);
   const mcpTools = useAppState(s_0 => s_0.mcp.tools);
@@ -2153,6 +2172,7 @@ export function ManagePlugins({
       {visibleItems.map((item_10, visibleIndex) => {
       const actualIndex = pagination.toActualIndex(visibleIndex);
       const isSelected_0 = actualIndex === selectedIndex && !isSearchMode;
+      const scopeForItem_0 = getScopeForItem(item_10);
 
       // Check if we need to show a scope header
       const prevItem = visibleIndex > 0 ? visibleItems[visibleIndex - 1] : null;
@@ -2181,10 +2201,10 @@ export function ManagePlugins({
             return scope_8;
         }
       };
-      return <React.Fragment key={item_10.id}>
+      return <React.Fragment key={getIdForItem(item_10)}>
             {showScopeHeader && <Box marginTop={visibleIndex > 0 ? 1 : 0} paddingLeft={2}>
-                <Text dimColor={item_10.scope !== 'flagged'} color={item_10.scope === 'flagged' ? 'warning' : undefined} bold={item_10.scope === 'flagged'}>
-                  {getScopeLabel(item_10.scope)}
+                <Text dimColor={scopeForItem_0 !== 'flagged'} color={scopeForItem_0 === 'flagged' ? 'warning' : undefined} bold={scopeForItem_0 === 'flagged'}>
+                  {getScopeLabel(scopeForItem_0)}
                 </Text>
               </Box>}
             <UnifiedInstalledCell item={item_10} isSelected={isSelected_0} />
