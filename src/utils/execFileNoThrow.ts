@@ -3,7 +3,24 @@
 // By using cross-spawn, Windows gets .cmd/.bat compatibility without falling
 // back to a generic shell command string.
 
-import { spawn } from 'cross-spawn'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const spawn = require('cross-spawn') as (
+  file: string,
+  args: string[],
+  options?: {
+    cwd?: string
+    env?: NodeJS.ProcessEnv
+    shell?: boolean
+    signal?: AbortSignal
+    stdio?: ('pipe' | 'ignore' | 'inherit')[]
+  },
+) => {
+  stdout: NodeJS.ReadableStream | null
+  stderr: NodeJS.ReadableStream | null
+  stdin: NodeJS.WritableStream | null
+  kill: () => void
+  once: (event: string, handler: (...args: unknown[]) => void) => void
+}
 import path from 'node:path'
 import { getCwd } from '../utils/cwd.js'
 import { logError } from './log.js'
@@ -264,8 +281,8 @@ export function execFileNoThrowWithCwd(
       }
     }
 
-    child.stdout?.on('data', chunk => appendOutput(chunk, 'stdout'))
-    child.stderr?.on('data', chunk => appendOutput(chunk, 'stderr'))
+    child.stdout?.on('data', (chunk: string | Buffer) => appendOutput(chunk, 'stdout'))
+    child.stderr?.on('data', (chunk: string | Buffer) => appendOutput(chunk, 'stderr'))
 
     child.once('spawn', () => {
       if (stdinMode === 'pipe' && child.stdin) {
@@ -277,7 +294,7 @@ export function execFileNoThrowWithCwd(
       }
     })
 
-    child.once('error', error => {
+    child.once('error', (error: Error) => {
       logError(error)
       finish({ stdout: '', stderr: '', code: 1, error: error.message })
     })
@@ -290,7 +307,7 @@ export function execFileNoThrowWithCwd(
           }, finalTimeout)
         : undefined
 
-    child.once('close', (code, closeSignal) => {
+    child.once('close', (code: number | null, closeSignal: string | null) => {
       if (timeoutId) {
         clearTimeout(timeoutId)
       }

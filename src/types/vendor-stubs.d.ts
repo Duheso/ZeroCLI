@@ -96,3 +96,8 @@ declare module 'plist' {
   const _default: { parse: typeof parse; build: typeof build };
   export default _default;
 }
+
+declare module 'react-reconciler/constants.js' {
+  export const LegacyRoot: number;
+  export const ConcurrentRoot: number;
+}

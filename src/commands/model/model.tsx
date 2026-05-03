@@ -118,19 +118,19 @@ function ModelPickerWrapper(t0: { onDone: LocalJSXCommandOnDone }) {
   }
   return t4;
 }
-function _temp4(prev_0: { fastMode: boolean }) {
+function _temp4(prev_0: any) {
   return {
     ...prev_0,
     fastMode: false
   };
 }
-function _temp3(s_1: { fastMode: boolean }) {
+function _temp3(s_1: any) {
   return s_1.fastMode;
 }
-function _temp2(s_0: { mainLoopModelForSession: string | undefined }) {
+function _temp2(s_0: any) {
   return s_0.mainLoopModelForSession;
 }
-function _temp(s: { mainLoopModel: string }) {
+function _temp(s: any) {
   return s.mainLoopModel;
 }
 function SetModelAndClose({
@@ -265,13 +265,13 @@ function ShowModelAndClose(t0: { onDone: LocalJSXCommandOnDone }) {
   }
   return null;
 }
-function _temp9(s_1: { effortValue: EffortValue | undefined }) {
+function _temp9(s_1: any) {
   return s_1.effortValue;
 }
-function _temp8(s_0: { mainLoopModelForSession: string | undefined }) {
+function _temp8(s_0: any) {
   return s_0.mainLoopModelForSession;
 }
-function _temp7(s: { mainLoopModel: string }) {
+function _temp7(s: any) {
   return s.mainLoopModel;
 }
 function haveSameModelOptions(left: ModelOption[], right: ModelOption[]): boolean {
