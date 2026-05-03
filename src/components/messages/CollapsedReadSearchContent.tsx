@@ -257,7 +257,7 @@ export function CollapsedReadSearchContent({
                 {info.command} ({formatSecondsShort(info.durationMs ?? 0)})
               </Text>)}
           </>}
-        {(message.relevantMemories as { path: string; content: string; mtimeMs?: number }[])?.map(m => <Box key={m.path} flexDirection="column" marginTop={1}>
+        {message.relevantMemories?.map(m => <Box key={m.path} flexDirection="column" marginTop={1}>
             <Text dimColor>
               {'  ⎿  '}{t('summary_recalled_cap')} {basename(m.path)}
             </Text>

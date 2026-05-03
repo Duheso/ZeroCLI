@@ -388,15 +388,15 @@ export type CollapsedReadSearchGroup = {
   displayMessage: CollapsibleMessage
   latestDisplayHint?: string
   // Memory recall (absorbed from relevant_memories attachments)
-  relevantMemories?: string[]
+  relevantMemories?: { path: string; content: string; mtimeMs: number }[]
   // Bash command counts (fullscreen)
   bashCount?: number
   gitOpBashCount?: number
   // Git operations (fullscreen)
-  commits?: (CommitKind & { commitHash: string })[]
-  pushes?: { ref: string }[]
-  branches?: { action: BranchAction; branch: string }[]
-  prs?: { action: PrAction; url: string }[]
+  commits?: { sha: string; kind: CommitKind }[]
+  pushes?: { branch: string }[]
+  branches?: { ref: string; action: BranchAction }[]
+  prs?: { number: number; url?: string; action: PrAction }[]
   // MCP
   mcpCallCount?: number
   mcpServerNames?: string[]

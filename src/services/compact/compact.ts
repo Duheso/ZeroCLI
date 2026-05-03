@@ -367,7 +367,7 @@ export function annotateBoundaryWithPreservedSegment(
         headUuid: keep[0]!.uuid as UUID,
         anchorUuid,
         tailUuid: keep.at(-1)!.uuid as UUID,
-      },
+      } as unknown as { startUuid: UUID; endUuid: UUID; tailUuid: UUID },
     },
   }
 }
@@ -603,14 +603,14 @@ export async function compactConversation(
     const boundaryMarker = createCompactBoundaryMessage(
       isAutoCompact ? 'auto' : 'manual',
       preCompactTokenCount ?? 0,
-      messages.at(-1)?.uuid,
+      messages.at(-1)?.uuid as UUID | undefined,
     )
     // Carry loaded-tool state — the summary doesn't preserve tool_reference
     // blocks, so the post-compact schema filter needs this to keep sending
     // already-loaded deferred tool schemas to the API.
     const preCompactDiscovered = extractDiscoveredToolNames(messages)
     if (preCompactDiscovered.size > 0) {
-      boundaryMarker.compactMetadata.preCompactDiscoveredTools = [
+      ;(boundaryMarker.compactMetadata as any).preCompactDiscoveredTools = [
         ...preCompactDiscovered,
       ].sort()
     }
@@ -842,7 +842,7 @@ export async function partialCompactConversation(
     context.setResponseLength?.(() => 0)
     context.onCompactProgress?.({ type: 'compact_start' })
 
-    const compactPrompt = getPartialCompactPrompt(customInstructions, direction)
+    const compactPrompt = getPartialCompactPrompt(customInstructions, direction as PartialCompactDirection)
     const summaryRequest = createUserMessage({
       content: compactPrompt,
     })
@@ -1019,7 +1019,7 @@ export async function partialCompactConversation(
     const boundaryMarker = createCompactBoundaryMessage(
       'manual',
       preCompactTokenCount ?? 0,
-      lastPreCompactUuid,
+      lastPreCompactUuid as UUID | undefined,
       userFeedback,
       messagesToSummarize.length,
     )
@@ -1027,7 +1027,7 @@ export async function partialCompactConversation(
     // simpler than tracking which half each tool lived in.
     const preCompactDiscovered = extractDiscoveredToolNames(allMessages)
     if (preCompactDiscovered.size > 0) {
-      boundaryMarker.compactMetadata.preCompactDiscoveredTools = [
+      ;(boundaryMarker.compactMetadata as any).preCompactDiscoveredTools = [
         ...preCompactDiscovered,
       ].sort()
     }
@@ -1042,7 +1042,7 @@ export async function partialCompactConversation(
               summarizeMetadata: {
                 messagesSummarized: messagesToSummarize.length,
                 userContext: userFeedback,
-                direction,
+                direction: direction as PartialCompactDirection,
               },
             }
           : { isVisibleInTranscriptOnly: true as const }),
@@ -1087,7 +1087,7 @@ export async function partialCompactConversation(
     return {
       boundaryMarker: annotateBoundaryWithPreservedSegment(
         boundaryMarker,
-        anchorUuid,
+        anchorUuid as UUID,
         messagesToKeep,
       ),
       summaryMessages,
@@ -1338,8 +1338,8 @@ async function streamCompactSummary({
         if (
           !hasStartedStreaming &&
           event.type === 'stream_event' &&
-          event.event.type === 'content_block_start' &&
-          event.event.content_block.type === 'text'
+          (event.event as any).type === 'content_block_start' &&
+          (event.event as any).content_block.type === 'text'
         ) {
           hasStartedStreaming = true
           context.setStreamMode?.('responding')
@@ -1347,10 +1347,10 @@ async function streamCompactSummary({
 
         if (
           event.type === 'stream_event' &&
-          event.event.type === 'content_block_delta' &&
-          event.event.delta.type === 'text_delta'
+          (event.event as any).type === 'content_block_delta' &&
+          (event.event as any).delta.type === 'text_delta'
         ) {
-          const charactersStreamed = event.event.delta.text.length
+          const charactersStreamed = (event.event as any).delta.text.length
           context.setResponseLength?.(length => length + charactersStreamed)
         }
 

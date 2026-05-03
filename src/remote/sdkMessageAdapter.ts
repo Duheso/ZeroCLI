@@ -65,7 +65,7 @@ function convertResultMessage(msg: SDKResultMessage): SystemMessage {
     level: isError ? 'warning' : 'info',
     uuid: msg.uuid,
     timestamp: new Date().toISOString(),
-  }
+  } as SystemMessage
 }
 
 /**
@@ -79,7 +79,7 @@ function convertInitMessage(msg: SDKSystemMessage): SystemMessage {
     level: 'info',
     uuid: msg.uuid,
     timestamp: new Date().toISOString(),
-  }
+  } as SystemMessage
 }
 
 /**
@@ -100,7 +100,7 @@ function convertStatusMessage(msg: SDKStatusMessage): SystemMessage | null {
     level: 'info',
     uuid: msg.uuid,
     timestamp: new Date().toISOString(),
-  }
+  } as SystemMessage
 }
 
 /**
@@ -119,7 +119,7 @@ function convertToolProgressMessage(
     uuid: msg.uuid,
     timestamp: new Date().toISOString(),
     toolUseID: msg.tool_use_id,
-  }
+  } as SystemMessage
 }
 
 /**
@@ -135,8 +135,8 @@ function convertCompactBoundaryMessage(
     level: 'info',
     uuid: msg.uuid,
     timestamp: new Date().toISOString(),
-    compactMetadata: fromSDKCompactMetadata(msg.compact_metadata),
-  }
+    compactMetadata: fromSDKCompactMetadata(msg.compact_metadata) as any,
+  } as SystemMessage
 }
 
 /**

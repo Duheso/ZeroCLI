@@ -267,7 +267,7 @@ function VerboseAgentTranscript(t0: VerboseAgentTranscriptProps) {
     const filteredMessages = progressMessages.filter(_temp4);
     let t3;
     if ($[8] !== agentLookups || $[9] !== inProgressToolUseIDs || $[10] !== tools || $[11] !== verbose) {
-      t3 = (progressMessage: ProgressMessage<Progress>) => <MessageResponse key={progressMessage.uuid} height={1}><MessageComponent message={progressMessage.data.message} lookups={agentLookups} addMargin={false} tools={tools} commands={[]} verbose={verbose} inProgressToolUseIDs={inProgressToolUseIDs} progressMessagesForMessage={[]} shouldAnimate={false} shouldShowDot={false} isTranscriptMode={false} isStatic={true} /></MessageResponse>;
+      t3 = (progressMessage: ProgressMessage<Progress>) => <MessageResponse key={progressMessage.uuid} height={1}><MessageComponent message={(progressMessage.data as any).message} lookups={agentLookups} addMargin={false} tools={tools} commands={[]} verbose={verbose} inProgressToolUseIDs={inProgressToolUseIDs} progressMessagesForMessage={[]} shouldAnimate={false} shouldShowDot={false} isTranscriptMode={false} isStatic={true} /></MessageResponse>;
       $[8] = agentLookups;
       $[9] = inProgressToolUseIDs;
       $[10] = tools;
@@ -479,7 +479,7 @@ export function renderToolUseProgressMessage(progressMessages: ProgressMessage<P
     const latestAssistant = progressMessages.findLast((msg): msg is ProgressMessage<AgentToolProgress> => hasProgressMessage(msg.data) && (msg.data.message.type as string) === 'assistant');
     let tokens = null;
     if ((latestAssistant?.data.message.type as string) === 'assistant') {
-      const usage = latestAssistant.data.message.message.usage;
+      const usage = (latestAssistant!.data.message as any).message.usage;
       tokens = (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0) + usage.input_tokens + usage.output_tokens;
     }
     return {
@@ -591,7 +591,7 @@ export function renderToolUseRejectedMessage(_input: {
   const firstData = progressMessagesForMessage[0]?.data;
   const agentId = firstData && hasProgressMessage(firstData) ? firstData.agentId : undefined;
   return <>
-      {"external" === 'ant' && agentId && <MessageResponse>
+      {(String("external") as string) === 'ant' && agentId && <MessageResponse>
           <Text color="warning">
             [internal] API calls: {getDisplayPath(getDumpPromptsPath(agentId))}
           </Text>

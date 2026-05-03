@@ -249,6 +249,7 @@ export function SystemTextMessage(t0: Props) {
   }
   return t4;
 }
+type StopHookSummaryMessageProps = { message: SystemStopHookSummaryMessage; addMargin?: boolean; verbose: boolean; isTranscriptMode: boolean };
 function StopHookSummaryMessage(t0: StopHookSummaryMessageProps) {
   const $ = _c(47);
   const {
