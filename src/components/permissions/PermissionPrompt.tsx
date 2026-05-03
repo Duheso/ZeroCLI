@@ -4,7 +4,7 @@ import { Box, Text } from '../../ink.js';
 import type { KeybindingAction } from '../../keybindings/types.js';
 import { useKeybindings } from '../../keybindings/useKeybinding.js';
 import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from '../../services/analytics/index.js';
-import { useSetAppState } from '../../state/AppState.js';
+import { useSetAppState, type AppState } from '../../state/AppState.js';
 import { type OptionWithDescription, Select } from '../CustomSelect/select.js';
 export type FeedbackType = 'accept' | 'reject';
 export type PermissionPromptOption<T extends string> = {
@@ -42,7 +42,7 @@ const DEFAULT_PLACEHOLDERS: Record<FeedbackType, string> = {
  * - Analytics events for feedback interactions
  * - Transforming options to Select-compatible format
  */
-export function PermissionPrompt(t0) {
+export function PermissionPrompt(t0: PermissionPromptProps<string>) {
   const $ = _c(54);
   const {
     options,
@@ -57,14 +57,14 @@ export function PermissionPrompt(t0) {
   const [rejectFeedback, setRejectFeedback] = useState("");
   const [acceptInputMode, setAcceptInputMode] = useState(false);
   const [rejectInputMode, setRejectInputMode] = useState(false);
-  const [focusedValue, setFocusedValue] = useState(null);
+  const [focusedValue, setFocusedValue] = useState<string | null>(null);
   const [acceptFeedbackModeEntered, setAcceptFeedbackModeEntered] = useState(false);
   const [rejectFeedbackModeEntered, setRejectFeedbackModeEntered] = useState(false);
   let t2;
   if ($[0] !== focusedValue || $[1] !== options) {
     let t3;
     if ($[3] !== focusedValue) {
-      t3 = opt => opt.value === focusedValue;
+      t3 = (opt: PermissionPromptOption<string>) => opt.value === focusedValue;
       $[3] = focusedValue;
       $[4] = t3;
     } else {
@@ -84,7 +84,7 @@ export function PermissionPrompt(t0) {
   if ($[5] !== acceptInputMode || $[6] !== options || $[7] !== rejectInputMode) {
     let t4;
     if ($[9] !== acceptInputMode || $[10] !== rejectInputMode) {
-      t4 = opt_0 => {
+      t4 = (opt_0: PermissionPromptOption<string>) => {
         const {
           value,
           label,
@@ -102,7 +102,7 @@ export function PermissionPrompt(t0) {
         } = feedbackConfig;
         const isInputMode = type === "accept" ? acceptInputMode : rejectInputMode;
         const onChange = type === "accept" ? setAcceptFeedback : setRejectFeedback;
-        const defaultPlaceholder = DEFAULT_PLACEHOLDERS[type];
+        const defaultPlaceholder = DEFAULT_PLACEHOLDERS[type as FeedbackType];
         if (isInputMode) {
           return {
             type: "input" as const,

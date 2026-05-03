@@ -4,20 +4,23 @@ import { Text } from '../../ink.js';
 import { extractMcpToolDisplayName, getMcpDisplayName } from '../../services/mcp/mcpStringUtils.js';
 import { filterToolsByServer } from '../../services/mcp/utils.js';
 import { useAppState } from '../../state/AppState.js';
+import type { AppState } from '../../state/AppStateStore.js';
 import type { Tool } from '../../Tool.js';
 import { plural } from '../../utils/stringUtils.js';
 import { ConfigurableShortcutHint } from '../ConfigurableShortcutHint.js';
+import type { OptionWithDescription } from '../CustomSelect/select.js';
 import { Select } from '../CustomSelect/index.js';
 import { Byline } from '../design-system/Byline.js';
 import { Dialog } from '../design-system/Dialog.js';
 import { KeyboardShortcutHint } from '../design-system/KeyboardShortcutHint.js';
 import type { ServerInfo } from './types.js';
+import type { ExitState } from '../../hooks/useExitOnCtrlCD.js';
 type Props = {
   server: ServerInfo;
   onSelectTool: (tool: Tool, index: number) => void;
   onBack: () => void;
 };
-export function MCPToolListView(t0) {
+export function MCPToolListView(t0: Props) {
   const $ = _c(21);
   const {
     server,
@@ -25,10 +28,10 @@ export function MCPToolListView(t0) {
     onBack
   } = t0;
   const mcpTools = useAppState(_temp);
-  let t1;
+  let t1: Tool[];
   bb0: {
     if (server.client.type !== "connected") {
-      let t2;
+      let t2: Tool[];
       if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
         t2 = [];
         $[0] = t2;
@@ -38,7 +41,7 @@ export function MCPToolListView(t0) {
       t1 = t2;
       break bb0;
     }
-    let t2;
+    let t2: Tool[];
     if ($[1] !== mcpTools || $[2] !== server.name) {
       t2 = filterToolsByServer(mcpTools, server.name);
       $[1] = mcpTools;
@@ -50,11 +53,11 @@ export function MCPToolListView(t0) {
     t1 = t2;
   }
   const serverTools = t1;
-  let t2;
+  let t2: OptionWithDescription[];
   if ($[4] !== server.name || $[5] !== serverTools) {
     let t3;
     if ($[7] !== server.name) {
-      t3 = (tool, index) => {
+      t3 = (tool: Tool, index: number) => {
         const toolName = getMcpDisplayName(tool.name, server.name);
         const fullDisplayName = tool.userFacingName ? tool.userFacingName({}) : toolName;
         const displayName = extractMcpToolDisplayName(fullDisplayName);
@@ -104,7 +107,7 @@ export function MCPToolListView(t0) {
   const t6 = `${t4} ${t5}`;
   let t7;
   if ($[11] !== onBack || $[12] !== onSelectTool || $[13] !== serverTools || $[14] !== toolOptions) {
-    t7 = serverTools.length === 0 ? <Text dimColor={true}>No tools available</Text> : <Select options={toolOptions} onChange={value => {
+    t7 = serverTools.length === 0 ? <Text dimColor={true}>No tools available</Text> : <Select options={toolOptions} onChange={(value: string) => {
       const index_0 = parseInt(value);
       const tool_0 = serverTools[index_0];
       if (tool_0) {
@@ -132,9 +135,9 @@ export function MCPToolListView(t0) {
   }
   return t8;
 }
-function _temp2(exitState) {
+function _temp2(exitState: ExitState) {
   return exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline><KeyboardShortcutHint shortcut={"\u2191\u2193"} action="navigate" /><KeyboardShortcutHint shortcut="Enter" action="select" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="back" /></Byline>;
 }
-function _temp(s) {
+function _temp(s: AppState) {
   return s.mcp.tools;
 }

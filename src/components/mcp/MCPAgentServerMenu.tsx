@@ -11,6 +11,7 @@ import { Byline } from '../design-system/Byline.js';
 import { Dialog } from '../design-system/Dialog.js';
 import { KeyboardShortcutHint } from '../design-system/KeyboardShortcutHint.js';
 import { Spinner } from '../Spinner.js';
+import type { ExitState } from '../../hooks/useExitOnCtrlCDWithKeybindings.js';
 import type { AgentMcpServerInfo } from './types.js';
 type Props = {
   agentServer: AgentMcpServerInfo;
@@ -107,7 +108,7 @@ export function MCPAgentServerMenu({
   // Only show authenticate option for HTTP/SSE servers
   if (agentServer.needsAuth) {
     menuOptions.push({
-      label: agentServer.isAuthenticated ? 'Re-authenticate' : 'Authenticate',
+      label: 'Authenticate',
       value: 'auth'
     });
   }
@@ -115,7 +116,7 @@ export function MCPAgentServerMenu({
     label: 'Back',
     value: 'back'
   });
-  return <Dialog title={`${capitalizedServerName} MCP Server`} subtitle="agent-only" onCancel={onCancel} inputGuide={exitState => exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline>
+  return <Dialog title={`${capitalizedServerName} MCP Server`} subtitle="agent-only" onCancel={onCancel} inputGuide={(exitState: ExitState) => exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline>
             <KeyboardShortcutHint shortcut="↑↓" action="navigate" />
             <KeyboardShortcutHint shortcut="Enter" action="confirm" />
             <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="go back" />
@@ -126,12 +127,12 @@ export function MCPAgentServerMenu({
           <Text dimColor>{agentServer.transport}</Text>
         </Box>
 
-        {agentServer.url && <Box>
+        {(agentServer.transport !== 'stdio' && agentServer.url && <Box>
             <Text bold>URL: </Text>
             <Text dimColor>{agentServer.url}</Text>
-          </Box>}
+          </Box>)}
 
-        {agentServer.command && <Box>
+        {agentServer.transport === 'stdio' && agentServer.command && <Box>
             <Text bold>Command: </Text>
             <Text dimColor>{agentServer.command}</Text>
           </Box>}
@@ -151,10 +152,10 @@ export function MCPAgentServerMenu({
 
         {agentServer.needsAuth && <Box>
             <Text bold>Auth: </Text>
-            {agentServer.isAuthenticated ? <Text>{color('success', theme)(figures.tick)} authenticated</Text> : <Text>
-                {color('warning', theme)(figures.triangleUpOutline)} may need
-                authentication
-              </Text>}
+            <Text>
+              {color('warning', theme)(figures.triangleUpOutline)} may need
+              authentication
+            </Text>
           </Box>}
       </Box>
 
@@ -167,7 +168,7 @@ export function MCPAgentServerMenu({
         </Box>}
 
       <Box>
-        <Select options={menuOptions} onChange={async value => {
+        <Select options={menuOptions} onChange={async (value: string) => {
         switch (value) {
           case 'auth':
             await handleAuthenticate();
