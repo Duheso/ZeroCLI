@@ -243,7 +243,7 @@ export function TreeSelect<T>(t0: TreeSelectProps<T>) {
   const findFlattenedNode = t8;
   let t9;
   if ($[17] !== findFlattenedNode || $[18] !== onCollapse || $[19] !== onExpand) {
-    t9 = (nodeId_1, shouldExpand) => {
+    t9 = (nodeId_1: string | number, shouldExpand: boolean) => {
       const flatNode_1 = findFlattenedNode(nodeId_1);
       if (!flatNode_1 || !flatNode_1.hasChildren) {
         return;
@@ -252,13 +252,13 @@ export function TreeSelect<T>(t0: TreeSelectProps<T>) {
         if (onExpand) {
           onExpand(nodeId_1);
         } else {
-          setInternalExpandedIds(prev => new Set(prev).add(nodeId_1));
+          setInternalExpandedIds((prev: Set<string | number>) => new Set(prev).add(nodeId_1));
         }
       } else {
         if (onCollapse) {
           onCollapse(nodeId_1);
         } else {
-          setInternalExpandedIds(prev_0 => {
+          setInternalExpandedIds((prev_0: Set<string | number>) => {
             const newSet = new Set(prev_0);
             newSet.delete(nodeId_1);
             return newSet;
@@ -276,7 +276,7 @@ export function TreeSelect<T>(t0: TreeSelectProps<T>) {
   const toggleExpand = t9;
   let t10;
   if ($[21] !== findFlattenedNode || $[22] !== focusNodeId || $[23] !== isDisabled || $[24] !== nodeMap || $[25] !== onFocus || $[26] !== toggleExpand) {
-    t10 = e => {
+    t10 = (e: KeyboardEvent) => {
       if (!focusNodeId || isDisabled) {
         return;
       }
@@ -321,7 +321,7 @@ export function TreeSelect<T>(t0: TreeSelectProps<T>) {
   const handleKeyDown = t10;
   let t11;
   if ($[28] !== nodeMap || $[29] !== onSelect) {
-    t11 = nodeId_2 => {
+    t11 = (nodeId_2: string | number) => {
       const node_1 = nodeMap.get(nodeId_2);
       if (!node_1) {
         return;
@@ -337,7 +337,7 @@ export function TreeSelect<T>(t0: TreeSelectProps<T>) {
   const handleChange = t11;
   let t12;
   if ($[31] !== nodeMap || $[32] !== onFocus) {
-    t12 = nodeId_3 => {
+    t12 = (nodeId_3: string | number) => {
       if (isProgrammaticFocusRef.current) {
         isProgrammaticFocusRef.current = false;
         return;
@@ -388,9 +388,9 @@ export function TreeSelect<T>(t0: TreeSelectProps<T>) {
   }
   return t14;
 }
-function _temp2(_depth) {
+function _temp2(_depth: number) {
   return "  \u25B8 ";
 }
-function _temp(isExpanded_0) {
+function _temp(isExpanded_0: boolean) {
   return isExpanded_0 ? "\u25BC " : "\u25B6 ";
 }

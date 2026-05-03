@@ -12,7 +12,7 @@ type LinePart = {
   highlight: TextHighlight | undefined;
   start: number;
 };
-export function HighlightedInput(t0) {
+export function HighlightedInput(t0: Props) {
   const $ = _c(23);
   const {
     text,
@@ -21,7 +21,7 @@ export function HighlightedInput(t0) {
   let lines;
   if ($[0] !== highlights || $[1] !== text) {
     const segments = segmentTextByHighlights(text, highlights);
-    lines = [[]];
+    lines = [] as LinePart[][];
     let pos = 0;
     for (const segment of segments) {
       const parts = segment.text.split("\n");
@@ -108,9 +108,9 @@ export function HighlightedInput(t0) {
   if ($[15] !== glimmerIndex || $[16] !== lines_0) {
     let t4;
     if ($[18] !== glimmerIndex) {
-      t4 = (lineParts, lineIndex) => <Box key={lineIndex}>{lineParts.length === 0 ? <Text> </Text> : lineParts.map((part_0, partIndex) => {
+      t4 = (lineParts: LinePart[], lineIndex: number) => <Box key={lineIndex}>{lineParts.length === 0 ? <Text> </Text> : lineParts.map((part_0: LinePart, partIndex: number) => {
           if (part_0.highlight?.shimmerColor && part_0.highlight.color) {
-            return <Text key={partIndex}>{part_0.text.split("").map((char, charIndex) => <ShimmerChar key={charIndex} char={char} index={part_0.start + charIndex} glimmerIndex={glimmerIndex} messageColor={part_0.highlight.color} shimmerColor={part_0.highlight.shimmerColor} />)}</Text>;
+            return <Text key={partIndex}>{part_0.text.split("").map((char: string, charIndex: number) => <ShimmerChar key={charIndex} char={char} index={part_0.start + charIndex} glimmerIndex={glimmerIndex} messageColor={part_0.highlight!.color} shimmerColor={part_0.highlight!.shimmerColor} />)}</Text>;
           }
           return <Text key={partIndex} color={part_0.highlight?.color} dimColor={part_0.highlight?.dimColor} inverse={part_0.highlight?.inverse}><Ansi>{part_0.text}</Ansi></Text>;
         })}</Box>;
@@ -137,6 +137,6 @@ export function HighlightedInput(t0) {
   }
   return t4;
 }
-function _temp(h) {
+function _temp(h: TextHighlight) {
   return h.shimmerColor;
 }

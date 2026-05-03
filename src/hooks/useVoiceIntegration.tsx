@@ -224,10 +224,10 @@ export function useVoiceIntegration({
   const voiceEnabled = feature('VOICE_MODE') ? useVoiceEnabled() : false;
   const voiceState = feature('VOICE_MODE') ?
   // biome-ignore lint/correctness/useHookAtTopLevel: feature() is a compile-time constant
-  useVoiceState(s => s.voiceState) : 'idle' as const;
+  useVoiceState((s: { voiceState: string }) => s.voiceState) : 'idle' as const;
   const voiceInterimTranscript = feature('VOICE_MODE') ?
   // biome-ignore lint/correctness/useHookAtTopLevel: feature() is a compile-time constant
-  useVoiceState(s_0 => s_0.voiceInterimTranscript) : '';
+  useVoiceState((s_0: { voiceInterimTranscript: unknown }) => s_0.voiceInterimTranscript) as string : '';
 
   // Set the voice anchor for focus mode (where recording starts via terminal
   // focus, not key hold). Key-hold sets the anchor in stripTrailing.
@@ -391,7 +391,7 @@ export function useVoiceKeybindingHandler({
   const voiceEnabled = feature('VOICE_MODE') ? useVoiceEnabled() : false;
   const voiceState = feature('VOICE_MODE') ?
   // biome-ignore lint/correctness/useHookAtTopLevel: feature() is a compile-time constant
-  useVoiceState(s => s.voiceState) : 'idle';
+  useVoiceState((s: { voiceState: string }) => s.voiceState) : 'idle';
 
   // Find the configured key for voice:pushToTalk from keybinding context.
   // Forward iteration with last-wins (matching the resolver): if a later
@@ -670,7 +670,12 @@ export function useVoiceKeybindingHandler({
 // TODO(onKeyDown-migration): temporary shim so existing JSX callers
 // (<VoiceKeybindingHandler .../>) keep compiling. Remove once REPL.tsx
 // wires handleKeyDown directly.
-export function VoiceKeybindingHandler(props) {
+export function VoiceKeybindingHandler(props: {
+  voiceHandleKeyEvent: (fallbackMs?: number) => void;
+  stripTrailing: (maxStrip: number, opts?: StripOpts) => number;
+  resetAnchor: () => void;
+  isActive: boolean;
+}) {
   useVoiceKeybindingHandler(props);
   return null;
 }
