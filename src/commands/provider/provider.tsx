@@ -207,10 +207,10 @@ export function getProviderWizardDefaults(
     sanitizeProviderConfigValue(processEnv.GEMINI_MODEL, secretSource) ||
     DEFAULT_GEMINI_MODEL
   const safeMistralModel =
-    sanitizeProviderConfigValue(processEnv.MISTRAL_MODEL, processEnv) ||
+    sanitizeProviderConfigValue(processEnv.MISTRAL_MODEL, secretSource) ||
     DEFAULT_MISTRAL_MODEL
   const safeMistralBaseUrl =
-    sanitizeProviderConfigValue(processEnv.MISTRAL_BASE_URL, processEnv) ||
+    sanitizeProviderConfigValue(processEnv.MISTRAL_BASE_URL, secretSource) ||
     DEFAULT_MISTRAL_BASE_URL
 
   return {
@@ -673,7 +673,7 @@ function ProviderChooser({
           options={options}
           inlineDescriptions
           visibleOptionCount={options.length}
-          onChange={onChoose}
+          onChange={(v) => onChoose(v as ProviderChoice)}
           onCancel={onCancel}
         />
       </Box>
@@ -716,7 +716,7 @@ function AutoGoalChooser({
           defaultFocusValue="balanced"
           inlineDescriptions
           visibleOptionCount={options.length}
-          onChange={onChoose}
+          onChange={(v) => onChoose(v as RecommendationGoal)}
           onCancel={onBack}
         />
       </Box>
@@ -824,9 +824,11 @@ function AutoRecommendationStep({
               { label: 'Back', value: 'back' },
               { label: 'Cancel', value: 'cancel' },
             ]}
-            onChange={(value: string) =>
-              value === 'back' ? onBack() : onCancel()
-            }
+            onChange={(value) => {
+              const v = value as string
+              if (v === 'back') return onBack()
+              return onCancel()
+            }}
             onCancel={onCancel}
           />
         </Box>
@@ -849,10 +851,11 @@ function AutoRecommendationStep({
               { label: 'Back', value: 'back' },
               { label: 'Cancel', value: 'cancel' },
             ]}
-            onChange={(value: string) => {
-              if (value === 'continue') {
+            onChange={(value) => {
+              const v = value as string
+              if (v === 'continue') {
                 onNeedOpenAI(status.defaultModel)
-              } else if (value === 'back') {
+              } else if (v === 'back') {
                 onBack()
               } else {
                 onCancel()
@@ -882,15 +885,16 @@ function AutoRecommendationStep({
             { label: 'Back', value: 'back' },
             { label: 'Cancel', value: 'cancel' },
           ]}
-          onChange={(value: string) => {
-            if (value === 'save') {
+          onChange={(value) => {
+            const v = value as string
+            if (v === 'save') {
               onSave(
                 'ollama',
                 buildOllamaProfileEnv(status.model, {
                   getOllamaChatBaseUrl,
                 }),
               )
-            } else if (value === 'back') {
+            } else if (v === 'back') {
               onBack()
             } else {
               onCancel()
@@ -971,9 +975,7 @@ function OllamaModelStep({
               { label: 'Back', value: 'back' },
               { label: 'Cancel', value: 'cancel' },
             ]}
-            onChange={(value: string) =>
-              value === 'back' ? onBack() : onCancel()
-            }
+            onChange={(v) => (v as string) === 'back' ? onBack() : onCancel()}
             onCancel={onCancel}
           />
         </Box>
@@ -994,10 +996,11 @@ function OllamaModelStep({
           defaultFocusValue={status.defaultValue}
           inlineDescriptions
           visibleOptionCount={Math.min(8, status.options.length)}
-          onChange={(value: string) => {
+          onChange={(value) => {
+            const v = value as string
             onSave(
               'ollama',
-              buildOllamaProfileEnv(value, {
+              buildOllamaProfileEnv(v, {
                 getOllamaChatBaseUrl,
               }),
             )
@@ -1047,9 +1050,7 @@ function CodexOAuthStep({
               { label: 'Back', value: 'back' },
               { label: 'Cancel', value: 'cancel' },
             ]}
-            onChange={(value: string) =>
-              value === 'back' ? onBack() : onCancel()
-            }
+            onChange={(v) => (v as string) === 'back' ? onBack() : onCancel()}
             onCancel={onCancel}
           />
         </Box>
@@ -1108,9 +1109,7 @@ function CodexCredentialStep({
               { label: 'Back', value: 'back' },
               { label: 'Cancel', value: 'cancel' },
             ]}
-            onChange={(value: string) =>
-              value === 'back' ? onBack() : onCancel()
-            }
+            onChange={(v) => (v as string) === 'back' ? onBack() : onCancel()}
             onCancel={onCancel}
           />
         </Box>
@@ -1144,9 +1143,10 @@ function CodexCredentialStep({
           defaultFocusValue="codexplan"
           inlineDescriptions
           visibleOptionCount={options.length}
-          onChange={(value: string) => {
+          onChange={(value) => {
+            const v = value as string
             const env = buildCodexProfileEnv({
-              model: value,
+              model: v,
               credentialSource: credentials.credentialSource,
               processEnv: process.env,
             })
@@ -1514,10 +1514,11 @@ export function ProviderWizard({
               options={options}
               inlineDescriptions
               visibleOptionCount={options.length}
-              onChange={(value: string) => {
-                if (value === 'api-key') {
+              onChange={(value) => {
+                const v = value as string
+                if (v === 'api-key') {
                   setStep({ name: 'gemini-key' })
-                } else if (value === 'access-token') {
+                } else if (v === 'access-token') {
                   setStep({ name: 'gemini-access-token' })
                 } else {
                   setStep({

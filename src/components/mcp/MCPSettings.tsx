@@ -2,7 +2,7 @@ import { c as _c } from "react-compiler-runtime";
 import React, { useEffect, useMemo } from 'react';
 import type { CommandResultDisplay } from '../../commands.js';
 import { ClaudeAuthProvider } from '../../services/mcp/auth.js';
-import type { McpClaudeAIProxyServerConfig, McpHTTPServerConfig, McpSSEServerConfig, McpStdioServerConfig } from '../../services/mcp/types.js';
+import type { MCPServerConnection, McpClaudeAIProxyServerConfig, McpHTTPServerConfig, McpSSEServerConfig, McpStdioServerConfig } from '../../services/mcp/types.js';
 import { extractAgentMcpServers, filterToolsByServer } from '../../services/mcp/utils.js';
 import { useAppState } from '../../state/AppState.js';
 import { getSessionIngressAuthToken } from '../../utils/sessionIngressAuth.js';
@@ -18,7 +18,7 @@ type Props = {
     display?: CommandResultDisplay;
   }) => void;
 };
-export function MCPSettings(t0) {
+export function MCPSettings(t0: Props) {
   const $ = _c(66);
   const {
     onComplete
@@ -36,7 +36,7 @@ export function MCPSettings(t0) {
     t1 = $[0];
   }
   const [viewState, setViewState] = React.useState(t1);
-  let t2;
+  let t2: ServerInfo[];
   if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = [];
     $[1] = t2;
@@ -68,7 +68,7 @@ export function MCPSettings(t0) {
     t5 = () => {
       let cancelled = false;
       const prepareServers = async function prepareServers() {
-        const serverInfos = await Promise.all(filteredClients.map(async client_0 => {
+        const serverInfos = await Promise.all(filteredClients.map(async (client_0: MCPServerConnection) => {
           const scope = client_0.config.scope;
           const isSSE = client_0.config.type === "sse";
           const isHTTP = client_0.config.type === "http";
@@ -168,11 +168,11 @@ export function MCPSettings(t0) {
         let t10;
         let t9;
         if ($[16] === Symbol.for("react.memo_cache_sentinel")) {
-          t9 = server => setViewState({
+          t9 = (server: ServerInfo) => setViewState({
             type: "server-menu",
             server
           });
-          t10 = agentServer => setViewState({
+          t10 = (agentServer: AgentMcpServerInfo) => setViewState({
             type: "agent-server-menu",
             agentServer
           });
@@ -287,7 +287,7 @@ export function MCPSettings(t0) {
         let t10;
         let t9;
         if ($[46] !== viewState.server) {
-          t9 = (_, index) => setViewState({
+          t9 = (_: unknown, index: number) => setViewState({
             type: "server-tool-detail",
             server: viewState.server,
             toolIndex: index
@@ -383,15 +383,15 @@ export function MCPSettings(t0) {
       }
   }
 }
-function _temp4(a, b) {
+function _temp4(a: ServerInfo, b: ServerInfo) {
   return a.name.localeCompare(b.name);
 }
-function _temp3(client) {
+function _temp3(client: MCPServerConnection) {
   return client.name !== "ide";
 }
-function _temp2(s_0) {
+function _temp2(s_0: any) {
   return s_0.agentDefinitions;
 }
-function _temp(s) {
+function _temp(s: any) {
   return s.mcp;
 }

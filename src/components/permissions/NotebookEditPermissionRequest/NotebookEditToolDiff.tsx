@@ -10,8 +10,10 @@ import { getPatchForDisplay } from '../../../utils/diff.js';
 import { getFsImplementation } from '../../../utils/fsOperations.js';
 import { safeParseJSON } from '../../../utils/json.js';
 import { parseCellId } from '../../../utils/notebook.js';
-import { HighlightedCode } from '../../HighlightedCode.js';
-import { StructuredDiff } from '../../StructuredDiff.js';
+import { HighlightedCode as _HighlightedCode } from '../../HighlightedCode.js';
+import { StructuredDiff as _StructuredDiff } from '../../StructuredDiff.js';
+const HighlightedCode = _HighlightedCode as React.ComponentType<{ code: string; filePath: string; dim?: boolean; width?: number }>;
+const StructuredDiff = _StructuredDiff as React.ComponentType<{ patch: any; dim: boolean; width: number; filePath: string; firstLine: string | null; fileContent?: string }>;
 type Props = {
   notebook_path: string;
   cell_id: string | undefined;
@@ -31,7 +33,7 @@ type InnerProps = {
   width: number;
   promise: Promise<NotebookContent | null>;
 };
-export function NotebookEditToolDiff(props) {
+export function NotebookEditToolDiff(props: Props) {
   const $ = _c(5);
   let t0;
   if ($[0] !== props.notebook_path) {
@@ -58,10 +60,10 @@ export function NotebookEditToolDiff(props) {
 function _temp2() {
   return null;
 }
-function _temp(content) {
+function _temp(content: string) {
   return safeParseJSON(content) as NotebookContent | null;
 }
-function NotebookEditToolDiffInner(t0) {
+function NotebookEditToolDiffInner(t0: InnerProps) {
   const $ = _c(34);
   const {
     notebook_path,
@@ -102,7 +104,7 @@ function NotebookEditToolDiffInner(t0) {
       }
       let t3;
       if ($[5] !== cell_id) {
-        t3 = cell => cell.id === cell_id;
+        t3 = (cell: any) => cell.id === cell_id;
         $[5] = cell_id;
         $[6] = t3;
       } else {
@@ -206,7 +208,7 @@ function NotebookEditToolDiffInner(t0) {
   }
   let t9;
   if ($[23] !== cell_type || $[24] !== edit_mode || $[25] !== hunks || $[26] !== new_source || $[27] !== notebook_path || $[28] !== oldSource || $[29] !== width) {
-    t9 = edit_mode === "delete" ? <Box flexDirection="column" paddingLeft={2}><HighlightedCode code={oldSource} filePath={notebook_path} /></Box> : edit_mode === "insert" ? <Box flexDirection="column" paddingLeft={2}><HighlightedCode code={new_source} filePath={cell_type === "markdown" ? "file.md" : notebook_path} /></Box> : hunks ? intersperse(hunks.map(_ => <StructuredDiff key={_.newStart} patch={_} dim={false} width={width} filePath={notebook_path} firstLine={new_source.split("\n")[0] ?? null} fileContent={oldSource} />), _temp3) : <HighlightedCode code={new_source} filePath={cell_type === "markdown" ? "file.md" : notebook_path} />;
+    t9 = edit_mode === "delete" ? <Box flexDirection="column" paddingLeft={2}><HighlightedCode code={oldSource} filePath={notebook_path} /></Box> : edit_mode === "insert" ? <Box flexDirection="column" paddingLeft={2}><HighlightedCode code={new_source} filePath={cell_type === "markdown" ? "file.md" : notebook_path} /></Box> : hunks ? intersperse(hunks.map((_hunk: any) => <StructuredDiff key={_hunk.newStart} patch={_hunk} dim={false} width={width} filePath={notebook_path} firstLine={new_source.split("\n")[0] ?? null} fileContent={oldSource} />), _temp3) : <HighlightedCode code={new_source} filePath={cell_type === "markdown" ? "file.md" : notebook_path} />;
     $[23] = cell_type;
     $[24] = edit_mode;
     $[25] = hunks;
@@ -229,6 +231,6 @@ function NotebookEditToolDiffInner(t0) {
   }
   return t10;
 }
-function _temp3(i) {
+function _temp3(i: number) {
   return <NoSelect fromLeftEdge={true} key={`ellipsis-${i}`}><Text dimColor={true}>...</Text></NoSelect>;
 }

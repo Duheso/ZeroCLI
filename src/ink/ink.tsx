@@ -3,7 +3,9 @@ import { closeSync, constants as fsConstants, openSync, readSync, writeSync } fr
 import noop from 'lodash-es/noop.js';
 import throttle from 'lodash-es/throttle.js';
 import React, { type ReactNode } from 'react';
+// @ts-ignore react-reconciler has no .d.ts
 import type { FiberRoot } from 'react-reconciler';
+// @ts-ignore react-reconciler/constants.js has no .d.ts
 import { LegacyRoot } from 'react-reconciler/constants.js';
 import { onExit } from 'signal-exit';
 import { flushInteractionTime } from 'src/bootstrap/state.js';
@@ -270,8 +272,6 @@ export default class Ink {
       }
     };
 
-    // @ts-expect-error @types/react-reconciler@0.32.3 declares 11 args with transitionCallbacks,
-    // but react-reconciler 0.33.0 source only accepts 10 args (no transitionCallbacks)
     this.container = reconciler.createContainer(
       this.rootNode,
       LegacyRoot,
@@ -281,19 +281,19 @@ export default class Ink {
       'id',
       noop,
       // onUncaughtError
-      error => {
+      (error: unknown) => {
         this.reportRenderError('uncaught', error);
       },
       // onCaughtError
-      error => {
+      (error: unknown) => {
         this.reportRenderError('caught', error);
       },
       // onRecoverableError
-      error => {
+      (error: unknown) => {
         this.reportRenderError('recoverable', error);
       }, // onDefaultTransitionIndicator
     );
-    if ("production" === 'development') {
+    if (process.env.NODE_ENV === 'development') {
       reconciler.injectIntoDevTools({
         bundleType: 0,
         // Reporting React DOM's version, not Ink's
@@ -817,7 +817,6 @@ export default class Ink {
   }
   pause(): void {
     // Flush pending React updates and render before pausing.
-    // @ts-expect-error flushSyncFromReconciler exists in react-reconciler 0.31 but not in @types/react-reconciler
     reconciler.flushSyncFromReconciler();
     this.onRender();
     this.isPaused = true;
@@ -1476,9 +1475,7 @@ export default class Ink {
         </TerminalWriteProvider>
       </App>;
 
-    // @ts-expect-error updateContainerSync exists in react-reconciler but not in @types/react-reconciler
     reconciler.updateContainerSync(tree, this.container, null, noop);
-    // @ts-expect-error flushSyncWork exists in react-reconciler but not in @types/react-reconciler
     reconciler.flushSyncWork();
     logForDebugging('[Ink:render] updateContainer complete');
   }
@@ -1544,9 +1541,7 @@ export default class Ink {
       this.drainTimer = null;
     }
 
-    // @ts-expect-error updateContainerSync exists in react-reconciler but not in @types/react-reconciler
     reconciler.updateContainerSync(null, this.container, null, noop);
-    // @ts-expect-error flushSyncWork exists in react-reconciler but not in @types/react-reconciler
     reconciler.flushSyncWork();
     instances.delete(this.options.stdout);
 
@@ -1642,7 +1637,7 @@ export default class Ink {
       // don't stack-overflow.
       if (reentered) {
         const encoding = typeof encodingOrCb === 'string' ? encodingOrCb : undefined;
-        return originalWrite.call(stderr, chunk, encoding, callback);
+        return originalWrite.call(stderr, chunk, encoding, callback as ((err?: Error | null) => void) | undefined);
       }
       reentered = true;
       try {

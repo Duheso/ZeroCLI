@@ -39,7 +39,7 @@ type Props = {
   onImagePaste?: (base64Image: string, mediaType?: string, filename?: string, dimensions?: ImageDimensions, sourcePath?: string) => void;
   onRemoveImage?: (id: number) => void;
 };
-export function QuestionView(t0) {
+export function QuestionView(t0: Props) {
   const $ = _c(114);
   const {
     question,
@@ -80,7 +80,7 @@ export function QuestionView(t0) {
   const editorName = t2;
   let t3;
   if ($[1] !== onTextInputFocus) {
-    t3 = value => {
+    t3 = (value: string) => {
       const isOther = value === "__other__";
       setIsOtherFocused(isOther);
       onTextInputFocus(isOther);
@@ -155,8 +155,8 @@ export function QuestionView(t0) {
     { isActive: isFooterFocused },
   );
 
-  let handleOpenEditor;
-  let questionText;
+  let handleOpenEditor: ((currentValue: string, setValue: (v: string) => void) => Promise<void>) | undefined;
+  let questionText: string;
   let t7;
   if ($[12] !== onUpdateQuestionState || $[13] !== question || $[14] !== questionStates) {
     const textOptions = question.options.map(_temp2);
@@ -164,7 +164,7 @@ export function QuestionView(t0) {
     const questionState = questionStates[questionText];
     let t8;
     if ($[18] !== onUpdateQuestionState || $[19] !== question.multiSelect || $[20] !== questionText) {
-      t8 = async (currentValue, setValue) => {
+      t8 = async (currentValue: string, setValue: (v: string) => void) => {
         const result = await editPromptInEditor(currentValue);
         if (result.content !== null && result.content !== currentValue) {
           setValue(result.content);
@@ -185,7 +185,7 @@ export function QuestionView(t0) {
     const t10 = questionState?.textInputValue ?? "";
     let t11;
     if ($[22] !== onUpdateQuestionState || $[23] !== question.multiSelect || $[24] !== questionText) {
-      t11 = value_0 => {
+      t11 = (value_0: string) => {
         onUpdateQuestionState(questionText, {
           textInputValue: value_0
         }, question.multiSelect ?? false);
@@ -292,7 +292,7 @@ export function QuestionView(t0) {
   }
   let t12;
   if ($[58] !== currentQuestionIndex || $[59] !== handleFocus || $[60] !== handleOpenEditor || $[61] !== isFooterFocused || $[62] !== onAnswer || $[63] !== onCancel || $[64] !== onImagePaste || $[65] !== onRemoveImage || $[66] !== onSubmit || $[67] !== onUpdateQuestionState || $[68] !== options || $[69] !== pastedContents || $[70] !== question.multiSelect || $[71] !== question.question || $[72] !== questionStates || $[73] !== questionText || $[74] !== questions.length) {
-    t12 = <Box marginTop={1}>{question.multiSelect ? <SelectMulti key={question.question} options={options} defaultValue={questionStates[question.question]?.selectedValue as string[] | undefined} onChange={values => {
+    t12 = <Box marginTop={1}>{question.multiSelect ? <SelectMulti key={question.question} options={options} defaultValue={questionStates[question.question]?.selectedValue as string[] | undefined} onChange={(values: string[]) => {
         onUpdateQuestionState(questionText, {
           selectedValue: values
         }, true);
@@ -300,11 +300,12 @@ export function QuestionView(t0) {
         const finalValues = values.filter(_temp4).concat(textInput ? [textInput] : []);
         onAnswer(questionText, finalValues, undefined, false);
       }} onFocus={handleFocus} onCancel={onCancel} submitButtonText={currentQuestionIndex === questions.length - 1 ? "Submit" : "Next"} onSubmit={onSubmit} onDownFromLastItem={handleDownFromLastItem} isDisabled={isFooterFocused} onOpenEditor={handleOpenEditor} onImagePaste={onImagePaste} pastedContents={pastedContents} onRemoveImage={onRemoveImage} /> : <Select key={question.question} options={options} defaultValue={questionStates[question.question]?.selectedValue as string | undefined} onChange={value_1 => {
+        const v = value_1 as string;
         onUpdateQuestionState(questionText, {
-          selectedValue: value_1
+          selectedValue: v
         }, false);
-        const textInput_0 = value_1 === "__other__" ? questionStates[questionText]?.textInputValue : undefined;
-        onAnswer(questionText, value_1, textInput_0);
+        const textInput_0 = v === "__other__" ? questionStates[questionText]?.textInputValue : undefined;
+        onAnswer(questionText, v, textInput_0);
       }} onFocus={handleFocus} onCancel={onCancel} onDownFromLastItem={handleDownFromLastItem} isDisabled={isFooterFocused} layout="compact-vertical" onOpenEditor={handleOpenEditor} onImagePaste={onImagePaste} pastedContents={pastedContents} onRemoveImage={onRemoveImage} />}</Box>;
     $[58] = currentQuestionIndex;
     $[59] = handleFocus;
@@ -440,13 +441,13 @@ export function QuestionView(t0) {
   }
   return t26;
 }
-function _temp4(v) {
+function _temp4(v: string) {
   return v !== "__other__";
 }
-function _temp3(opt_0) {
+function _temp3(opt_0: QuestionOption) {
   return opt_0.preview;
 }
-function _temp2(opt) {
+function _temp2(opt: QuestionOption) {
   return {
     type: "text" as const,
     value: opt.label,
@@ -454,6 +455,6 @@ function _temp2(opt) {
     description: opt.description
   };
 }
-function _temp(s) {
+function _temp(s: { toolPermissionContext: { mode: string } }) {
   return s.toolPermissionContext.mode;
 }
