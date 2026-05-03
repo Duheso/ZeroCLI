@@ -428,7 +428,7 @@ Questions asked and answers provided:\n${questionsWithAnswers_0}`;
           answer_2 = questionImages.length > 0 ? `${textInput} (Image attached)` : textInput;
         } else {
           if (label === "__other__") {
-            const questionImages_0 = Object.values(pastedContentsByQuestion[questionText_1] ?? {}).filter(_temp6);
+            const questionImages_0 = Object.values(pastedContentsByQuestion[questionText_1] ?? {}).filter((c: any) => c.type === "image");
             answer_2 = questionImages_0.length > 0 ? "(Image attached)" : label;
           } else {
             answer_2 = label;
