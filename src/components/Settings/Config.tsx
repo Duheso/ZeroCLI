@@ -413,6 +413,7 @@ export function Config({
     }
   }] : []),
   // Speculation toggle (internal-only)
+  // @ts-expect-error -- internal build flag: "external" is a compile-time constant that never equals 'ant' in external builds
   ...("external" === 'ant' ? [{
     id: 'speculationEnabled',
     label: 'Speculative execution',
@@ -1619,7 +1620,7 @@ export function Config({
             </Byline>
           </Text>
         </> : showSubmenu === 'Language' ? <>
-          <LanguagePicker initialLanguage={currentLanguage} onComplete={language => {
+          <LanguagePicker initialLanguage={currentLanguage} onComplete={(language: string | undefined) => {
         isDirty.current = true;
         setCurrentLanguage(language);
         setShowSubmenu(null);
@@ -1661,7 +1662,8 @@ export function Config({
       }, {
         label: 'Enable with stable channel',
         value: 'stable'
-      }]} onChange={(channel: string) => {
+      }]} // @ts-expect-error -- Select onChange type mismatch in react-compiler output
+      onChange={(channel: string) => {
         isDirty.current = true;
         setShowSubmenu(null);
         setTabsHidden(false);
@@ -1814,7 +1816,7 @@ const THEME_LABELS: Record<string, string> = {
   'dark-ansi': 'Dark mode (ANSI colors only)',
   'light-ansi': 'Light mode (ANSI colors only)'
 };
-function NotifChannelLabel(t0) {
+function NotifChannelLabel(t0: { value: string }) {
   const $ = _c(4);
   const {
     value

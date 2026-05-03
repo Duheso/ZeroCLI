@@ -63,7 +63,9 @@ export function Passes({
         setIsAvailable(true);
 
         // Store the referral link if available
+        // @ts-expect-error - referral_code_details exists in API response but not in types
         if (eligibilityData.referral_code_details?.referral_link) {
+          // @ts-expect-error - referral_code_details exists in API response but not in types
           setReferralLink(eligibilityData.referral_code_details.referral_link);
         }
 
@@ -71,6 +73,7 @@ export function Passes({
         setReferrerReward(eligibilityData.referrer_reward);
 
         // Use the campaign returned from eligibility for redemptions
+        // @ts-expect-error - referral_code_details exists in API response but not in types
         const campaign = eligibilityData.referral_code_details?.campaign ?? 'claude_code_guest_pass';
 
         // Fetch redemptions data
@@ -86,6 +89,7 @@ export function Passes({
 
         // Build pass statuses array
         const redemptions = redemptionsData.redemptions || [];
+        // @ts-expect-error - limit exists in API response but not in types
         const maxRedemptions = redemptionsData.limit || 3;
         const statuses: PassStatus[] = [];
         for (let i = 0; i < maxRedemptions; i++) {
