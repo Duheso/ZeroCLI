@@ -84,7 +84,7 @@ function useSmoothCount(target: number, time: number, snap: boolean): number {
   }
   return displayed.current;
 }
-function ReviewRainbowLine(t0) {
+function ReviewRainbowLine(t0: { session: DeepImmutable<import('src/tasks/RemoteAgentTask/RemoteAgentTask.js').RemoteAgentTaskState> }) {
   const $ = _c(15);
   const {
     session

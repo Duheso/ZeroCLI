@@ -36,7 +36,7 @@ const BOX_CHARS = {
  * Truncates content that exceeds maxLines with an indicator.
  * The parent component should pass maxLines based on its available height budget.
  */
-export function PreviewBox(props) {
+export function PreviewBox(props: PreviewBoxProps) {
   const $ = _c(4);
   const settings = useSettings();
   if (settings.syntaxHighlightingDisabled) {
