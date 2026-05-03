@@ -152,13 +152,14 @@ export class RemoteSessionManager {
   ): void {
     // Handle control requests (permission prompts from CCR)
     if (message.type === 'control_request') {
-      this.handleControlRequest(message)
+      this.handleControlRequest(message as SDKControlRequest)
       return
     }
 
     // Handle control cancel requests (server cancelling a pending permission prompt)
     if (message.type === 'control_cancel_request') {
-      const { request_id } = message
+      const cancelMsg = message as SDKControlCancelRequest
+      const request_id: string = cancelMsg.request_id
       const pendingRequest = this.pendingPermissionRequests.get(request_id)
       logForDebugging(
         `[RemoteSessionManager] Permission request cancelled: ${request_id}`,
@@ -193,8 +194,9 @@ export class RemoteSessionManager {
       logForDebugging(
         `[RemoteSessionManager] Permission request for tool: ${inner.tool_name}`,
       )
-      this.pendingPermissionRequests.set(request_id, inner)
-      this.callbacks.onPermissionRequest(inner, request_id)
+      const permRequest = request as SDKControlPermissionRequest
+      this.pendingPermissionRequests.set(request_id, permRequest)
+      this.callbacks.onPermissionRequest(permRequest, request_id)
     } else {
       // Send an error response for unrecognized subtypes so the server
       // doesn't hang waiting for a reply that never comes.

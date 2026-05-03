@@ -369,6 +369,8 @@ export type GroupedToolUseMessage = {
   toolUseIDs: string[]
   messages: NormalizedAssistantMessage[]
   displayMessage: NormalizedAssistantMessage
+  results: NormalizedUserMessage[]
+  messageId: string
 }
 
 export type CollapsedReadSearchGroup = {

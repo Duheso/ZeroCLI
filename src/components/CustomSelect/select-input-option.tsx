@@ -2,6 +2,7 @@ import { c as _c } from "react-compiler-runtime";
 import React, { type ReactNode, useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line custom-rules/prefer-use-keybindings -- UP arrow exit not in Attachments bindings
 import { Box, Text, useInput } from '../../ink.js';
+import type { Key } from '../../ink/events/input-event.js';
 import { useKeybinding, useKeybindings } from '../../keybindings/useKeybinding.js';
 import type { PastedContent } from '../../utils/config.js';
 import { getImageFromClipboard } from '../../utils/imagePaste.js';
@@ -75,7 +76,7 @@ type Props<T> = {
    */
   onSelectedImageIndexChange?: (index: number) => void;
 };
-export function SelectInputOption(t0) {
+export function SelectInputOption<T = unknown>(t0: Props<T>) {
   const $ = _c(100);
   const {
     option,
@@ -312,7 +313,7 @@ export function SelectInputOption(t0) {
   useKeybindings(t20, t22);
   let t23;
   if ($[45] !== onImagesSelectedChange) {
-    t23 = (_input, key) => {
+    t23 = (_input: string, key: Key) => {
       if (key.upArrow) {
         onImagesSelectedChange?.(false);
       }
