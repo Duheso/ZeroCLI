@@ -40,7 +40,7 @@ export function formatReviewStageCounts(stage: ReviewStage | undefined, found: n
 // Per-character rainbow gradient, same treatment as the ultraplan keyword.
 // The phase offset lets the gradient cycle — so the colors sweep along the
 // text on each animation frame instead of being static.
-function RainbowText(t0) {
+function RainbowText(t0: { text: string, phase?: number }) {
   const $ = _c(5);
   const {
     text,
@@ -57,7 +57,7 @@ function RainbowText(t0) {
   }
   let t3;
   if ($[2] !== phase || $[3] !== t2) {
-    t3 = <>{t2.map((ch, i) => <Text key={i} color={getRainbowColor(i + phase)}>{ch}</Text>)}</>;
+    t3 = <>{t2.map((ch: string, i: number) => <Text key={i} color={getRainbowColor(i + phase)}>{ch}</Text>)}</>;
     $[2] = phase;
     $[3] = t2;
     $[4] = t3;

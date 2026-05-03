@@ -19,7 +19,7 @@ type Props = {
 
 // How many recent turns to render. Earlier turns collapse to a count.
 const VISIBLE_TURNS = 6;
-export function DreamDetailDialog(t0) {
+export function DreamDetailDialog(t0: Props) {
   const $ = _c(70);
   const {
     task,
@@ -50,7 +50,7 @@ export function DreamDetailDialog(t0) {
   useKeybindings(t1, t2);
   let t3;
   if ($[3] !== onBack || $[4] !== onDone || $[5] !== onKill || $[6] !== task.status) {
-    t3 = e => {
+    t3 = (e: KeyboardEvent) => {
       if (e.key === " ") {
         e.preventDefault();
         onDone();
@@ -132,7 +132,7 @@ export function DreamDetailDialog(t0) {
     t10 = onDone;
     t11 = "background";
     if ($[42] !== onBack || $[43] !== onKill || $[44] !== task.status) {
-      t12 = exitState => exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline>{onBack && <KeyboardShortcutHint shortcut={"\u2190"} action="go back" />}<KeyboardShortcutHint shortcut="Esc/Enter/Space" action="close" />{task.status === "running" && onKill && <KeyboardShortcutHint shortcut="x" action="stop" />}</Byline>;
+      t12 = (exitState: { pending: boolean; keyName: string }) => exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <Byline>{onBack && <KeyboardShortcutHint shortcut={"\u2190"} action="go back" />}<KeyboardShortcutHint shortcut="Esc/Enter/Space" action="close" />{task.status === "running" && onKill && <KeyboardShortcutHint shortcut="x" action="stop" />}</Byline>;
       $[42] = onBack;
       $[43] = onKill;
       $[44] = task.status;
@@ -242,9 +242,9 @@ export function DreamDetailDialog(t0) {
   }
   return t19;
 }
-function _temp2(turn, i) {
+function _temp2(turn: { text: string; toolUseCount: number }, i: number) {
   return <Box key={i} flexDirection="column"><Text wrap="wrap">{turn.text}</Text>{turn.toolUseCount > 0 && <Text dimColor={true}>{"  "}({turn.toolUseCount}{" "}{plural(turn.toolUseCount, "tool")})</Text>}</Box>;
 }
-function _temp(t) {
+function _temp(t: { text: string }) {
   return t.text !== "";
 }
