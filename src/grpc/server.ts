@@ -122,7 +122,7 @@ export class GrpcServer {
                   if (reply.toLowerCase() === 'yes' || reply.toLowerCase() === 'y') {
                     resolve({ behavior: 'allow' })
                   } else {
-                    resolve({ behavior: 'deny', reason: 'User denied via gRPC' })
+                    resolve({ behavior: 'deny', reason: 'User denied via gRPC' } as any)
                   }
                 })
               })
@@ -143,17 +143,19 @@ export class GrpcServer {
 
           for await (const msg of generator) {
             if (msg.type === 'stream_event') {
-              if (msg.event.type === 'content_block_delta' && msg.event.delta.type === 'text_delta') {
+              const event = msg.event as { type?: string; delta?: { type?: string; text?: string } }
+              if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
                 call.write({
                   text_chunk: {
-                    text: msg.event.delta.text
+                    text: event.delta.text
                   }
                 })
-                fullText += msg.event.delta.text
+                fullText += event.delta.text || ''
               }
             } else if (msg.type === 'user') {
               // Extract tool results
-              const content = msg.message.content
+              const messageObj = msg.message as { content?: unknown }
+              const content = messageObj.content
               if (Array.isArray(content)) {
                 for (const block of content) {
                   if (block.type === 'tool_result') {
@@ -161,7 +163,7 @@ export class GrpcServer {
                     if (typeof block.content === 'string') {
                       outputStr = block.content
                     } else if (Array.isArray(block.content)) {
-                      outputStr = block.content.map(c => c.type === 'text' ? c.text : '').join('\n')
+                      outputStr = (block.content as Array<{ type?: string; text?: string }>).map((c: { type?: string; text?: string }) => c.type === 'text' ? c.text : '').join('\n')
                     }
                     call.write({
                       tool_result: {

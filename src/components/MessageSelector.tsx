@@ -294,7 +294,7 @@ export function MessageSelector({
         if (userMessage.uuid !== currentUUID) {
           const canRestore = fileHistoryCanRestore(fileHistory, userMessage.uuid as UUID);
           const nextUserMessage = messageOptions.at(itemIndex + 1);
-          const diffStats_0 = canRestore ? computeDiffStatsBetweenMessages(messages, userMessage.uuid as UUID, nextUserMessage?.uuid !== currentUUID ? nextUserMessage?.uuid : undefined) : undefined;
+          const diffStats_0 = canRestore ? computeDiffStatsBetweenMessages(messages, userMessage.uuid as UUID, nextUserMessage?.uuid !== currentUUID ? nextUserMessage?.uuid as UUID : undefined) : undefined;
           if (diffStats_0 !== undefined) {
             setFileHistoryMetadata(prev_1 => ({
               ...prev_1,
@@ -459,7 +459,7 @@ function RestoreOptionDescription(t0: { selectedRestoreOption: RestoreOption; ca
   }
   return t4;
 }
-function RestoreCodeConfirmation(t0) {
+function RestoreCodeConfirmation(t0: { diffStatsForRestore?: DiffStats }) {
   const $ = _c(14);
   const {
     diffStatsForRestore
@@ -542,7 +542,7 @@ function RestoreCodeConfirmation(t0) {
   }
   return t2;
 }
-function DiffStatsText(t0) {
+function DiffStatsText(t0: { diffStats: DiffStats }) {
   const $ = _c(7);
   const {
     diffStats
@@ -577,7 +577,7 @@ function DiffStatsText(t0) {
   }
   return t3;
 }
-function UserMessageOption(t0) {
+function UserMessageOption(t0: { userMessage: UserMessage; color?: string; dimColor?: string; isCurrent: boolean; paddingRight?: number }) {
   const $ = _c(31);
   const {
     userMessage,
