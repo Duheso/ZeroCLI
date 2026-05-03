@@ -15,7 +15,7 @@ type Props = {
   verbose: boolean;
   previewHint?: string;
 };
-export function FileEditToolUpdatedMessage(t0) {
+export function FileEditToolUpdatedMessage(t0: Props) {
   const $ = _c(22);
   const {
     filePath,
@@ -109,15 +109,15 @@ export function FileEditToolUpdatedMessage(t0) {
   }
   return t8;
 }
-function _temp4(acc_0, hunk_0) {
+function _temp4(acc_0: number, hunk_0: StructuredPatchHunk): number {
   return acc_0 + count(hunk_0.lines, _temp3);
 }
-function _temp3(__0) {
+function _temp3(__0: string): boolean {
   return __0.startsWith("-");
 }
-function _temp2(acc, hunk) {
+function _temp2(acc: number, hunk: StructuredPatchHunk): number {
   return acc + count(hunk.lines, _temp);
 }
-function _temp(_) {
-  return _.startsWith("+");
+function _temp(_0: string): boolean {
+  return _0.startsWith("+");
 }

@@ -6,6 +6,7 @@ import { t } from '../../i18n/index.js';
 import { useRegisterOverlay } from '../../context/overlayContext.js';
 import { type DiffData, useDiffData } from '../../hooks/useDiffData.js';
 import { type TurnDiff, useTurnDiffs } from '../../hooks/useTurnDiffs.js';
+import { type ExitState } from '../../hooks/useExitOnCtrlCDWithKeybindings.js';
 import { Box, Text } from '../../ink.js';
 import { useKeybindings } from '../../keybindings/useKeybinding.js';
 import { useShortcutDisplay } from '../../keybindings/useShortcutDisplay.js';
@@ -53,7 +54,7 @@ function turnDiffToDiffData(turn: TurnDiff): DiffData {
     loading: false
   };
 }
-export function DiffDialog(t0) {
+export function DiffDialog(t0: Props) {
   const $ = _c(73);
   const {
     messages,
@@ -329,7 +330,7 @@ export function DiffDialog(t0) {
   const handleCancel = t22;
   let t23;
   if ($[51] !== dismissShortcut || $[52] !== sources.length || $[53] !== viewMode) {
-    t23 = exitState => exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : viewMode === "list" ? <Byline>{sources.length > 1 && <Text>{t('diff_nav_source') as string}</Text>}<Text>{t('diff_nav_select') as string}</Text><Text>{t('diff_nav_enter_view') as string}</Text><Text>{t('diff_nav_esc_close')(dismissShortcut) as string}</Text></Byline> : <Byline><Text>{t('diff_nav_back') as string}</Text><Text>{t('diff_nav_esc_close')(dismissShortcut) as string}</Text></Byline>;
+    t23 = (exitState: ExitState) => exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : viewMode === "list" ? <Byline>{sources.length > 1 && <Text>{t('diff_nav_source') as string}</Text>}<Text>{t('diff_nav_select') as string}</Text><Text>{t('diff_nav_enter_view') as string}</Text><Text>{t('diff_nav_esc_close')(dismissShortcut) as string}</Text></Byline> : <Byline><Text>{t('diff_nav_back') as string}</Text><Text>{t('diff_nav_esc_close')(dismissShortcut) as string}</Text></Byline>;
     $[51] = dismissShortcut;
     $[52] = sources.length;
     $[53] = viewMode;
@@ -369,13 +370,13 @@ export function DiffDialog(t0) {
   }
   return t25;
 }
-function _temp3(prev_1) {
+function _temp3(prev_1: number) {
   return Math.max(0, prev_1 - 1);
 }
-function _temp2(prev) {
+function _temp2(prev: number) {
   return Math.max(0, prev - 1);
 }
-function _temp(turn) {
+function _temp(turn: TurnDiff) {
   return {
     type: "turn",
     turn
