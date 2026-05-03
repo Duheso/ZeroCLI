@@ -665,7 +665,7 @@ export function ManagePlugins({
       originalScope: originalScope_0,
       childMcps
     } of pluginsWithChildren) {
-      const scope_0 = item_1.scope;
+      const scope_0 = item_1.scope ?? 'user';
       if (!itemsByScope.has(scope_0)) {
         itemsByScope.set(scope_0, []);
       }
@@ -976,8 +976,8 @@ export function ManagePlugins({
             id: failedItem.id,
             name: failedItem.name,
             marketplace: failedItem.marketplace,
-            errors: failedItem.errors,
-            scope: failedItem.scope
+            errors: failedItem.errors as PluginError[],
+            scope: failedItem.scope as PersistablePluginScope
           }
         });
         hasAutoNavigated.current = true;
@@ -1165,9 +1165,9 @@ export function ManagePlugins({
       const mergedSettings_0 = getSettings_DEPRECATED();
       const currentPending = pendingToggles.get(pluginId_4);
       const isEnabled_0 = mergedSettings_0?.enabledPlugins?.[pluginId_4] !== false;
-      const pluginScope_0 = item_7.scope;
+      const pluginScope_0 = item_7.scope ?? 'user';
       const isBuiltin_0 = pluginScope_0 === 'builtin';
-      if (isBuiltin_0 || isInstallableScope(pluginScope_0)) {
+      if (isBuiltin_0 || isInstallableScope(pluginScope_0 as PluginScope)) {
         const newPending = new Map(pendingToggles);
         // Omit scope — see handleSingleOperation's enable/disable comment.
         if (currentPending) {

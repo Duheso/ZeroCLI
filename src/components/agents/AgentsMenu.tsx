@@ -372,7 +372,7 @@ export function AgentsMenu(t0: Props) {
         const menuItems = t17;
         let t18;
         if ($[66] !== agentToUse || $[67] !== modeState) {
-          t18 = value_0 => {
+          t18 = (value_0: string) => {
             bb129: switch (value_0) {
               case "view":
                 {
@@ -490,7 +490,7 @@ export function AgentsMenu(t0: Props) {
         if ($[89] !== allAgents || $[90] !== modeState.agent) {
           let t14;
           if ($[92] !== modeState.agent) {
-            t14 = a_8 => a_8.agentType === modeState.agent.agentType && a_8.source === modeState.agent.source;
+            t14 = (a_8: AgentDefinition) => a_8.agentType === modeState.agent.agentType && a_8.source === modeState.agent.source;
             $[92] = modeState.agent;
             $[93] = t14;
           } else {
@@ -615,7 +615,7 @@ export function AgentsMenu(t0: Props) {
         }
         let t17;
         if ($[119] !== handleAgentDeleted || $[120] !== modeState) {
-          t17 = value => {
+          t17 = (value: string) => {
             if (value === "yes") {
               handleAgentDeleted(modeState.agent);
             } else {
@@ -685,7 +685,7 @@ export function AgentsMenu(t0: Props) {
         if ($[135] !== allAgents || $[136] !== modeState.agent) {
           let t14;
           if ($[138] !== modeState.agent) {
-            t14 = a_7 => a_7.agentType === modeState.agent.agentType && a_7.source === modeState.agent.source;
+            t14 = (a_7: AgentDefinition) => a_7.agentType === modeState.agent.agentType && a_7.source === modeState.agent.source;
             $[138] = modeState.agent;
             $[139] = t14;
           } else {
@@ -712,7 +712,7 @@ export function AgentsMenu(t0: Props) {
         let t16;
         let t17;
         if ($[142] !== modeState.previousMode) {
-          t16 = message_0 => {
+          t16 = (message_0: string) => {
             handleAgentCreated(message_0);
             setModeState(modeState.previousMode);
           };
@@ -768,33 +768,33 @@ export function AgentsMenu(t0: Props) {
       }
   }
 }
-function _temp0(a_5) {
+function _temp0(a_5: AgentDefinition) {
   return a_5.source === "plugin";
 }
-function _temp9(a_4) {
+function _temp9(a_4: AgentDefinition) {
   return a_4.source === "flagSettings";
 }
-function _temp8(a_3) {
+function _temp8(a_3: AgentDefinition) {
   return a_3.source === "localSettings";
 }
-function _temp7(a_2) {
+function _temp7(a_2: AgentDefinition) {
   return a_2.source === "policySettings";
 }
-function _temp6(a_1) {
+function _temp6(a_1: AgentDefinition) {
   return a_1.source === "projectSettings";
 }
-function _temp5(a_0) {
+function _temp5(a_0: AgentDefinition) {
   return a_0.source === "userSettings";
 }
-function _temp4(a) {
+function _temp4(a: AgentDefinition) {
   return a.source === "built-in";
 }
-function _temp3(s_1) {
+function _temp3(s_1: import('../../state/AppState.js').AppState) {
   return s_1.toolPermissionContext;
 }
-function _temp2(s_0) {
+function _temp2(s_0: import('../../state/AppState.js').AppState) {
   return s_0.mcp.tools;
 }
-function _temp(s) {
+function _temp(s: import('../../state/AppState.js').AppState) {
   return s.agentDefinitions;
 }

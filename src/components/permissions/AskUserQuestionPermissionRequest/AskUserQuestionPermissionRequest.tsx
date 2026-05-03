@@ -185,7 +185,7 @@ function AskUserQuestionPermissionRequestBody(t0: PermissionRequestProps & { hig
       };
       cacheImagePath(newContent);
       storeImage(newContent);
-      setPastedContentsByQuestion(prev => ({
+      setPastedContentsByQuestion((prev: Record<string, Record<string, any>>) => ({
         ...prev,
         [questionText]: {
           ...(prev[questionText] ?? {}),
@@ -201,7 +201,7 @@ function AskUserQuestionPermissionRequestBody(t0: PermissionRequestProps & { hig
   let t8;
   if ($[17] === Symbol.for("react.memo_cache_sentinel")) {
     t8 = (questionText_0: string, id: number) => {
-      setPastedContentsByQuestion(prev_0 => {
+      setPastedContentsByQuestion((prev_0: Record<string, Record<string, any>>) => {
         const questionContents = {
           ...(prev_0[questionText_0] ?? {})
         };
@@ -368,7 +368,7 @@ Questions asked and answers provided:\n${questionsWithAnswers_0}`;
   const handleFinishPlanInterview = t14;
   let t15;
   if ($[48] !== allImageAttachments || $[49] !== isInPlanMode || $[50] !== metadataSource || $[51] !== onDone || $[52] !== questionStates || $[53] !== questions || $[54] !== toolUseConfirm) {
-    t15 = async answersToSubmit => {
+    t15 = async (answersToSubmit: Record<string, string>) => {
       if (metadataSource) {
         logEvent("tengu_ask_user_question_accepted", {
           source: metadataSource as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -382,16 +382,12 @@ Questions asked and answers provided:\n${questionsWithAnswers_0}`;
       for (const q_3 of questions) {
         const answer_1 = answersToSubmit[q_3.question];
         const notes = questionStates[q_3.question]?.textInputValue;
-        const selectedOption = answer_1 ? q_3.options.find(opt_1 => opt_1.label === answer_1) : undefined;
+        const selectedOption = answer_1 ? q_3.options.find((opt_1: any) => opt_1.label === answer_1) : undefined;
         const preview = selectedOption?.preview;
         if (preview || notes?.trim()) {
           annotations[q_3.question] = {
-            ...(preview && {
-              preview
-            }),
-            ...(notes?.trim() && {
-              notes: notes.trim()
-            })
+            ...(preview && ({ preview } as any)),
+            ...(notes?.trim() && ({ notes: notes.trim() } as any))
           };
         }
       }
@@ -420,7 +416,7 @@ Questions asked and answers provided:\n${questionsWithAnswers_0}`;
   const submitAnswers = t15;
   let t16;
   if ($[56] !== answers || $[57] !== pastedContentsByQuestion || $[58] !== questions.length || $[59] !== setAnswer || $[60] !== submitAnswers) {
-    t16 = (questionText_1, label, textInput, t17) => {
+    t16 = (questionText_1: string, label: any, textInput: any, t17: any) => {
       const shouldAdvance = t17 === undefined ? true : t17;
       let answer_2;
       const isMultiSelect = Array.isArray(label);
@@ -462,7 +458,7 @@ Questions asked and answers provided:\n${questionsWithAnswers_0}`;
   const handleQuestionAnswer = t16;
   let t17;
   if ($[62] !== answers || $[63] !== handleCancel || $[64] !== submitAnswers) {
-    t17 = function handleFinalResponse(value) {
+    t17 = function handleFinalResponse(value: string) {
       if (value === "cancel") {
         handleCancel();
         return;
@@ -537,7 +533,7 @@ Questions asked and answers provided:\n${questionsWithAnswers_0}`;
   if (currentQuestion) {
     let t23;
     if ($[78] !== currentQuestion.question) {
-      t23 = (base64, mediaType_0, filename_0, dims, path) => onImagePaste(currentQuestion.question, base64, mediaType_0, filename_0, dims, path);
+      t23 = (base64: string, mediaType_0: any, filename_0: any, dims: any, path: any) => onImagePaste(currentQuestion.question, base64, mediaType_0, filename_0, dims, path);
       $[78] = currentQuestion.question;
       $[79] = t23;
     } else {
@@ -612,19 +608,19 @@ Questions asked and answers provided:\n${questionsWithAnswers_0}`;
 function _temp6(c_1) {
   return c_1.type === "image";
 }
-function _temp5(c_0) {
+function _temp5(c_0: any) {
   return c_0.type === "image";
 }
-function _temp4(s) {
+function _temp4(s: any) {
   return s.toolPermissionContext.mode;
 }
-function _temp3(c) {
+function _temp3(c: any) {
   return c.type === "image";
 }
-function _temp2(contents) {
+function _temp2(contents: any) {
   return Object.values(contents);
 }
-function _temp(opt) {
+function _temp(opt: any) {
   return opt.preview;
 }
 async function convertImagesToBlocks(images: PastedContent[]): Promise<ImageBlockParam[] | undefined> {
