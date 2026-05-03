@@ -46,6 +46,9 @@ export type MCPProgress = {
   status: 'started' | 'completed' | 'failed'
   serverName: string
   toolName: string
+  progress?: number
+  total?: number
+  progressMessage?: string
 }
 
 // Web search progress

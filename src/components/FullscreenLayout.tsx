@@ -290,7 +290,7 @@ export function FullscreenLayout(t0: Props) {
     rows: terminalRows,
     columns
   } = useTerminalSize();
-  const [stickyPrompt, setStickyPrompt] = useState(null);
+  const [stickyPrompt, setStickyPrompt] = useState<StickyPrompt | null>(null);
   let t4;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t4 = {
@@ -303,7 +303,7 @@ export function FullscreenLayout(t0: Props) {
   const chromeCtx = t4;
   let t5;
   if ($[1] !== scrollRef) {
-    t5 = listener => scrollRef?.current?.subscribe(listener) ?? _temp;
+    t5 = (listener: Function) => scrollRef?.current?.subscribe(listener) ?? _temp;
     $[1] = scrollRef;
     $[2] = t5;
   } else {

@@ -137,7 +137,7 @@ function _temp2(a: ValidationError, b: ValidationError) {
   }
   return (a.path || "").localeCompare(b.path || "");
 }
-function _temp(acc, error) {
+function _temp(acc: Record<string, ValidationError[]>, error: ValidationError) {
   const file = error.file || "(file not specified)";
   if (!acc[file]) {
     acc[file] = [];
