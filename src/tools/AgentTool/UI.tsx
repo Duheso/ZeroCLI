@@ -372,7 +372,7 @@ export function renderToolResultMessage(data: Output, progressMessagesForMessage
     usage,
     content,
     prompt
-  } = data;
+  } = data as any;
   const result = [totalToolUseCount === 1 ? '1 tool use' : `${totalToolUseCount} tool uses`, formatNumber(totalTokens) + ' tokens', formatDuration(totalDurationMs)];
   const completionMessage = `Done (${result.join(' · ')})`;
   const finalAssistantMessage = createAssistantMessage({
@@ -385,7 +385,7 @@ export function renderToolResultMessage(data: Output, progressMessagesForMessage
     }
   });
   return <Box flexDirection="column">
-      {("external" as string) === 'ant' && <MessageResponse>
+      {String("external") === 'ant' && <MessageResponse>
           <Text color="warning">
             [internal] API calls: {getDisplayPath(getDumpPromptsPath(agentId))}
           </Text>
@@ -476,9 +476,9 @@ export function renderToolUseProgressMessage(progressMessages: ProgressMessage<P
       const message = msg.data.message;
       return message.message.content.some(content => content.type === 'tool_use');
     });
-    const latestAssistant = progressMessages.findLast((msg): msg is ProgressMessage<AgentToolProgress> => hasProgressMessage(msg.data) && msg.data.message.type === 'assistant');
+    const latestAssistant = progressMessages.findLast((msg): msg is ProgressMessage<AgentToolProgress> => hasProgressMessage(msg.data) && (msg.data.message.type as string) === 'assistant');
     let tokens = null;
-    if (latestAssistant?.data.message.type === 'assistant') {
+    if ((latestAssistant?.data.message.type as string) === 'assistant') {
       const usage = latestAssistant.data.message.message.usage;
       tokens = (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0) + usage.input_tokens + usage.output_tokens;
     }
@@ -635,10 +635,10 @@ function calculateAgentStats(progressMessages: ProgressMessage<Progress>[]): {
     const message = msg.data.message;
     return message.type === 'user' && message.message.content.some(content => content.type === 'tool_result');
   });
-  const latestAssistant = progressMessages.findLast((msg): msg is ProgressMessage<AgentToolProgress> => hasProgressMessage(msg.data) && msg.data.message.type === 'assistant');
+  const latestAssistant = progressMessages.findLast((msg): msg is ProgressMessage<AgentToolProgress> => hasProgressMessage(msg.data) && (msg.data.message.type as string) === 'assistant');
   let tokens = null;
-  if (latestAssistant?.data.message.type === 'assistant') {
-    const usage = latestAssistant.data.message.message.usage;
+  if ((latestAssistant?.data.message.type as string) === 'assistant') {
+    const usage = (latestAssistant.data.message as any).message.usage;
     tokens = (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0) + usage.input_tokens + usage.output_tokens;
   }
   return {

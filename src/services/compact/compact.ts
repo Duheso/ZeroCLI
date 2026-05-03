@@ -1,5 +1,7 @@
 import { feature } from 'bun:bundle'
-import type { UUID } from 'src/types/UUID.js'
+import type { UUID } from '../../types/UUID.js'
+
+type LegacyPartialCompactDirection = 'from' | 'up_to'
 import uniqBy from 'lodash-es/uniqBy.js'
 
 /* eslint-disable @typescript-eslint/no-require-imports */
@@ -778,7 +780,7 @@ export async function partialCompactConversation(
   context: ToolUseContext,
   cacheSafeParams: CacheSafeParams,
   userFeedback?: string,
-  direction: PartialCompactDirection = 'from',
+  direction: LegacyPartialCompactDirection = 'from',
 ): Promise<CompactionResult> {
   try {
     const messagesToSummarize =

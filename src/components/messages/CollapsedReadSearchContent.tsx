@@ -40,7 +40,15 @@ type Props = {
 };
 
 /** Render a single tool use in verbose mode */
-function VerboseToolUse(t0) {
+type VerboseToolUseProps = {
+  content: { id: string; input: unknown; name: string };
+  tools: Tools;
+  lookups: ReturnType<typeof buildMessageLookups>;
+  inProgressToolUseIDs: Set<string>;
+  shouldAnimate: boolean;
+  theme: ThemeName;
+};
+function VerboseToolUse(t0: VerboseToolUseProps) {
   const $ = _c(24);
   const {
     content,
