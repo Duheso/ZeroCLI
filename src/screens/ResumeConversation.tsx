@@ -349,17 +349,17 @@ function NoConversationsMessage() {
 function _temp() {
   process.exit(1);
 }
-function CrossProjectMessage(t0) {
+function CrossProjectMessage(t0: { command: string }) {
   const $ = _c(8);
   const {
     command
   } = t0;
-  let t1;
+  let t1: any[] = [];
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = [];
     $[0] = t1;
   } else {
-    t1 = $[0];
+    t1 = $[0] as string[];
   }
   React.useEffect(_temp3, t1);
   let t2;

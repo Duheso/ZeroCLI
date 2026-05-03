@@ -254,14 +254,17 @@ export function prepareMessagesForInjection(messages: Message[]): Message[] {
 
   return messages
     .map(msg => {
-      if (!('message' in msg) || !Array.isArray(msg.message.content)) return msg
-      const content = msg.message.content.filter(keep)
-      if (content.length === msg.message.content.length) return msg
+      type ContentBlock = { type: string; id?: string; tool_use_id?: string; text?: string }
+      type MsgWithContent = { message: { content: ContentBlock[] } }
+      const msgWithContent = msg as MsgWithContent
+      if (!('message' in msg) || !Array.isArray(msgWithContent.message.content)) return msg
+      const content = msgWithContent.message.content.filter(keep)
+      if (content.length === msgWithContent.message.content.length) return msg
       if (content.length === 0) return null
       // Drop messages where all remaining blocks are whitespace-only text
       // (API rejects these with 400: "text content blocks must contain non-whitespace text")
       const hasNonWhitespaceContent = content.some(
-        (b: { type: string; text?: string }) =>
+        (b: ContentBlock) =>
           b.type !== 'text' || (b.text !== undefined && b.text.trim() !== ''),
       )
       if (!hasNonWhitespaceContent) return null

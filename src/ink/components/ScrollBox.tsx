@@ -214,23 +214,29 @@ function ScrollBox({
   // stickyScroll is passed as a DOM attribute (via ink-box directly) so it's
   // available on the first render — ref callbacks fire after the initial
   // commit, which is too late for the first frame.
-  return <ink-box ref={el => {
-    domRef.current = el;
-    if (el) el.scrollTop ??= 0;
-  }} style={{
-    flexWrap: 'nowrap',
-    flexDirection: style.flexDirection ?? 'row',
-    flexGrow: style.flexGrow ?? 0,
-    flexShrink: style.flexShrink ?? 1,
-    ...style,
-    overflowX: 'scroll',
-    overflowY: 'scroll'
-  }} {...stickyScroll ? {
-    stickyScroll: true
-  } : {}}>
-      <Box flexDirection="column" flexGrow={1} flexShrink={0} width="100%">
-        {children}
-      </Box>
-    </ink-box>;
+  const innerContent = (
+    <Box flexDirection="column" flexGrow={1} flexShrink={0} width="100%">
+      {children}
+    </Box>
+  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const InkBox = (React as any).createElement as (type: string, props: Record<string, any>, ...children: any[]) => React.ReactElement;
+  const inkBox = InkBox('ink-box', {
+    ref: (el: DOMElement | null) => {
+      domRef.current = el;
+      if (el) el.scrollTop ??= 0;
+    },
+    style: {
+      flexWrap: 'nowrap',
+      flexDirection: style.flexDirection ?? 'row',
+      flexGrow: style.flexGrow ?? 0,
+      flexShrink: style.flexShrink ?? 1,
+      ...style,
+      overflowX: 'scroll',
+      overflowY: 'scroll',
+    },
+    ...(stickyScroll ? { stickyScroll: true } : {}),
+  }, innerContent);
+  return inkBox;
 }
 export default ScrollBox;

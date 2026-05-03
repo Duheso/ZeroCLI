@@ -55,6 +55,8 @@ import {
   type OpenAICompatibilityFailureCategory,
 } from './openaiErrorClassification.js'
 
+declare const MACRO: { FEEDBACK_CHANNEL: string }
+
 export const API_ERROR_MESSAGE_PREFIX = 'API Error'
 
 function stripOpenAICompatibilityMetadata(message: string): string {

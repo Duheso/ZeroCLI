@@ -1,6 +1,9 @@
 import {
+  // @ts-expect-error - no .d.ts for constants.js exports
   ContinuousEventPriority,
+  // @ts-expect-error - no .d.ts for constants.js exports
   DefaultEventPriority,
+  // @ts-expect-error - no .d.ts for constants.js exports
   DiscreteEventPriority,
 } from 'react-reconciler/constants.js'
 import { logError } from '../../utils/log.js'
