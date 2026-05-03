@@ -13,6 +13,7 @@ import type {
   RequestStartEvent,
   StopHookInfo,
   StreamEvent,
+  SystemMessageLevel,
   TombstoneMessage,
   ToolUseSummaryMessage,
 } from '../types/message.js'
@@ -117,9 +118,9 @@ export async function* handleStopHooks(
     const turnAssistantMessages = stopHookContext.messages.filter(
       (m): m is AssistantMessage => m.type === 'assistant',
     )
-    const p = jobClassifierModule!
+    const p = (jobClassifierModule! as any)
       .classifyAndWriteState(process.env.CLAUDE_JOB_DIR, turnAssistantMessages)
-      .catch(err => {
+      .catch((err: unknown) => {
         logForDebugging(`[job] classifier error: ${errorMessage(err)}`, {
           level: 'error',
         })
@@ -210,7 +211,7 @@ export async function* handleStopHooks(
             hookInfos.push({
               command: progressData.command,
               promptText: progressData.promptText,
-            })
+            } as StopHookInfo)
           }
         }
         // Track errors and output from attachments
@@ -303,7 +304,7 @@ export async function* handleStopHooks(
         preventedContinuation,
         stopReason,
         hasOutput,
-        'suggestion',
+        'suggestion' as SystemMessageLevel,
         stopHookToolUseID,
       )
 

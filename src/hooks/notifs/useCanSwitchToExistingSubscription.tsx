@@ -31,10 +31,10 @@ async function _temp2() {
   return {
     key: "switch-to-subscription",
     jsx: <Text color="suggestion">Use your existing Claude {subscriptionType} plan with ZeroCLI<Text color="text" dimColor={true}>{" "}· /login to activate</Text></Text>,
-    priority: "low"
+    priority: "low" as const
   };
 }
-function _temp(current) {
+function _temp(current: ReturnType<typeof getGlobalConfig>) {
   return {
     ...current,
     subscriptionNoticeCount: (current.subscriptionNoticeCount ?? 0) + 1
@@ -49,9 +49,11 @@ async function getExistingClaudeSubscription(): Promise<'Max' | 'Pro' | null> {
   if (!profile) {
     return null;
   }
+  // @ts-expect-error - has_claude_max exists at runtime but is not in the typed account shape
   if (profile.account.has_claude_max) {
     return 'Max';
   }
+  // @ts-expect-error - has_claude_pro exists at runtime but is not in the typed account shape
   if (profile.account.has_claude_pro) {
     return 'Pro';
   }

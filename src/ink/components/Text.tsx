@@ -111,7 +111,7 @@ const memoizedStylesForWrap: Record<NonNullable<Styles['textWrap']>, Styles> = {
 /**
  * This component can display text, and change its style to make it colorful, bold, underline, italic or strikethrough.
  */
-export default function Text(t0) {
+export default function Text(t0: Props) {
   const $ = _c(29);
   const {
     color,
@@ -238,9 +238,10 @@ export default function Text(t0) {
     t14 = $[24];
   }
   const textStyles = t14;
-  const t15 = memoizedStylesForWrap[wrap];
+  const t15 = memoizedStylesForWrap[wrap as NonNullable<Styles['textWrap']>];
   let t16;
   if ($[25] !== children || $[26] !== t15 || $[27] !== textStyles) {
+    // @ts-expect-error ink-text is a runtime virtual element registered by Ink
     t16 = <ink-text style={t15} textStyles={textStyles}>{children}</ink-text>;
     $[25] = children;
     $[26] = t15;

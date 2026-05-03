@@ -35,8 +35,8 @@ const SAFE_BRIDGE_STRING_KEYS = new Set([
 
 const PERMISSION_MODES: readonly PermissionMode[] = [
   'ask',
-  'skip_all_permission_checks',
-  'follow_a_plan',
+  'skip_all_permission_checks' as PermissionMode,
+  'follow_a_plan' as PermissionMode,
 ]
 
 function isPermissionMode(raw: string): raw is PermissionMode {
@@ -212,7 +212,7 @@ export function createChromeContext(
         }
       },
     }),
-    trackEvent: (eventName, metadata) => {
+    trackEvent: (eventName: string, metadata: Record<string, unknown>) => {
       const safeMetadata: {
         [key: string]:
           | boolean

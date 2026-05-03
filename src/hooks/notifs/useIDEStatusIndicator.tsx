@@ -14,7 +14,7 @@ type Props = {
   ideSelection: IDESelection | undefined;
   mcpClients: MCPServerConnection[];
 };
-export function useIDEStatusIndicator(t0) {
+export function useIDEStatusIndicator(t0: Props) {
   const $ = _c(26);
   const {
     ideSelection,
@@ -163,7 +163,7 @@ export function useIDEStatusIndicator(t0) {
   }
   useEffect(t8, t9);
 }
-function _temp2(hasShownHintRef_0, addNotification_0) {
+function _temp2(hasShownHintRef_0: React.MutableRefObject<boolean>, addNotification_0: (n: any) => void) {
   detectIDEs(true).then(infos => {
     const ideName_0 = infos[0]?.name;
     if (ideName_0 && !hasShownHintRef_0.current) {
@@ -177,7 +177,7 @@ function _temp2(hasShownHintRef_0, addNotification_0) {
     }
   });
 }
-function _temp(current) {
+function _temp(current: any) {
   return {
     ...current,
     ideHintShownCount: (current.ideHintShownCount ?? 0) + 1
