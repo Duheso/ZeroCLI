@@ -7,7 +7,7 @@ import { useKeybindings } from '../keybindings/useKeybinding.js';
 import { logEvent } from '../services/analytics/index.js';
 import type { NormalizedUserMessage, RenderableMessage } from '../types/message.js';
 import { isEmptyMessageText, SYNTHETIC_MESSAGES } from '../utils/messages.js';
-const NAVIGABLE_TYPES = ['user', 'assistant', 'grouped_tool_use', 'collapsed_read_search', 'system', 'attachment'] as const;
+const NAVIGABLE_TYPES = ['user', 'assistant', 'grouped_tool_use', 'collapsed_read_search_group', 'system', 'attachment'] as const;
 export type NavigableType = (typeof NAVIGABLE_TYPES)[number];
 export type NavigableOf<T extends NavigableType> = Extract<RenderableMessage, {
   type: T;

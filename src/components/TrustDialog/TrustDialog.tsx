@@ -10,6 +10,7 @@ import { useKeybinding } from '../../keybindings/useKeybinding.js';
 import { getMcpConfigsByScope } from '../../services/mcp/config.js';
 import { BASH_TOOL_NAME } from '../../tools/BashTool/toolName.js';
 import { checkHasTrustDialogAccepted, saveCurrentProjectConfig } from '../../utils/config.js';
+import type { ProjectConfig } from '../../utils/config.js';
 import { getCwd } from '../../utils/cwd.js';
 import { getFsImplementation } from '../../utils/fsOperations.js';
 import { gracefulShutdownSync } from '../../utils/gracefulShutdown.js';
@@ -20,7 +21,7 @@ type Props = {
   onDone(): void;
   commands?: Command[];
 };
-export function TrustDialog(t0) {
+export function TrustDialog(t0: Props) {
   const $ = _c(33);
   const {
     onDone,
@@ -154,7 +155,7 @@ export function TrustDialog(t0) {
   React.useEffect(t12, t13);
   let t14;
   if ($[16] !== hasAnyBashExecution || $[17] !== onDone) {
-    t14 = function onChange(value) {
+    t14 = function onChange(value: string) {
       if (value === "exit") {
         gracefulShutdownSync(1);
         return;

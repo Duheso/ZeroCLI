@@ -28,6 +28,7 @@ import type { Tool } from '../Tool.js'
 import { findToolByName } from '../Tool.js'
 import type { Message as MessageType } from '../types/message.js'
 import type { PermissionAskDecision } from '../types/permissions.js'
+import type { PermissionUpdate } from '../utils/permissions/PermissionUpdateSchema.js'
 import { logForDebugging } from '../utils/debug.js'
 import { gracefulShutdown } from '../utils/gracefulShutdown.js'
 import type { RemoteMessageContent } from '../utils/teleport/api.js'
@@ -91,13 +92,14 @@ export function useSSHSession({
         }
       },
       onPermissionRequest: (request: SDKControlPermissionRequest, requestId: string) => {
+        const toolName = request.tool_name ?? 'unknown'
         logForDebugging(
-          `[useSSHSession] permission request: ${request.tool_name}`,
+          `[useSSHSession] permission request: ${toolName}`,
         )
 
         const tool =
-          findToolByName(toolsRef.current, request.tool_name) ??
-          createToolStub(request.tool_name)
+          findToolByName(toolsRef.current, toolName) ??
+          createToolStub(toolName)
 
         const syntheticMessage = createSyntheticAssistantMessage(
           request,
@@ -178,6 +180,7 @@ export function useSSHSession({
           timestamp: new Date().toISOString(),
           uuid: randomUUID(),
           level: 'warning',
+          isMeta: false,
         }
         setMessages(prev => [...prev, msg])
       },
@@ -199,7 +202,7 @@ export function useSSHSession({
         }
         void gracefulShutdown(1, 'other', { finalMessage: msg })
       },
-      onError: error => {
+      onError: (error: unknown) => {
         logForDebugging(`[useSSHSession] error: ${error.message}`)
       },
     })
