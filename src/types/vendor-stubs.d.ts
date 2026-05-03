@@ -65,6 +65,13 @@ declare module 'asciichart' {
 
 declare module 'audio-capture-napi' {
   export class Logger {}
+  export function isNativeAudioAvailable(): boolean
+  export function isNativeRecordingActive(): boolean
+  export function stopNativeRecording(): void
+  export function startNativeRecording(
+    onData: (data: Buffer) => void,
+    onEnd: () => void,
+  ): boolean
 }
 
 declare module 'plist' {
