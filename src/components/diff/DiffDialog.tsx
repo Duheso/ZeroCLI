@@ -262,7 +262,7 @@ export function DiffDialog(t0: Props) {
   const headerSubtitle = currentTurn ? currentTurn.userPromptPreview ? `"${currentTurn.userPromptPreview}"` : "" : "(git diff HEAD)";
   let t18;
   if ($[40] !== sourceIndex || $[41] !== sources) {
-    t18 = sources.length > 1 ? <Box>{sourceIndex > 0 && <Text dimColor={true}>◀ </Text>}{sources.map((source, i) => {
+    t18 = sources.length > 1 ? <Box>{sourceIndex > 0 && <Text dimColor={true}>◀ </Text>}{sources.map((source: DiffSource, i: number) => {
         const isSelected = i === sourceIndex;
         const label = source.type === "current" ? "Current" : `T${source.turn.turnIndex}`;
         return <Text key={i} dimColor={!isSelected} bold={isSelected}>{i > 0 ? " \xB7 " : ""}{label}</Text>;
