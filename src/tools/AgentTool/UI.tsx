@@ -181,7 +181,7 @@ function processProgressMessages(messages: ProgressMessage<Progress>[], tools: T
 const ESTIMATED_LINES_PER_TOOL = 9;
 const TERMINAL_BUFFER_LINES = 7;
 type Output = z.input<ReturnType<typeof outputSchema>>;
-export function AgentPromptDisplay(t0) {
+export function AgentPromptDisplay(t0: any) {
   const $ = _c(3);
   const {
     prompt,
@@ -205,7 +205,7 @@ export function AgentPromptDisplay(t0) {
   }
   return t3;
 }
-export function AgentResponseDisplay(t0) {
+export function AgentResponseDisplay(t0: any) {
   const $ = _c(5);
   const {
     content
@@ -235,7 +235,7 @@ export function AgentResponseDisplay(t0) {
   }
   return t3;
 }
-function _temp(block, index) {
+function _temp(block: any, index: number) {
   return <Box key={index} paddingLeft={2} marginTop={index === 0 ? 0 : 1}><Markdown>{block.text}</Markdown></Box>;
 }
 type VerboseAgentTranscriptProps = {
@@ -243,7 +243,7 @@ type VerboseAgentTranscriptProps = {
   tools: Tools;
   verbose: boolean;
 };
-function VerboseAgentTranscript(t0) {
+function VerboseAgentTranscript(t0: any) {
   const $ = _c(15);
   const {
     progressMessages,

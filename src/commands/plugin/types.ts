@@ -1,3 +1,5 @@
+import type { LocalJSXCommandOnDone } from '../../types/command.js';
+
 /**
  * View state for the plugin settings screen.
  */
@@ -41,5 +43,7 @@ export type ViewState =
  * Props for the PluginSettings component.
  */
 export type PluginSettingsProps = {
-  parsedCommand: { type: string };
+  onComplete: LocalJSXCommandOnDone;
+  args?: string;
+  showMcpRedirectMessage?: boolean;
 };

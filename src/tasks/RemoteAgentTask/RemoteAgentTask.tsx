@@ -572,7 +572,7 @@ function startRemoteSessionPolling(taskId: string, context: TaskContext): () => 
         accumulatedLog = [...accumulatedLog, ...response.newEvents];
         const deltaText = response.newEvents.map(msg => {
           if (msg.type === 'assistant') {
-            return (msg.message.content as readonly { type: string; text?: string }[]).filter(block => block.type === 'text').map(block => 'text' in block ? block.text : '').join('\n');
+            return (msg.message as { content: readonly { type: string; text?: string }[] }).content.filter(block => block.type === 'text').map(block => 'text' in block ? block.text : '').join('\n');
           }
           return jsonStringify(msg);
         }).join('\n');

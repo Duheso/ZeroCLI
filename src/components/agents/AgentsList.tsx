@@ -326,8 +326,8 @@ export function AgentsList(t0: Props) {
             label,
             source: groupSource_0
           } = t24;
-          return <React.Fragment key={groupSource_0}>{renderAgentGroup(label, sortedAgents.filter(a_7 => a_7.source === groupSource_0))}</React.Fragment>;
-        })}{builtInAgents_0.length > 0 && <Box flexDirection="column" marginBottom={1} paddingLeft={2}><Text dimColor={true}><Text bold={true}>{t('agents_builtin_label')}</Text>{t('agents_builtin_always_avail_parens')}</Text>{builtInAgents_0.map(renderAgent)}</Box>}</> : source === "built-in" ? <><Text dimColor={true} italic={true}>{t('agents_builtin_note')}</Text><Box marginTop={1} flexDirection="column">{sortedAgents.map(agent_2 => renderAgent(agent_2))}</Box></> : <>{sortedAgents.filter(_temp0).map(agent_3 => renderAgent(agent_3))}{sortedAgents.some(_temp1) && <><Divider />{renderBuiltInAgentsSection()}</>}</>;
+          return <React.Fragment key={groupSource_0}>{renderAgentGroup(label, sortedAgents.filter((a_7: ResolvedAgent) => a_7.source === groupSource_0))}</React.Fragment>;
+        })}{builtInAgents_0.length > 0 && <Box flexDirection="column" marginBottom={1} paddingLeft={2}><Text dimColor={true}><Text bold={true}>{t('agents_builtin_label')}</Text>{t('agents_builtin_always_avail_parens')}</Text>{builtInAgents_0.map(renderAgent)}</Box>}</> : source === "built-in" ? <><Text dimColor={true} italic={true}>{t('agents_builtin_note')}</Text><Box marginTop={1} flexDirection="column">{sortedAgents.map((agent_2: ResolvedAgent) => renderAgent(agent_2))}</Box></> : <>{sortedAgents.filter(_temp0).map((agent_3: ResolvedAgent) => renderAgent(agent_3))}{sortedAgents.some(_temp1) && <><Divider />{renderBuiltInAgentsSection()}</>}</>;
     }
     $[30] = changes;
     $[31] = handleKeyDown;
@@ -403,37 +403,37 @@ export function AgentsList(t0: Props) {
   }
   return t24;
 }
-function _temp1(a_9) {
+function _temp1(a_9: ResolvedAgent) {
   return a_9.source === "built-in";
 }
-function _temp0(a_8) {
+function _temp0(a_8: ResolvedAgent) {
   return a_8.source !== "built-in";
 }
-function _temp9(g_0) {
+function _temp9(g_0: AgentSourceGroup) {
   return g_0.source !== "built-in";
 }
-function _temp8(a_6) {
+function _temp8(a_6: ResolvedAgent) {
   return !a_6.overriddenBy;
 }
-function _temp7(a_5) {
+function _temp7(a_5: ResolvedAgent) {
   return a_5.source === "built-in";
 }
-function _temp6(a_4) {
+function _temp6(a_4: ResolvedAgent) {
   return a_4.source !== "built-in";
 }
-function _temp5(a_3) {
+function _temp5(a_3: ResolvedAgent) {
   return a_3.source === "built-in";
 }
-function _temp4(a_2) {
+function _temp4(a_2: ResolvedAgent) {
   return a_2.source === "built-in";
 }
-function _temp3(g) {
+function _temp3(g: AgentSourceGroup) {
   return g.source !== "built-in";
 }
-function _temp2(a) {
+function _temp2(a: ResolvedAgent) {
   return a.source !== "built-in";
 }
-function _temp(agent) {
+function _temp(agent: ResolvedAgent) {
   return {
     isOverridden: !!agent.overriddenBy,
     overriddenBy: agent.overriddenBy || null
