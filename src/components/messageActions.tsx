@@ -49,7 +49,7 @@ export function isNavigableMessage(msg: NavigableMessage): boolean {
       }
       return true;
     case 'grouped_tool_use':
-    case 'collapsed_read_search':
+    case 'collapsed_read_search_group':
       return true;
     case 'attachment':
       switch (msg.attachment.type) {
@@ -272,7 +272,7 @@ export function useMessageActions(cursor: MessageActionsState | null, setCursor:
 }
 
 // Must mount inside <KeybindingSetup>.
-export function MessageActionsKeybindings(t0) {
+export function MessageActionsKeybindings(t0: { handlers: Record<string, () => void>; isActive: boolean }) {
   const $ = _c(2);
   const {
     handlers,

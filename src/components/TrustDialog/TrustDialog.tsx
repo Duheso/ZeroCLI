@@ -270,16 +270,16 @@ function _temp7() {
 function _temp6() {
   return gracefulShutdownSync(1);
 }
-function _temp5(current) {
+function _temp5(current: ProjectConfig) {
   return {
     ...current,
     hasTrustDialogAccepted: true
   };
 }
-function _temp4(command_0) {
+function _temp4(command_0: Command) {
   return command_0.type === "prompt" && (command_0.loadedFrom === "skills" || command_0.loadedFrom === "plugin") && (command_0.source === "projectSettings" || command_0.source === "localSettings" || command_0.source === "plugin") && command_0.allowedTools?.some(_temp3);
 }
-function _temp3(tool_0) {
+function _temp3(tool_0: string) {
   return tool_0 === BASH_TOOL_NAME || tool_0.startsWith(BASH_TOOL_NAME + "(");
 }
 function _temp2(command) {

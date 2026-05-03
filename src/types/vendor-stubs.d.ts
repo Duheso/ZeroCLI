@@ -15,10 +15,16 @@ declare module '@ant/claude-for-chrome-mcp' {
 
 declare module 'ws' {
   class WebSocket {
-    constructor(url: string, protocols: string[], options: Record<string, unknown>);
+    constructor(url: string, options?: Record<string, unknown>);
+    constructor(url: string, protocols: string[], options?: Record<string, unknown>);
     on(event: string, callback: (...args: any[]) => void): void;
     send(data: any): void;
     close(): void;
+    readonly readyState: number;
+    static readonly CONNECTING: number;
+    static readonly OPEN: number;
+    static readonly CLOSING: number;
+    static readonly CLOSED: number;
   }
   export default WebSocket;
 }

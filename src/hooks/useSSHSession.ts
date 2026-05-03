@@ -109,8 +109,8 @@ export function useSSHSession({
         const permissionResult: PermissionAskDecision = {
           behavior: 'ask',
           message:
-            request.description ?? `${request.tool_name} requires permission`,
-          suggestions: request.permission_suggestions,
+            request.description ?? `${toolName} requires permission`,
+          suggestions: request.permission_suggestions as PermissionUpdate[] | undefined,
           blockedPath: request.blocked_path,
         }
 
@@ -118,10 +118,10 @@ export function useSSHSession({
           assistantMessage: syntheticMessage,
           tool,
           description:
-            request.description ?? `${request.tool_name} requires permission`,
-          input: request.input,
+            request.description ?? `${toolName} requires permission`,
+          input: request.input as { [key: string]: unknown },
           toolUseContext: {} as ToolUseConfirm['toolUseContext'],
-          toolUseID: request.tool_use_id,
+          toolUseID: request.tool_use_id ?? '',
           permissionResult,
           permissionPromptStartTimeMs: Date.now(),
           onUserInteraction() {},
