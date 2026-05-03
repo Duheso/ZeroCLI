@@ -107,8 +107,8 @@ import type { ElicitResult } from '@modelcontextprotocol/sdk/types.js'
 import type { HookResultMessage } from '../types/message.js'
 
 // Missing types that were in agentSdkTypes.js but not in coreTypes.ts
-// AsyncHookJSONOutput doesn't exist in the SDK types -- it's the same shape as HookJSONOutput
-type AsyncHookJSONOutput = HookJSONOutput
+// AsyncHookJSONOutput doesn't exist in the SDK types -- it extends HookJSONOutput with async flag
+type AsyncHookJSONOutput = HookJSONOutput & { async: true; asyncTimeout?: number }
 
 // Local type aliases to break circular dependency (SyncHookJSONOutput is defined
 // in src/types/hooks.ts which imports from the SDK, but coreTypes.ts re-exports
@@ -3808,7 +3808,7 @@ export async function executeStopFailureHooks(
   // Some createAssistantAPIErrorMessage call sites omit `error` (e.g.
   // image-size at errors.ts:431). Default to 'unknown' so matcher filtering
   // at getMatchingHooks:1525 always applies.
-  const error = lastMessage.error ?? 'unknown'
+  const error = typeof lastMessage.error === 'string' ? lastMessage.error : 'unknown'
   const hookInput: StopFailureHookInput = {
     ...createBaseHookInput(undefined, undefined, toolUseContext),
     hook_event_name: 'StopFailure',

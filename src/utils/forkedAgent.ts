@@ -526,7 +526,7 @@ export async function runForkedAgent({
   // Generate agent ID and record initial messages for transcript
   // When skipTranscript is set, skip agent ID creation and all transcript I/O
   const agentId = skipTranscript ? undefined : createAgentId(forkLabel)
-  let lastRecordedUuid: UUID | null = null
+  let lastRecordedUuid: (UUID | string) | null = null
   if (agentId) {
     await recordSidechainTranscript(initialMessages, agentId).catch(err =>
       logForDebugging(
@@ -561,7 +561,7 @@ export async function runForkedAgent({
           message.event?.type === 'message_delta' &&
           message.event.usage
         ) {
-          const turnUsage = updateUsage({ ...EMPTY_USAGE }, message.event.usage)
+          const turnUsage = updateUsage({ ...EMPTY_USAGE }, message.event.usage as import('@anthropic-ai/sdk/resources/beta/messages/messages.mjs').BetaMessageDeltaUsage)
           totalUsage = accumulateUsage(totalUsage, turnUsage)
         }
         continue
@@ -585,7 +585,7 @@ export async function runForkedAgent({
           msg.type === 'user' ||
           msg.type === 'progress')
       ) {
-        await recordSidechainTranscript([msg], agentId, lastRecordedUuid).catch(
+        await recordSidechainTranscript([msg], agentId, lastRecordedUuid as import('crypto').UUID | null).catch(
           err =>
             logForDebugging(
               `Forked agent [${forkLabel}] failed to record transcript: ${err}`,
