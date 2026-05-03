@@ -213,7 +213,11 @@ export function CollapsedReadSearchContent({
   if (isActiveGroup) {
     for (const id_0 of toolUseIds) {
       if (!inProgressToolUseIDs.has(id_0)) continue;
-      const latest = lookups.progressMessagesByToolUseID.get(id_0)?.at(-1)?.data;
+      const latest = lookups.progressMessagesByToolUseID.get(id_0)?.at(-1)?.data as (Progress & {
+        phase?: string;
+        toolInput?: unknown;
+        toolName?: string;
+      }) | undefined;
       if (latest?.type === 'repl_tool_call' && latest.phase === 'start') {
         const input = latest.toolInput as {
           command?: string;

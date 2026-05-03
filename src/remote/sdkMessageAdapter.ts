@@ -1,5 +1,4 @@
 import type {
-  SDKAssistantMessage,
   SDKCompactBoundaryMessage,
   SDKMessage,
   SDKPartialAssistantMessage,
@@ -29,7 +28,7 @@ import { createUserMessage } from '../utils/messages.js'
 /**
  * Convert an SDKAssistantMessage to an AssistantMessage
  */
-function convertAssistantMessage(msg: SDKAssistantMessage): AssistantMessage {
+function convertAssistantMessage(msg: SDKMessage & { type: 'assistant' }): AssistantMessage {
   return {
     type: 'assistant',
     message: msg.message,
