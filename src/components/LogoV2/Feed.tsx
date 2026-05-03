@@ -48,7 +48,7 @@ export function calculateFeedWidth(config: FeedConfig): number {
   }
   return maxWidth;
 }
-export function Feed(t0) {
+export function Feed(t0: FeedProps) {
   const $ = _c(15);
   const {
     config,
@@ -80,7 +80,7 @@ export function Feed(t0) {
   }
   let t3;
   if ($[4] !== actualWidth || $[5] !== customContent || $[6] !== emptyMessage || $[7] !== footer || $[8] !== lines || $[9] !== maxTimestampWidth) {
-    t3 = customContent ? <>{customContent.content}{footer && <Text dimColor={true} italic={true}>{truncate(footer, actualWidth)}</Text>}</> : lines.length === 0 && emptyMessage ? <Text dimColor={true}>{truncate(emptyMessage, actualWidth)}</Text> : <>{lines.map((line_0, index) => {
+    t3 = customContent ? <>{customContent.content}{footer && <Text dimColor={true} italic={true}>{truncate(footer, actualWidth)}</Text>}</> : lines.length === 0 && emptyMessage ? <Text dimColor={true}>{truncate(emptyMessage, actualWidth)}</Text> : <>{lines.map((line_0: FeedLine, index: number) => {
         const textWidth = Math.max(10, actualWidth - (maxTimestampWidth > 0 ? maxTimestampWidth + 2 : 0));
         return <Text key={index}>{maxTimestampWidth > 0 && <><Text dimColor={true}>{(line_0.timestamp || "").padEnd(maxTimestampWidth)}</Text>{"  "}</>}<Text>{truncate(line_0.text, textWidth)}</Text></Text>;
       })}{footer && <Text dimColor={true} italic={true}>{truncate(footer, actualWidth)}</Text>}</>;
@@ -106,6 +106,6 @@ export function Feed(t0) {
   }
   return t4;
 }
-function _temp(line) {
+function _temp(line: FeedLine) {
   return line.timestamp ? stringWidth(line.timestamp) : 0;
 }

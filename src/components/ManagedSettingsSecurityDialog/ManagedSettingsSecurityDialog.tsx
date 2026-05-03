@@ -12,7 +12,7 @@ type Props = {
   onAccept: () => void;
   onReject: () => void;
 };
-export function ManagedSettingsSecurityDialog(t0) {
+export function ManagedSettingsSecurityDialog(t0: Props) {
   const $ = _c(26);
   const {
     settings,
@@ -34,7 +34,7 @@ export function ManagedSettingsSecurityDialog(t0) {
   useKeybinding("confirm:no", onReject, t1);
   let t2;
   if ($[1] !== onAccept || $[2] !== onReject) {
-    t2 = function onChange(value) {
+    t2 = function onChange(value: string) {
       if (value === "exit") {
         onReject();
         return;
@@ -143,6 +143,6 @@ export function ManagedSettingsSecurityDialog(t0) {
   }
   return t19;
 }
-function _temp(item, index) {
+function _temp(item: string, index: number) {
   return <Box key={index} paddingLeft={2}><Text><Text dimColor={true}>· </Text><Text>{item}</Text></Text></Box>;
 }
