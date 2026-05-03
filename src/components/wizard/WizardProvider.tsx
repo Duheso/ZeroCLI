@@ -203,12 +203,12 @@ export function WizardProvider(t0: WizardProviderProps) {
   }
   return t14;
 }
-function _temp3(prev_2) {
+function _temp3(prev_2: number): number {
   return prev_2 - 1;
 }
-function _temp2(prev_1) {
+function _temp2(prev_1: number[]): number[] {
   return prev_1.slice(0, -1);
 }
-function _temp(prev_0) {
+function _temp(prev_0: number): number {
   return prev_0 + 1;
 }

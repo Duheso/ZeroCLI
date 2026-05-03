@@ -6,6 +6,7 @@ import { useVirtualScroll } from '../hooks/useVirtualScroll.js';
 import type { ScrollBoxHandle } from '../ink/components/ScrollBox.js';
 import type { DOMElement } from '../ink/dom.js';
 import type { MatchPosition } from '../ink/render-to-screen.js';
+import type { ClickEvent } from '../ink/events/click-event.js';
 import { Box } from '../ink.js';
 import type { RenderableMessage } from '../types/message.js';
 import { TextHoverColorContext } from './design-system/ThemedText.js';
@@ -194,7 +195,7 @@ type VirtualItemProps = {
 // verbose). Memoing with a comparator that ignores renderItem would use a
 // STALE closure on bail (wrong selection highlight, stale verbose). Including
 // renderItem in the comparator defeats memo since it's fresh each render.
-function VirtualItem(t0) {
+function VirtualItem(t0: any) {
   const $ = _c(30);
   const {
     itemKey: k,
@@ -222,7 +223,7 @@ function VirtualItem(t0) {
   const t3 = expanded ? 1 : undefined;
   let t4;
   if ($[3] !== clickable || $[4] !== msg || $[5] !== onClickK) {
-    t4 = clickable ? e => onClickK(msg, e.cellIsBlank) : undefined;
+    t4 = clickable ? (e: ClickEvent) => onClickK(msg, e.cellIsBlank) : undefined;
     $[3] = clickable;
     $[4] = msg;
     $[5] = onClickK;
@@ -345,7 +346,7 @@ export function VirtualMessageList({
   useImperativeHandle(cursorNavRef, (): MessageActionsNav => {
     const select = (m: NavigableMessage) => setCursor?.({
       uuid: m.uuid,
-      msgType: m.type,
+      msgType: m.type as import('./messageActions.js').NavigableType,
       expanded: false,
       toolName: toolCallOf(m)?.name
     });

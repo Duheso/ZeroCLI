@@ -1,7 +1,7 @@
 import { c as _c } from "react-compiler-runtime";
 import * as React from 'react';
 import { Text } from '../../ink.js';
-import { useAppState } from '../../state/AppState.js';
+import { useAppState, type AppState } from '../../state/AppState.js';
 type Props = {
   teamsSelected: boolean;
   showHint: boolean;
@@ -11,7 +11,7 @@ type Props = {
  * Footer status indicator showing teammate count
  * Similar to BackgroundTaskStatus but for teammates
  */
-export function TeamStatus(t0) {
+export function TeamStatus(t0: Props) {
   const $ = _c(14);
   const {
     teamsSelected,
@@ -71,9 +71,9 @@ export function TeamStatus(t0) {
   }
   return t6;
 }
-function _temp2(t) {
+function _temp2(t: { name: string }) {
   return t.name !== "team-lead";
 }
-function _temp(s) {
+function _temp(s: AppState) {
   return s.teamContext;
 }
