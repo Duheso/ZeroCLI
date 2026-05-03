@@ -43,7 +43,7 @@ export function BackgroundTaskStatus(t0: Props) {
   const viewingAgentTaskId = useAppState(_temp2);
   let t3;
   if ($[0] !== tasks) {
-    t3 = (Object.values(tasks ?? {}) as TaskState[]).filter((t: TaskState) => isBackgroundTask(t));
+    t3 = (Object.values(tasks ?? {}) as TaskState[]).filter(_temp3);
     $[0] = tasks;
     $[1] = t3;
   } else {
@@ -294,7 +294,7 @@ type AgentPillProps = {
   isIdle: boolean;
   onClick?: () => void;
 };
-function AgentPill(t0) {
+function AgentPill(t0: AgentPillProps) {
   const $ = _c(19);
   const {
     name,
@@ -384,7 +384,7 @@ function AgentPill(t0) {
   }
   return t3;
 }
-function SummaryPill(t0) {
+function SummaryPill(t0: { selected: boolean; onClick?: (taskId?: string) => void; children: React.ReactNode }) {
   const $ = _c(8);
   const {
     selected,

@@ -5,6 +5,7 @@ import type { SettingSource } from 'src/utils/settings/constants.js';
 import type { KeyboardEvent } from '../../ink/events/keyboard-event.js';
 import { Box, Text } from '../../ink.js';
 import type { ResolvedAgent } from '../../tools/AgentTool/agentDisplay.js';
+import type { AgentSourceGroup } from '../../tools/AgentTool/agentDisplay.js';
 import { AGENT_SOURCE_GROUPS, compareAgentsByName, getOverrideSourceLabel, resolveAgentModelDisplay } from '../../tools/AgentTool/agentDisplay.js';
 import type { AgentDefinition } from '../../tools/AgentTool/loadAgentsDir.js';
 import { count } from '../../utils/array.js';
@@ -144,7 +145,7 @@ export function AgentsList(t0: Props) {
       }
       let currentPosition = 0;
       if (!isCreateNewSelected && selectedAgent) {
-        const agentIndex = selectableAgentsInOrder.findIndex(a_1 => a_1.agentType === selectedAgent.agentType && a_1.source === selectedAgent.source);
+        const agentIndex = selectableAgentsInOrder.findIndex((a_1: ResolvedAgent) => a_1.agentType === selectedAgent.agentType && a_1.source === selectedAgent.source);
         if (agentIndex >= 0) {
           currentPosition = hasCreateOption ? agentIndex + 1 : agentIndex;
         }
