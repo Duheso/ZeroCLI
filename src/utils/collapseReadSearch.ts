@@ -501,7 +501,7 @@ export function hasAnyToolInProgress(
 export function getDisplayMessageFromCollapsed(
   message: CollapsedReadSearchGroup,
 ): RenderableMessage {
-  const firstMsg = message.displayMessage
+  const firstMsg = message.displayMessage as RenderableMessage
   if (firstMsg.type === 'grouped_tool_use') {
     return firstMsg.displayMessage
   }
@@ -887,9 +887,9 @@ export function collapseReadSearchGroups(
         currentGroup.toolUseIds.add(id)
       }
 
-      currentGroup.messages.push(msg)
+      currentGroup.messages.push(msg as CollapsibleMessage)
     } else if (isCollapsibleToolResult(msg, currentGroup.toolUseIds)) {
-      currentGroup.messages.push(msg)
+      currentGroup.messages.push(msg as CollapsibleMessage)
       // Scan bash results for commit SHAs / PR URLs to surface in the summary
       if (isFullscreenEnvEnabled() && currentGroup.bashCommands?.size) {
         scanBashResultForGitOps(msg, currentGroup)
