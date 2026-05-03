@@ -240,7 +240,7 @@ function getTaskIcon(status: Task['status']): {
       };
   }
 }
-function TaskItem(t0) {
+function TaskItem(t0: TaskItemProps) {
   const $ = _c(37);
   const {
     task,
@@ -370,9 +370,9 @@ function TaskItem(t0) {
   }
   return t12;
 }
-function _temp2(id) {
+function _temp2(id: string) {
   return `#${id}`;
 }
-function _temp(a, b) {
+function _temp(a: string, b: string) {
   return parseInt(a, 10) - parseInt(b, 10);
 }

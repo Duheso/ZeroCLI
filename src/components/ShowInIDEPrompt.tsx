@@ -22,7 +22,7 @@ type Props<A> = {
   yesInputMode: boolean;
   noInputMode: boolean;
 };
-export function ShowInIDEPrompt(t0) {
+export function ShowInIDEPrompt<A>(t0: Props<A>) {
   const $ = _c(36);
   const {
     onChange,
@@ -80,6 +80,7 @@ export function ShowInIDEPrompt(t0) {
   }
   let t6;
   if ($[9] !== acceptFeedback || $[10] !== input || $[11] !== onChange || $[12] !== options || $[13] !== rejectFeedback) {
+    // @ts-expect-error react-compiler type loss
     t6 = value => {
       const selected = options.find(opt => opt.value === value);
       if (selected) {
@@ -118,6 +119,7 @@ export function ShowInIDEPrompt(t0) {
   }
   let t8;
   if ($[18] !== setFocusedOption) {
+    // @ts-expect-error react-compiler type loss
     t8 = value_0 => setFocusedOption(value_0);
     $[18] = setFocusedOption;
     $[19] = t8;
@@ -126,6 +128,7 @@ export function ShowInIDEPrompt(t0) {
   }
   let t9;
   if ($[20] !== onInputModeToggle || $[21] !== options || $[22] !== t6 || $[23] !== t7 || $[24] !== t8) {
+    // @ts-expect-error react-compiler type loss on Select props
     t9 = <Select options={options} inlineDescriptions={true} onChange={t6} onCancel={t7} onFocus={t8} onInputModeToggle={onInputModeToggle} />;
     $[20] = onInputModeToggle;
     $[21] = options;

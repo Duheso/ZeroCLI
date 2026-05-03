@@ -180,10 +180,10 @@ export class GrpcServer {
               // Extract real token counts and final text from the result
               if (msg.subtype === 'success') {
                 if (msg.result) {
-                  fullText = msg.result
+                  fullText = msg.result as string
                 }
-                promptTokens = msg.usage?.input_tokens ?? 0
-                completionTokens = msg.usage?.output_tokens ?? 0
+                promptTokens = (msg.usage as { input_tokens?: number } | undefined)?.input_tokens ?? 0
+                completionTokens = (msg.usage as { output_tokens?: number } | undefined)?.output_tokens ?? 0
               }
             }
           }
@@ -196,7 +196,7 @@ export class GrpcServer {
             if (sessionId) {
               if (!this.sessions.has(sessionId) && this.sessions.size >= MAX_SESSIONS) {
                 // Evict oldest session (Map preserves insertion order)
-                this.sessions.delete(this.sessions.keys().next().value)
+                this.sessions.delete(this.sessions.keys().next().value as string)
               }
               this.sessions.set(sessionId, previousMessages)
             }
