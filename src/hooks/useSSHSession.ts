@@ -204,7 +204,8 @@ export function useSSHSession({
         void gracefulShutdown(1, 'other', { finalMessage: msg })
       },
       onError: (error: unknown) => {
-        logForDebugging(`[useSSHSession] error: ${error.message}`)
+        const errMsg = error instanceof Error ? error.message : String(error)
+        logForDebugging(`[useSSHSession] error: ${errMsg}`)
       },
     })
 
