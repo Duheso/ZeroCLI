@@ -548,7 +548,7 @@ function NewMessagesPill(t0: { count: number; onClick?: () => void }) {
 // even with scrollTop unchanged (the DECSTBM region top shifts with the
 // ScrollBox, and the diff engine sees "everything moved"). Fixed height
 // keeps the ScrollBox anchored; only the header TEXT changes, not its box.
-function StickyPromptHeader(t0) {
+function StickyPromptHeader(t0: { text: string; onClick?: () => void }) {
   const $ = _c(8);
   const {
     text,
