@@ -301,7 +301,7 @@ function _temp4(pm_1: ProgressMessage<Progress>) {
     return false;
   }
   const msg = pm_1.data.message;
-  if (msg.type === "user" && msg.toolUseResult === undefined) {
+  if ((msg.type as string) === "user" && msg.toolUseResult === undefined) {
     return false;
   }
   return true;

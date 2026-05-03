@@ -1,5 +1,5 @@
 import { feature } from 'bun:bundle'
-import type { UUID } from 'crypto'
+import type { UUID } from 'src/types/UUID.js'
 import uniqBy from 'lodash-es/uniqBy.js'
 
 /* eslint-disable @typescript-eslint/no-require-imports */
@@ -30,6 +30,7 @@ import type {
   HookResultMessage,
   Message,
   PartialCompactDirection,
+  StreamEvent,
   SystemCompactBoundaryMessage,
   SystemMessage,
   UserMessage,
