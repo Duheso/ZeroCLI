@@ -1148,7 +1148,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
           onChange={(value) => {
             const nextDraft = {
               ...draft,
-              model: value,
+              model: value as string,
             }
             setDraft(nextDraft)
             persistDraft(nextDraft)
@@ -1224,7 +1224,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
           onChange={(value) => {
             const nextDraft = {
               ...draft,
-              model: value,
+              model: value as string,
             }
             setDraft(nextDraft)
             persistDraft(nextDraft)
