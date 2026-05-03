@@ -166,7 +166,7 @@ function EffortIndicatorSymbol(t0: { level: string }) {
   } = t0;
   let t1;
   if ($[0] !== level) {
-    t1 = effortLevelToSymbol(level);
+    t1 = effortLevelToSymbol(level as EffortLevel);
     $[0] = level;
     $[1] = t1;
   } else {
