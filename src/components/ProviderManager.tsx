@@ -317,7 +317,7 @@ function CodexOAuthSetup({
   }, persistCredentials: (options?: { profileId?: string }) => void) => {
     await onConfigured(tokens, persistCredentials)
   }, [onConfigured])
-  useKeybinding('confirm:no', onBack, [onBack])
+  useKeybinding('confirm:no', onBack)
 
   const status = useCodexOAuthFlow({
     onAuthenticated: handleAuthenticated,
@@ -1115,7 +1115,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
                 description: t('pm_back_preset_desc'),
               },
             ]}
-            onChange={(value: string) => {
+            onChange={(value) => {
               if (value === 'manual') {
                 setFormStepIndex(0)
                 setCursorOffset(draft.name.length)
@@ -1145,7 +1145,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
           defaultFocusValue={atomicChatSelection.defaultValue}
           inlineDescriptions
           visibleOptionCount={Math.min(8, atomicChatSelection.options.length)}
-          onChange={(value: string) => {
+          onChange={(value) => {
             const nextDraft = {
               ...draft,
               model: value,
@@ -1191,7 +1191,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
                 description: t('pm_back_preset_desc'),
               },
             ]}
-            onChange={(value: string) => {
+            onChange={(value) => {
               if (value === 'manual') {
                 setFormStepIndex(0)
                 setCursorOffset(draft.name.length)
@@ -1221,7 +1221,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
           defaultFocusValue={ollamaSelection.defaultValue}
           inlineDescriptions
           visibleOptionCount={Math.min(8, ollamaSelection.options.length)}
-          onChange={(value: string) => {
+          onChange={(value) => {
             const nextDraft = {
               ...draft,
               model: value,
@@ -1414,7 +1414,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
         </Text>
         <Select
           options={options}
-          onChange={(value: string) => {
+          onChange={(value) => {
             if (value === 'skip') {
               closeWithCancelled('Provider setup skipped')
               return
@@ -1524,7 +1524,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
         </Box>
         <Select
           options={menuOptions}
-          onChange={(value: string) => {
+          onChange={(value) => {
             setErrorMessage(undefined)
             switch (value) {
               case 'add':
@@ -1602,7 +1602,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
   function renderProfileSelection(
     title: string,
     emptyMessage: string,
-    onSelect: (profileId: string) => void,
+    onSelect: (profileId: unknown) => void,
     options?: { includeGithub?: boolean },
   ): React.ReactNode {
     const includeGithub = options?.includeGithub ?? false

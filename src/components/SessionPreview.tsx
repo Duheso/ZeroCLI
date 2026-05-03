@@ -12,19 +12,22 @@ import { Byline } from './design-system/Byline.js';
 import { KeyboardShortcutHint } from './design-system/KeyboardShortcutHint.js';
 import { LoadingState } from './design-system/LoadingState.js';
 import { Messages } from './Messages.js';
+import type { Command } from '../types/command.js';
+import type { StreamingToolUse } from '../utils/messages.js';
+import type { ToolUseConfirm } from './permissions/PermissionRequest.js';
 type Props = {
   log: LogOption;
   onExit: () => void;
   onSelect: (log: LogOption) => void;
 };
-export function SessionPreview(t0) {
+export function SessionPreview(t0: Props) {
   const $ = _c(33);
   const {
     log,
     onExit,
     onSelect
   } = t0;
-  const [fullLog, setFullLog] = React.useState(null);
+  const [fullLog, setFullLog] = React.useState<LogOption | null>(null);
   let t1;
   let t2;
   if ($[0] !== log) {
@@ -112,7 +115,7 @@ export function SessionPreview(t0) {
     }
     return t9;
   }
-  let t8;
+  let t8: unknown[];
   if ($[14] === Symbol.for("react.memo_cache_sentinel")) {
     t8 = [];
     $[14] = t8;
@@ -120,7 +123,7 @@ export function SessionPreview(t0) {
     t8 = $[14];
   }
   let t10;
-  let t9;
+  let t9: unknown[];
   if ($[15] === Symbol.for("react.memo_cache_sentinel")) {
     t9 = [];
     t10 = new Set();
@@ -130,7 +133,7 @@ export function SessionPreview(t0) {
     t10 = $[15];
     t9 = $[16];
   }
-  let t11;
+  let t11: unknown[];
   if ($[17] === Symbol.for("react.memo_cache_sentinel")) {
     t11 = [];
     $[17] = t11;

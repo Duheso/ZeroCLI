@@ -49,7 +49,7 @@ function getSkillListLabel(skill: SkillCommand): string {
   const leafName = skill.name.split(':').pop() ?? skill.name;
   return leafName === skill.name ? skill.name : `${skill.name} - ${leafName}`;
 }
-export function SkillsMenu(t0) {
+export function SkillsMenu(t0: Props) {
   const $ = _c(35);
   const {
     onExit,
@@ -74,7 +74,7 @@ export function SkillsMenu(t0) {
       flagSettings: [],
       plugin: [],
       mcp: []
-    };
+    } as Record<SkillSource, SkillCommand[]>;
     for (const skill of skills) {
       const source = skill.source as SkillSource;
       if (source in groups) {
@@ -131,14 +131,14 @@ export function SkillsMenu(t0) {
   const renderSkill = _temp3;
   let t3;
   if ($[10] !== skillsBySource) {
-    t3 = source_0 => {
+    t3 = (source_0: SkillSource) => {
       const groupSkills = skillsBySource[source_0];
       if (groupSkills.length === 0) {
         return null;
       }
       const title = getSourceTitle(source_0);
       const subtitle = getSourceSubtitle(source_0, groupSkills);
-      return <Box flexDirection="column" key={source_0}><FullWidthRow><Text bold={true} dimColor={true}>{title}</Text>{subtitle && <Text dimColor={true}> ({subtitle})</Text>}</FullWidthRow>{groupSkills.map(skill_1 => renderSkill(skill_1))}</Box>;
+      return <Box flexDirection="column" key={source_0}><FullWidthRow><Text bold={true} dimColor={true}>{title}</Text>{subtitle && <Text dimColor={true}> ({subtitle})</Text>}</FullWidthRow>{groupSkills.map((skill_1: SkillCommand) => renderSkill(skill_1))}</Box>;
     };
     $[10] = skillsBySource;
     $[11] = t3;
@@ -227,15 +227,15 @@ export function SkillsMenu(t0) {
   }
   return t14;
 }
-function _temp3(skill_0) {
+function _temp3(skill_0: SkillCommand) {
   const estimatedTokens = estimateSkillFrontmatterTokens(skill_0);
   const tokenDisplay = `~${formatTokens(estimatedTokens)}`;
   const pluginName = skill_0.source === "plugin" ? skill_0.pluginInfo?.pluginManifest.name : undefined;
   return <FullWidthRow key={`${skill_0.name}-${skill_0.source}`}><Text>{getSkillListLabel(skill_0)}</Text><Text dimColor={true}>{pluginName ? ` · ${pluginName}` : ""} · {tokenDisplay} description tokens</Text></FullWidthRow>;
 }
-function _temp2(a, b) {
+function _temp2(a: SkillCommand, b: SkillCommand) {
   return a.name.localeCompare(b.name);
 }
-function _temp(cmd) {
+function _temp(cmd: Command) {
   return cmd.type === "prompt" && (cmd.loadedFrom === "skills" || cmd.loadedFrom === "commands_DEPRECATED" || cmd.loadedFrom === "plugin" || cmd.loadedFrom === "mcp");
 }
