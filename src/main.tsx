@@ -3021,7 +3021,7 @@ async function run(): Promise<CommanderCommand> {
       // KAIROS block so Agent(name: "foo") can spawn in-process teammates
       // without TeamCreate. computeInitialTeamContext() is for tmux-spawned
       // teammates reading their own identity, not the assistant-mode leader.
-      teamContext: feature('KAIROS') ? assistantTeamContext ?? computeInitialTeamContext?.() : computeInitialTeamContext?.()
+      teamContext: (feature('KAIROS') ? assistantTeamContext ?? computeInitialTeamContext?.() : computeInitialTeamContext?.()) as any,
     };
 
     // Add CLI initial prompt to history
@@ -3188,7 +3188,7 @@ async function run(): Promise<CommanderCommand> {
         createSSHSession,
         createLocalSSHSession,
         SSHSessionError
-      } = await import('./ssh/createSSHSession.js');
+      } = (await import('./ssh/createSSHSession.js')) as any;
       let sshSession;
       try {
         if (_pendingSSH.local) {
@@ -3213,7 +3213,7 @@ async function run(): Promise<CommanderCommand> {
             dangerouslySkipPermissions: _pendingSSH.dangerouslySkipPermissions,
             extraCliArgs: _pendingSSH.extraCliArgs
           }, isTTY ? {
-            onProgress: msg => {
+            onProgress: (msg: string) => {
               hadProgress = true;
               process.stderr.write(`\r  ${msg}\x1b[K`);
             }
@@ -3224,7 +3224,7 @@ async function run(): Promise<CommanderCommand> {
         setCwdState(sshSession.remoteCwd);
         setDirectConnectServerUrl(_pendingSSH.local ? 'local' : _pendingSSH.host);
       } catch (err) {
-        return await exitWithError(root, err instanceof SSHSessionError ? err.message : String(err), () => gracefulShutdown(1));
+        return await exitWithError(root, String(err), () => gracefulShutdown(1));
       }
       const sshInfoMessage = createSystemMessage(_pendingSSH.local ? `Local ssh-proxy test session\ncwd: ${sshSession.remoteCwd}\nAuth: unix socket → local proxy` : `SSH session to ${_pendingSSH.host}\nRemote cwd: ${sshSession.remoteCwd}\nAuth: unix socket -R → local proxy`, 'info');
       await launchRepl(root, {
@@ -3251,7 +3251,7 @@ async function run(): Promise<CommanderCommand> {
       // loaded by useAssistantHistory on scroll-up (no blocking fetch here).
       const {
         discoverAssistantSessions
-      } = await import('./assistant/sessionDiscovery.js');
+      } = (await import('./assistant/sessionDiscovery.js')) as any;
       let targetSessionId = _pendingAssistantChat.sessionId;
 
       // Discovery flow — list bridge environments, filter sessions
@@ -3314,7 +3314,7 @@ async function run(): Promise<CommanderCommand> {
       setKairosActive(true);
       setUserMsgOptIn(true);
       setIsRemoteMode(true);
-      const remoteSessionConfig = createRemoteSessionConfig(targetSessionId, getAccessToken, apiCreds.orgUUID, /* hasInitialPrompt */false, /* viewerOnly */true);
+      const remoteSessionConfig = createRemoteSessionConfig(targetSessionId ?? '', getAccessToken, apiCreds.orgUUID, /* hasInitialPrompt */false, /* viewerOnly */true);
       const infoMessage = createSystemMessage(`Attached to assistant session ${targetSessionId!.slice(0, 8)}…`, 'info');
       const assistantInitialState: AppState = {
         ...initialState,
