@@ -1602,7 +1602,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
   function renderProfileSelection(
     title: string,
     emptyMessage: string,
-    onSelect: (profileId: unknown) => void,
+    onSelect: (profileId: string) => void,
     options?: { includeGithub?: boolean },
   ): React.ReactNode {
     const includeGithub = options?.includeGithub ?? false

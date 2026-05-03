@@ -115,7 +115,7 @@ export function SessionPreview(t0: Props) {
     }
     return t9;
   }
-  let t8: unknown[];
+  let t8: Command[];
   if ($[14] === Symbol.for("react.memo_cache_sentinel")) {
     t8 = [];
     $[14] = t8;
@@ -123,7 +123,7 @@ export function SessionPreview(t0: Props) {
     t8 = $[14];
   }
   let t10;
-  let t9: unknown[];
+  let t9: ToolUseConfirm[];
   if ($[15] === Symbol.for("react.memo_cache_sentinel")) {
     t9 = [];
     t10 = new Set();
@@ -133,7 +133,7 @@ export function SessionPreview(t0: Props) {
     t10 = $[15];
     t9 = $[16];
   }
-  let t11: unknown[];
+  let t11: StreamingToolUse[];
   if ($[17] === Symbol.for("react.memo_cache_sentinel")) {
     t11 = [];
     $[17] = t11;
