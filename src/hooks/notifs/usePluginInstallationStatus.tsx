@@ -116,12 +116,12 @@ export function usePluginInstallationStatus() {
   }
   useEffect(t1, t2);
 }
-function _temp3(p) {
+function _temp3(p: { status: string }) {
   return p.status === "failed";
 }
-function _temp2(m) {
+function _temp2(m: { status: string }) {
   return m.status === "failed";
 }
-function _temp(s) {
+function _temp(s: { plugins: { installationStatus: { marketplaces: Array<{ status: string }>, plugins: Array<{ status: string }> } } }) {
   return s.plugins.installationStatus;
 }
