@@ -68,7 +68,7 @@ function getSearchOrReadInfo(progressMessage: ProgressMessage<Progress>, tools: 
   }
 
   // Check tool_result (user message) - find corresponding tool use from the map
-  if (message.type === 'user') {
+  if ((message.type as string) === 'user') {
     const content = message.message.content[0];
     if (content?.type === 'tool_result') {
       const toolUse = toolUseByID.get(content.tool_use_id);
@@ -99,7 +99,7 @@ type ProcessedMessage = {
  */
 function processProgressMessages(messages: ProgressMessage<Progress>[], tools: Tools, isAgentRunning: boolean): ProcessedMessage[] {
   // Only process for ants
-  if (("external" as string) !== 'ant') {
+  if (String("external") !== 'ant') {
     return messages.filter((m): m is ProgressMessage<AgentToolProgress> => hasProgressMessage(m.data) && m.data.message.type !== 'user').map(m => ({
       type: 'original',
       message: m
@@ -181,7 +181,7 @@ function processProgressMessages(messages: ProgressMessage<Progress>[], tools: T
 const ESTIMATED_LINES_PER_TOOL = 9;
 const TERMINAL_BUFFER_LINES = 7;
 type Output = z.input<ReturnType<typeof outputSchema>>;
-export function AgentPromptDisplay(t0: any) {
+export function AgentPromptDisplay(t0: { prompt: string; dim?: boolean }) {
   const $ = _c(3);
   const {
     prompt,
@@ -205,7 +205,7 @@ export function AgentPromptDisplay(t0: any) {
   }
   return t3;
 }
-export function AgentResponseDisplay(t0: any) {
+export function AgentResponseDisplay(t0: { content: Array<{ text: string }> }) {
   const $ = _c(5);
   const {
     content
@@ -235,7 +235,7 @@ export function AgentResponseDisplay(t0: any) {
   }
   return t3;
 }
-function _temp(block: any, index: number) {
+function _temp(block: { text: string }, index: number) {
   return <Box key={index} paddingLeft={2} marginTop={index === 0 ? 0 : 1}><Markdown>{block.text}</Markdown></Box>;
 }
 type VerboseAgentTranscriptProps = {
@@ -243,7 +243,7 @@ type VerboseAgentTranscriptProps = {
   tools: Tools;
   verbose: boolean;
 };
-function VerboseAgentTranscript(t0: any) {
+function VerboseAgentTranscript(t0: VerboseAgentTranscriptProps) {
   const $ = _c(15);
   const {
     progressMessages,
