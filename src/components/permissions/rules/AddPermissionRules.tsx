@@ -45,7 +45,7 @@ type Props = {
   initialContext: ToolPermissionContext;
   setToolPermissionContext: (newContext: ToolPermissionContext) => void;
 };
-export function AddPermissionRules(t0) {
+export function AddPermissionRules(t0: Props) {
   const $ = _c(26);
   const {
     onAddRules,
@@ -65,7 +65,7 @@ export function AddPermissionRules(t0) {
   const allOptions = t1;
   let t2;
   if ($[1] !== initialContext || $[2] !== onAddRules || $[3] !== onCancel || $[4] !== ruleBehavior || $[5] !== ruleValues || $[6] !== setToolPermissionContext) {
-    t2 = selectedValue => {
+    t2 = (selectedValue: string) => {
       if (selectedValue === "cancel") {
         onCancel();
         return;
@@ -85,7 +85,7 @@ export function AddPermissionRules(t0) {
             destination
           });
           setToolPermissionContext(updatedContext);
-          const rules = ruleValues.map(ruleValue => ({
+          const rules = ruleValues.map((ruleValue: PermissionRuleValue) => ({
             ruleValue,
             ruleBehavior,
             source: destination
@@ -94,7 +94,7 @@ export function AddPermissionRules(t0) {
           const allUnreachable = detectUnreachableRules(updatedContext, {
             sandboxAutoAllowEnabled
           });
-          const newUnreachable = allUnreachable.filter(u => ruleValues.some(rv => rv.toolName === u.rule.ruleValue.toolName && rv.ruleContent === u.rule.ruleValue.ruleContent));
+          const newUnreachable = allUnreachable.filter(u => ruleValues.some((rv: PermissionRuleValue) => rv.toolName === u.rule.ruleValue.toolName && rv.ruleContent === u.rule.ruleValue.ruleContent));
           onAddRules(rules, newUnreachable.length > 0 ? newUnreachable : undefined);
         }
       }
@@ -174,6 +174,6 @@ export function AddPermissionRules(t0) {
   }
   return t10;
 }
-function _temp(ruleValue_0) {
+function _temp(ruleValue_0: PermissionRuleValue) {
   return <Box flexDirection="column" key={permissionRuleValueToString(ruleValue_0)}><Text bold={true}>{permissionRuleValueToString(ruleValue_0)}</Text><PermissionRuleDescription ruleValue={ruleValue_0} /></Box>;
 }
