@@ -36,7 +36,6 @@ import type {
   ResolvePrepareCaptureResult,
   RunningApp,
   ScreenshotResult,
-  // @ts-expect-error @ant/computer-use-mcp is only available in internal builds
 } from '@ant/computer-use-mcp'
 
 // @ts-expect-error @ant/computer-use-mcp is only available in internal builds
@@ -616,7 +615,7 @@ export function createCliExecutor(opts: {
     async getFrontmostApp(): Promise<FrontmostApp | null> {
       const info = requireComputerUseInput().getFrontmostAppInfo()
       if (!info || !info.bundleId) return null
-      return { bundleId: info.bundleId, displayName: info.appName }
+      return { bundleId: info.bundleId, displayName: info.appName } as unknown as FrontmostApp
     },
 
     async appUnderPoint(

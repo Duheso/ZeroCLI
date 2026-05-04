@@ -9,8 +9,10 @@
  * package is only loaded the first time a lock function is actually called.
  */
 
+// @ts-expect-error proper-lockfile has no TypeScript declarations
 import type { CheckOptions, LockOptions, UnlockOptions } from 'proper-lockfile'
 
+// @ts-expect-error proper-lockfile has no TypeScript declarations
 type Lockfile = typeof import('proper-lockfile')
 
 let _lockfile: Lockfile | undefined
