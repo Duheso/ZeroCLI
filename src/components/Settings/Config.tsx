@@ -673,8 +673,29 @@ export function Config({
       });
     }
   },
-  // autoUpdates setting is hidden - use DISABLE_AUTOUPDATER env var to control
-  autoUpdaterDisabledReason ? {
+  // Auto-update ON/OFF toggle (space to toggle, like UI Language)
+  ...(autoUpdaterDisabledReason?.type !== 'env' ? [{
+    id: 'autoUpdates',
+    label: 'Auto-Update',
+    value: globalConfig.autoUpdates !== false,
+    type: 'boolean' as const,
+    onChange(enabled: boolean) {
+      isDirty.current = true;
+      saveGlobalConfig(current => ({
+        ...current,
+        autoUpdates: enabled
+      }));
+      setGlobalConfig({
+        ...getGlobalConfig(),
+        autoUpdates: enabled
+      });
+      logEvent('tengu_autoupdate_toggled', {
+        enabled: enabled as unknown as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
+      });
+    }
+  }] : []),
+  // Channel selector — shown only when user has auto-updates enabled
+  ...(globalConfig.autoUpdates !== false && autoUpdaterDisabledReason?.type !== 'env' ? [autoUpdaterDisabledReason ? {
     id: 'autoUpdatesChannel',
     label: 'Auto-update channel',
     value: 'disabled',
@@ -688,7 +709,7 @@ export function Config({
     onChange() {
       // Handled via toggleSetting -> 'ChannelDowngrade'
     }
-  }, {
+  }] : []), {
     id: 'theme',
     label: 'Theme',
     value: themeSetting,
@@ -1223,6 +1244,9 @@ export function Config({
     if (globalConfig.remoteControlAtStartup !== initialConfig.current.remoteControlAtStartup) {
       const remoteLabel = globalConfig.remoteControlAtStartup === undefined ? 'Reset Remote Control to default' : `${globalConfig.remoteControlAtStartup ? 'Enabled' : 'Disabled'} Remote Control for all sessions`;
       formattedChanges.push(remoteLabel);
+    }
+    if (globalConfig.autoUpdates !== initialConfig.current.autoUpdates) {
+      formattedChanges.push(`${globalConfig.autoUpdates !== false ? 'Enabled' : 'Disabled'} auto-update`);
     }
     if (settingsData?.autoUpdatesChannel !== initialSettingsData.current?.autoUpdatesChannel) {
       formattedChanges.push(`Set auto-update channel to ${chalk.bold(settingsData?.autoUpdatesChannel ?? 'latest')}`);

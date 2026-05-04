@@ -1777,7 +1777,10 @@ export function formatAutoUpdaterDisabledReason(
 }
 
 export function getAutoUpdaterDisabledReason(): AutoUpdaterDisabledReason | null {
-  if (process.env.NODE_ENV === 'development') {
+  const config = getGlobalConfig()
+  // Development build restriction — skipped only when the user has explicitly
+  // enabled auto-updates in config (allows opt-in for testing / self-hosted use).
+  if (process.env.NODE_ENV === 'development' && config.autoUpdates !== true) {
     return { type: 'development' }
   }
   if (isEnvTruthy(process.env.DISABLE_AUTOUPDATER)) {
@@ -1787,7 +1790,6 @@ export function getAutoUpdaterDisabledReason(): AutoUpdaterDisabledReason | null
   if (essentialTrafficEnvVar) {
     return { type: 'env', envVar: essentialTrafficEnvVar }
   }
-  const config = getGlobalConfig()
   if (
     config.autoUpdates === false &&
     (config.installMethod !== 'native' ||

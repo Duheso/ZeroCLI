@@ -81,7 +81,7 @@ export function PackageManagerAutoUpdater(t0: any) {
   }
   let t5;
   if ($[5] !== updateCommand) {
-    t5 = <Text color="warning" wrap="truncate">Update available! Run: <Text bold={true}>{updateCommand}</Text></Text>;
+    t5 = <Text color="warning" wrap="truncate">Update available · Run <Text bold={true}>{updateCommand}</Text> to update ZeroCLI</Text>;
     $[5] = updateCommand;
     $[6] = t5;
   } else {
