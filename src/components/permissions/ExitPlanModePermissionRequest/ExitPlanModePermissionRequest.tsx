@@ -535,7 +535,7 @@ export function ExitPlanModePermissionRequest({
     setStickyFooter(<Box flexDirection="column" borderStyle="round" borderColor="planMode" borderLeft={false} borderRight={false} borderBottom={false} paddingX={1}>
         <Text dimColor>Would you like to proceed?</Text>
         <Box marginTop={1}>
-          <Select options={options} onChange={v => void handleResponseRef.current(v)} onCancel={() => handleCancelRef.current?.()} onImagePaste={onImagePaste} pastedContents={pastedContents} onRemoveImage={onRemoveImage} />
+          <Select options={options} onChange={(v: unknown) => void handleResponseRef.current(v as ResponseValue)} onCancel={() => handleCancelRef.current?.()} onImagePaste={onImagePaste} pastedContents={pastedContents} onRemoveImage={onRemoveImage} />
         </Box>
         {editorName && <Box flexDirection="row" gap={1} marginTop={1}>
             <Text dimColor>ctrl-g to edit in </Text>
@@ -608,7 +608,10 @@ export function ExitPlanModePermissionRequest({
           }, {
             label: 'No',
             value: 'no' as const
-          }]} onChange={handleEmptyPlanResponse} onCancel={() => {
+          }]}
+            // @ts-expect-error Select lost generic type in react-compiler output (SelectProps<unknown>)
+            onChange={handleEmptyPlanResponse}
+            onCancel={() => {
             logEvent('tengu_plan_exit', {
               planLengthChars: 0,
               outcome: 'no' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -648,7 +651,10 @@ export function ExitPlanModePermissionRequest({
                   you like to proceed?
                 </Text>
                 <Box marginTop={1}>
-                  <Select options={options} onChange={handleResponse} onCancel={() => handleCancelRef.current?.()} onImagePaste={onImagePaste} pastedContents={pastedContents} onRemoveImage={onRemoveImage} />
+                  <Select options={options}
+                    // @ts-expect-error Select lost generic type in react-compiler output (SelectProps<unknown>)
+                    onChange={handleResponse}
+                    onCancel={() => handleCancelRef.current?.()} onImagePaste={onImagePaste} pastedContents={pastedContents} onRemoveImage={onRemoveImage} />
                 </Box>
               </>}
           </Box>

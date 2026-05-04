@@ -74,7 +74,7 @@ export function NativeAutoUpdater({
     if (isUpdatingRef.current) {
       return;
     }
-    if ("production" === 'test' || "production" === 'development') {
+    if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
       logForDebugging('NativeAutoUpdater: Skipping update check in test/dev environment');
       return;
     }
@@ -184,7 +184,8 @@ export function NativeAutoUpdater({
       {autoUpdaterResult?.status === 'install_failed' && <Text color="error" wrap="truncate">
           ✗ Auto-update failed &middot; Try <Text bold>/status</Text>
         </Text>}
-      {maxVersionIssue && "external" === 'ant' && <Text color="warning">
+      // @ts-expect-error build flag comparison
+      {maxVersionIssue && ("external" as any) === 'ant' && <Text color="warning">
           ⚠ Known issue: {maxVersionIssue} &middot; Run{' '}
           <Text bold>claude rollback --safe</Text> to downgrade
         </Text>}
