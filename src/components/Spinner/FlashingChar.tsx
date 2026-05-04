@@ -9,7 +9,7 @@ type Props = {
   messageColor: keyof Theme;
   shimmerColor: keyof Theme;
 };
-export function FlashingChar(t0) {
+export function FlashingChar(t0: Props) {
   const $ = _c(9);
   const {
     char,
@@ -23,8 +23,8 @@ export function FlashingChar(t0) {
     t1 = Symbol.for("react.early_return_sentinel");
     bb0: {
       const theme = getTheme(themeName);
-      const baseColorStr = theme[messageColor];
-      const shimmerColorStr = theme[shimmerColor];
+      const baseColorStr = theme[messageColor as keyof typeof theme];
+      const shimmerColorStr = theme[shimmerColor as keyof typeof theme];
       const baseRGB = baseColorStr ? parseRGB(baseColorStr) : null;
       const shimmerRGB = shimmerColorStr ? parseRGB(shimmerColorStr) : null;
       if (baseRGB && shimmerRGB) {

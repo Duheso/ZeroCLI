@@ -41,7 +41,7 @@ type PromptCharProps = {
  * Renders the prompt character (❯).
  * Teammate color overrides the default color when set.
  */
-function PromptChar(t0) {
+function PromptChar(t0: PromptCharProps) {
   const $ = _c(3);
   const {
     isLoading,
@@ -60,7 +60,7 @@ function PromptChar(t0) {
   }
   return t1;
 }
-export function PromptInputModeIndicator(t0) {
+export function PromptInputModeIndicator(t0: Props) {
   const $ = _c(6);
   const {
     mode,
@@ -76,7 +76,7 @@ export function PromptInputModeIndicator(t0) {
     t1 = $[0];
   }
   const teammateColor = t1;
-  const viewedTeammateThemeColor = viewingAgentColor ? AGENT_COLOR_TO_THEME_COLOR[viewingAgentColor] : undefined;
+  const viewedTeammateThemeColor = viewingAgentColor ? AGENT_COLOR_TO_THEME_COLOR[viewingAgentColor as AgentColorName] : undefined;
   let t2;
   if ($[1] !== isLoading || $[2] !== mode || $[3] !== viewedTeammateThemeColor || $[4] !== viewingAgentName) {
     t2 = <Box alignItems="flex-start" alignSelf="flex-start" flexWrap="nowrap" justifyContent="flex-start">{viewingAgentName ? <PromptChar isLoading={isLoading} themeColor={viewedTeammateThemeColor} /> : mode === "bash" ? <Text color="bashBorder" dimColor={isLoading}>! </Text> : <PromptChar isLoading={isLoading} themeColor={isAgentSwarmsEnabled() ? teammateColor : undefined} />}</Box>;
