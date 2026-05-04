@@ -133,7 +133,7 @@ const result = await Bun.build({
     // Keep the internal compatibility version high enough to pass
     // first-party minimum-version guards, but expose the real package
     // version separately in ZeroCLI branding.
-    'MACRO.VERSION': JSON.stringify('0.7.7'),
+    'MACRO.VERSION': JSON.stringify('0.7.8'),
     'MACRO.DISPLAY_VERSION': JSON.stringify(version),
     'MACRO.BUILD_TIME': JSON.stringify(new Date().toISOString()),
     'MACRO.ISSUES_EXPLAINER':

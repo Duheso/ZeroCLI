@@ -1,6 +1,6 @@
 {
   "name": "@duheso/zerocli",
-  "version": "0.7.7",
+  "version": "0.7.8",
   "description": "Zero Cli to any LLM — OpenAI, Gemini, DeepSeek, Ollama, and 200+ models",
   "type": "module",
   "bin": {
