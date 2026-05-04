@@ -15,7 +15,7 @@ function stdioConfig(scope: 'local' | 'project' | 'user' | 'enterprise', command
   return {
     type: 'stdio' as const,
     command,
-    args: [],
+    args: [] as string[],
     scope,
   }
 }
@@ -28,6 +28,7 @@ function makeDependencies(overrides: Partial<McpDoctorDependencies> = {}): McpDo
     isMcpServerDisabled: () => false,
     describeMcpConfigFilePath: scope => `scope://${scope}`,
     clearServerCache: async () => {},
+    // @ts-expect-error -- test stub signature simplified vs production memoized type
     connectToServer: async (name, config) => ({
       name,
       type: 'connected',
@@ -143,6 +144,7 @@ test('doctorAllServers reports global validation findings once without duplicati
       servers: { filesystem: localConfig },
       errors: [],
     }),
+    // @ts-expect-error -- test stub return types narrowed by branch, union mismatches production signature
     getMcpConfigsByScope: scope =>
       scope === 'project'
         ? {
@@ -184,6 +186,7 @@ test('doctorServer explains same-name shadowing across scopes', async () => {
       },
       errors: [],
     }),
+    // @ts-expect-error -- test stub return types narrowed by branch, union mismatches production signature
     getMcpConfigsByScope: scope => {
       switch (scope) {
         case 'local':
@@ -210,6 +213,7 @@ test('doctorServer explains same-name shadowing across scopes', async () => {
 test('doctorServer reports project servers pending approval', async () => {
   const projectConfig = stdioConfig('project', 'node-project')
   const deps = makeDependencies({
+    // @ts-expect-error -- test stub return types narrowed by branch, union mismatches production signature
     getMcpConfigsByScope: scope =>
       scope === 'project'
         ? { servers: { sentry: projectConfig }, errors: [] }
@@ -236,11 +240,13 @@ test('doctorServer does not treat disabled servers as runtime-active or live-che
       servers: { github: localConfig },
       errors: [],
     }),
+    // @ts-expect-error -- test stub return types narrowed by branch, union mismatches production signature
     getMcpConfigsByScope: scope =>
       scope === 'local'
         ? { servers: { github: localConfig }, errors: [] }
         : { servers: {}, errors: [] },
     isMcpServerDisabled: name => name === 'github',
+    // @ts-expect-error -- test stub signature simplified vs production memoized type
     connectToServer: async (name, config) => {
       connectCalls += 1
       return {
@@ -275,10 +281,12 @@ test('doctorAllServers skips live checks in config-only mode', async () => {
       servers: { linear: localConfig },
       errors: [],
     }),
+    // @ts-expect-error -- test stub return types narrowed by branch, union mismatches production signature
     getMcpConfigsByScope: scope =>
       scope === 'local'
         ? { servers: { linear: localConfig }, errors: [] }
         : { servers: {}, errors: [] },
+    // @ts-expect-error -- test stub signature simplified vs production memoized type
     connectToServer: async (name, config) => {
       connectCalls += 1
       return {
@@ -324,6 +332,7 @@ test('doctorAllServers honors scopeFilter when collecting validation errors', as
       servers: { filesystem: userConfig },
       errors: [],
     }),
+    // @ts-expect-error -- test stub return types narrowed by branch, union mismatches production signature
     getMcpConfigsByScope: scope => {
       switch (scope) {
         case 'project':
@@ -421,10 +430,12 @@ test('doctorServer converts failed live checks into blocking findings', async ()
       servers: { github: localConfig },
       errors: [],
     }),
+    // @ts-expect-error -- test stub return types narrowed by branch, union mismatches production signature
     getMcpConfigsByScope: scope =>
       scope === 'local'
         ? { servers: { github: localConfig }, errors: [] }
         : { servers: {}, errors: [] },
+    // @ts-expect-error -- test stub signature simplified vs production memoized type
     connectToServer: async (name, config) => ({
       name,
       type: 'failed',
@@ -452,10 +463,12 @@ test('doctorServer converts needs-auth live checks into warning findings', async
       servers: { sentry: localConfig },
       errors: [],
     }),
+    // @ts-expect-error -- test stub return types narrowed by branch, union mismatches production signature
     getMcpConfigsByScope: scope =>
       scope === 'local'
         ? { servers: { sentry: localConfig }, errors: [] }
         : { servers: {}, errors: [] },
+    // @ts-expect-error -- test stub signature simplified vs production memoized type
     connectToServer: async (name, config) => ({
       name,
       type: 'needs-auth',
@@ -503,10 +516,12 @@ test('doctorServer with scopeFilter does not leak runtime definition from anothe
       servers: { github: localConfig },
       errors: [],
     }),
+    // @ts-expect-error -- test stub return types narrowed by branch, union mismatches production signature
     getMcpConfigsByScope: scope =>
       scope === 'local'
         ? { servers: { github: localConfig }, errors: [] }
         : { servers: {}, errors: [] },
+    // @ts-expect-error -- test stub signature simplified vs production memoized type
     connectToServer: async (name, config) => {
       connectCalls += 1
       return {

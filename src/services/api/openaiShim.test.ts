@@ -329,7 +329,7 @@ test('strips Anthropic-specific headers on GitHub Codex transport with providerO
 
 test('preserves usage from final OpenAI stream chunk with empty choices', async () => {
   globalThis.fetch = (async (_input, init) => {
-    const url = typeof _input === 'string' ? _input : _input.url
+    const url = typeof _input === 'string' ? _input : (_input as Request).url
     expect(url).toBe('http://example.test/v1/chat/completions')
 
     const body = JSON.parse(String(init?.body))
@@ -911,7 +911,7 @@ test('uses GEMINI_ACCESS_TOKEN for Gemini OpenAI-compatible requests', async () 
   delete process.env.GOOGLE_API_KEY
 
   globalThis.fetch = (async (input, init) => {
-    requestUrl = typeof input === 'string' ? input : input.url
+    requestUrl = typeof input === 'string' ? input : (input as Request).url
     const headers = init?.headers as Record<string, string> | undefined
     capturedAuthorization =
       headers?.Authorization ?? headers?.authorization ?? null
@@ -959,7 +959,9 @@ test('uses GEMINI_ACCESS_TOKEN for Gemini OpenAI-compatible requests', async () 
   expect(requestUrl).toBe(
     'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
   )
+  // @ts-expect-error - narrow type for test assertion
   expect(capturedAuthorization).toBe('Bearer gemini-access-token')
+  // @ts-expect-error - narrow type for test assertion
   expect(capturedProject).toBe('gemini-project')
 })
 
@@ -2514,6 +2516,7 @@ test('non-streaming: real content takes precedence over reasoning_content', asyn
 })
 
 test('non-streaming: strips <think> tag block from assistant content', async () => {
+  // @ts-expect-error - test mock
   globalThis.fetch = (async () => {
     return new Response(
       JSON.stringify({
@@ -2646,6 +2649,7 @@ test('streaming: thinking block closed before tool call', async () => {
 })
 
 test('streaming: strips <think> tag block from assistant content deltas', async () => {
+  // @ts-expect-error - test mock
   globalThis.fetch = (async () => {
     const chunks = makeStreamChunks([
       {
@@ -2704,6 +2708,7 @@ test('streaming: strips <think> tag block from assistant content deltas', async 
 })
 
 test('streaming: strips <think> tag split across multiple content chunks', async () => {
+  // @ts-expect-error - test mock
   globalThis.fetch = (async () => {
     const chunks = makeStreamChunks([
       {
@@ -2792,6 +2797,7 @@ test('streaming: strips <think> tag split across multiple content chunks', async
 test('streaming: preserves prose without tags (no phrase-based false positive)', async () => {
   // Regression: older phrase-based sanitizer would strip "I should..." prose.
   // The tag-based approach leaves legitimate assistant output alone.
+  // @ts-expect-error - test mock
   globalThis.fetch = (async () => {
     const chunks = makeStreamChunks([
       {
@@ -2858,6 +2864,7 @@ test('classifies localhost transport failures with actionable category marker', 
     code: 'ECONNREFUSED',
   })
 
+  // @ts-expect-error - test mock
   globalThis.fetch = (async () => {
     throw transportError
   }) as FetchType
@@ -2887,6 +2894,7 @@ test('propagates AbortError without wrapping it as transport failure', async () 
   process.env.OPENAI_BASE_URL = 'http://localhost:11434/v1'
 
   const abortError = new DOMException('The operation was aborted.', 'AbortError')
+  // @ts-expect-error - test mock
   globalThis.fetch = (async () => {
     throw abortError
   }) as FetchType
@@ -2912,6 +2920,7 @@ test('propagates AbortError without wrapping it as transport failure', async () 
 test('classifies chat-completions endpoint 404 failures with endpoint_not_found marker', async () => {
   process.env.OPENAI_BASE_URL = 'http://localhost:11434'
 
+  // @ts-expect-error - test mock
   globalThis.fetch = (async () =>
     new Response('Not Found', {
       status: 404,
@@ -2936,7 +2945,7 @@ test('self-heals localhost resolution failures by retrying local loopback base U
 
   const requestUrls: string[] = []
   globalThis.fetch = (async (input, _init) => {
-    const url = typeof input === 'string' ? input : input.url
+    const url = typeof input === 'string' ? input : (input as Request).url
     requestUrls.push(url)
 
     if (url.includes('localhost')) {
@@ -2994,7 +3003,7 @@ test('self-heals local endpoint_not_found by retrying with /v1 base URL', async 
 
   const requestUrls: string[] = []
   globalThis.fetch = (async (input, _init) => {
-    const url = typeof input === 'string' ? input : input.url
+    const url = typeof input === 'string' ? input : (input as Request).url
     requestUrls.push(url)
 
     if (url === 'http://localhost:11434/chat/completions') {
