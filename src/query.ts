@@ -53,6 +53,7 @@ import {
   createToolUseSummaryMessage,
   createMicrocompactBoundaryMessage,
 } from './utils/messages.js'
+import { pruneContentReplacementState } from './utils/toolResultStorage.js'
 import { generateToolUseSummary } from './services/toolUseSummary/toolUseSummaryGenerator.js'
 import { prependUserContext, appendSystemContext } from './utils/api.js'
 import {
@@ -539,6 +540,14 @@ async function* queryLoop(
 
       for (const message of postCompactMessages) {
         yield message
+      }
+
+      // Prune stale contentReplacementState entries after compact to reclaim heap
+      if (toolUseContext.contentReplacementState) {
+        pruneContentReplacementState(
+          toolUseContext.contentReplacementState,
+          postCompactMessages,
+        )
       }
 
       // Continue on with the current query call using the post compact messages

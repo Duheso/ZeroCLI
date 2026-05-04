@@ -1040,6 +1040,40 @@ export function reconstructForSubagentResume(
 }
 
 /**
+ * Prune stale entries from ContentReplacementState that no longer appear in
+ * the active message set. Called after compaction to reclaim memory from
+ * tool_use_ids that were removed from the transcript.
+ *
+ * Returns true if any entries were removed.
+ */
+export function pruneContentReplacementState(
+  state: ContentReplacementState,
+  messages: Message[],
+): boolean {
+  const liveIds = new Set(
+    collectCandidatesByMessage(messages).flat().map(c => c.toolUseId),
+  )
+  const beforeSeen = state.seenIds.size
+  const beforeRepl = state.replacements.size
+
+  // Prune seenIds — only keep IDs still live
+  for (const id of state.seenIds) {
+    if (!liveIds.has(id)) {
+      state.seenIds.delete(id)
+    }
+  }
+
+  // Prune replacements — only keep IDs still live
+  for (const [id] of state.replacements) {
+    if (!liveIds.has(id)) {
+      state.replacements.delete(id)
+    }
+  }
+
+  return state.seenIds.size !== beforeSeen || state.replacements.size !== beforeRepl
+}
+
+/**
  * Get a human-readable error message from a filesystem error
  */
 function getFileSystemErrorMessage(error: Error): string {

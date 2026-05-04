@@ -259,13 +259,17 @@ export class QueryEngine {
         forceDecision,
       )
 
-      // Track denials for SDK reporting
+      // Track denials for SDK reporting (bounded to prevent unbounded heap growth)
       if (result.behavior !== 'allow') {
         this.permissionDenials.push({
           tool_name: sdkCompatToolName(tool.name),
           tool_use_id: toolUseID,
           tool_input: input,
         })
+        // Keep only the last 100 denials to prevent unbounded memory growth
+        if (this.permissionDenials.length > 100) {
+          this.permissionDenials = this.permissionDenials.slice(-100)
+        }
       }
 
       return result

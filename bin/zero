@@ -1,66 +1,87 @@
-#!/usr/bin/env node
+#!/usr/bin/env bash
 
-/**
- * Zero CLI — COPILOT_* env var support
- *
- * Maps COPILOT_PROVIDER_* / COPILOT_MODEL vars to the native OpenAI-shim
- * vars, then boots the app.
- *
- * Internal (localhost):
- *   export COPILOT_PROVIDER_BASE_URL=http://localhost:3052/v1
- *   export COPILOT_PROVIDER_TYPE=openai
- *   export COPILOT_PROVIDER_API_KEY=not-required
- *   export COPILOT_MODEL=gemma4:code
- *   zero
- *
- * External (remote server):
- *   export COPILOT_PROVIDER_BASE_URL=http://10.11.36.131:3052/v1
- *   export COPILOT_PROVIDER_TYPE=openai
- *   export COPILOT_PROVIDER_API_KEY=not-required
- *   export COPILOT_MODEL=gemma4:code
- *   zero
- */
+# Zero CLI — Shell wrapper for env var mapping and V8 heap configuration
+#
+# Maps COPILOT_PROVIDER_* / COPILOT_MODEL vars to the native OpenAI-shim
+# vars, then boots the app.
+#
+# Internal (localhost):
+#   export COPILOT_PROVIDER_BASE_URL=http://localhost:3052/v1
+#   export COPILOT_PROVIDER_TYPE=openai
+#   export COPILOT_PROVIDER_API_KEY=not-required
+#   export COPILOT_MODEL=gemma4:code
+#   zero
+#
+# External (remote server):
+#   export COPILOT_PROVIDER_BASE_URL=http://10.11.36.131:3052/v1
+#   export COPILOT_PROVIDER_TYPE=openai
+#   export COPILOT_PROVIDER_API_KEY=not-required
+#   export COPILOT_MODEL=gemma4:code
+#   zero
 
-// ── COPILOT_* → native env var mapping ──────────────────────────────────────
+# ── COPILOT_* → native env var mapping ──────────────────────────────────────
 
-const providerType = (process.env.COPILOT_PROVIDER_TYPE ?? '').toLowerCase()
+providerType="${COPILOT_PROVIDER_TYPE,,}"
 
-if (providerType === 'openai' || process.env.COPILOT_PROVIDER_BASE_URL) {
-  // Activate OpenAI-compatible shim
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
-}
+if [[ "$providerType" == "openai" ]] && [[ -n "$COPILOT_PROVIDER_BASE_URL" ]]; then
+  export CLAUDE_CODE_USE_OPENAI=1
+fi
 
-if (process.env.COPILOT_PROVIDER_BASE_URL && !process.env.OPENAI_BASE_URL) {
-  process.env.OPENAI_BASE_URL = process.env.COPILOT_PROVIDER_BASE_URL
-}
+if [[ -n "$COPILOT_PROVIDER_BASE_URL" ]] && [[ -z "$OPENAI_BASE_URL" ]]; then
+  export OPENAI_BASE_URL="$COPILOT_PROVIDER_BASE_URL"
+fi
 
-if (process.env.COPILOT_PROVIDER_API_KEY && !process.env.OPENAI_API_KEY) {
-  process.env.OPENAI_API_KEY = process.env.COPILOT_PROVIDER_API_KEY
-}
+if [[ -n "$COPILOT_PROVIDER_API_KEY" ]] && [[ -z "$OPENAI_API_KEY" ]]; then
+  export OPENAI_API_KEY="$COPILOT_PROVIDER_API_KEY"
+fi
 
-if (process.env.COPILOT_MODEL && !process.env.OPENAI_MODEL) {
-  process.env.OPENAI_MODEL = process.env.COPILOT_MODEL
-}
+if [[ -n "$COPILOT_MODEL" ]] && [[ -z "$OPENAI_MODEL" ]]; then
+  export OPENAI_MODEL="$COPILOT_MODEL"
+fi
 
-// COPILOT_TOOLLESS=1 → disable tool calling (text-only mode).
-// Useful for models that loop on tool calls instead of answering.
-if (process.env.COPILOT_TOOLLESS && !process.env.OPENAI_TOOLLESS) {
-  process.env.OPENAI_TOOLLESS = process.env.COPILOT_TOOLLESS
-}
+# COPILOT_TOOLLESS=1 → disable tool calling (text-only mode).
+if [[ -n "$COPILOT_TOOLLESS" ]] && [[ -z "$OPENAI_TOOLLESS" ]]; then
+  export OPENAI_TOOLLESS="$COPILOT_TOOLLESS"
+fi
 
-// ── Boot the compiled bundle ─────────────────────────────────────────────────
+# ── V8 heap configuration ────────────────────────────────────────────────────
+#
+# Prevent "JavaScript heap out of memory" crashes during long-running
+# sessions (large context windows, agent waves, file editing). The default
+# V8 heap limit (~4GB) is insufficient for the Zero CLI's context buildup.
+#
+# When running in CCR (remote containers), use 8GB. Otherwise, allocate
+# 8GB on machines with enough RAM, falling back to 6GB as minimum.
 
-import { existsSync } from 'fs'
-import { join, dirname } from 'path'
-import { fileURLToPath, pathToFileURL } from 'url'
+if [[ "$CLAUDE_CODE_REMOTE" == "true" ]]; then
+  HEAP_SIZE=8192
+else
+  totalMemMB=$(free -m 2>/dev/null | awk '/^Mem:/{print $2}')
+  if [[ -n "$totalMemMB" ]] && [[ "$totalMemMB" -gt 16384 ]]; then
+    HEAP_SIZE=8192
+  else
+    HEAP_SIZE=6144
+  fi
+fi
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const distPath = join(__dirname, '..', 'dist', 'cli.mjs')
+# Preserve existing NODE_OPTIONS (user may set --inspect, etc.)
+if [[ -n "$NODE_OPTIONS" ]]; then
+  export NODE_OPTIONS="${NODE_OPTIONS} --max-old-space-size=${HEAP_SIZE}"
+else
+  export NODE_OPTIONS="--max-old-space-size=${HEAP_SIZE}"
+fi
 
-if (existsSync(distPath)) {
-  await import(pathToFileURL(distPath).href)
-} else {
-  console.error(`
+# ── Boot the compiled bundle ─────────────────────────────────────────────────
+
+# Resolve through symlinks (npm link creates symlink chains)
+RESOLVED="$(cd -P "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(dirname "$(realpath "$0")" 2>/dev/null || echo "$RESOLVED")"
+DIST_PATH="${SCRIPT_DIR}/../dist/cli.mjs"
+
+if [[ -f "$DIST_PATH" ]]; then
+  exec node "$DIST_PATH" "$@"
+else
+  cat >&2 <<'USAGE'
   zero: dist/cli.mjs not found.
 
   Build first:
@@ -70,6 +91,6 @@ if (existsSync(distPath)) {
     bun run dev
 
   See README.md for setup instructions.
-`)
-  process.exit(1)
-}
+USAGE
+  exit 1
+fi

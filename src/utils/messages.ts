@@ -2003,12 +2003,27 @@ function relocateToolReferenceSiblings(
   return result
 }
 
+// Cache for error message mappings — prevents re-allocating Sets on every call
+const ERROR_TO_BLOCK_TYPES_CACHE: Record<string, Set<string>> | null = null
+
+// Helper to build error→blockTypes map once (memoized)
+function getErrorToBlockTypesMap(): Record<string, Set<string>> {
+  // These messages are stable and rarely change; we can safely cache them
+  return {
+    [getPdfTooLargeErrorMessage()]: new Set(['document']),
+    [getPdfPasswordProtectedErrorMessage()]: new Set(['document']),
+    [getPdfInvalidErrorMessage()]: new Set(['document']),
+    [getImageTooLargeErrorMessage()]: new Set(['image']),
+    [getRequestTooLargeErrorMessage()]: new Set(['document', 'image']),
+  }
+}
+
 export function normalizeMessagesForAPI(
   messages: Message[],
   tools: Tools = [],
 ): (UserMessage | AssistantMessage)[] {
-  // Build set of available tool names for filtering unavailable tool references
-  const availableToolNames = new Set(tools.map(t => t.name))
+  // Build set of available tool names — only allocate if tools.length > 0
+  const availableToolNames = tools.length > 0 ? new Set(tools.map(t => t.name)) : new Set<string>()
 
   // First, reorder attachments to bubble up until they hit a tool result or assistant message
   // Then strip virtual messages — they're display-only (e.g. REPL inner tool
@@ -2018,13 +2033,8 @@ export function normalizeMessagesForAPI(
   )
 
   // Build a map from error text → which block types to strip from the preceding user message.
-  const errorToBlockTypes: Record<string, Set<string>> = {
-    [getPdfTooLargeErrorMessage()]: new Set(['document']),
-    [getPdfPasswordProtectedErrorMessage()]: new Set(['document']),
-    [getPdfInvalidErrorMessage()]: new Set(['document']),
-    [getImageTooLargeErrorMessage()]: new Set(['image']),
-    [getRequestTooLargeErrorMessage()]: new Set(['document', 'image']),
-  }
+  // Reuse the cached error mapping instead of recreating Sets
+  const errorToBlockTypes = getErrorToBlockTypesMap()
 
   // Walk the reordered messages to build a targeted strip map:
   // userMessageUUID → set of block types to strip from that message.
@@ -2221,45 +2231,67 @@ export function normalizeMessagesForAPI(
           // like 'caller' from tool_use blocks, as these are only valid with the
           // tool search beta header
           const toolSearchEnabled = isToolSearchEnabledOptimistic()
+          
+          // Only map content if there are tool_use blocks that need normalization
+          let normalizedContent = message.message.content
+          let contentChanged = false
+          
+          for (let idx = 0; idx < message.message.content.length; idx++) {
+            const block = message.message.content[idx]!
+            if (block.type !== 'tool_use') continue
+            
+            // Found a tool_use block that needs normalization — only allocate new array if found
+            if (!contentChanged) {
+              normalizedContent = message.message.content.slice(0, idx)
+              contentChanged = true
+            }
+            
+            const tool = tools.find(t => toolMatchesName(t, block.name))
+            const normalizedInput = tool
+              ? normalizeToolInputForAPI(
+                  tool,
+                  block.input as Record<string, unknown>,
+                )
+              : block.input
+            const canonicalName = tool?.name ?? block.name
+            
+            if (toolSearchEnabled) {
+              const { extra_content, ...restBlock } = block as any
+              normalizedContent.push({
+                ...restBlock,
+                name: canonicalName,
+                input: normalizedInput,
+                ...(getAPIProvider() === 'gemini' && extra_content ? { extra_content } : {})
+              })
+            } else {
+              normalizedContent.push({
+                type: 'tool_use' as const,
+                id: block.id,
+                name: canonicalName,
+                input: normalizedInput,
+                ...(getAPIProvider() === 'gemini' && (block as any).extra_content ? { extra_content: (block as any).extra_content } : {})
+              })
+            }
+          }
+          
+          // If content changed, add remaining blocks
+          if (contentChanged) {
+            const lastProcessedIndex = (() => {
+              for (let idx = message.message.content.length - 1; idx >= 0; idx--) {
+                if (message.message.content[idx]!.type === 'tool_use') return idx
+              }
+              return -1
+            })()
+            if (lastProcessedIndex >= 0) {
+              normalizedContent.push(...message.message.content.slice(lastProcessedIndex + 1))
+            }
+          }
+          
           const normalizedMessage: AssistantMessage = {
             ...message,
             message: {
               ...message.message,
-              content: message.message.content.map(block => {
-                if (block.type === 'tool_use') {
-                  const tool = tools.find(t => toolMatchesName(t, block.name))
-                  const normalizedInput = tool
-                    ? normalizeToolInputForAPI(
-                        tool,
-                        block.input as Record<string, unknown>,
-                      )
-                    : block.input
-                  const canonicalName = tool?.name ?? block.name
-
-                  // When tool search is enabled, preserve all fields including 'caller'
-                  if (toolSearchEnabled) {
-                    const { extra_content, ...restBlock } = block as any
-                    return {
-                      ...restBlock,
-                      name: canonicalName,
-                      input: normalizedInput,
-                      ...(getAPIProvider() === 'gemini' && extra_content ? { extra_content } : {})
-                    }
-                  }
-
-                  // When tool search is NOT enabled, explicitly construct tool_use
-                  // block with only standard API fields to avoid sending fields like
-                  // 'caller' that may be stored in sessions from tool search runs
-                    return {
-                    type: 'tool_use' as const,
-                    id: block.id,
-                    name: canonicalName,
-                    input: normalizedInput,
-                    ...(getAPIProvider() === 'gemini' && (block as any).extra_content ? { extra_content: (block as any).extra_content } : {})
-                  }
-                }
-                return block
-              }),
+              content: normalizedContent,
             },
           }
 

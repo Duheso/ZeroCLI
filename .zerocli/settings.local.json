@@ -59,7 +59,9 @@
       "Bash(head -5 grep -n \"import.*antModel\\\\|resolveAntModel\\\\|getAntModelOverrideConfig\" /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-ac8b0146/src/utils/model/model.ts)",
       "Bash(cd /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-a215d7b4 __NEW_LINE_578dc8f9c47de85a__ echo \"=== FeedbackSurveyView to understand FeedbackSurveyResponse ===\" head -30 src/components/FeedbackSurvey/FeedbackSurveyView.tsx __NEW_LINE_578dc8f9c47de85a__ echo \"\" echo \"=== useFeedbackSurvey to understand FeedbackSurveyResponse ===\" head -30 src/components/FeedbackSurvey/useFeedbackSurvey.tsx __NEW_LINE_578dc8f9c47de85a__ echo \"\" echo \"=== notebook.ts types usage context ===\" sed -n '55,130p' src/utils/notebook.ts __NEW_LINE_578dc8f9c47de85a__ echo \"\" echo \"=== NotebookEditToolDiff.tsx usage ===\" cat src/components/permissions/NotebookEditPermissionRequest/NotebookEditToolDiff.tsx)",
       "Bash(cd /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-a215d7b4 __NEW_LINE_52b1e0b0ad84e461__ grep -n \"FeedbackSurveyType\\\\|surveyType\" src/components/FeedbackSurvey/useFeedbackSurvey.tsx)",
-      "Bash(head -20 grep -rn \"FeedbackSurveyType\\\\|FeedbackSurveyResponse\" src/ --include=*.ts --include=*.tsx)"
+      "Bash(head -20 grep -rn \"FeedbackSurveyType\\\\|FeedbackSurveyResponse\" src/ --include=*.ts --include=*.tsx)",
+      "Bash(find /home/accadmin/.claude/sessions/ -name *.jsonl -size +100M)",
+      "Bash(find /home/accadmin/.claude/ -name *.jsonl)"
     ]
   },
   "enabledMcpjsonServers": [
