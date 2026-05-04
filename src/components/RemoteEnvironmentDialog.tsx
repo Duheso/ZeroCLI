@@ -257,7 +257,7 @@ function SingleEnvironmentContent(t0: { environment: EnvironmentResource; onDone
   }
   return t3;
 }
-function MultipleEnvironmentsContent(t0: { environments: EnvironmentResource[]; selectedEnvironment: EnvironmentResource; selectedEnvironmentSource: SettingSource | null; loadingState: string; onSelect: (value: string) => void; onCancel: (message?: string) => void }) {
+function MultipleEnvironmentsContent(t0: { environments: EnvironmentResource[]; selectedEnvironment: EnvironmentResource; selectedEnvironmentSource: SettingSource | null; loadingState: string | null; onSelect: (value: string) => void; onCancel: (message?: string) => void }) {
   const $ = _c(18);
   const {
     environments,
@@ -303,7 +303,7 @@ function MultipleEnvironmentsContent(t0: { environments: EnvironmentResource[]; 
   }
   let t5;
   if ($[8] !== environments || $[9] !== loadingState || $[10] !== onSelect || $[11] !== selectedEnvironment.environment_id) {
-    t5 = loadingState === "updating" ? <LoadingState message={"Updating\u2026"} /> : <Select options={environments.map(_temp)} defaultValue={selectedEnvironment.environment_id} onChange={onSelect} onCancel={() => onSelect("cancel")} layout="compact-vertical" />;
+    t5 = loadingState === "updating" ? <LoadingState message={"Updating\u2026"} /> : <Select options={environments.map(_temp)} defaultValue={selectedEnvironment.environment_id} onChange={onSelect as (value: unknown) => void} onCancel={() => onSelect("cancel")} layout="compact-vertical" />;
     $[8] = environments;
     $[9] = loadingState;
     $[10] = onSelect;
