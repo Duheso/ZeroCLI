@@ -2,9 +2,10 @@ import { describe, expect, test } from 'bun:test'
 
 describe('readGithubModelsToken', () => {
   test('returns undefined in bare mode', async () => {
-    const { readGithubModelsToken } = await import(
+    const { readGithubModelsToken } = (await import(
+      // @ts-expect-error cache-busting query string for Bun module mocks
       './githubModelsCredentials.js?read-bare-mode'
-    )
+    )) as any
 
     const prev = process.env.CLAUDE_CODE_SIMPLE
     process.env.CLAUDE_CODE_SIMPLE = '1'
@@ -19,9 +20,10 @@ describe('readGithubModelsToken', () => {
 
 describe('saveGithubModelsToken / clearGithubModelsToken', () => {
   test('save returns failure in bare mode', async () => {
-    const { saveGithubModelsToken } = await import(
+    const { saveGithubModelsToken } = (await import(
+      // @ts-expect-error cache-busting query string for Bun module mocks
       './githubModelsCredentials.js?save-bare-mode'
-    )
+    )) as any
 
     const prev = process.env.CLAUDE_CODE_SIMPLE
     process.env.CLAUDE_CODE_SIMPLE = '1'
@@ -36,9 +38,10 @@ describe('saveGithubModelsToken / clearGithubModelsToken', () => {
   })
 
   test('clear succeeds in bare mode', async () => {
-    const { clearGithubModelsToken } = await import(
+    const { clearGithubModelsToken } = (await import(
+      // @ts-expect-error cache-busting query string for Bun module mocks
       './githubModelsCredentials.js?clear-bare-mode'
-    )
+    )) as any
 
     const prev = process.env.CLAUDE_CODE_SIMPLE
     process.env.CLAUDE_CODE_SIMPLE = '1'
@@ -50,4 +53,3 @@ describe('saveGithubModelsToken / clearGithubModelsToken', () => {
     }
   })
 })
-

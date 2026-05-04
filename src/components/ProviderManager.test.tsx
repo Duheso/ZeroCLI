@@ -497,7 +497,7 @@ test('ProviderManager first-run Ollama preset auto-detects installed models', as
     baseUrl: payload.baseUrl,
     model: payload.model,
     apiKey: payload.apiKey,
-  }))
+  })) as any
 
   mockProviderManagerDependencies(
     () => undefined,
@@ -592,7 +592,7 @@ test('ProviderManager first-run Codex OAuth switches the current session after l
     baseUrl: payload.baseUrl,
     model: payload.model,
     apiKey: payload.apiKey,
-  }))
+  })) as any
 
   mockProviderManagerDependencies(
     () => undefined,
@@ -684,7 +684,7 @@ test('ProviderManager first-run Codex OAuth reports next-startup fallback when s
     baseUrl: payload.baseUrl,
     model: payload.model,
     apiKey: payload.apiKey,
-  }))
+  })) as any
 
   mockProviderManagerDependencies(
     () => undefined,
@@ -769,7 +769,7 @@ test('ProviderManager does not hijack a manual Codex profile when OAuth credenti
     baseUrl: payload.baseUrl,
     model: payload.model,
     apiKey: payload.apiKey,
-  }))
+  })) as any
   const updateProviderProfile = mock(() => manualProfile)
   const persistCredentials = mock(() => {})
 

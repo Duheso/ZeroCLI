@@ -39,12 +39,12 @@ describe('hydrateGithubModelsTokenFromSecureStorage', () => {
         }),
       }),
     }))
-
-    const { hydrateGithubModelsTokenFromSecureStorage } = await import(
+    const { hydrateGithubModelsTokenFromSecureStorage } = (await import(
+      // @ts-ignore cache-busting query string for Bun module mocks
       './githubModelsCredentials.js?hydrate=sets-token'
-    )
+    )) as any
     hydrateGithubModelsTokenFromSecureStorage()
-    expect(process.env.GITHUB_TOKEN).toBe('stored-secret')
+    expect(process.env.GITHUB_TOKEN!).toBe('stored-secret')
     expect(process.env.CLAUDE_CODE_GITHUB_TOKEN_HYDRATED).toBe('1')
   })
 
@@ -61,9 +61,10 @@ describe('hydrateGithubModelsTokenFromSecureStorage', () => {
       }),
     }))
 
-    const { hydrateGithubModelsTokenFromSecureStorage } = await import(
+    const { hydrateGithubModelsTokenFromSecureStorage } = (await import(
+      // @ts-ignore cache-busting query string for Bun module mocks
       './githubModelsCredentials.js?hydrate=preserve-existing'
-    )
+    )) as any
     hydrateGithubModelsTokenFromSecureStorage()
     expect(process.env.GITHUB_TOKEN).toBe('already')
     expect(process.env.CLAUDE_CODE_GITHUB_TOKEN_HYDRATED).toBeUndefined()

@@ -1,6 +1,7 @@
 import { expect, test } from 'bun:test'
 
 import type { Frame } from './frame.ts'
+import type { Hyperlink } from './screen.ts'
 import { LogUpdate } from './log-update.ts'
 import {
   CellWidth,
@@ -47,6 +48,7 @@ function frameFromLines(
         char,
         styleId: stylePool.none,
         width: CellWidth.Narrow,
+        hyperlink: undefined,
       })
     }
   }

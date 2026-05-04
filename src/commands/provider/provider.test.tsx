@@ -383,8 +383,8 @@ test('buildCodexProfileEnv derives oauth source from secure storage when no expl
     }),
   }))
 
-  // @ts-expect-error cache-busting query string for Bun module mocks
   const { buildCodexProfileEnv } = await import(
+    // @ts-expect-error cache-busting query string for Bun module mocks
     '../../utils/providerProfile.js?secure-storage-codex-source'
   )
 
@@ -402,8 +402,8 @@ test('buildCodexProfileEnv derives oauth source from secure storage when no expl
 })
 
 test('explicitly declared env takes precedence over applySavedProfileToCurrentSession', async () => {
-  // @ts-expect-error cache-busting query string for Bun module mocks
   const { applySavedProfileToCurrentSession } = await import(
+    // @ts-expect-error cache-busting query string for Bun module mocks
     '../../utils/providerProfile.js?apply-saved-profile-codex'
   )
   const processEnv: NodeJS.ProcessEnv = {
@@ -442,8 +442,8 @@ test('explicitly declared env takes precedence over applySavedProfileToCurrentSe
 })
 
 test('explicitly declared env takes precedence over applySavedProfileToCurrentSession', async () => {
-  // @ts-expect-error cache-busting query string for Bun module mocks
   const { applySavedProfileToCurrentSession } = await import(
+    // @ts-expect-error cache-busting query string for Bun module mocks
     '../../utils/providerProfile.js?apply-saved-profile-codex-oauth'
   )
   const processEnv: NodeJS.ProcessEnv = {

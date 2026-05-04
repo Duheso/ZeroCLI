@@ -155,7 +155,9 @@ test('loadTranscriptFile preserves and relinks a valid preserved segment', async
   expect(messages.has(id(12))).toBe(false)
   expect(messages.has(id(13))).toBe(true)
   expect(messages.has(id(14))).toBe(true)
+  // @ts-expect-error — union type narrowing limitation
   expect(messages.get(id(13))?.parentUuid).toBe(id(16))
+  // @ts-expect-error — union type narrowing limitation
   expect(messages.get(id(14))?.parentUuid).toBe(id(13))
 
   const chain = buildConversationChain(messages, messages.get(id(14))!)
@@ -203,6 +205,7 @@ test('stripPersistedToolUseResultsFromJSONLBuffer drops raw toolUseResult while 
   const persisted = user(id(31), null, 'placeholder')
   persisted.message = {
     role: 'user',
+    // @ts-expect-error — content is string in original type, but tool_result uses array
     content: [
       {
         type: 'tool_result',
@@ -225,7 +228,7 @@ test('stripPersistedToolUseResultsFromJSONLBuffer drops raw toolUseResult while 
 
   expect(parsed?.toolUseResult).toBeUndefined()
   expect(
-    (parsed?.message.content as Array<{ content: string }>)[0]?.content,
+    (parsed?.message.content as unknown as Array<{ content: string }>)[0]?.content,
   ).toContain('Preview text')
 })
 
@@ -233,6 +236,7 @@ test('loadTranscriptFile omits raw toolUseResult for persisted-output transcript
   const persisted = user(id(41), null, 'placeholder')
   persisted.message = {
     role: 'user',
+    // @ts-expect-error — content is string in original type, but tool_result uses array
     content: [
       {
         type: 'tool_result',
@@ -256,6 +260,6 @@ test('loadTranscriptFile omits raw toolUseResult for persisted-output transcript
   expect(loaded).toBeDefined()
   expect(loaded?.toolUseResult).toBeUndefined()
   expect(
-    (loaded?.message.content as Array<{ content: string }>)[0]?.content,
+    (loaded?.message.content as unknown as Array<{ content: string }>)[0]?.content,
   ).toContain('Preview text')
 })

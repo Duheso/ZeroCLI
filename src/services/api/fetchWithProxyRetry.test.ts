@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, expect, test } from 'bun:test'
+import { afterEach, beforeEach, expect, mock, test } from 'bun:test'
 
 import { _resetKeepAliveForTesting } from '../../utils/proxy.js'
 import {
@@ -74,10 +74,10 @@ test('fetchWithProxyRetry retries once with keepalive disabled after socket clos
 test('fetchWithProxyRetry does not retry non-network errors', async () => {
   let attempts = 0
 
-  globalThis.fetch = (async () => {
+  ;(globalThis.fetch as any) = mock(async () => {
     attempts += 1
     throw new Error('400 bad request')
-  }) as FetchType
+  })
 
   await expect(fetchWithProxyRetry('https://example.com')).rejects.toThrow(
     '400 bad request',

@@ -117,7 +117,7 @@ test('deserializeMessagesWithInterruptDetection strips thinking blocks only for 
   const openaiModule = await import(`./conversationRecovery.ts?provider=openai-${Date.now()}`)
   const thirdParty = openaiModule.deserializeMessagesWithInterruptDetection(serializedMessages as never[])
   const thirdPartyAssistantMessages = thirdParty.messages.filter(
-    message => message.type === 'assistant',
+    (message: { type: string }) => message.type === 'assistant',
   )
 
   expect(thirdPartyAssistantMessages).toHaveLength(2)
@@ -125,10 +125,10 @@ test('deserializeMessagesWithInterruptDetection strips thinking blocks only for 
     { type: 'text', text: 'visible reply' },
   ])
   expect(
-    JSON.stringify(thirdPartyAssistantMessages.map(message => message.message?.content)),
+    JSON.stringify(thirdPartyAssistantMessages.map((message: { message?: { content?: unknown } }) => message.message?.content)),
   ).not.toContain('secret reasoning')
   expect(
-    JSON.stringify(thirdPartyAssistantMessages.map(message => message.message?.content)),
+    JSON.stringify(thirdPartyAssistantMessages.map((message: { message?: { content?: unknown } }) => message.message?.content)),
   ).not.toContain('only hidden reasoning')
 
   mock.restore()
@@ -144,7 +144,7 @@ test('deserializeMessagesWithInterruptDetection strips thinking blocks only for 
   const bedrockModule = await import(`./conversationRecovery.ts?provider=bedrock-${Date.now()}`)
   const anthropicCompatible = bedrockModule.deserializeMessagesWithInterruptDetection(serializedMessages as never[])
   const anthropicAssistantMessages = anthropicCompatible.messages.filter(
-    message => message.type === 'assistant',
+    (message: { type: string }) => message.type === 'assistant',
   )
 
   expect(anthropicAssistantMessages).toHaveLength(2)
@@ -153,9 +153,9 @@ test('deserializeMessagesWithInterruptDetection strips thinking blocks only for 
     { type: 'text', text: 'visible reply' },
   ])
   expect(
-    JSON.stringify(anthropicAssistantMessages.map(message => message.message?.content)),
+    JSON.stringify(anthropicAssistantMessages.map((message: { message?: { content?: unknown } }) => message.message?.content)),
   ).toContain('secret reasoning')
   expect(
-    JSON.stringify(anthropicAssistantMessages.map(message => message.message?.content)),
+    JSON.stringify(anthropicAssistantMessages.map((message: { message?: { content?: unknown } }) => message.message?.content)),
   ).not.toContain('only hidden reasoning')
 })

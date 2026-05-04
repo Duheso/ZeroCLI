@@ -25,7 +25,7 @@ describe('preconnectAnthropicApi', () => {
       getAPIProvider: () => 'openai',
     }))
     const fetchMock = mock(() => Promise.resolve(new Response(null, { status: 200 })))
-    globalThis.fetch = fetchMock as typeof globalThis.fetch
+    globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch
 
     const { preconnectAnthropicApi } = await importFreshModule()
     preconnectAnthropicApi()
@@ -39,7 +39,7 @@ describe('preconnectAnthropicApi', () => {
       getAPIProvider: () => 'gemini',
     }))
     const fetchMock = mock(() => Promise.resolve(new Response(null, { status: 200 })))
-    globalThis.fetch = fetchMock as typeof globalThis.fetch
+    globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch
 
     const { preconnectAnthropicApi } = await importFreshModule()
     preconnectAnthropicApi()
@@ -53,7 +53,7 @@ describe('preconnectAnthropicApi', () => {
       getAPIProvider: () => 'github',
     }))
     const fetchMock = mock(() => Promise.resolve(new Response(null, { status: 200 })))
-    globalThis.fetch = fetchMock as typeof globalThis.fetch
+    globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch
 
     const { preconnectAnthropicApi } = await importFreshModule()
     preconnectAnthropicApi()
@@ -73,7 +73,7 @@ describe('preconnectAnthropicApi', () => {
       getAPIProvider: () => 'firstParty',
     }))
     const fetchMock = mock(() => Promise.resolve(new Response(null, { status: 200 })))
-    globalThis.fetch = fetchMock as typeof globalThis.fetch
+    globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch
 
     const { preconnectAnthropicApi } = await importFreshModule()
     preconnectAnthropicApi()

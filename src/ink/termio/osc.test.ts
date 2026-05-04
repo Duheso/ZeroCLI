@@ -9,7 +9,7 @@ const generateTempFilePathMock = mock(() => mockedClipboardPath)
 
 const execFileNoThrowMock = mock(
   async () => ({ code: 0, stdout: '', stderr: '' }),
-)
+) as any
 
 function installOscMocks(): void {
   mock.module('../../utils/execFileNoThrow.js', () => ({
@@ -33,9 +33,9 @@ async function flushClipboardCopy(): Promise<void> {
 async function waitForExecCall(
   command: string,
   attempts = 20,
-): Promise<(typeof execFileNoThrowMock.mock.calls)[number] | undefined> {
+): Promise<any> {
   for (let attempt = 0; attempt < attempts; attempt++) {
-    const call = execFileNoThrowMock.mock.calls.find(([cmd]) => cmd === command)
+    const call = (execFileNoThrowMock as any).mock.calls.find(([cmd]: [string]) => cmd === command)
     if (call) {
       return call
     }
@@ -67,7 +67,7 @@ describe('Windows clipboard fallback', () => {
     await setClipboard('Привет мир')
     const windowsCall = await waitForExecCall('powershell')
 
-    expect(execFileNoThrowMock.mock.calls.some(([cmd]) => cmd === 'clip')).toBe(
+    expect((execFileNoThrowMock as any).mock.calls.some(([cmd]: [string]) => cmd === 'clip')).toBe(
       false,
     )
     expect(windowsCall).toBeDefined()
@@ -132,7 +132,7 @@ describe('clipboard path behavior remains stable', () => {
 
     await setClipboard('Привет мир')
 
-    expect(execFileNoThrowMock.mock.calls.some(([cmd]) => cmd === 'powershell')).toBe(
+    expect((execFileNoThrowMock as any).mock.calls.some(([cmd]: [string]) => cmd === 'powershell')).toBe(
       false,
     )
   })
@@ -143,7 +143,7 @@ describe('clipboard path behavior remains stable', () => {
 
     await setClipboard('hello')
 
-    expect(execFileNoThrowMock.mock.calls.some(([cmd]) => cmd === 'pbcopy')).toBe(
+    expect((execFileNoThrowMock as any).mock.calls.some(([cmd]: [string]) => cmd === 'pbcopy')).toBe(
       true,
     )
   })

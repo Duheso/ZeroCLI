@@ -30,7 +30,7 @@ test('custom error responses log the error redirect analytics event', async () =
 
   ;(listener as any).pendingResponse = response
 
-  listener.handleErrorRedirect(res => {
+  listener.handleErrorRedirect((res: any) => {
     res.writeHead(400, {
       'Content-Type': 'text/plain; charset=utf-8',
     })
@@ -82,7 +82,7 @@ test('custom handlers that do not end the response are closed automatically and 
 
   ;(listener as any).pendingResponse = response
 
-  listener.handleErrorRedirect(res => {
+  listener.handleErrorRedirect((res: any) => {
     res.writeHead(400, {
       'Content-Type': 'text/plain; charset=utf-8',
     })

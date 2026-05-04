@@ -1,5 +1,6 @@
 import { afterEach, expect, test } from 'bun:test'
 
+import type { PermissionResult } from '../../utils/permissions/PermissionResult.js'
 import { getEmptyToolPermissionContext } from '../../Tool.js'
 import { SandboxManager } from '../../utils/sandbox/sandbox-adapter.js'
 import { bashToolHasPermission } from './bashPermissions.js'
@@ -54,6 +55,6 @@ test('sandbox auto-allow still enforces Bash path constraints', async () => {
   )
 
   expect(result.behavior).toBe('ask')
-  expect(result.message).toContain('was blocked')
-  expect(result.message).toContain('/etc/passwd')
+  expect((result as any).message).toContain('was blocked')
+  expect((result as any).message).toContain('/etc/passwd')
 })
