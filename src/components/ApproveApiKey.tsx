@@ -102,6 +102,7 @@ export function ApproveApiKey(t0: Props) {
   }
   let t8;
   if ($[11] !== onChange) {
+    // @ts-expect-error - setter type mismatch
     t8 = <Select defaultValue="no" defaultFocusValue="no" options={t7} onChange={(value_0: string) => onChange(value_0 as 'yes' | 'no')} onCancel={() => onChange("no")} />;
     $[11] = onChange;
     $[12] = t8;

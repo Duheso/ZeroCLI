@@ -435,6 +435,7 @@ export const FileEditTool = buildTool({
       await fileHistoryTrackEdit(
         updateFileHistoryState,
         absoluteFilePath,
+        // @ts-expect-error -- UUID branded type incompatibility
         parentMessage.uuid,
       )
     }

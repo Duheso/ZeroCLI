@@ -832,7 +832,7 @@ function getFunctionResultClearingSection(model: string): string | null {
     // section rather than trying to read .supportedModels off null.
     return null
   }
-  const isModelSupported = config.supportedModels?.some(pattern =>
+  const isModelSupported = config.supportedModels?.some((pattern: string) =>
     model.includes(pattern),
   )
   if (

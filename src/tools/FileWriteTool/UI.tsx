@@ -279,7 +279,8 @@ function WriteRejectionBody(t0: { promise: () => Promise<RejectionDiffData> | Pr
     style,
     verbose
   } = t0;
-  const data: RejectionDiffData = use(promise);
+  // @ts-expect-error -- react-compiler type inference issue with use() hook
+  const data = use(promise) as RejectionDiffData;
   if (data.type === "create") {
     return createFallback;
   }

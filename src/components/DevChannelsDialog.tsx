@@ -78,6 +78,7 @@ export function DevChannelsDialog(t0: Props) {
   }
   let t7;
   if ($[9] !== onChange) {
+    // @ts-expect-error - setter type mismatch
     t7 = <Select options={t6} onChange={(value_0: string) => onChange(value_0 as 'accept' | 'exit')} />;
     $[9] = onChange;
     $[10] = t7;

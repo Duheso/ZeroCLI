@@ -166,7 +166,7 @@ export function AgentEditor({
         });
       }} />;
     case 'edit-model':
-      return <ModelSelector initialModel={agent.model} onComplete={async model => {
+      return <ModelSelector initialModel={agent.model} onComplete={async (model: any) => {
         setEditMode('menu');
         await handleSave({
           model

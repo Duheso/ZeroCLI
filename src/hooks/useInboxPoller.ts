@@ -645,7 +645,7 @@ export function useInboxPoller({
               requestId: parsed.requestId,
               approved: true,
               timestamp: new Date().toISOString(),
-              permissionMode: modeToInherit,
+              permissionMode: modeToInherit as any,
             },
             setAppState,
           )

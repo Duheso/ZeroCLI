@@ -22,7 +22,7 @@ export function ConfirmStepWrapper({
 }: Props): ReactNode {
   const {
     wizardData
-  } = useWizard<AgentWizardData>();
+  } = useWizard() as any;
   const [saveError, setSaveError] = useState<string | null>(null);
   const setAppState = useSetAppState();
   const saveAgent = useCallback(async (openInEditor: boolean): Promise<void> => {

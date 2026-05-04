@@ -250,7 +250,8 @@ async function executeForkedSkill(
             onProgress({
               toolUseID: `skill_${parentMessage.message.id}`,
               data: {
-                message: m,
+                // @ts-expect-error -- m is union of NormalizedAssistantMessage | NormalizedUserMessage
+            message: m,
                 type: 'skill_progress',
                 prompt: skillContent,
                 agentId,

@@ -130,6 +130,7 @@ function IDEScreen(t0: { availableIDEs: DetectedIDEInfo[]; unavailableIDEs: Dete
   }
   let t6;
   if ($[19] !== availableIDEs.length || $[20] !== handleSelectIDE || $[21] !== options || $[22] !== selectedValue) {
+    // @ts-expect-error - setter type mismatch
     t6 = availableIDEs.length !== 0 && <Select defaultValue={selectedValue} defaultFocusValue={selectedValue} options={options} onChange={(value_0: string) => {
       setSelectedValue(value_0);
       handleSelectIDE(value_0);

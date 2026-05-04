@@ -80,7 +80,7 @@ export function LspRecommendationMenu({
           <Text>Would you like to install this LSP plugin?</Text>
         </Box>
         <Box>
-          <Select options={options} onChange={onSelect} onCancel={() => onResponse('no')} />
+            <Select options={options} onChange={onSelect as any} onCancel={() => onResponse('no')} />
         </Box>
       </Box>
     </PermissionDialog>;

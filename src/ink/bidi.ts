@@ -14,6 +14,7 @@
  * also lacks bidi. We enable bidi reordering when running on Windows or
  * inside Windows Terminal (covers WSL).
  */
+// @ts-expect-error - no declaration file for bidi-js
 import bidiFactory from 'bidi-js'
 
 type ClusteredChar = {

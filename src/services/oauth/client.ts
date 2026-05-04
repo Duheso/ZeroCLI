@@ -396,7 +396,7 @@ export async function fetchProfileInfo(accessToken: string): Promise<{
     subscriptionCreatedAt?: string
   } = {
     subscriptionType,
-    rateLimitTier: profile?.organization?.rate_limit_tier ?? null,
+    rateLimitTier: (profile?.organization as any)?.rate_limit_tier ?? null,
     hasExtraUsageEnabled:
       profile?.organization?.has_extra_usage_enabled ?? null,
     billingType: profile?.organization?.billing_type ?? null,

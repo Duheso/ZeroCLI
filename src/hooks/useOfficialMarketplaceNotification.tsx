@@ -10,7 +10,7 @@ import { useStartupNotification } from './notifs/useStartupNotification.js';
  * notifications for success/failure in the bottom right of the REPL.
  */
 export function useOfficialMarketplaceNotification() {
-  useStartupNotification(_temp);
+  useStartupNotification(_temp as any);
 }
 async function _temp() {
   const result = await checkAndInstallOfficialMarketplace();

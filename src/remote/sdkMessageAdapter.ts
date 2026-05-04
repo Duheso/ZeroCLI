@@ -137,7 +137,7 @@ function convertCompactBoundaryMessage(
     level: 'info',
     uuid: msg.uuid,
     timestamp: new Date().toISOString(),
-    compactMetadata: fromSDKCompactMetadata(msg.compact_metadata) as any,
+    compactMetadata: fromSDKCompactMetadata(msg.compact_metadata as any) as any,
   } as SystemMessage
 }
 

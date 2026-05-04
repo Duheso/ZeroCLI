@@ -37,7 +37,7 @@ function validatePathWithinPlugin(
   const rel = relative(resolvedPluginPath, resolvedFilePath)
 
   // If relative path starts with .. or is absolute, it's outside the plugin dir
-  if (rel.startsWith('..') || resolve(rel) === rel) {
+  if (rel.startsWith('..') || resolve(rel as string) === rel) {
     return null
   }
 
@@ -259,7 +259,7 @@ export function resolvePluginLspEnvironment(
 
   // Resolve args
   if (resolved.args) {
-    resolved.args = resolved.args.map(arg => resolveValue(arg))
+    resolved.args = resolved.args.map((arg: string) => resolveValue(arg))
   }
 
   // Resolve environment variables and add CLAUDE_PLUGIN_ROOT / CLAUDE_PLUGIN_DATA

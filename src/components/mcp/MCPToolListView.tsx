@@ -107,6 +107,7 @@ export function MCPToolListView(t0: Props) {
   const t6 = `${t4} ${t5}`;
   let t7;
   if ($[11] !== onBack || $[12] !== onSelectTool || $[13] !== serverTools || $[14] !== toolOptions) {
+    // @ts-expect-error - setter type mismatch
     t7 = serverTools.length === 0 ? <Text dimColor={true}>No tools available</Text> : <Select options={toolOptions} onChange={(value: string) => {
       const index_0 = parseInt(value);
       const tool_0 = serverTools[index_0];

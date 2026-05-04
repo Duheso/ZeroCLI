@@ -313,7 +313,7 @@ export function ResumeConversation({
       </Box>;
   }
   const resumeErrorBanner = resumeError ? <Box flexDirection="column" marginBottom={1}>
-      <Text color="red">Failed to resume conversation.</Text>
+      <Text color={"red" as any}>Failed to resume conversation.</Text>
       <Text>{resumeError}</Text>
       <Text dimColor={true}>Choose a different conversation to continue.</Text>
     </Box> : null;

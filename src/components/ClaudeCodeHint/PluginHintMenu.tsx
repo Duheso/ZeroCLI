@@ -70,7 +70,7 @@ export function PluginHintMenu({
           <Text>Would you like to install it?</Text>
         </Box>
         <Box>
-          <Select options={options} onChange={onSelect} onCancel={() => onResponse('no')} />
+            <Select options={options} onChange={onSelect as any} onCancel={() => onResponse('no')} />
         </Box>
       </Box>
     </PermissionDialog>;

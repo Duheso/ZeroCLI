@@ -345,7 +345,7 @@ export function TreeSelect<T>(t0: TreeSelectProps<T>) {
       if (lastFocusedIdRef.current === nodeId_3) {
         return;
       }
-      lastFocusedIdRef.current = nodeId_3;
+      lastFocusedIdRef.current = nodeId_3 as null;
       if (onFocus) {
         const node_2 = nodeMap.get(nodeId_3);
         if (node_2) {

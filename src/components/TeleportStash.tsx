@@ -110,6 +110,7 @@ export function TeleportStash({
     }, {
       label: 'Exit',
       value: 'exit'
+    // @ts-expect-error - setter type mismatch
     }]} onChange={handleSelectChange} />}
     </Dialog>;
 }

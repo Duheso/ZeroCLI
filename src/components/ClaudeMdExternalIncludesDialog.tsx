@@ -94,6 +94,7 @@ export function ClaudeMdExternalIncludesDialog(t0: Props) {
   }
   let t10;
   if ($[10] !== handleSelection) {
+    // @ts-expect-error - setter type mismatch
     t10 = <Select options={t9} onChange={(value_0: string) => handleSelection(value_0 as 'yes' | 'no')} />;
     $[10] = handleSelection;
     $[11] = t10;

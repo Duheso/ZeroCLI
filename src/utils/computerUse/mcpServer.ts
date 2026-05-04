@@ -63,7 +63,8 @@ export async function createComputerUseMcpServerForCli(): Promise<
   const server = createComputerUseMcpServer(adapter, coordinateMode)
 
   const installedAppNames = await tryGetInstalledAppNames()
-  const tools = buildComputerUseTools(
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const tools = (buildComputerUseTools as (capabilities: any, coordMode: any, apps: any) => any[])(
     adapter.executor.capabilities,
     coordinateMode,
     installedAppNames,

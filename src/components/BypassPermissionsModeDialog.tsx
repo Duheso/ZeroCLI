@@ -70,6 +70,7 @@ export function BypassPermissionsModeDialog(t0: Props) {
   }
   let t5;
   if ($[5] !== onChange) {
+    // @ts-expect-error - setter type mismatch
     t5 = <Dialog title="WARNING: ZeroCLI running in Bypass Permissions mode" color="error" onCancel={handleEscape}>{t3}<Select options={t4} onChange={(value_0: string) => onChange(value_0 as 'accept' | 'decline')} /></Dialog>;
     $[5] = onChange;
     $[6] = t5;

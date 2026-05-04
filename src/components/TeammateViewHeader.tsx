@@ -76,6 +76,6 @@ export function TeammateViewHeader() {
   }
   return t6;
 }
-function _temp(s) {
+function _temp(s: any) {
   return getViewedTeammateTask(s);
 }

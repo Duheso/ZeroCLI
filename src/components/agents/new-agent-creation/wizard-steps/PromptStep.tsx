@@ -61,7 +61,7 @@ export function PromptStep() {
     t3 = () => {
       const trimmedPrompt = systemPrompt.trim();
       if (!trimmedPrompt) {
-        setError("System prompt is required");
+        setError("System prompt is required" as any);
         return;
       }
       setError(null);

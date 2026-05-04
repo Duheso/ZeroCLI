@@ -336,6 +336,7 @@ function RulesTabContent(props: RulesTabContentProps) {
   const t7 = isSearchMode || headerFocused;
   let t8;
   if ($[15] !== focusHeader || $[16] !== lastFocusedRuleKey || $[17] !== onCancel || $[18] !== onSelect || $[19] !== options || $[20] !== t6 || $[21] !== t7) {
+    // @ts-expect-error - setter type mismatch
     t8 = <Select options={options} onChange={onSelect} onCancel={onCancel} visibleOptionCount={t6} isDisabled={t7} defaultFocusValue={lastFocusedRuleKey} onUpFromFirstItem={focusHeader} />;
     $[15] = focusHeader;
     $[16] = lastFocusedRuleKey;

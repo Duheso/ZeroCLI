@@ -225,6 +225,6 @@ export function WorktreeExitDialog({
   }];
   const defaultValue = hasTmuxSession ? 'keep-with-tmux' : 'keep';
   return <Dialog title="Exiting worktree session" subtitle={subtitle} onCancel={handleCancel}>
-      <Select defaultFocusValue={defaultValue} options={options} onChange={handleSelect} />
+      <Select defaultFocusValue={defaultValue} options={options} onChange={handleSelect as any} />
     </Dialog>;
 }

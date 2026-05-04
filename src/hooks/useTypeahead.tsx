@@ -492,6 +492,7 @@ export function useTypeahead({
   // subsequent tests in the shard. The subscriber still registers so
   // fileSuggestions tests that trigger a refresh directly work correctly.
   useEffect(() => {
+    // @ts-expect-error - intentional comparison
     if ("production" !== 'test') {
       startBackgroundCacheRefresh();
     }

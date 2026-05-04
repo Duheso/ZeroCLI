@@ -24,7 +24,8 @@ export function setupComputerUseMCP(): {
   mcpConfig: Record<string, ScopedMcpServerConfig>
   allowedTools: string[]
 } {
-  const allowedTools = buildComputerUseTools(
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const allowedTools = (buildComputerUseTools as (capabilities: any, coordMode: any) => any[])(
     CLI_CU_CAPABILITIES,
     getChicagoCoordinateMode(),
   ).map(t => buildMcpToolName(COMPUTER_USE_MCP_SERVER_NAME, t.name))
@@ -46,7 +47,7 @@ export function setupComputerUseMCP(): {
         command: process.execPath,
         args,
         scope: 'dynamic',
-      } as const,
+      } as const satisfies ScopedMcpServerConfig,
     },
     allowedTools,
   }

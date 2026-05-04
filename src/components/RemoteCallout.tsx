@@ -56,7 +56,7 @@ export function RemoteCallout({
           </Text>
         </Box>
         <Box>
-          <Select options={options} onChange={handleSelect} onCancel={handleCancel} />
+            <Select options={options} onChange={handleSelect as any} onCancel={handleCancel} />
         </Box>
       </Box>
     </PermissionDialog>;

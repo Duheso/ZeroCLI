@@ -25,6 +25,7 @@ export const TestingPermissionTool: Tool<InputSchema, string> = buildTool({
     return 'TestingPermission';
   },
   isEnabled() {
+    // @ts-expect-error -- intentional always-false guard
     return "production" === 'test';
   },
   isConcurrencySafe() {

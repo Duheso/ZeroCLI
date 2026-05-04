@@ -87,6 +87,7 @@ export function useMemorySurvey(messages: Message[], isLoading: boolean, hasActi
     });
   }, []);
   const shouldShowTranscriptPrompt = useCallback((selected_0: FeedbackSurveyResponse) => {
+    // @ts-expect-error - intentional comparison
     if ("external" !== 'ant') {
       return false;
     }

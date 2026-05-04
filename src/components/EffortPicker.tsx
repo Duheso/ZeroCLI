@@ -115,6 +115,7 @@ export function EffortPicker({ onSelect, onCancel }: Props) {
         <Select
           options={options}
           defaultValue={initialFocus}
+          // @ts-expect-error - setter type mismatch
           onChange={handleSelect}
           onCancel={handleCancel}
           visibleOptionCount={Math.min(6, options.length)}

@@ -190,6 +190,7 @@ export function FilePermissionDialog<T extends ToolInput = ToolInput>({
           }
         }} onCancel={() => onChange({
           type: 'reject'
+        // @ts-expect-error - setter type mismatch
         })} onFocus={(value_0: unknown) => setFocusedOption(value_0 as string)} onInputModeToggle={handleInputModeToggle} />
         </Box>
       </PermissionDialog>

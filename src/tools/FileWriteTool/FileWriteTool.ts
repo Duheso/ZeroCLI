@@ -259,6 +259,7 @@ export const FileWriteTool = buildTool({
       await fileHistoryTrackEdit(
         updateFileHistoryState,
         fullFilePath,
+        // @ts-expect-error -- UUID branded type incompatibility
         parentMessage.uuid,
       )
     }

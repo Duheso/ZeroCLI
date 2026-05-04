@@ -25,6 +25,7 @@ export function renderToolResultMessage(output: Output, _progressMessagesForMess
 }: {
   verbose: boolean;
 }): React.ReactNode {
+  // @ts-expect-error -- intentional always-false guard
   if ("external" === 'ant') {
     return null;
   }

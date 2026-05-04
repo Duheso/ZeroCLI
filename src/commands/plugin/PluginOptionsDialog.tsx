@@ -247,7 +247,7 @@ export function PluginOptionsDialog(t0: Props) {
   }
   let t15;
   if ($[39] !== fieldSchema.description) {
-    t15 = fieldSchema.description && <Text dimColor={true}>{fieldSchema.description}</Text>;
+    t15 = fieldSchema.description && <Text dimColor={true}>{fieldSchema.description as any}</Text>;
     $[39] = fieldSchema.description;
     $[40] = t15;
   } else {

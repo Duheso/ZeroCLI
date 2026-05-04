@@ -70,7 +70,7 @@ export function runPostCompactCleanup(querySource?: QuerySource): void {
   clearBetaTracingState()
   if (feature('COMMIT_ATTRIBUTION')) {
     void import('../../utils/attributionHooks.js').then(m =>
-      m.sweepFileContentCache(),
+      (m as any).sweepFileContentCache(),
     )
   }
   clearSessionMessagesCache()

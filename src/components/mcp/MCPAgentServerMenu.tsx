@@ -168,16 +168,16 @@ export function MCPAgentServerMenu({
         </Box>}
 
       <Box>
-        <Select options={menuOptions} onChange={async (value: string) => {
-        switch (value) {
-          case 'auth':
-            await handleAuthenticate();
-            break;
-          case 'back':
-            onCancel();
-            break;
-        }
-      }} onCancel={onCancel} />
+        <Select options={menuOptions} onChange={((async (value: string) => {
+          switch (value) {
+            case 'auth':
+              await handleAuthenticate();
+              break;
+            case 'back':
+              onCancel();
+              break;
+          }
+        })) as any} onCancel={onCancel} />
       </Box>
     </Dialog>;
 }

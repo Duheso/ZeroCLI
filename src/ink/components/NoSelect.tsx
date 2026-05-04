@@ -1,7 +1,7 @@
 import { c as _c } from "react-compiler-runtime";
 import React, { type PropsWithChildren } from 'react';
 import Box, { type Props as BoxProps } from './Box.js';
-type Props = Omit<BoxProps, 'noSelect'> & {
+type Props = Omit<BoxProps, 'noSelect'> & PropsWithChildren & {
   /**
    * Extend the exclusion zone from column 0 to this box's right edge,
    * for every row this box occupies. Use for gutters rendered inside a
@@ -32,7 +32,7 @@ type Props = Omit<BoxProps, 'noSelect'> & {
  * tracking). No-op in the main-screen scrollback render where the
  * terminal's native selection is used instead.
  */
-export function NoSelect(t0) {
+export function NoSelect(t0: Props) {
   const $ = _c(8);
   let boxProps;
   let children;
