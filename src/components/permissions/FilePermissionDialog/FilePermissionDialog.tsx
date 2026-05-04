@@ -8,7 +8,7 @@ import { getCwd } from '../../../utils/cwd.js';
 import { getFsImplementation, safeResolvePath } from '../../../utils/fsOperations.js';
 import { expandPath } from '../../../utils/path.js';
 import type { CompletionType } from '../../../utils/unaryLogging.js';
-import { Select } from '../../CustomSelect/index.js';
+import { Select, type OptionWithDescription } from '../../CustomSelect/index.js';
 import { ShowInIDEPrompt } from '../../ShowInIDEPrompt.js';
 import { usePermissionRequestLogging } from '../hooks.js';
 import { PermissionDialog } from '../PermissionDialog.js';
@@ -171,7 +171,7 @@ export function FilePermissionDialog<T extends ToolInput = ToolInput>({
         {content}
         <Box flexDirection="column" paddingX={1}>
           {typeof question === 'string' ? <Text>{question}</Text> : question}
-          <Select options={options} inlineDescriptions onChange={value => {
+          <Select options={options as OptionWithDescription<string>[]} inlineDescriptions onChange={(value: unknown) => {
           const selected = options.find(opt => opt.value === value);
           if (selected) {
             // For reject option
@@ -190,7 +190,7 @@ export function FilePermissionDialog<T extends ToolInput = ToolInput>({
           }
         }} onCancel={() => onChange({
           type: 'reject'
-        })} onFocus={value_0 => setFocusedOption(value_0)} onInputModeToggle={handleInputModeToggle} />
+        })} onFocus={(value_0: unknown) => setFocusedOption(value_0 as string)} onInputModeToggle={handleInputModeToggle} />
         </Box>
       </PermissionDialog>
       <Box paddingX={1} marginTop={1}>

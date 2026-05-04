@@ -7,7 +7,7 @@ type Props = {
   message: NormalizedMessage;
   isTranscriptMode: boolean;
 };
-export function MessageModel(t0) {
+export function MessageModel(t0: Props) {
   const $ = _c(5);
   const {
     message,
@@ -37,6 +37,6 @@ export function MessageModel(t0) {
   }
   return t3;
 }
-function _temp(c) {
+function _temp(c: { type: string }) {
   return c.type === "text";
 }

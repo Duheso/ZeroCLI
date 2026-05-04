@@ -262,9 +262,10 @@ function OnboardGithub(props: {
     ]
     return (
       <Box flexDirection="column" gap={1}>
-        <Text color="red">{errorMsg}</Text>
+        <Text color={"red" as any}>{errorMsg}</Text>
         <Select
           options={options}
+          // @ts-expect-error - Select onChange expects (value: unknown) => void, but we know the value is string from our options
           onChange={(v: string) => {
             if (v === 'back') {
               setStep('menu')
@@ -321,6 +322,7 @@ function OnboardGithub(props: {
       </Text>
       <Select
         options={menuOptions}
+        // @ts-expect-error - Select onChange expects (value: unknown) => void, but we know the value is string from our options
         onChange={(v: string) => {
           if (v === 'cancel') {
             onDone('GitHub onboard cancelled', { display: 'system' })
