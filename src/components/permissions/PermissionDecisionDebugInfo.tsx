@@ -7,7 +7,7 @@ import { Ansi, Box, color, Text, useTheme } from '../../ink.js';
 import { useAppState } from '../../state/AppState.js';
 import type { PermissionMode } from '../../utils/permissions/PermissionMode.js';
 import { permissionModeTitle } from '../../utils/permissions/PermissionMode.js';
-import type { PermissionDecision, PermissionDecisionReason } from '../../utils/permissions/PermissionResult.js';
+import type { PermissionAskDecision, PermissionDecision, PermissionDecisionReason, PermissionResult } from '../../utils/permissions/PermissionResult.js';
 import { extractRules } from '../../utils/permissions/PermissionUpdate.js';
 import type { PermissionUpdate } from '../../utils/permissions/PermissionUpdateSchema.js';
 import type { PermissionRuleValue } from '../../utils/permissions/PermissionRule.js';
@@ -61,7 +61,7 @@ function PermissionDecisionInfoItem(t0: PermissionDecisionInfoItemProps) {
       switch (decisionReason.type) {
         case "subcommandResults":
           {
-            return <Box flexDirection="column">{Array.from((decisionReason.reasons as any).entries()).map((t2: [string, import('../../utils/permissions/PermissionResult.js').PermissionResult]) => {
+            return <Box flexDirection="column">{(Array.from((decisionReason.reasons as any).entries()) as [string, any][]).map((t2) => {
                 const [subcommand, result] = t2;
                 const icon = result.behavior === "allow" ? color("success", theme)(figures.tick) : color("error", theme)(figures.cross);
                 return <Box flexDirection="column" key={subcommand}><Text>{icon} {subcommand}</Text>{result.decisionReason !== undefined && result.decisionReason.type !== "subcommandResults" && <Text><Text dimColor={true}>{"  "}⎿{"  "}</Text><Ansi>{decisionReasonDisplayString(result.decisionReason)}</Ansi></Text>}{result.behavior === "ask" && <SuggestedRules suggestions={result.suggestions} />}</Box>;
@@ -400,10 +400,10 @@ export function PermissionDecisionDebugInfo(t0: Props) {
     t3 = $[8];
   }
   let t4;
-  if ($[9] !== permissionResult.behavior || $[10] !== permissionResult.message) {
-    t4 = permissionResult.behavior !== "allow" && <Box flexDirection="row"><Box justifyContent="flex-end" minWidth={10}><Text dimColor={true}>Message </Text></Box><Text>{permissionResult.message}</Text></Box>;
+  if ($[9] !== permissionResult.behavior || $[10] !== (permissionResult as PermissionAskDecision).message) {
+    t4 = permissionResult.behavior !== "allow" && <Box flexDirection="row"><Box justifyContent="flex-end" minWidth={10}><Text dimColor={true}>Message </Text></Box><Text>{(permissionResult as PermissionAskDecision).message}</Text></Box>;
     $[9] = permissionResult.behavior;
-    $[10] = permissionResult.message;
+    $[10] = (permissionResult as PermissionAskDecision).message;
     $[11] = t4;
   } else {
     t4 = $[11];

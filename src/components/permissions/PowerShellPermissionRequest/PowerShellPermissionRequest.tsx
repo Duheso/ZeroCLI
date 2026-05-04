@@ -219,7 +219,7 @@ export function PowerShellPermissionRequest(props: PermissionRequestProps): Reac
                 <Text color="warning">{destructiveWarning}</Text>
               </Box>}
             <Text>Do you want to proceed?</Text>
-            <Select options={options} inlineDescriptions onChange={onSelect} onCancel={() => handleReject()} onFocus={handleFocus} onInputModeToggle={handleInputModeToggle} />
+            <Select options={options} inlineDescriptions onChange={onSelect as (value: unknown) => void} onCancel={() => handleReject()} onFocus={handleFocus as (value: unknown) => void} onInputModeToggle={handleInputModeToggle as (value: unknown) => void} />
           </Box>
           <Box justifyContent="space-between" marginTop={1}>
             <Text dimColor>

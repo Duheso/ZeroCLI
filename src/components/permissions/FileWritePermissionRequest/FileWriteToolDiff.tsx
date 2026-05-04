@@ -5,6 +5,7 @@ import { useTerminalSize } from '../../../hooks/useTerminalSize.js';
 import { Box, NoSelect, Text } from '../../../ink.js';
 import { intersperse } from '../../../utils/array.js';
 import { getPatchForDisplay } from '../../../utils/diff.js';
+import { type StructuredPatchHunk } from 'diff';
 import { HighlightedCode } from '../../HighlightedCode.js';
 import { StructuredDiff } from '../../StructuredDiff.js';
 type Props = {
@@ -13,7 +14,7 @@ type Props = {
   fileExists: boolean;
   oldContent: string;
 };
-export function FileWriteToolDiff(t0) {
+export function FileWriteToolDiff(t0: Props) {
   const $ = _c(15);
   const {
     file_path,
@@ -62,7 +63,7 @@ export function FileWriteToolDiff(t0) {
   const firstLine = t2;
   let t3;
   if ($[6] !== columns || $[7] !== content || $[8] !== file_path || $[9] !== firstLine || $[10] !== hunks || $[11] !== oldContent) {
-    t3 = hunks ? intersperse(hunks.map(_ => <StructuredDiff key={_.newStart} patch={_} dim={false} filePath={file_path} firstLine={firstLine} fileContent={oldContent} width={columns - 2} />), _temp) : <HighlightedCode code={content || "(No content)"} filePath={file_path} />;
+    t3 = hunks ? intersperse(hunks.map((hunk: StructuredPatchHunk) => <StructuredDiff key={hunk.newStart} patch={hunk} dim={false} filePath={file_path} firstLine={firstLine} fileContent={oldContent} width={columns - 2} />), _temp) : <HighlightedCode code={content || "(No content)"} filePath={file_path} />;
     $[6] = columns;
     $[7] = content;
     $[8] = file_path;
@@ -83,6 +84,6 @@ export function FileWriteToolDiff(t0) {
   }
   return t4;
 }
-function _temp(i) {
+function _temp(i: number) {
   return <NoSelect fromLeftEdge={true} key={`ellipsis-${i}`}><Text dimColor={true}>...</Text></NoSelect>;
 }
