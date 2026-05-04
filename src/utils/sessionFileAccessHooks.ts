@@ -149,6 +149,7 @@ async function handleSessionFileAccess(
   _signal: AbortSignal | undefined,
 ): Promise<HookJSONOutput> {
   if (input.hook_event_name !== 'PostToolUse') return {}
+  if (!input.tool_name) return {}
 
   const fileType = getSessionFileTypeFromInput(
     input.tool_name,

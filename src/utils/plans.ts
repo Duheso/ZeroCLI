@@ -362,7 +362,7 @@ export async function persistFileSnapshotIfRemote(): Promise<void> {
     return
   }
   try {
-    const snapshotFiles: SystemFileSnapshotMessage['snapshotFiles'] = []
+    const snapshotFiles: Array<{ key: string; path: string; content: string }> = []
 
     // Snapshot plan file
     const plan = getPlan()
@@ -386,7 +386,7 @@ export async function persistFileSnapshotIfRemote(): Promise<void> {
       isMeta: true,
       timestamp: new Date().toISOString(),
       uuid: randomUUID(),
-      snapshotFiles,
+      files: snapshotFiles as SystemFileSnapshotMessage['files'],
     }
 
     const { recordTranscript } = await import('./sessionStorage.js')

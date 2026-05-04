@@ -8,8 +8,12 @@
  * - Strips tool list and model info from init messages
  */
 
-import type { SDKAssistantMessage } from 'src/entrypoints/agentSdkTypes.js'
 import type { StdoutMessage } from 'src/entrypoints/sdk/controlTypes.js'
+
+/** Local alias for the assistant message shape used by streamlined transform. */
+type SDKAssistantMessage = {
+  message: { content: unknown }
+}
 import { FILE_EDIT_TOOL_NAME } from 'src/tools/FileEditTool/constants.js'
 import { FILE_READ_TOOL_NAME } from 'src/tools/FileReadTool/prompt.js'
 import { FILE_WRITE_TOOL_NAME } from 'src/tools/FileWriteTool/prompt.js'
@@ -137,13 +141,14 @@ export function createStreamlinedTransformer(): (
   ): StdoutMessage | null {
     switch (message.type) {
       case 'assistant': {
-        const content = message.message.content
+        const msg = message as unknown as SDKAssistantMessage
+        const content = msg.message.content
         const text = Array.isArray(content)
           ? extractTextContent(content, '\n').trim()
           : ''
 
         // Accumulate tool counts from this message
-        accumulateToolUses(message, cumulativeCounts)
+        accumulateToolUses(msg, cumulativeCounts)
 
         if (text.length > 0) {
           // Text message: emit text only, reset counts
