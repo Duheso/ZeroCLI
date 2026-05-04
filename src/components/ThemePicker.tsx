@@ -195,8 +195,8 @@ export function ThemePicker({
         {introBlock}
         <Select
           options={themeOptions}
-          onFocus={handleRowFocus}
-          onChange={handleSelect}
+          onFocus={handleRowFocus as (value: unknown) => void}
+          onChange={handleSelect as (value: unknown) => void}
           onCancel={handleCancel}
           visibleOptionCount={themeOptions.length}
           defaultValue={themeSetting}

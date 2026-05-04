@@ -16,7 +16,7 @@ type Props = {
   taskId?: string;
   verbose: boolean;
 };
-export function ShellProgressMessage(t0) {
+export function ShellProgressMessage(t0: Props) {
   const $ = _c(30);
   const {
     output,
@@ -40,7 +40,7 @@ export function ShellProgressMessage(t0) {
   let t2;
   if ($[2] !== output || $[3] !== strippedFullOutput || $[4] !== verbose) {
     const strippedOutput = stripAnsi(output.trim());
-    lines = strippedOutput.split("\n").filter(_temp);
+    lines = strippedOutput.split("\n").filter(_temp as any);
     t2 = verbose ? strippedFullOutput : lines.slice(-5).join("\n");
     $[2] = output;
     $[3] = strippedFullOutput;
@@ -144,6 +144,6 @@ export function ShellProgressMessage(t0) {
   }
   return t10;
 }
-function _temp(line) {
+function _temp(line: string): string {
   return line;
 }
