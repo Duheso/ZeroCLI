@@ -11,7 +11,7 @@ import { MessageResponse } from '../MessageResponse.js';
 type Props = {
   content: string;
 };
-export function UserLocalCommandOutputMessage(t0) {
+export function UserLocalCommandOutputMessage(t0: Props) {
   const $ = _c(4);
   const {
     content
@@ -54,7 +54,7 @@ export function UserLocalCommandOutputMessage(t0) {
   }
   return lines;
 }
-function IndentedContent(t0) {
+function IndentedContent(t0: { children: string }) {
   const $ = _c(5);
   const {
     children
@@ -87,7 +87,7 @@ function IndentedContent(t0) {
   }
   return t2;
 }
-function CloudLaunchContent(t0) {
+function CloudLaunchContent(t0: { children: string }) {
   const $ = _c(19);
   const {
     children
