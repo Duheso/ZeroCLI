@@ -34,7 +34,7 @@ const NOOP_HELPERS: PromptInputHelpers = {
  * user's keybinding configuration. When triggered, each handler submits
  * the corresponding slash command (e.g., "command:commit" submits "/commit").
  */
-export function CommandKeybindingHandlers(t0) {
+export function CommandKeybindingHandlers(t0: Props) {
   const $ = _c(8);
   const {
     onSubmit,
@@ -72,7 +72,7 @@ export function CommandKeybindingHandlers(t0) {
     t2 = actions;
   }
   const commandActions = t2;
-  let map;
+  let map: Record<string, () => void>;
   if ($[3] !== commandActions || $[4] !== onSubmit) {
     map = {};
     for (const action of commandActions) {

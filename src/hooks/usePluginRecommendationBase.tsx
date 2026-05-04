@@ -23,11 +23,11 @@ type PluginData = NonNullable<Awaited<ReturnType<typeof getPluginById>>>;
  */
 export function usePluginRecommendationBase() {
   const $ = _c(6);
-  const [recommendation, setRecommendation] = React.useState(null);
+  const [recommendation, setRecommendation] = React.useState<PluginData | null>(null);
   const isCheckingRef = React.useRef(false);
   let t0;
   if ($[0] !== recommendation) {
-    t0 = resolve => {
+    t0 = (resolve: () => Promise<PluginData | null>) => {
       if (getIsRemoteMode()) {
         return;
       }
@@ -38,7 +38,7 @@ export function usePluginRecommendationBase() {
         return;
       }
       isCheckingRef.current = true;
-      resolve().then(rec => {
+      resolve().then((rec: PluginData | null) => {
         if (rec) {
           setRecommendation(rec);
         }
