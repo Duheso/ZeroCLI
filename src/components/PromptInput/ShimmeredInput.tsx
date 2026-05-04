@@ -21,7 +21,7 @@ export function HighlightedInput(t0: Props) {
   let lines;
   if ($[0] !== highlights || $[1] !== text) {
     const segments = segmentTextByHighlights(text, highlights);
-    lines = [] as LinePart[][];
+    lines = [[]] as LinePart[][];
     let pos = 0;
     for (const segment of segments) {
       const parts = segment.text.split("\n");

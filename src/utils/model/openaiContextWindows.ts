@@ -131,7 +131,7 @@ const OPENAI_CONTEXT_WINDOWS: Record<string, number> = {
   'qwen/qwen3-8b': 128_000,
   'qwen/qwen2.5-7b-instruct': 32_768,
   // Qwen3.6 via vLLM (local OpenAI-compatible server)
-  'qwen3.6-27b': 128_000,
+  'qwen3.6-27b': 256_000,
   'qwen3.6-35b': 128_000,
   // Mistral via NVIDIA NIM
   'mistralai/mistral-large-3-675b-instruct-2512': 256_000,
@@ -387,7 +387,7 @@ const OPENAI_MAX_OUTPUT_TOKENS: Record<string, number> = {
   'qwen/qwen3-32b': 32_768,
   'qwen/qwen2.5-7b-instruct': 8_192,
   // Qwen3.6 via vLLM (local OpenAI-compatible server)
-  'qwen3.6-27b': 32_768,
+  'qwen3.6-27b': 65_536,
   'qwen3.6-35b': 32_768,
 
   'mistralai/mistral-large-3-675b-instruct-2512': 32_768,

@@ -2962,6 +2962,10 @@ export function REPL({
         // if onQueryImpl throws. onTurnComplete is called separately in
         // onQueryImpl only on successful completion.
         resetLoadingState();
+        // Force a shallow-copy of the messages array so React compiler
+        // memoization detects the reference change and re-reads mutated
+        // usage data (e.g. message_delta sets message.usage after yield).
+        setMessages(prev => [...prev]);
         await mrOnTurnComplete(messagesRef.current, abortController.signal.aborted);
 
         // Notify bridge clients that the turn is complete so mobile apps

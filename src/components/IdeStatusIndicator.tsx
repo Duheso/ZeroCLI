@@ -1,4 +1,3 @@
-import { c as _c } from "react-compiler-runtime";
 import { basename } from 'path';
 import * as React from 'react';
 import { useIdeConnectionStatus } from '../hooks/useIdeConnectionStatus.js';
@@ -6,53 +5,62 @@ import type { IDESelection } from '../hooks/useIdeSelection.js';
 import { Text } from '../ink.js';
 import type { MCPServerConnection } from '../services/mcp/types.js';
 import { t } from '../i18n/index.js';
+import { getContextWindowForModel } from '../utils/context.js';
+import { formatTokens } from '../utils/format.js';
+
 type IdeStatusIndicatorProps = {
   ideSelection: IDESelection | undefined;
   mcpClients?: MCPServerConnection[];
+  tokenUsage?: number;
+  mainLoopModel?: string;
 };
-export function IdeStatusIndicator(t0: any) {
-  const $ = _c(7);
-  const {
-    ideSelection,
-    mcpClients
-  } = t0;
-  const {
-    status: ideStatus
-  } = useIdeConnectionStatus(mcpClients);
-  const shouldShowIdeSelection = ideStatus === "connected" && (ideSelection?.filePath || ideSelection?.text && ideSelection.lineCount > 0);
-  if (ideStatus === null || !shouldShowIdeSelection || !ideSelection) {
-    return null;
+
+function formatTokenInfo(tokenUsage: number, model: string): string {
+  const contextWindow = getContextWindowForModel(model);
+  const pct = contextWindow > 0 ? Math.round((tokenUsage / contextWindow) * 100) : 0;
+  return `${formatTokens(tokenUsage)}/${formatTokens(contextWindow)} tokens (${pct}%)`;
+}
+
+export function IdeStatusIndicator({
+  ideSelection,
+  mcpClients,
+  tokenUsage,
+  mainLoopModel,
+}: IdeStatusIndicatorProps) {
+  const { status: ideStatus } = useIdeConnectionStatus(mcpClients);
+  const shouldShowIdeSelection =
+    ideStatus === 'connected' &&
+    (ideSelection?.filePath || (ideSelection?.text && ideSelection.lineCount > 0));
+
+  const tokenSuffix =
+    tokenUsage !== undefined && mainLoopModel
+      ? ` · ${mainLoopModel} · ${formatTokenInfo(tokenUsage, mainLoopModel)}`
+      : '';
+
+  if (!shouldShowIdeSelection || !ideSelection) {
+    if (!tokenSuffix) return null;
+    return (
+      <Text color="ide" key="token-indicator" wrap="truncate">
+        {mainLoopModel} · {tokenUsage !== undefined && mainLoopModel ? formatTokenInfo(tokenUsage, mainLoopModel) : ''}
+      </Text>
+    );
   }
+
   if (ideSelection.text && ideSelection.lineCount > 0) {
-    const t1 = ideSelection.lineCount === 1 ? t('ideLineSingular') : t('ideLinePlural');
-    let t2;
-    if ($[0] !== ideSelection.lineCount || $[1] !== t1) {
-      t2 = <Text color="ide" key="selection-indicator" wrap="truncate">⧉ {ideSelection.lineCount}{" "}{t1} {t('ideSelected')}</Text>;
-      $[0] = ideSelection.lineCount;
-      $[1] = t1;
-      $[2] = t2;
-    } else {
-      t2 = $[2];
-    }
-    return t2;
+    const lineLabel = ideSelection.lineCount === 1 ? t('ideLineSingular') : t('ideLinePlural');
+    return (
+      <Text color="ide" key="selection-indicator" wrap="truncate">
+        ⧉ {ideSelection.lineCount} {lineLabel} {t('ideSelected')}{tokenSuffix}
+      </Text>
+    );
   }
+
   if (ideSelection.filePath) {
-    let t1;
-    if ($[3] !== ideSelection.filePath) {
-      t1 = basename(ideSelection.filePath);
-      $[3] = ideSelection.filePath;
-      $[4] = t1;
-    } else {
-      t1 = $[4];
-    }
-    let t2;
-    if ($[5] !== t1) {
-      t2 = <Text color="ide" key="selection-indicator" wrap="truncate">⧉ {t('ideInFile')} {t1}</Text>;
-      $[5] = t1;
-      $[6] = t2;
-    } else {
-      t2 = $[6];
-    }
-    return t2;
+    const filename = basename(ideSelection.filePath);
+    return (
+      <Text color="ide" key="selection-indicator" wrap="truncate">
+        ⧉ {t('ideInFile')} {filename}{tokenSuffix}
+      </Text>
+    );
   }
 }

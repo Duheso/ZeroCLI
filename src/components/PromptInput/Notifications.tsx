@@ -27,6 +27,7 @@ import { setEnvHookNotifier } from '../../utils/hooks/fileChangedWatcher.js';
 import { toIDEDisplayName } from '../../utils/ide.js';
 import { getMessagesAfterCompactBoundary } from '../../utils/messages.js';
 import { tokenCountFromLastAPIResponse } from '../../utils/tokens.js';
+import { roughTokenCountEstimationForMessages } from '../../services/tokenEstimation.js';
 import { AutoUpdaterWrapper } from '../AutoUpdaterWrapper.js';
 import { ConfigurableShortcutHint } from '../ConfigurableShortcutHint.js';
 import { IdeStatusIndicator } from '../IdeStatusIndicator.js';
@@ -75,7 +76,8 @@ export function Notifications(t0: Props) {
   let t3;
   if ($[0] !== messages) {
     const messagesForTokenCount = getMessagesAfterCompactBoundary(messages);
-    t3 = tokenCountFromLastAPIResponse(messagesForTokenCount);
+    const apiTokens = tokenCountFromLastAPIResponse(messagesForTokenCount);
+    t3 = apiTokens > 0 ? apiTokens : roughTokenCountEstimationForMessages(messagesForTokenCount);
     $[0] = messages;
     $[1] = t3;
   } else {
@@ -286,7 +288,7 @@ function NotificationContent({
     return <VoiceIndicator voiceState={voiceState} />;
   }
   return <>
-      <IdeStatusIndicator ideSelection={ideSelection} mcpClients={mcpClients} />
+      <IdeStatusIndicator ideSelection={ideSelection} mcpClients={mcpClients} tokenUsage={tokenUsage} mainLoopModel={mainLoopModel} />
       {notifications.current && ('jsx' in notifications.current ? <Text wrap="truncate" key={notifications.current.key}>
             {notifications.current.jsx}
           </Text> : <Text color={notifications.current.color} dimColor={!notifications.current.color} wrap="truncate">
