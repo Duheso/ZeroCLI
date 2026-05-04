@@ -17,7 +17,7 @@ export async function validateManifest(
   const parseResult = McpbManifestSchema.safeParse(manifestJson)
 
   if (!parseResult.success) {
-    const errors = parseResult.error.flatten()
+    const errors = parseResult.error.flatten() as { fieldErrors: Record<string, string[] | undefined>; formErrors: unknown[] }
     const errorMessages = [
       ...Object.entries(errors.fieldErrors).map(
         ([field, errs]) => `${field}: ${errs?.join(', ')}`,
