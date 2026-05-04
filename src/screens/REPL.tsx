@@ -4842,7 +4842,7 @@ export function REPL({
             }
           }} />}
           {("external" as any) === 'ant' && focusedInputDialog === 'undercover-callout' && UndercoverAutoCallout && <UndercoverAutoCallout onDone={() => setShowUndercoverCallout(false)} />}
-          {focusedInputDialog === 'effort-callout' && <EffortCallout model={mainLoopModel} onDone={(selection: string) => {
+          {focusedInputDialog === 'effort-callout' && <EffortCallout model={mainLoopModel} onDone={(selection: any) => {
             setShowEffortCallout(false);
             if (selection !== 'dismiss') {
               setAppState(prev => ({
@@ -4973,7 +4973,7 @@ export function REPL({
               systemContext,
               toolUseContext: context,
               forkContextMessages: compactMessages
-            }, feedback, direction);
+            }, feedback, direction as any);
             const kept = result.messagesToKeep ?? [];
             const ordered = (direction as string) === 'up_to' ? [...result.summaryMessages, ...kept] : [...kept, ...result.summaryMessages];
             const postCompact = [result.boundaryMarker, ...ordered, ...result.attachments, ...result.hookResults];

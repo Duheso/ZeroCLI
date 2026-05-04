@@ -25,7 +25,7 @@ type Props = {
  * (width × lines.length) and hands the joined string straight to output.write(),
  * which already splits on '\n' and parses ANSI into the screen buffer.
  */
-export function RawAnsi(t0) {
+export function RawAnsi(t0: Props) {
   const $ = _c(6);
   const {
     lines,
@@ -44,6 +44,7 @@ export function RawAnsi(t0) {
   }
   let t2;
   if ($[2] !== lines.length || $[3] !== t1 || $[4] !== width) {
+    // @ts-expect-error - ink-raw-ansi is a custom Ink runtime element, not a JSX type
     t2 = <ink-raw-ansi rawText={t1} rawWidth={width} rawHeight={lines.length} />;
     $[2] = lines.length;
     $[3] = t1;

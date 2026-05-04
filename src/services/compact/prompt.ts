@@ -273,7 +273,7 @@ const NO_TOOLS_TRAILER =
 
 export function getPartialCompactPrompt(
   customInstructions?: string,
-  direction: 'from' | 'up_to' = 'from',
+  direction: PartialCompactDirection | ('from' | 'up_to') = 'from',
 ): string {
   const template =
     direction === 'up_to'
