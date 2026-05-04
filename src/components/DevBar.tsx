@@ -6,7 +6,7 @@ import { Text, useInterval } from '../ink.js';
 
 // Show DevBar for dev builds or all ants
 function shouldShowDevBar(): boolean {
-  return "production" === 'development' || "external" === 'ant';
+  return ("production" as string) === 'development' || ("external" as string) === 'ant';
 }
 export function DevBar() {
   const $ = _c(5);
@@ -43,6 +43,6 @@ export function DevBar() {
   }
   return t2;
 }
-function _temp(op) {
+function _temp(op: { operation: string; durationMs: number }) {
   return `${op.operation} (${Math.round(op.durationMs)}ms)`;
 }

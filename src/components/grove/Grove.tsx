@@ -1,6 +1,7 @@
 import { c as _c } from "react-compiler-runtime";
 import React, { useEffect, useState } from 'react';
 import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from 'src/services/analytics/index.js';
+import { type ExitState } from '../../hooks/useExitOnCtrlCDWithKeybindings.js';
 import { Box, Link, Text, useInput } from '../../ink.js';
 import { type AccountSettings, calculateShouldShowGrove, type GroveConfig, getGroveNoticeConfig, getGroveSettings, markGroveNoticeViewed, updateGroveSettings } from '../../services/api/grove.js';
 import { Select } from '../CustomSelect/index.js';
@@ -372,7 +373,7 @@ export function PrivacySettingsDialog(t0: PrivacySettingsDialogProps) {
   React.useEffect(_temp2, t1);
   let t2;
   if ($[1] !== domainExcluded || $[2] !== groveEnabled) {
-    t2 = async (input, key) => {
+    t2 = async (input: string, key: { tab?: boolean; return?: boolean }) => {
       if (!domainExcluded && (key.tab || key.return || input === " ")) {
         const newValue = !groveEnabled;
         setGroveEnabled(newValue);
