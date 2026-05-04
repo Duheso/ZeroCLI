@@ -65,7 +65,7 @@ function stringsForDecisionReason(reason: PermissionDecisionReason | undefined, 
       return null;
   }
 }
-export function PermissionRuleExplanation(t0) {
+export function PermissionRuleExplanation(t0: PermissionRuleExplanationProps) {
   const $ = _c(11);
   const {
     permissionResult,
@@ -115,6 +115,6 @@ export function PermissionRuleExplanation(t0) {
   }
   return t5;
 }
-function _temp(s) {
+function _temp(s: { toolPermissionContext: { mode: string } }) {
   return s.toolPermissionContext.mode;
 }
