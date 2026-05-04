@@ -234,7 +234,7 @@ export function ContextVisualization(t0: Props) {
         const isReserved = cat_2.name === RESERVED_CATEGORY_NAME;
         const displayName = cat_2.name;
         const symbol = cat_2.isDeferred ? " " : isReserved ? "\u26DD" : "\u26C1";
-        return <Box key={index}><Text color={cat_2.color}>{symbol}</Text><Text> {displayName}: </Text><Text dimColor={true}>{tokenDisplay} tokens ({percentDisplay})</Text></Box>;
+        return <Box key={index}><Text color={cat_2.color as any}>{symbol}</Text><Text> {displayName}: </Text><Text dimColor={true}>{tokenDisplay} tokens ({percentDisplay})</Text></Box>;
       };
       $[38] = rawMaxTokens;
       $[39] = t19;
@@ -487,9 +487,9 @@ function _temp4(square: { categoryName: string; color: string; squareFullness: n
     return <Text key={colIndex} dimColor={true}>{"\u26F6 "}</Text>;
   }
   if (square.categoryName === RESERVED_CATEGORY_NAME) {
-    return <Text key={colIndex} color={square.color}>{"\u26DD "}</Text>;
+    return <Text key={colIndex} color={square.color as any}>{"\u26DD "}</Text>;
   }
-  return <Text key={colIndex} color={square.color}>{square.squareFullness >= 0.7 ? "\u26C1 " : "\u26C0 "}</Text>;
+  return <Text key={colIndex} color={square.color as any}>{square.squareFullness >= 0.7 ? "\u26C1 " : "\u26C0 "}</Text>;
 }
 function _temp3(cat_1: { name: string }) {
   return cat_1.name === RESERVED_CATEGORY_NAME;

@@ -11,7 +11,7 @@ type Props = {
   server: ServerInfo;
   onBack: () => void;
 };
-export function MCPToolDetailView(t0) {
+export function MCPToolDetailView(t0: Props) {
   const $ = _c(44);
   const {
     tool,
@@ -206,6 +206,6 @@ export function MCPToolDetailView(t0) {
   }
   return t18;
 }
-function _temp(exitState) {
+function _temp(exitState: any) {
   return exitState.pending ? <Text>Press {exitState.keyName} again to exit</Text> : <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="go back" />;
 }

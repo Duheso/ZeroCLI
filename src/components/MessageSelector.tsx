@@ -592,7 +592,7 @@ function UserMessageOption(t0: { userMessage: UserMessage; color?: string; dimCo
   if (isCurrent) {
     let t1;
     if ($[0] !== color || $[1] !== dimColor) {
-      t1 = <Box width="100%"><Text italic={true} color={color} dimColor={dimColor}>(current)</Text></Box>;
+      t1 = <Box width="100%"><Text italic={true} color={color as keyof Theme | undefined} dimColor={dimColor as boolean | undefined}>(current)</Text></Box>;
       $[0] = color;
       $[1] = dimColor;
       $[2] = t1;
@@ -619,7 +619,7 @@ function UserMessageOption(t0: { userMessage: UserMessage; color?: string; dimCo
       if (isEmptyMessageText(messageText)) {
         let t7;
         if ($[17] !== color || $[18] !== dimColor) {
-          t7 = <Box flexDirection="row" width="100%"><Text italic={true} color={color} dimColor={dimColor}>((empty message))</Text></Box>;
+          t7 = <Box flexDirection="row" width="100%"><Text italic={true} color={color as keyof Theme | undefined} dimColor={dimColor as boolean | undefined}>((empty message))</Text></Box>;
           $[17] = color;
           $[18] = dimColor;
           $[19] = t7;
@@ -639,7 +639,7 @@ function UserMessageOption(t0: { userMessage: UserMessage; color?: string; dimCo
           } else {
             t7 = $[20];
           }
-          t6 = <Box flexDirection="row" width="100%">{t7}<Text color={color} dimColor={dimColor}>{" "}{input}</Text></Box>;
+          t6 = <Box flexDirection="row" width="100%">{t7}<Text color={color as keyof Theme | undefined} dimColor={dimColor as boolean | undefined}>{" "}{input}</Text></Box>;
           break bb0;
         }
       }
@@ -649,10 +649,10 @@ function UserMessageOption(t0: { userMessage: UserMessage; color?: string; dimCo
         const isSkillFormat = extractTag(messageText, "skill-format") === "true";
         if (commandMessage) {
           if (isSkillFormat) {
-            t6 = <Box flexDirection="row" width="100%"><Text color={color} dimColor={dimColor}>Skill({commandMessage})</Text></Box>;
+            t6 = <Box flexDirection="row" width="100%"><Text color={color as keyof Theme | undefined} dimColor={dimColor as boolean | undefined}>Skill({commandMessage})</Text></Box>;
             break bb0;
           } else {
-            t6 = <Box flexDirection="row" width="100%"><Text color={color} dimColor={dimColor}>/{commandMessage} {args}</Text></Box>;
+            t6 = <Box flexDirection="row" width="100%"><Text color={color as keyof Theme | undefined} dimColor={dimColor as boolean | undefined}>/{commandMessage} {args}</Text></Box>;
             break bb0;
           }
         }

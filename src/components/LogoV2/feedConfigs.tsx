@@ -30,8 +30,8 @@ export function createWhatsNewFeed(releaseNotes: string[]): FeedConfig {
       const match = note.match(/^(\d+\s+\w+\s+ago)\s+(.+)$/);
       if (match) {
         return {
-          timestamp: match[1],
-          text: match[2] || ''
+          timestamp: match![1],
+          text: match![2] || ''
         };
       }
     }

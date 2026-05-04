@@ -444,7 +444,7 @@ function SystemTextMessageInner(t0: { content: string; addMargin?: boolean; dot:
   const t1 = addMargin ? 1 : 0;
   let t2;
   if ($[0] !== color || $[1] !== dimColor || $[2] !== dot) {
-    t2 = dot && <Box minWidth={2}><Text color={color} dimColor={dimColor}>{BLACK_CIRCLE}</Text></Box>;
+    t2 = dot && <Box minWidth={2}><Text color={color as any} dimColor={dimColor}>{BLACK_CIRCLE}</Text></Box>;
     $[0] = color;
     $[1] = dimColor;
     $[2] = dot;
@@ -463,7 +463,7 @@ function SystemTextMessageInner(t0: { content: string; addMargin?: boolean; dot:
   }
   let t5;
   if ($[6] !== color || $[7] !== dimColor || $[8] !== t4) {
-    t5 = <Text color={color} dimColor={dimColor} wrap="wrap">{t4}</Text>;
+    t5 = <Text color={color as any} dimColor={dimColor} wrap="wrap">{t4}</Text>;
     $[6] = color;
     $[7] = dimColor;
     $[8] = t4;
@@ -633,7 +633,7 @@ function MemorySavedMessage(t0: { message: SystemMemorySavedMessage; addMargin?:
   } else {
     t6 = $[5];
   }
-  const t7 = message.verb ?? "Saved";
+  const t7 = (message as any).verb ?? "Saved";
   const t8 = parts.join(" \xB7 ");
   let t9;
   if ($[6] !== t7 || $[7] !== t8) {
