@@ -1,4 +1,5 @@
 import { feature } from 'bun:bundle';
+import type { UUID } from 'crypto';
 import type { ToolResultBlockParam } from '@anthropic-ai/sdk/resources/index.mjs';
 import { copyFile, stat as fsStat, truncate as fsTruncate, link } from 'fs/promises';
 import * as React from 'react';
@@ -397,7 +398,7 @@ async function applySedEdit(simulatedEdit: {
 
   // Track file history before making changes (for undo support)
   if (fileHistoryEnabled() && parentMessage) {
-    await fileHistoryTrackEdit(toolUseContext.updateFileHistoryState, absoluteFilePath, parentMessage.uuid);
+    await fileHistoryTrackEdit(toolUseContext.updateFileHistoryState, absoluteFilePath, parentMessage.uuid as UUID);
   }
 
   // Detect line endings and write new content
@@ -679,7 +680,7 @@ export const BashTool = buildTool({
               fullOutput: progress.fullOutput,
               elapsedTimeSeconds: progress.elapsedTimeSeconds,
               totalLines: progress.totalLines,
-              totalBytes: progress.totalBytes,
+              totalBytes: progress.totalBytes ?? 0,
               taskId: progress.taskId,
               timeoutMs: progress.timeoutMs
             }
