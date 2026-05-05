@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Text } from '../ink.js';
-import { isClaudeAISubscriber } from '../utils/auth.js';
 import { isChromeExtensionInstalled, shouldEnableClaudeInChrome } from '../utils/claudeInChrome/setup.js';
 import { isRunningOnHomespace } from '../utils/envUtils.js';
 import { useStartupNotification } from './notifs/useStartupNotification.js';
@@ -21,14 +20,7 @@ async function _temp() {
   if (!shouldEnableClaudeInChrome(chromeFlag)) {
     return null;
   }
-  if (true && !isClaudeAISubscriber()) {
-    return {
-      key: "chrome-requires-subscription",
-      jsx: <Text color="error">Claude in Chrome requires a claude.ai subscription</Text>,
-      priority: "immediate",
-      timeoutMs: 5000
-    };
-  }
+  // Subscription check removed — ZeroCLI works without claude.ai account
   const installed = await isChromeExtensionInstalled();
   if (!installed && !isRunningOnHomespace()) {
     return {

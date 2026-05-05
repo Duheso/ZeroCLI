@@ -5,7 +5,7 @@ import { t } from '../../i18n/index.js'
 const command: Command = {
   name: 'chrome',
   description: t('cmd_chrome') as string,
-  availability: ['claude-ai'],
+  availability: [],
   isEnabled: () => !getIsNonInteractiveSession(),
   type: 'local-jsx',
   load: () => import('./chrome.js'),

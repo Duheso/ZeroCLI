@@ -1,6 +1,6 @@
 {
   "name": "@duheso/zerocli",
-  "version": "0.8.1",
+  "version": "0.8.3",
   "description": "Zero Cli to any LLM — OpenAI, Gemini, DeepSeek, Ollama, and 200+ models",
   "type": "module",
   "bin": {
@@ -10,6 +10,8 @@
     "bin/",
     "dist/cli.mjs",
     "dist/vendor/ripgrep",
+    "chrome-extension/",
+    "scripts/setup-chrome-native-host.mjs",
     "README.md"
   ],
   "scripts": {
