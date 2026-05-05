@@ -71,7 +71,7 @@ export const ThinkingAdaptiveSchema = lazySchema(() =>
     .object({
       type: z.literal('adaptive'),
     })
-    .describe('Claude decides when and how much to think (Opus 4.6+).'),
+    .describe('Zero decides when and how much to think (Opus 4.6+).'),
 )
 
 export const ThinkingEnabledSchema = lazySchema(() =>
@@ -99,7 +99,7 @@ export const ThinkingConfigSchema = lazySchema(() =>
       ThinkingDisabledSchema(),
     ])
     .describe(
-      "Controls Claude's thinking/reasoning behavior. When set, takes precedence over the deprecated maxThinkingTokens.",
+      "Controls Zero's thinking/reasoning behavior. When set, takes precedence over the deprecated maxThinkingTokens.",
     ),
 )
 
@@ -148,7 +148,7 @@ export const McpServerConfigForProcessTransportSchema = lazySchema(() =>
   ]),
 )
 
-export const McpClaudeAIProxyServerConfigSchema = lazySchema(() =>
+export const McpZeroAIProxyServerConfigSchema = lazySchema(() =>
   z.object({
     type: z.literal('claudeai-proxy'),
     url: z.string(),
@@ -160,7 +160,7 @@ export const McpClaudeAIProxyServerConfigSchema = lazySchema(() =>
 export const McpServerStatusConfigSchema = lazySchema(() =>
   z.union([
     McpServerConfigForProcessTransportSchema(),
-    McpClaudeAIProxyServerConfigSchema(),
+    McpZeroAIProxyServerConfigSchema(),
   ]),
 )
 
@@ -1064,7 +1064,7 @@ export const ModelInfoSchema = lazySchema(() =>
         .boolean()
         .optional()
         .describe(
-          'Whether this model supports adaptive thinking (Claude decides when and how much to think)',
+          'Whether this model supports adaptive thinking (Zero decides when and how much to think)',
         ),
       supportsFastMode: z
         .boolean()

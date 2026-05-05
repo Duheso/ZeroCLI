@@ -155,7 +155,7 @@ import {
   modelSupportsAdvisor,
 } from 'src/utils/advisor.js'
 import { getAgentContext } from 'src/utils/agentContext.js'
-import { isClaudeAISubscriber } from 'src/utils/auth.js'
+import { isZeroAISubscriber } from 'src/utils/auth.js'
 import {
   getToolSearchBetaHeader,
   modelSupportsStructuredOutputs,
@@ -421,7 +421,7 @@ function should1hCacheTTL(querySource?: QuerySource): boolean {
   if (userEligible === null) {
     userEligible =
       process.env.USER_TYPE === 'ant' ||
-      (isClaudeAISubscriber() && !currentLimits.isUsingOverage)
+      (isZeroAISubscriber() && !currentLimits.isUsingOverage)
     setPromptCache1hEligible(userEligible)
   }
   if (!userEligible) return false
@@ -1046,7 +1046,7 @@ async function* queryModel(
   // init (~10ms). For non-Opus models (haiku, sonnet) this skips the await
   // entirely. Subscribers don't hit this path at all.
   if (
-    !isClaudeAISubscriber() &&
+    !isZeroAISubscriber() &&
     isNonCustomOpusModel(options.model) &&
     (
       await getDynamicConfig_BLOCKS_ON_INIT<{ activated: boolean }>(
@@ -2294,7 +2294,7 @@ async function* queryModel(
                 max_tokens: maxOutputTokens,
               })
               yield createAssistantAPIErrorMessage({
-                content: `${API_ERROR_MESSAGE_PREFIX}: Claude's response exceeded the ${
+                content: `${API_ERROR_MESSAGE_PREFIX}: Zero's response exceeded the ${
                   maxOutputTokens
                 } output token maximum. To configure this behavior, set the CLAUDE_CODE_MAX_OUTPUT_TOKENS environment variable.`,
                 apiError: 'max_output_tokens',

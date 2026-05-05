@@ -5,7 +5,7 @@ import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
   logEvent,
 } from 'src/services/analytics/index.js'
-import { getClaudeAIOAuthTokens } from 'src/utils/auth.js'
+import { getZeroAIOAuthTokens } from 'src/utils/auth.js'
 import { getGlobalConfig, saveGlobalConfig } from 'src/utils/config.js'
 import { logForDebugging } from 'src/utils/debug.js'
 import { isEnvDefinedFalsy } from 'src/utils/envUtils.js'
@@ -14,7 +14,7 @@ import { clearMcpAuthCache } from './client.js'
 import { normalizeNameForMCP } from './normalization.js'
 import type { ScopedMcpServerConfig } from './types.js'
 
-type ClaudeAIMcpServer = {
+type ZeroAIMcpServer = {
   type: 'mcp_server'
   id: string
   display_name: string
@@ -22,8 +22,8 @@ type ClaudeAIMcpServer = {
   created_at: string
 }
 
-type ClaudeAIMcpServersResponse = {
-  data: ClaudeAIMcpServer[]
+type ZeroAIMcpServersResponse = {
+  data: ZeroAIMcpServer[]
   has_more: boolean
   next_page: string | null
 }
@@ -32,12 +32,12 @@ const FETCH_TIMEOUT_MS = 5000
 const MCP_SERVERS_BETA_HEADER = 'mcp-servers-2025-12-04'
 
 /**
- * Fetches MCP server configurations from Claude.ai org configs.
- * These servers are managed by the organization via Claude.ai.
+ * Fetches MCP server configurations from Zero.ai org configs.
+ * These servers are managed by the organization via Zero.ai.
  *
  * Results are memoized for the session lifetime (fetch once per CLI session).
  */
-export const fetchClaudeAIMcpConfigsIfEligible = memoize(
+export const fetchZeroAIMcpConfigsIfEligible = memoize(
   async (): Promise<Record<string, ScopedMcpServerConfig>> => {
     try {
       if (getAPIProvider() !== 'firstParty') {
@@ -58,7 +58,7 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(
         return {}
       }
 
-      const tokens = getClaudeAIOAuthTokens()
+      const tokens = getZeroAIOAuthTokens()
       if (!tokens?.accessToken) {
         logForDebugging('[claudeai-mcp] No access token')
         logEvent('tengu_claudeai_mcp_eligibility', {
@@ -68,8 +68,8 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(
         return {}
       }
 
-      // Check for user:mcp_servers scope directly instead of isClaudeAISubscriber().
-      // In non-interactive mode, isClaudeAISubscriber() returns false when ANTHROPIC_API_KEY
+      // Check for user:mcp_servers scope directly instead of isZeroAISubscriber().
+      // In non-interactive mode, isZeroAISubscriber() returns false when ANTHROPIC_API_KEY
       // is set (even with valid OAuth tokens) because preferThirdPartyAuthentication() causes
       // isAnthropicAuthEnabled() to return false. Checking the scope directly allows users
       // with both API keys and OAuth tokens to access claude.ai MCPs in print mode.
@@ -89,7 +89,7 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(
 
       logForDebugging(`[claudeai-mcp] Fetching from ${url}`)
 
-      const response = await axios.get<ClaudeAIMcpServersResponse>(url, {
+      const response = await axios.get<ZeroAIMcpServersResponse>(url, {
         headers: {
           Authorization: `Bearer ${tokens.accessToken}`,
           'Content-Type': 'application/json',
@@ -144,11 +144,11 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(
 )
 
 /**
- * Clears the memoized cache for fetchClaudeAIMcpConfigsIfEligible.
+ * Clears the memoized cache for fetchZeroAIMcpConfigsIfEligible.
  * Call this after login so the next fetch will use the new auth tokens.
  */
-export function clearClaudeAIMcpConfigsCache(): void {
-  fetchClaudeAIMcpConfigsIfEligible.cache.clear?.()
+export function clearZeroAIMcpConfigsCache(): void {
+  fetchZeroAIMcpConfigsIfEligible.cache.clear?.()
   // Also clear the auth cache so freshly-authorized servers get re-connected
   clearMcpAuthCache()
 }
@@ -161,7 +161,7 @@ export function clearClaudeAIMcpConfigsCache(): void {
  * worth surfacing; an org-configured connector that's been needs-auth since
  * it showed up is one the user has demonstrably ignored.
  */
-export function markClaudeAiMcpConnected(name: string): void {
+export function markZeroAiMcpConnected(name: string): void {
   saveGlobalConfig(current => {
     const seen = current.claudeAiMcpEverConnected ?? []
     if (seen.includes(name)) return current
@@ -169,6 +169,6 @@ export function markClaudeAiMcpConnected(name: string): void {
   })
 }
 
-export function hasClaudeAiMcpEverConnected(name: string): boolean {
+export function hasZeroAiMcpEverConnected(name: string): boolean {
   return (getGlobalConfig().claudeAiMcpEverConnected ?? []).includes(name)
 }

@@ -6,12 +6,12 @@ import axios from 'axios'
 import { OAUTH_BETA_HEADER } from '../constants/oauth.js'
 import {
   getAnthropicApiKey,
-  getClaudeAIOAuthTokens,
+  getZeroAIOAuthTokens,
   handleOAuth401Error,
-  isClaudeAISubscriber,
+  isZeroAISubscriber,
 } from './auth.js'
 import { getAPIProvider } from './model/providers.js'
-import { getClaudeCodeUserAgent } from './userAgent.js'
+import { getZeroCodeUserAgent } from './userAgent.js'
 import { getWorkload } from './workloadContext.js'
 
 // WARNING: We rely on `claude-cli` in the user agent for log filtering.
@@ -50,7 +50,7 @@ export function getMCPUserAgent(): string {
   return `claude-code/${MACRO.VERSION}${suffix}`
 }
 
-// User-Agent for WebFetch requests to arbitrary sites. `Claude-User` is
+// User-Agent for WebFetch requests to arbitrary sites. `Zero-User` is
 // The first-party provider's publicly documented agent for user-initiated fetches (what site
 // operators match in robots.txt); the claude-code suffix lets them distinguish
 // local CLI traffic from claude.ai server-side fetches.
@@ -59,7 +59,7 @@ export function getWebFetchUserAgent(): string {
     getAPIProvider() === 'firstParty'
       ? 'https://support.anthropic.com/'
       : 'https://github.com/Duheso/ZeroCLI'
-  return `Claude-User (${getClaudeCodeUserAgent()}; +${supportUrl})`
+  return `Zero-User (${getZeroCodeUserAgent()}; +${supportUrl})`
 }
 
 export type AuthHeaders = {
@@ -72,8 +72,8 @@ export type AuthHeaders = {
  * Returns either OAuth headers for Max/Pro users or API key headers for regular users
  */
 export function getAuthHeaders(): AuthHeaders {
-  if (isClaudeAISubscriber()) {
-    const oauthTokens = getClaudeAIOAuthTokens()
+  if (isZeroAISubscriber()) {
+    const oauthTokens = getZeroAIOAuthTokens()
     if (!oauthTokens?.accessToken) {
       return {
         headers: {},
@@ -133,7 +133,7 @@ export async function withOAuth401Retry<T>(
         typeof err.response?.data === 'string' &&
         err.response.data.includes('OAuth token has been revoked'))
     if (!isAuthError) throw err
-    const failedAccessToken = getClaudeAIOAuthTokens()?.accessToken
+    const failedAccessToken = getZeroAIOAuthTokens()?.accessToken
     if (!failedAccessToken) throw err
     await handleOAuth401Error(failedAccessToken)
     return await request()

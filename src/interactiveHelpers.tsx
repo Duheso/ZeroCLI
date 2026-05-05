@@ -18,7 +18,7 @@ import { handleMcpjsonServerApprovals } from './services/mcpServerApproval.js';
 import { AppStateProvider } from './state/AppState.js';
 import { onChangeAppState } from './state/onChangeAppState.js';
 import { normalizeApiKeyForConfig } from './utils/authPortable.js';
-import { getExternalClaudeMdIncludes, getMemoryFiles, shouldShowClaudeMdExternalIncludesWarning } from './utils/claudemd.js';
+import { getExternalZeroMdIncludes, getMemoryFiles, shouldShowZeroMdExternalIncludesWarning } from './utils/claudemd.js';
 import { checkHasTrustDialogAccepted, getCustomApiKeyStatus, getGlobalConfig, saveGlobalConfig } from './utils/config.js';
 import { updateDeepLinkTerminalPreference } from './utils/deepLink/terminalPreference.js';
 import { isEnvTruthy, isRunningOnHomespace } from './utils/envUtils.js';
@@ -170,12 +170,12 @@ export async function showSetupScreens(root: Root, permissionMode: PermissionMod
       }
 
       // Check for claude.md includes that need approval
-      if (await shouldShowClaudeMdExternalIncludesWarning()) {
-        const externalIncludes = getExternalClaudeMdIncludes(await getMemoryFiles(true));
+      if (await shouldShowZeroMdExternalIncludesWarning()) {
+        const externalIncludes = getExternalZeroMdIncludes(await getMemoryFiles(true));
         const {
-          ClaudeMdExternalIncludesDialog
-        } = await import('./components/ClaudeMdExternalIncludesDialog.js');
-        await showSetupDialog(root, done => <ClaudeMdExternalIncludesDialog onDone={done} isStandaloneDialog externalIncludes={externalIncludes} />);
+          ZeroMdExternalIncludesDialog
+        } = await import('./components/ZeroMdExternalIncludesDialog.js');
+        await showSetupDialog(root, done => <ZeroMdExternalIncludesDialog onDone={done} isStandaloneDialog externalIncludes={externalIncludes} />);
       }
     }
   }
@@ -264,7 +264,7 @@ export async function showSetupScreens(root: Root, permissionMode: PermissionMod
       const [{
         isChannelsEnabled
       }, {
-        getClaudeAIOAuthTokens
+        getZeroAIOAuthTokens
       }] = await Promise.all([import('./services/mcp/channelAllowlist.js'), import('./utils/auth.js')]);
       // Skip the dialog when channels are blocked (tengu_harbor off or no
       // OAuth) — accepting then immediately seeing "not available" in
@@ -273,7 +273,7 @@ export async function showSetupScreens(root: Root, permissionMode: PermissionMod
       // named. dev:true here is for the flag label in ChannelsNotice
       // (hasNonDev check); the allowlist bypass it also grants is moot
       // since the gate blocks upstream.
-      if (!isChannelsEnabled() || !getClaudeAIOAuthTokens()?.accessToken) {
+      if (!isChannelsEnabled() || !getZeroAIOAuthTokens()?.accessToken) {
         setAllowedChannels([...getAllowedChannels(), ...devChannels.map(c => ({
           ...c,
           dev: true
@@ -297,12 +297,12 @@ export async function showSetupScreens(root: Root, permissionMode: PermissionMod
     }
   }
 
-  // Show Chrome onboarding for first-time Claude in Chrome users
-  if (claudeInChrome && !getGlobalConfig().hasCompletedClaudeInChromeOnboarding) {
+  // Show Chrome onboarding for first-time Zero in Chrome users
+  if (claudeInChrome && !getGlobalConfig().hasCompletedZeroInChromeOnboarding) {
     const {
-      ClaudeInChromeOnboarding
-    } = await import('./components/ClaudeInChromeOnboarding.js');
-    await showSetupDialog(root, done => <ClaudeInChromeOnboarding onDone={done} />);
+      ZeroInChromeOnboarding
+    } = await import('./components/ZeroInChromeOnboarding.js');
+    await showSetupDialog(root, done => <ZeroInChromeOnboarding onDone={done} />);
   }
   return onboardingShown;
 }

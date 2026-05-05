@@ -132,7 +132,7 @@ export function getAllBrowserDataPathsPortable(): BrowserPath[] {
 }
 
 /**
- * Detects if the Claude in Chrome extension is installed by checking the Extensions
+ * Detects if the Zero in Chrome extension is installed by checking the Extensions
  * directory across all supported Chromium-based browsers and their profiles.
  *
  * This is a portable version that can be used by both TUI and VS Code extension.
@@ -149,7 +149,7 @@ export async function detectExtensionInstallationPortable(
   browser: ChromiumBrowser | null
 }> {
   if (browserPaths.length === 0) {
-    log?.(`[Claude in Chrome] No browser paths to check`)
+    log?.(`[Zero in Chrome] No browser paths to check`)
     return { isInstalled: false, browser: null }
   }
 
@@ -178,7 +178,7 @@ export async function detectExtensionInstallationPortable(
 
     if (profileDirs.length > 0) {
       log?.(
-        `[Claude in Chrome] Found ${browser} profiles: ${profileDirs.join(', ')}`,
+        `[Zero in Chrome] Found ${browser} profiles: ${profileDirs.join(', ')}`,
       )
     }
 
@@ -195,7 +195,7 @@ export async function detectExtensionInstallationPortable(
         try {
           await readdir(extensionPath)
           log?.(
-            `[Claude in Chrome] Extension ${extensionId} found in ${browser} ${profile}`,
+            `[Zero in Chrome] Extension ${extensionId} found in ${browser} ${profile}`,
           )
           return { isInstalled: true, browser }
         } catch {
@@ -205,7 +205,7 @@ export async function detectExtensionInstallationPortable(
     }
   }
 
-  log?.(`[Claude in Chrome] Extension not found in any browser`)
+  log?.(`[Zero in Chrome] Extension not found in any browser`)
   return { isInstalled: false, browser: null }
 }
 

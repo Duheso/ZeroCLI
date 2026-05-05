@@ -4,8 +4,8 @@ import {
   checkAndRefreshOAuthTokenIfNeeded,
   getAnthropicApiKey,
   getApiKeyFromApiKeyHelper,
-  getClaudeAIOAuthTokens,
-  isClaudeAISubscriber,
+  getZeroAIOAuthTokens,
+  isZeroAISubscriber,
   refreshAndGetAwsCredentials,
   refreshGcpCredentialsIfNeeded,
 } from 'src/utils/auth.js'
@@ -59,10 +59,10 @@ const importRuntimeModule = new Function(
  *
  * Vertex AI:
  * - Model-specific region variables (highest priority):
- *   - VERTEX_REGION_CLAUDE_3_5_HAIKU: Region for Claude 3.5 Haiku model
- *   - VERTEX_REGION_CLAUDE_HAIKU_4_5: Region for Claude Haiku 4.5 model
- *   - VERTEX_REGION_CLAUDE_3_5_SONNET: Region for Claude 3.5 Sonnet model
- *   - VERTEX_REGION_CLAUDE_3_7_SONNET: Region for Claude 3.7 Sonnet model
+ *   - VERTEX_REGION_CLAUDE_3_5_HAIKU: Region for Zero 3.5 Haiku model
+ *   - VERTEX_REGION_CLAUDE_HAIKU_4_5: Region for Zero Haiku 4.5 model
+ *   - VERTEX_REGION_CLAUDE_3_5_SONNET: Region for Zero 3.5 Sonnet model
+ *   - VERTEX_REGION_CLAUDE_3_7_SONNET: Region for Zero 3.7 Sonnet model
  * - CLOUD_ML_REGION: Optional. The default GCP region to use for all models
  *   If specific model region not specified above
  * - ANTHROPIC_VERTEX_PROJECT_ID: Required. Your GCP project ID
@@ -112,7 +112,7 @@ export async function getAnthropicClient({
   const defaultHeaders: { [key: string]: string } = {
     'x-app': 'cli',
     'User-Agent': getUserAgent(),
-    'X-Claude-Code-Session-Id': getSessionId(),
+    'X-Zero-Code-Session-Id': getSessionId(),
     ...customHeaders,
     ...(containerId ? { 'x-claude-remote-container-id': containerId } : {}),
     ...(remoteSessionId
@@ -139,7 +139,7 @@ export async function getAnthropicClient({
   await checkAndRefreshOAuthTokenIfNeeded()
   logForDebugging('[API:auth] OAuth token check complete')
 
-  if (!isClaudeAISubscriber()) {
+  if (!isZeroAISubscriber()) {
     await configureApiKeyHeaders(defaultHeaders, getIsNonInteractiveSession())
   }
 
@@ -362,9 +362,9 @@ export async function getAnthropicClient({
 
   // Determine authentication method based on available tokens
   const clientConfig: ConstructorParameters<typeof Anthropic>[0] = {
-    apiKey: isClaudeAISubscriber() ? null : apiKey || getAnthropicApiKey(),
-    authToken: isClaudeAISubscriber()
-      ? getClaudeAIOAuthTokens()?.accessToken
+    apiKey: isZeroAISubscriber() ? null : apiKey || getAnthropicApiKey(),
+    authToken: isZeroAISubscriber()
+      ? getZeroAIOAuthTokens()?.accessToken
       : undefined,
     // Set baseURL from OAuth config when using staging OAuth
     ...(process.env.USER_TYPE === 'ant' &&

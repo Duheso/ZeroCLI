@@ -4,16 +4,16 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNotifications } from 'src/context/notifications.js';
 import { Text } from 'src/ink.js';
 import { getRateLimitWarning, getUsingOverageText } from 'src/services/claudeAiLimits.js';
-import { useClaudeAiLimits } from 'src/services/claudeAiLimitsHook.js';
+import { useZeroAiLimits } from 'src/services/claudeAiLimitsHook.js';
 import { getSubscriptionType } from 'src/utils/auth.js';
-import { hasClaudeAiBillingAccess } from 'src/utils/billing.js';
+import { hasZeroAiBillingAccess } from 'src/utils/billing.js';
 import { getIsRemoteMode } from '../../bootstrap/state.js';
 export function useRateLimitWarningNotification(model: any) {
   const $ = _c(17);
   const {
     addNotification
   } = useNotifications();
-  const claudeAiLimits = useClaudeAiLimits();
+  const claudeAiLimits = useZeroAiLimits();
   let t0;
   if ($[0] !== claudeAiLimits || $[1] !== model) {
     t0 = getRateLimitWarning(claudeAiLimits, model);
@@ -44,7 +44,7 @@ export function useRateLimitWarningNotification(model: any) {
   const subscriptionType = t2;
   let t3;
   if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-    t3 = hasClaudeAiBillingAccess();
+    t3 = hasZeroAiBillingAccess();
     $[6] = t3;
   } else {
     t3 = $[6];

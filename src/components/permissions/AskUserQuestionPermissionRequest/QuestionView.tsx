@@ -34,7 +34,7 @@ type Props = {
   onSubmit: () => void;
   onTabPrev?: () => void;
   onTabNext?: () => void;
-  onRespondToClaude: () => void;
+  onRespondToZero: () => void;
   onFinishPlanInterview: () => void;
   onImagePaste?: (base64Image: string, mediaType?: string, filename?: string, dimensions?: ImageDimensions, sourcePath?: string) => void;
   onRemoveImage?: (id: number) => void;
@@ -58,7 +58,7 @@ export function QuestionView(t0: Props) {
     onSubmit,
     onTabPrev,
     onTabNext,
-    onRespondToClaude,
+    onRespondToZero,
     onFinishPlanInterview,
     onImagePaste,
     pastedContents,
@@ -140,7 +140,7 @@ export function QuestionView(t0: Props) {
       if (key.return) {
         event.stopImmediatePropagation();
         if (footerIndex === 0) {
-          onRespondToClaude();
+          onRespondToZero();
         } else {
           onFinishPlanInterview();
         }
@@ -231,8 +231,8 @@ export function QuestionView(t0: Props) {
   const hasAnyPreview = !question.multiSelect && question.options.some(_temp3);
   if (hasAnyPreview) {
     let t8;
-    if ($[30] !== answers || $[31] !== currentQuestionIndex || $[32] !== hideSubmitTab || $[33] !== minContentHeight || $[34] !== minContentWidth || $[35] !== onAnswer || $[36] !== onCancel || $[37] !== onFinishPlanInterview || $[38] !== onRespondToClaude || $[39] !== onTabNext || $[40] !== onTabPrev || $[41] !== onTextInputFocus || $[42] !== onUpdateQuestionState || $[43] !== question || $[44] !== questionStates || $[45] !== questions) {
-      t8 = <PreviewQuestionView question={question} questions={questions} currentQuestionIndex={currentQuestionIndex} answers={answers} questionStates={questionStates} hideSubmitTab={hideSubmitTab} minContentHeight={minContentHeight} minContentWidth={minContentWidth} onUpdateQuestionState={onUpdateQuestionState} onAnswer={onAnswer} onTextInputFocus={onTextInputFocus} onCancel={onCancel} onTabPrev={onTabPrev} onTabNext={onTabNext} onRespondToClaude={onRespondToClaude} onFinishPlanInterview={onFinishPlanInterview} />;
+    if ($[30] !== answers || $[31] !== currentQuestionIndex || $[32] !== hideSubmitTab || $[33] !== minContentHeight || $[34] !== minContentWidth || $[35] !== onAnswer || $[36] !== onCancel || $[37] !== onFinishPlanInterview || $[38] !== onRespondToZero || $[39] !== onTabNext || $[40] !== onTabPrev || $[41] !== onTextInputFocus || $[42] !== onUpdateQuestionState || $[43] !== question || $[44] !== questionStates || $[45] !== questions) {
+      t8 = <PreviewQuestionView question={question} questions={questions} currentQuestionIndex={currentQuestionIndex} answers={answers} questionStates={questionStates} hideSubmitTab={hideSubmitTab} minContentHeight={minContentHeight} minContentWidth={minContentWidth} onUpdateQuestionState={onUpdateQuestionState} onAnswer={onAnswer} onTextInputFocus={onTextInputFocus} onCancel={onCancel} onTabPrev={onTabPrev} onTabNext={onTabNext} onRespondToZero={onRespondToZero} onFinishPlanInterview={onFinishPlanInterview} />;
       $[30] = answers;
       $[31] = currentQuestionIndex;
       $[32] = hideSubmitTab;
@@ -241,7 +241,7 @@ export function QuestionView(t0: Props) {
       $[35] = onAnswer;
       $[36] = onCancel;
       $[37] = onFinishPlanInterview;
-      $[38] = onRespondToClaude;
+      $[38] = onRespondToZero;
       $[39] = onTabNext;
       $[40] = onTabPrev;
       $[41] = onTextInputFocus;

@@ -5,7 +5,7 @@ import {
   resolveCodexApiCredentials,
   resolveProviderRequest,
 } from '../services/api/providerConfig.js'
-import { getGlobalClaudeFile } from './env.js'
+import { getGlobalZeroFile } from './env.js'
 import { isBareMode } from './envUtils.js'
 import {
   type GeminiResolvedCredential,
@@ -69,7 +69,7 @@ function checkGithubTokenStatus(
 }
 
 function getOpenAIMissingKeyMessage(): string {
-  const globalConfigPath = getGlobalClaudeFile()
+  const globalConfigPath = getGlobalZeroFile()
   const profilePath = resolve(process.cwd(), PROFILE_FILE_NAME)
 
   return [

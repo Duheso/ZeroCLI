@@ -440,7 +440,7 @@ const externalTips: Tip[] = [
   {
     id: 'desktop-app',
     content: async () =>
-      tipText('desktop-app', 'Run ZeroCLI locally or remotely using the Claude desktop app: clau.de/desktop'),
+      tipText('desktop-app', 'Run ZeroCLI locally or remotely using the Zero desktop app: clau.de/desktop'),
     cooldownSessions: 15,
     isRelevant: async () => getPlatform() !== 'linux',
   },
@@ -469,14 +469,14 @@ const externalTips: Tip[] = [
   {
     id: 'mobile-app',
     content: async () =>
-      tipText('mobile-app', '/mobile to use ZeroCLI from the Claude app on your phone'),
+      tipText('mobile-app', '/mobile to use ZeroCLI from the Zero app on your phone'),
     cooldownSessions: 15,
     isRelevant: async () => true,
   },
   {
     id: 'opusplan-mode-reminder',
     content: async () =>
-      `Your default model setting is Opus Plan Mode. Press ${getShortcutDisplay('chat:cycleMode', 'Chat', 'shift+tab')} twice to activate Plan Mode and plan with Claude Opus.`,
+      `Your default model setting is Opus Plan Mode. Press ${getShortcutDisplay('chat:cycleMode', 'Chat', 'shift+tab')} twice to activate Plan Mode and plan with Zero Opus.`,
     cooldownSessions: 2,
     async isRelevant() {
       const config = getGlobalConfig()

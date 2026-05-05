@@ -16,7 +16,7 @@ import {
   LEGACY_AGENT_TOOL_NAME,
 } from '../tools/AgentTool/constants.js'
 import type { LogOption } from '../types/logs.js'
-import { getClaudeConfigHomeDir } from '../utils/envUtils.js'
+import { getZeroConfigHomeDir } from '../utils/envUtils.js'
 import { toError } from '../utils/errors.js'
 import { logError } from '../utils/log.js'
 import { extractTextContent } from '../utils/messages.js'
@@ -198,7 +198,7 @@ const LABEL_MAP: Record<string, string> = {
   wrong_approach: 'Wrong Approach',
   buggy_code: 'Buggy Code',
   user_rejected_action: 'User Rejected Action',
-  claude_got_blocked: 'Claude Got Blocked',
+  claude_got_blocked: 'Zero Got Blocked',
   user_stopped_early: 'User Stopped Early',
   wrong_file_or_location: 'Wrong File/Location',
   excessive_changes: 'Excessive Changes',
@@ -235,11 +235,11 @@ const LABEL_MAP: Record<string, string> = {
   essential: 'Essential',
 }
 
-// Lazy getters: getClaudeConfigHomeDir() is memoized and reads process.env.
+// Lazy getters: getZeroConfigHomeDir() is memoized and reads process.env.
 // Calling it at module scope would populate the memoize cache before
 // entrypoints can set CLAUDE_CONFIG_DIR, breaking all 150+ other callers.
 function getDataDir(): string {
-  return join(getClaudeConfigHomeDir(), 'usage-data')
+  return join(getZeroConfigHomeDir(), 'usage-data')
 }
 function getFacetsDir(): string {
   return join(getDataDir(), 'facets')
@@ -253,8 +253,8 @@ const FACET_EXTRACTION_PROMPT = `Analyze this ZeroCLI session and extract struct
 CRITICAL GUIDELINES:
 
 1. **goal_categories**: Count ONLY what the USER explicitly asked for.
-   - DO NOT count Claude's autonomous codebase exploration
-   - DO NOT count work Claude decided to do on its own
+   - DO NOT count Zero's autonomous codebase exploration
+   - DO NOT count work Zero decided to do on its own
    - ONLY count when user says "can you...", "please...", "I need...", "let's..."
 
 2. **user_satisfaction_counts**: Base ONLY on explicit user signals.
@@ -265,7 +265,7 @@ CRITICAL GUIDELINES:
    - "this is broken", "I give up" → frustrated
 
 3. **friction_counts**: Be specific about what went wrong.
-   - misunderstood_request: Claude interpreted incorrectly
+   - misunderstood_request: Zero interpreted incorrectly
    - wrong_approach: Right goal, wrong solution method
    - buggy_code: Code didn't work correctly
    - user_rejected_action: User said no/stop to a tool call
@@ -690,7 +690,7 @@ function formatTranscriptForFacets(log: LogOption): string {
 
 const SUMMARIZE_CHUNK_PROMPT = `Summarize this portion of a ZeroCLI session transcript. Focus on:
 1. What the user asked for
-2. What Claude did (tools used, files modified)
+2. What Zero did (tools used, files modified)
 3. Any friction or issues
 4. The outcome
 
@@ -876,7 +876,7 @@ RESPOND WITH ONLY A VALID JSON OBJECT matching this schema:
 }
 
 /**
- * Detects multi-clauding (using multiple Claude sessions concurrently).
+ * Detects multi-clauding (using multiple Zero sessions concurrently).
  * Uses a sliding window to find the pattern: session1 -> session2 -> session1
  * within a 30-minute window.
  */
@@ -906,7 +906,7 @@ export function detectMultiClauding(
 
   allSessionMessages.sort((a, b) => a.ts - b.ts)
 
-  const multiClaudeSessionPairs = new Set<string>()
+  const multiZeroSessionPairs = new Set<string>()
   const messagesDuringMulticlaude = new Set<string>()
 
   // Sliding window: sessionLastIndex tracks the most recent index for each session
@@ -935,7 +935,7 @@ export function detectMultiClauding(
         const between = allSessionMessages[j]!
         if (between.sessionId !== msg.sessionId) {
           const pair = [msg.sessionId, between.sessionId].sort().join(':')
-          multiClaudeSessionPairs.add(pair)
+          multiZeroSessionPairs.add(pair)
           messagesDuringMulticlaude.add(
             `${allSessionMessages[prevIndex]!.ts}:${msg.sessionId}`,
           )
@@ -950,14 +950,14 @@ export function detectMultiClauding(
   }
 
   const sessionsWithOverlaps = new Set<string>()
-  for (const pair of multiClaudeSessionPairs) {
+  for (const pair of multiZeroSessionPairs) {
     const [s1, s2] = pair.split(':')
     if (s1) sessionsWithOverlaps.add(s1)
     if (s2) sessionsWithOverlaps.add(s2)
   }
 
   return {
-    overlap_events: multiClaudeSessionPairs.size,
+    overlap_events: multiZeroSessionPairs.size,
     sessions_involved: sessionsWithOverlaps.size,
     user_messages_during: messagesDuringMulticlaude.size,
   }
@@ -1175,7 +1175,7 @@ Include 4-5 areas. Skip internal CC operations.`,
 
 RESPOND WITH ONLY A VALID JSON OBJECT:
 {
-  "narrative": "2-3 paragraphs analyzing HOW the user interacts with ZeroCLI. Use second person 'you'. Describe patterns: iterate quickly vs detailed upfront specs? Interrupt often or let Claude run? Include specific examples. Use **bold** for key insights.",
+  "narrative": "2-3 paragraphs analyzing HOW the user interacts with ZeroCLI. Use second person 'you'. Describe patterns: iterate quickly vs detailed upfront specs? Interrupt often or let Zero run? Include specific examples. Use **bold** for key insights.",
   "key_pattern": "One sentence summary of most distinctive interaction style"
 }`,
     maxTokens: 8192,
@@ -1215,7 +1215,7 @@ Include 3 friction categories with 2 examples each.`,
     prompt: `Analyze this ZeroCLI usage data and suggest improvements.
 
 ## CC FEATURES REFERENCE (pick from these for features_to_try):
-1. **MCP Servers**: Connect Claude to external tools, databases, and APIs via Model Context Protocol.
+1. **MCP Servers**: Connect Zero to external tools, databases, and APIs via Model Context Protocol.
    - How to use: Run \`claude mcp add <server-name> -- <command>\`
    - Good for: database queries, Slack integration, GitHub issue lookup, connecting to internal APIs
 
@@ -1227,12 +1227,12 @@ Include 3 friction categories with 2 examples each.`,
    - How to use: Add to \`.claude/settings.json\` under "hooks" key.
    - Good for: auto-formatting code, running type checks, enforcing conventions
 
-4. **Headless Mode**: Run Claude non-interactively from scripts and CI/CD.
+4. **Headless Mode**: Run Zero non-interactively from scripts and CI/CD.
    - How to use: \`claude -p "fix lint errors" --allowedTools "Edit,Read,Bash"\`
    - Good for: CI/CD integration, batch code fixes, automated reviews
 
-5. **Task Agents**: Claude spawns focused sub-agents for complex exploration or parallel work.
-   - How to use: Claude auto-invokes when helpful, or ask "use an agent to explore X"
+5. **Task Agents**: Zero spawns focused sub-agents for complex exploration or parallel work.
+   - How to use: Zero auto-invokes when helpful, or ask "use an agent to explore X"
    - Good for: codebase exploration, understanding complex systems
 
 RESPOND WITH ONLY A VALID JSON OBJECT:
@@ -1248,7 +1248,7 @@ RESPOND WITH ONLY A VALID JSON OBJECT:
   ]
 }
 
-IMPORTANT for claude_md_additions: PRIORITIZE instructions that appear MULTIPLE TIMES in the user data. If user told Claude the same thing in 2+ sessions (e.g., 'always run tests', 'use TypeScript'), that's a PRIME candidate - they shouldn't have to repeat themselves.
+IMPORTANT for claude_md_additions: PRIORITIZE instructions that appear MULTIPLE TIMES in the user data. If user told Zero the same thing in 2+ sessions (e.g., 'always run tests', 'use TypeScript'), that's a PRIME candidate - they shouldn't have to repeat themselves.
 
 IMPORTANT for features_to_try: Pick 2-3 from the CC FEATURES REFERENCE above. Include 2-3 items for each category.`,
     maxTokens: 8192,
@@ -1556,15 +1556,15 @@ async function generateParallelInsights(
       .join('\n') || ''
 
   // Now generate "At a Glance" with access to other sections' outputs
-  const atAGlancePrompt = `You're writing an "At a Glance" summary for a ZeroCLI usage insights report for ZeroCLI users. The goal is to help them understand their usage and improve how they can use Claude better, especially as models improve.
+  const atAGlancePrompt = `You're writing an "At a Glance" summary for a ZeroCLI usage insights report for ZeroCLI users. The goal is to help them understand their usage and improve how they can use Zero better, especially as models improve.
 
 Use this 4-part structure:
 
-1. **What's working** - What is the user's unique style of interacting with Claude and what are some impactful things they've done? You can include one or two details, but keep it high level since things might not be fresh in the user's memory. Don't be fluffy or overly complimentary. Also, don't focus on the tool calls they use.
+1. **What's working** - What is the user's unique style of interacting with Zero and what are some impactful things they've done? You can include one or two details, but keep it high level since things might not be fresh in the user's memory. Don't be fluffy or overly complimentary. Also, don't focus on the tool calls they use.
 
-2. **What's hindering you** - Split into (a) Claude's fault (misunderstandings, wrong approaches, bugs) and (b) user-side friction (not providing enough context, environment issues -- ideally more general than just one project). Be honest but constructive.
+2. **What's hindering you** - Split into (a) Zero's fault (misunderstandings, wrong approaches, bugs) and (b) user-side friction (not providing enough context, environment issues -- ideally more general than just one project). Be honest but constructive.
 
-3. **Quick wins to try** - Specific ZeroCLI features they could try from the examples below, or a workflow technique if you think it's really compelling. (Avoid stuff like "Ask Claude to confirm before taking actions" or "Type out more context up front" which are less compelling.)
+3. **Quick wins to try** - Specific ZeroCLI features they could try from the examples below, or a workflow technique if you think it's really compelling. (Avoid stuff like "Ask Zero to confirm before taking actions" or "Type out more context up front" which are less compelling.)
 
 4. **Ambitious workflows for better models** - As we move to much more capable models over the next 3-6 months, what should they prepare for? What workflows that seem impossible now will become possible? Draw from the appropriate section below.
 
@@ -1893,7 +1893,7 @@ function generateHtmlReport(
       <h3>Suggested CLAUDE.md Additions</h3>
       <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Just copy this into ZeroCLI to add it to your CLAUDE.md.</p>
       <div class="claude-md-actions">
-        <button class="copy-all-btn" onclick="copyAllCheckedClaudeMd()">Copy All Checked</button>
+        <button class="copy-all-btn" onclick="copyAllCheckedZeroMd()">Copy All Checked</button>
       </div>
       ${suggestions.claude_md_additions
         .map(
@@ -2227,7 +2227,7 @@ function generateHtmlReport(
         });
       }
     }
-    function copyAllCheckedClaudeMd() {
+    function copyAllCheckedZeroMd() {
       const checkboxes = document.querySelectorAll('.cmd-checkbox:checked');
       const texts = [];
       checkboxes.forEach(cb => {
@@ -2431,7 +2431,7 @@ function generateHtmlReport(
 
     <div class="charts-row">
       <div class="chart-card">
-        <div class="chart-title">What Helped Most (Claude's Capabilities)</div>
+        <div class="chart-title">What Helped Most (Zero's Capabilities)</div>
         ${generateBarChart(data.success, '#16a34a')}
       </div>
       <div class="chart-card">
@@ -2793,7 +2793,7 @@ export async function generateUsageReport(): Promise<{
   const aggregated = aggregateData(substantiveSessions, substantiveFacets)
   aggregated.total_sessions_scanned = totalSessionsScanned
 
-  // Generate parallel insights from Claude (6 sections)
+  // Generate parallel insights from Zero (6 sections)
   const insights = await generateParallelInsights(aggregated, facets)
 
   // Generate HTML report
@@ -2885,7 +2885,7 @@ ${data.date_range.start} to ${data.date_range.end}
 
 Your full shareable insights report is ready: ${reportUrl}${uploadHint}`
 
-    // Return prompt for Claude to respond to
+    // Return prompt for Zero to respond to
     return [
       {
         type: 'text',

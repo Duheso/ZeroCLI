@@ -2,19 +2,19 @@ import { describe, expect, test } from 'bun:test'
 import { join } from 'path'
 
 import { optionForPermissionSaveDestination } from '../components/permissions/rules/AddPermissionRules.tsx'
-import { isClaudeSettingsPath } from './permissions/filesystem.ts'
+import { isZeroSettingsPath } from './permissions/filesystem.ts'
 import { getValidationTip } from './settings/validationTips.ts'
 
 describe('Zero CLI settings path surfaces', () => {
-  test('isClaudeSettingsPath recognizes project .zero settings files', () => {
+  test('isZeroSettingsPath recognizes project .zero settings files', () => {
     expect(
-      isClaudeSettingsPath(
+      isZeroSettingsPath(
         join(process.cwd(), '.zerocli', 'settings.json'),
       ),
     ).toBe(true)
 
     expect(
-      isClaudeSettingsPath(
+      isZeroSettingsPath(
         join(process.cwd(), '.zerocli', 'settings.local.json'),
       ),
     ).toBe(true)
@@ -44,7 +44,7 @@ describe('Zero CLI settings path surfaces', () => {
 })
 
 describe('Zero CLI validation tips', () => {
-  test('permissions.defaultMode invalid value keeps suggestion but no Claude docs link', () => {
+  test('permissions.defaultMode invalid value keeps suggestion but no Zero docs link', () => {
     const tip = getValidationTip({
       path: 'permissions.defaultMode',
       code: 'invalid_value',

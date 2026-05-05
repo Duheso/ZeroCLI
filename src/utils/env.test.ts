@@ -41,22 +41,22 @@ async function importFreshEnvModule() {
   return import(`./env.js?ts=${Date.now()}-${Math.random()}`)
 }
 
-// getGlobalClaudeFile — three migration branches
+// getGlobalZeroFile — three migration branches
 
-test('getGlobalClaudeFile: new install returns .zerocli.json when neither file exists', async () => {
-  const { getGlobalClaudeFile } = await importFreshEnvModule()
-  expect(getGlobalClaudeFile()).toBe(join(tempDir, '.zerocli.json'))
+test('getGlobalZeroFile: new install returns .zerocli.json when neither file exists', async () => {
+  const { getGlobalZeroFile } = await importFreshEnvModule()
+  expect(getGlobalZeroFile()).toBe(join(tempDir, '.zerocli.json'))
 })
 
-test('getGlobalClaudeFile: existing user keeps .claude.json when only legacy file exists', async () => {
+test('getGlobalZeroFile: existing user keeps .claude.json when only legacy file exists', async () => {
   writeFileSync(join(tempDir, '.claude.json'), '{}')
-  const { getGlobalClaudeFile } = await importFreshEnvModule()
-  expect(getGlobalClaudeFile()).toBe(join(tempDir, '.claude.json'))
+  const { getGlobalZeroFile } = await importFreshEnvModule()
+  expect(getGlobalZeroFile()).toBe(join(tempDir, '.claude.json'))
 })
 
-test('getGlobalClaudeFile: migrated user uses .zerocli.json when both files exist', async () => {
+test('getGlobalZeroFile: migrated user uses .zerocli.json when both files exist', async () => {
   writeFileSync(join(tempDir, '.claude.json'), '{}')
   writeFileSync(join(tempDir, '.zerocli.json'), '{}')
-  const { getGlobalClaudeFile } = await importFreshEnvModule()
-  expect(getGlobalClaudeFile()).toBe(join(tempDir, '.zerocli.json'))
+  const { getGlobalZeroFile } = await importFreshEnvModule()
+  expect(getGlobalZeroFile()).toBe(join(tempDir, '.zerocli.json'))
 })

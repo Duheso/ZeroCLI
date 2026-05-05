@@ -586,7 +586,7 @@ export const SendMessageTool: Tool<InputSchema, SendMessageToolOutput> =
       if (feature('UDS_INBOX') && parseAddress(input.to).scheme === 'bridge') {
         return {
           behavior: 'ask' as const,
-          message: `Send a message to Remote Control session ${input.to}? It arrives as a user prompt on the receiving Claude (possibly another machine) via Anthropic's servers.`,
+          message: `Send a message to Remote Control session ${input.to}? It arrives as a user prompt on the receiving Zero (possibly another machine) via Anthropic's servers.`,
           // safetyCheck (not mode) — permissions.ts guards this before both
           // bypassPermissions (step 1g) and auto-mode's allowlist/classifier.
           // Cross-machine prompt injection must stay bypass-immune.
@@ -640,7 +640,7 @@ export const SendMessageTool: Tool<InputSchema, SendMessageToolOutput> =
             errorCode: 9,
           }
         }
-        // postInterClaudeMessage derives from= via getReplBridgeHandle() —
+        // postInterZeroMessage derives from= via getReplBridgeHandle() —
         // check handle directly for the init-timing window. Also check
         // isReplBridgeActive() to reject outbound-only (CCR mirror) mode
         // where the bridge is write-only and peer messaging is unsupported.
@@ -755,10 +755,10 @@ export const SendMessageTool: Tool<InputSchema, SendMessageToolOutput> =
             }
           }
           /* eslint-disable @typescript-eslint/no-require-imports */
-          const { postInterClaudeMessage } =
+          const { postInterZeroMessage } =
             require('../../bridge/peerSessions.js') as typeof import('../../bridge/peerSessions.js')
           /* eslint-enable @typescript-eslint/no-require-imports */
-          const result = await postInterClaudeMessage(
+          const result = await postInterZeroMessage(
             addr.target,
             input.message,
           )

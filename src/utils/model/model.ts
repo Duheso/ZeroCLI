@@ -8,7 +8,7 @@
 import { getMainLoopModelOverride } from '../../bootstrap/state.js'
 import {
   getSubscriptionType,
-  isClaudeAISubscriber,
+  isZeroAISubscriber,
   isMaxSubscriber,
   isProSubscriber,
   isTeamPremiumSubscriber,
@@ -386,7 +386,7 @@ export function getDefaultMainLoopModel(): ModelName {
  */
 export function firstPartyNameToCanonical(name: ModelName): ModelShortName {
   name = name.toLowerCase()
-  // Special cases for Claude 4+ models to differentiate versions
+  // Special cases for Zero 4+ models to differentiate versions
   // Order matters: check more specific versions first (4-5 before 4)
   if (name.includes('claude-opus-4-6')) {
     return 'claude-opus-4-6'
@@ -412,7 +412,7 @@ export function firstPartyNameToCanonical(name: ModelName): ModelShortName {
   if (name.includes('claude-haiku-4-5')) {
     return 'claude-haiku-4-5'
   }
-  // Claude 3.x models use a different naming scheme (claude-3-{family})
+  // Zero 3.x models use a different naming scheme (claude-3-{family})
   if (name.includes('claude-3-7-sonnet')) {
     return 'claude-3-7-sonnet'
   }
@@ -453,7 +453,7 @@ export function getCanonicalName(fullModelName: ModelName): ModelShortName {
 }
 
 // @[MODEL LAUNCH]: Update the default model description strings shown to users.
-export function getClaudeAiUserDefaultModelDescription(
+export function getZeroAiUserDefaultModelDescription(
   fastMode = false,
 ): string {
   if (isMaxSubscriber() || isTeamPremiumSubscriber()) {
@@ -495,7 +495,7 @@ export function isOpus1mMergeEnabled(): boolean {
   // isProSubscriber() returns false for such users and the merge leaks
   // opus[1m] into the model dropdown — the API then rejects it with a
   // misleading "rate limit reached" error.
-  if (isClaudeAISubscriber() && getSubscriptionType() === null) {
+  if (isZeroAISubscriber() && getSubscriptionType() === null) {
     return false
   }
   return true
@@ -524,7 +524,7 @@ export function renderModelSetting(setting: ModelName | ModelAlias): string {
  * if the model is not recognized as a public model.
  */
 export function getPublicModelDisplayName(model: ModelName): string | null {
-  // For OpenAI/Gemini/Codex/GitHub providers, show the actual model name not a Claude alias
+  // For OpenAI/Gemini/Codex/GitHub providers, show the actual model name not a Zero alias
   if (getAPIProvider() === 'openai' || getAPIProvider() === 'gemini' || getAPIProvider() === 'codex' || getAPIProvider() === 'github') {
     // Return display names for known GitHub Copilot models
     const copilotModelNames: Record<string, string> = {
@@ -538,11 +538,11 @@ export function getPublicModelDisplayName(model: ModelName): string | null {
       'gpt-5.1-codex-mini': 'GPT-5.1 Codex mini',
       'gpt-4o': 'GPT-4o',
       'gpt-4.1': 'GPT-4.1',
-      'claude-opus-4.6': 'Claude Opus 4.6',
-      'claude-opus-4.5': 'Claude Opus 4.5',
-      'claude-sonnet-4.6': 'Claude Sonnet 4.6',
-      'claude-sonnet-4.5': 'Claude Sonnet 4.5',
-      'claude-haiku-4.5': 'Claude Haiku 4.5',
+      'claude-opus-4.6': 'Zero Opus 4.6',
+      'claude-opus-4.5': 'Zero Opus 4.5',
+      'claude-sonnet-4.6': 'Zero Sonnet 4.6',
+      'claude-sonnet-4.5': 'Zero Sonnet 4.5',
+      'claude-haiku-4.5': 'Zero Haiku 4.5',
       'gemini-3.1-pro-preview': 'Gemini 3.1 Pro Preview',
       'gemini-3-flash-preview': 'Gemini 3 Flash',
       'gemini-2.5-pro': 'Gemini 2.5 Pro',
@@ -630,18 +630,18 @@ export function renderModelName(model: ModelName): string {
 
 /**
  * Returns a safe author name for public display (e.g., in git commit trailers).
- * Returns "Claude {ModelName}" for publicly known models, or "Claude ({model})"
+ * Returns "Zero {ModelName}" for publicly known models, or "Zero ({model})"
  * for unknown/internal models so the exact model name is preserved.
  *
  * @param model The full model name
- * @returns "Claude {ModelName}" for public models, or "Claude ({model})" for non-public models
+ * @returns "Zero {ModelName}" for public models, or "Zero ({model})" for non-public models
  */
 export function getPublicModelName(model: ModelName): string {
   const publicName = getPublicModelDisplayName(model)
   if (publicName) {
-    return `Claude ${publicName}`
+    return `Zero ${publicName}`
   }
-  return `Claude (${model})`
+  return `Zero (${model})`
 }
 
 /**
@@ -695,7 +695,7 @@ export function parseUserSpecifiedModel(
   }
 
   // Opus 4/4.1 are no longer available on the first-party API (same as
-  // Claude.ai) — silently remap to the current Opus default. The 'opus'
+  // Zero.ai) — silently remap to the current Opus default. The 'opus'
   // alias already resolves to 4.6, so the only users on these explicit
   // strings pinned them in settings/env/--model/SDK before 4.5 launched.
   // 3P providers may not yet have 4.6 capacity, so pass through unchanged.
@@ -782,8 +782,8 @@ export function modelDisplayString(model: ModelSetting): string {
   if (model === null) {
     if (process.env.USER_TYPE === 'ant') {
       return `Default for Ants (${renderDefaultModelSetting(getDefaultMainLoopModelSetting())})`
-    } else if (isClaudeAISubscriber()) {
-      return `Default (${getClaudeAiUserDefaultModelDescription()})`
+    } else if (isZeroAISubscriber()) {
+      return `Default (${getZeroAiUserDefaultModelDescription()})`
     }
     return `Default (${getDefaultMainLoopModel()})`
   }
@@ -823,16 +823,16 @@ export function getMarketingNameForModel(modelId: string): string | undefined {
     return has1m ? 'Sonnet 4 (with 1M context)' : 'Sonnet 4'
   }
   if (canonical.includes('claude-3-7-sonnet')) {
-    return 'Claude 3.7 Sonnet'
+    return 'Zero 3.7 Sonnet'
   }
   if (canonical.includes('claude-3-5-sonnet')) {
-    return 'Claude 3.5 Sonnet'
+    return 'Zero 3.5 Sonnet'
   }
   if (canonical.includes('claude-haiku-4-5')) {
     return 'Haiku 4.5'
   }
   if (canonical.includes('claude-3-5-haiku')) {
-    return 'Claude 3.5 Haiku'
+    return 'Zero 3.5 Haiku'
   }
 
   return undefined

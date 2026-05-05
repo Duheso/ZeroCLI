@@ -133,7 +133,7 @@ const result = await Bun.build({
     // Keep the internal compatibility version high enough to pass
     // first-party minimum-version guards, but expose the real package
     // version separately in ZeroCLI branding.
-    'MACRO.VERSION': JSON.stringify('0.8.3'),
+    'MACRO.VERSION': JSON.stringify('0.8.5'),
     'MACRO.DISPLAY_VERSION': JSON.stringify(version),
     'MACRO.BUILD_TIME': JSON.stringify(new Date().toISOString()),
     'MACRO.ISSUES_EXPLAINER':
@@ -273,7 +273,7 @@ export const ColorDiff = null;
 export const ColorFile = null;
 export const getSyntaxTheme = noop;
 export const plot = noop;
-export const createClaudeForChromeMcpServer = noop;
+export const createZeroForChromeMcpServer = noop;
 // OpenTelemetry exports
 export const ExportResultCode = { SUCCESS: 0, FAILED: 1 };
 export const resourceFromAttributes = noop;

@@ -3,7 +3,7 @@ import { afterEach, expect, test } from 'bun:test'
 // MACRO is replaced at build time by Bun.define but not in test mode.
 // Define it globally so tests that import modules using MACRO don't crash.
 ;(globalThis as Record<string, unknown>).MACRO = {
-  VERSION: '0.8.3',
+  VERSION: '0.8.5',
   DISPLAY_VERSION: '0.0.0-test',
   BUILD_TIME: new Date().toISOString(),
   ISSUES_EXPLAINER: 'report the issue at https://github.com/anthropics/claude-code/issues',
@@ -28,12 +28,12 @@ afterEach(() => {
 test('CLI identity prefixes describe Zero CLI instead of ZeroCLI', () => {
   expect(getCLISyspromptPrefix()).toContain('Zero CLI')
   expect(getCLISyspromptPrefix()).not.toContain('ZeroCLI')
-  expect(getCLISyspromptPrefix()).not.toContain("Anthropic's official CLI for Claude")
+  expect(getCLISyspromptPrefix()).not.toContain("Anthropic's official CLI for Zero")
 
   for (const prefix of CLI_SYSPROMPT_PREFIXES) {
     expect(prefix).toContain('Zero CLI')
     expect(prefix).not.toContain('ZeroCLI')
-    expect(prefix).not.toContain("Anthropic's official CLI for Claude")
+    expect(prefix).not.toContain("Anthropic's official CLI for Zero")
   }
 })
 
@@ -44,27 +44,27 @@ test('simple mode identity describes Zero CLI instead of ZeroCLI', async () => {
 
   expect(prompt[0]).toContain('Zero CLI')
   expect(prompt[0]).not.toContain('ZeroCLI')
-  expect(prompt[0]).not.toContain("Anthropic's official CLI for Claude")
+  expect(prompt[0]).not.toContain("Anthropic's official CLI for Zero")
 })
 
 test('built-in agent prompts describe Zero CLI instead of ZeroCLI', () => {
   expect(DEFAULT_AGENT_PROMPT).toContain('Zero CLI')
   expect(DEFAULT_AGENT_PROMPT).not.toContain('ZeroCLI')
-  expect(DEFAULT_AGENT_PROMPT).not.toContain("Anthropic's official CLI for Claude")
+  expect(DEFAULT_AGENT_PROMPT).not.toContain("Anthropic's official CLI for Zero")
 
   const generalPrompt = GENERAL_PURPOSE_AGENT.getSystemPrompt({
     toolUseContext: { options: {} as never },
   })
   expect(generalPrompt).toContain('Zero CLI')
   expect(generalPrompt).not.toContain('ZeroCLI')
-  expect(generalPrompt).not.toContain("Anthropic's official CLI for Claude")
+  expect(generalPrompt).not.toContain("Anthropic's official CLI for Zero")
 
   const explorePrompt = EXPLORE_AGENT.getSystemPrompt({
     toolUseContext: { options: {} as never },
   })
   expect(explorePrompt).toContain('Zero CLI')
   expect(explorePrompt).not.toContain('ZeroCLI')
-  expect(explorePrompt).not.toContain("Anthropic's official CLI for Claude")
+  expect(explorePrompt).not.toContain("Anthropic's official CLI for Zero")
 
   const planPrompt = PLAN_AGENT.getSystemPrompt({
     toolUseContext: { options: {} as never },
@@ -90,6 +90,6 @@ test('built-in agent prompts describe Zero CLI instead of ZeroCLI', () => {
   expect(guidePrompt).toContain('Zero CLI')
   expect(guidePrompt).toContain('You are the Zero CLI guide agent.')
   expect(guidePrompt).toContain('**Zero CLI** (the CLI tool)')
-  expect(guidePrompt).not.toContain('You are the Claude guide agent.')
+  expect(guidePrompt).not.toContain('You are the Zero guide agent.')
   expect(guidePrompt).not.toContain('**ZeroCLI** (the CLI tool)')
 })

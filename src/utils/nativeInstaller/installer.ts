@@ -41,7 +41,7 @@ import { logForDebugging } from '../debug.js'
 import { getCurrentInstallationType } from '../doctorDiagnostic.js'
 import { env } from '../env.js'
 import { envDynamic } from '../envDynamic.js'
-import { getClaudeConfigHomeDir, isEnvTruthy } from '../envUtils.js'
+import { getZeroConfigHomeDir, isEnvTruthy } from '../envUtils.js'
 import { errorMessage, getErrnoCode, isENOENT, toError } from '../errors.js'
 import { execFileNoThrowWithCwd } from '../execFileNoThrow.js'
 import { getShellType } from '../localInstaller.js'
@@ -49,7 +49,7 @@ import * as lockfile from '../lockfile.js'
 import { logError } from '../log.js'
 import { gt, gte } from '../semver.js'
 import {
-  filterClaudeAliases,
+  filterZeroAliases,
   getShellConfigPaths,
   readFileLines,
   writeFileLines,
@@ -131,7 +131,7 @@ function getBaseDirectories() {
   }
 }
 
-async function isPossibleClaudeBinary(filePath: string): Promise<boolean> {
+async function isPossibleZeroBinary(filePath: string): Promise<boolean> {
   try {
     const stats = await stat(filePath)
     // before download, the version lock file (located at the same filePath) will be size 0
@@ -470,7 +470,7 @@ async function performVersionUpdate(
   await updateSymlink(executablePath, installPath)
 
   // Verify the executable was actually created/updated
-  if (!(await isPossibleClaudeBinary(executablePath))) {
+  if (!(await isPossibleZeroBinary(executablePath))) {
     let installPathExists = false
     try {
       await stat(installPath)
@@ -489,7 +489,7 @@ async function performVersionUpdate(
 
 async function versionIsAvailable(version: string): Promise<boolean> {
   const { installPath } = await getVersionPaths(version)
-  return isPossibleClaudeBinary(installPath)
+  return isPossibleZeroBinary(installPath)
 }
 
 async function updateLatest(
@@ -539,7 +539,7 @@ async function updateLatest(
     !forceReinstall &&
     version === MACRO.VERSION &&
     (await versionIsAvailable(version)) &&
-    (await isPossibleClaudeBinary(executablePath))
+    (await isPossibleZeroBinary(executablePath))
   ) {
     logForDebugging(`Found ${version} at ${executablePath}, skipping install`)
     logEvent('tengu_native_update_complete', {
@@ -850,11 +850,11 @@ export async function checkInstall(
   // the executable is missing, EINVAL means it exists but isn't a symlink.
   // This avoids an access()→readlink() TOCTOU where deletion between the
   // two calls produces a misleading "Not a symlink" diagnostic.
-  // isPossibleClaudeBinary stats the path internally, so we don't pre-check
+  // isPossibleZeroBinary stats the path internally, so we don't pre-check
   // with access() — that would be a TOCTOU between access and the stat.
   if (isWindows) {
     // On Windows it's a copied executable, not a symlink
-    if (!(await isPossibleClaudeBinary(dirs.executable))) {
+    if (!(await isPossibleZeroBinary(dirs.executable))) {
       messages.push({
         message: `installMethod is native, but claude command is missing or invalid at ${dirs.executable}`,
         userActionRequired: true,
@@ -865,9 +865,9 @@ export async function checkInstall(
     try {
       const target = await readlink(dirs.executable)
       const absoluteTarget = resolve(dirname(dirs.executable), target)
-      if (!(await isPossibleClaudeBinary(absoluteTarget))) {
+      if (!(await isPossibleZeroBinary(absoluteTarget))) {
         messages.push({
-          message: `Claude symlink points to missing or invalid binary: ${target}`,
+          message: `Zero symlink points to missing or invalid binary: ${target}`,
           userActionRequired: true,
           type: 'error',
         })
@@ -881,9 +881,9 @@ export async function checkInstall(
         })
       } else {
         // EINVAL (not a symlink) or other — check as regular binary
-        if (!(await isPossibleClaudeBinary(dirs.executable))) {
+        if (!(await isPossibleZeroBinary(dirs.executable))) {
           messages.push({
-            message: `${dirs.executable} exists but is not a valid Claude binary`,
+            message: `${dirs.executable} exists but is not a valid Zero binary`,
             userActionRequired: true,
             type: 'error',
           })
@@ -1021,7 +1021,7 @@ async function getVersionFromSymlink(
   try {
     const target = await readlink(symlinkPath)
     const absoluteTarget = resolve(dirname(symlinkPath), target)
-    if (await isPossibleClaudeBinary(absoluteTarget)) {
+    if (await isPossibleZeroBinary(absoluteTarget)) {
       return absoluteTarget
     }
   } catch {
@@ -1498,7 +1498,7 @@ export async function cleanupShellAliases(): Promise<SetupMessage[]> {
       const lines = await readFileLines(configFile)
       if (!lines) continue
 
-      const { filtered, hadAlias } = filterClaudeAliases(lines)
+      const { filtered, hadAlias } = filterZeroAliases(lines)
 
       if (hadAlias) {
         await writeFileLines(configFile, filtered)
@@ -1690,7 +1690,7 @@ export async function cleanupNpmInstallations(): Promise<{
 
   // Preserve compatibility with pre-migration installs under ~/.claude/local.
   const localInstallDirs = Array.from(
-    new Set([join(getClaudeConfigHomeDir(), 'local'), join(homedir(), '.claude', 'local')]),
+    new Set([join(getZeroConfigHomeDir(), 'local'), join(homedir(), '.claude', 'local')]),
   )
 
   for (const localInstallDir of localInstallDirs) {

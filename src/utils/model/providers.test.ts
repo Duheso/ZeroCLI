@@ -149,7 +149,7 @@ test('isGithubNativeAnthropicMode: false for generic github:copilot alias', asyn
   expect(isGithubNativeAnthropicMode()).toBe(false)
 })
 
-test('isGithubNativeAnthropicMode: false for non-Claude model', async () => {
+test('isGithubNativeAnthropicMode: false for non-Zero model', async () => {
   clearProviderEnv()
   process.env.CLAUDE_CODE_USE_GITHUB = '1'
   process.env.OPENAI_MODEL = 'gpt-4o'

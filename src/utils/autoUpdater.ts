@@ -12,8 +12,8 @@ import { type ReleaseChannel, saveGlobalConfig } from './config.js'
 import { getAPIProvider } from './model/providers.js'
 import { logForDebugging } from './debug.js'
 import { env } from './env.js'
-import { getClaudeConfigHomeDir } from './envUtils.js'
-import { ClaudeError, getErrnoCode, isENOENT } from './errors.js'
+import { getZeroConfigHomeDir } from './envUtils.js'
+import { ZeroError, getErrnoCode, isENOENT } from './errors.js'
 import { execFileNoThrowWithCwd } from './execFileNoThrow.js'
 import { getFsImplementation } from './fsOperations.js'
 import { gracefulShutdownSync } from './gracefulShutdown.js'
@@ -21,7 +21,7 @@ import { logError } from './log.js'
 import { gte, lt } from './semver.js'
 import { getInitialSettings } from './settings/settings.js'
 import {
-  filterClaudeAliases,
+  filterZeroAliases,
   getShellConfigPaths,
   readFileLines,
   writeFileLines,
@@ -31,7 +31,7 @@ import { jsonParse } from './slowOperations.js'
 const GCS_BUCKET_URL =
   'https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases'
 
-class AutoUpdaterError extends ClaudeError {}
+class AutoUpdaterError extends ZeroError {}
 
 export type InstallStatus =
   | 'success'
@@ -173,7 +173,7 @@ const LOCK_TIMEOUT_MS = 5 * 60 * 1000 // 5 minute timeout for locks
  * This is a function to ensure it's evaluated at runtime after test setup
  */
 export function getLockFilePath(): string {
-  return join(getClaudeConfigHomeDir(), '.update.lock')
+  return join(getZeroConfigHomeDir(), '.update.lock')
 }
 
 /**
@@ -236,7 +236,7 @@ async function acquireLock(): Promise<boolean> {
         // fs.mkdir from getFsImplementation() is always recursive:true and
         // swallows EEXIST internally, so a dir-creation race cannot reach the
         // catch below — only writeFile's EEXIST (true lock contention) can.
-        await fs.mkdir(getClaudeConfigHomeDir())
+        await fs.mkdir(getZeroConfigHomeDir())
         await writeFile(lockPath, `${process.pid}`, {
           encoding: 'utf8',
           flag: 'wx',
@@ -477,7 +477,7 @@ export async function installGlobalPackage(
   }
 
   try {
-    await removeClaudeAliasesFromShellConfigs()
+    await removeZeroAliasesFromShellConfigs()
     // Check if we're using npm from Windows path in WSL
     if (!env.isRunningWithBun() && env.isNpmFromWindowsPath()) {
       logError(new Error('Windows NPM detected in WSL environment'))
@@ -543,7 +543,7 @@ To fix this issue:
  * Remove claude aliases from shell configuration files
  * This helps clean up old installation methods when switching to native or npm global
  */
-async function removeClaudeAliasesFromShellConfigs(): Promise<void> {
+async function removeZeroAliasesFromShellConfigs(): Promise<void> {
   const configMap = getShellConfigPaths()
 
   // Process each shell config file
@@ -552,7 +552,7 @@ async function removeClaudeAliasesFromShellConfigs(): Promise<void> {
       const lines = await readFileLines(configFile)
       if (!lines) continue
 
-      const { filtered, hadAlias } = filterClaudeAliases(lines)
+      const { filtered, hadAlias } = filterZeroAliases(lines)
 
       if (hadAlias) {
         await writeFileLines(configFile, filtered)

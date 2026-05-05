@@ -21,7 +21,7 @@ import {
 } from '../../bootstrap/state.js'
 import { isEnvTruthy } from '../../utils/envUtils.js'
 import { isOfficialMcpUrl } from '../mcp/officialRegistry.js'
-import { isClaudeAISubscriber, getSubscriptionType } from '../../utils/auth.js'
+import { isZeroAISubscriber, getSubscriptionType } from '../../utils/auth.js'
 import { getRepoRemoteHash } from '../../utils/git.js'
 import {
   getWslVersion,
@@ -425,7 +425,7 @@ export type EnvContext = {
   isRunningWithBun: boolean
   isCi: boolean
   isClaubbit: boolean
-  isClaudeCodeRemote: boolean
+  isZeroCodeRemote: boolean
   isLocalAgentMode: boolean
   isConductor: boolean
   remoteEnvironmentType?: string
@@ -434,8 +434,8 @@ export type EnvContext = {
   claudeCodeRemoteSessionId?: string
   tags?: string
   isGithubAction: boolean
-  isClaudeCodeAction: boolean
-  isClaudeAiAuth: boolean
+  isZeroCodeAction: boolean
+  isZeroAiAuth: boolean
   version: string
   versionBase?: string
   buildTime: string
@@ -593,7 +593,7 @@ const buildEnvContext = memoize(async (): Promise<EnvContext> => {
     isRunningWithBun: env.isRunningWithBun(),
     isCi: isEnvTruthy(process.env.CI),
     isClaubbit: isEnvTruthy(process.env.CLAUBBIT),
-    isClaudeCodeRemote: isEnvTruthy(process.env.CLAUDE_CODE_REMOTE),
+    isZeroCodeRemote: isEnvTruthy(process.env.CLAUDE_CODE_REMOTE),
     isLocalAgentMode: process.env.CLAUDE_CODE_ENTRYPOINT === 'local-agent',
     isConductor: env.isConductor(),
     ...(process.env.CLAUDE_CODE_REMOTE_ENVIRONMENT_TYPE && {
@@ -615,8 +615,8 @@ const buildEnvContext = memoize(async (): Promise<EnvContext> => {
       tags: process.env.CLAUDE_CODE_TAGS,
     }),
     isGithubAction: isEnvTruthy(process.env.GITHUB_ACTIONS),
-    isClaudeCodeAction: isEnvTruthy(process.env.CLAUDE_CODE_ACTION),
-    isClaudeAiAuth: isClaudeAISubscriber(),
+    isZeroCodeAction: isEnvTruthy(process.env.CLAUDE_CODE_ACTION),
+    isZeroAiAuth: isZeroAISubscriber(),
     version: MACRO.VERSION,
     versionBase: getVersionBase(),
     buildTime: MACRO.BUILD_TIME,
@@ -771,14 +771,14 @@ export type FirstPartyEventLoggingCoreMetadata = {
 export type FirstPartyEventLoggingMetadata = {
   env: EnvironmentMetadata
   process?: string
-  // auth is a top-level field on ClaudeCodeInternalEvent (proto PublicApiAuth).
+  // auth is a top-level field on ZeroCodeInternalEvent (proto PublicApiAuth).
   // account_id is intentionally omitted — only UUID fields are populated client-side.
   auth?: PublicApiAuth
-  // core fields correspond to the top level of ClaudeCodeInternalEvent.
+  // core fields correspond to the top level of ZeroCodeInternalEvent.
   // They get directly exported to their individual columns in the BigQuery tables
   core: FirstPartyEventLoggingCoreMetadata
   // additional fields are populated in the additional_metadata field of the
-  // ClaudeCodeInternalEvent proto. Includes but is not limited to information
+  // ZeroCodeInternalEvent proto. Includes but is not limited to information
   // that differs by event type.
   additional: Record<string, unknown>
 }
@@ -828,12 +828,12 @@ export function to1PEventFormat(
     is_running_with_bun: envContext.isRunningWithBun,
     is_ci: envContext.isCi,
     is_claubbit: envContext.isClaubbit,
-    is_claude_code_remote: envContext.isClaudeCodeRemote,
+    is_claude_code_remote: envContext.isZeroCodeRemote,
     is_local_agent_mode: envContext.isLocalAgentMode,
     is_conductor: envContext.isConductor,
     is_github_action: envContext.isGithubAction,
-    is_claude_code_action: envContext.isClaudeCodeAction,
-    is_claude_ai_auth: envContext.isClaudeAiAuth,
+    is_claude_code_action: envContext.isZeroCodeAction,
+    is_claude_ai_auth: envContext.isZeroAiAuth,
     version: envContext.version,
     build_time: envContext.buildTime,
     deployment_environment: envContext.deploymentEnvironment,
@@ -934,10 +934,10 @@ export function to1PEventFormat(
 
   // Map userMetadata to output fields.
   // Based on src/utils/user.ts getUser(), but with fields present in other
-  // parts of ClaudeCodeInternalEvent deduplicated.
+  // parts of ZeroCodeInternalEvent deduplicated.
   // Convert camelCase GitHubActionsMetadata to snake_case for 1P API
   // Note: github_actions_metadata is placed inside env (EnvironmentMetadata)
-  // rather than at the top level of ClaudeCodeInternalEvent
+  // rather than at the top level of ZeroCodeInternalEvent
   if (userMetadata.githubActionsMetadata) {
     const ghMeta = userMetadata.githubActionsMetadata
     env.github_actions_metadata = {

@@ -1,7 +1,7 @@
 import type {
   ConfigScope,
   MCPServerConnection,
-  McpClaudeAIProxyServerConfig,
+  McpZeroAIProxyServerConfig,
   McpHTTPServerConfig,
   McpSSEServerConfig,
   McpStdioServerConfig,
@@ -56,20 +56,20 @@ export type HTTPServerInfo = {
   config: McpHTTPServerConfig
 }
 
-export type ClaudeAIServerInfo = {
+export type ZeroAIServerInfo = {
   name: string
   client: MCPServerConnection
   scope: ConfigScope
   transport: 'claudeai-proxy'
   isAuthenticated: false
-  config: McpClaudeAIProxyServerConfig
+  config: McpZeroAIProxyServerConfig
 }
 
 export type ServerInfo =
   | StdioServerInfo
   | SSEServerInfo
   | HTTPServerInfo
-  | ClaudeAIServerInfo
+  | ZeroAIServerInfo
 
 // MCPViewState — tracked in MCPSettings.tsx
 export type MCPViewState =

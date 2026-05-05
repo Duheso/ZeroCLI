@@ -74,7 +74,7 @@ export function Onboarding({
           <OrderedList.Item>
             <Text>{t('claudeCanMakeMistakes')}</Text>
             <Text dimColor wrap="wrap">
-              {t('reviewClaudeResponses').split('\n').map((line, i) => i === 0 ? line : <><Newline />{line}</>)}
+              {t('reviewZeroResponses').split('\n').map((line, i) => i === 0 ? line : <><Newline />{line}</>)}
               <Newline />
             </Text>
           </OrderedList.Item>

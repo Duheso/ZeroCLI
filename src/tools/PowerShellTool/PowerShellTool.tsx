@@ -13,7 +13,7 @@ import { buildTool, type ToolDef } from '../../Tool.js';
 import { backgroundExistingForegroundTask, markTaskNotified, registerForeground, spawnShellTask, unregisterForeground } from '../../tasks/LocalShellTask/LocalShellTask.js';
 import type { AgentId } from '../../types/ids.js';
 import type { AssistantMessage } from '../../types/message.js';
-import { extractClaudeCodeHints } from '../../utils/claudeCodeHints.js';
+import { extractZeroCodeHints } from '../../utils/claudeCodeHints.js';
 import { isEnvTruthy } from '../../utils/envUtils.js';
 import { errorMessage as getErrorMessage, ShellError } from '../../utils/errors.js';
 import { truncate } from '../../utils/format.js';
@@ -398,7 +398,7 @@ export const PowerShellTool = buildTool({
     backgroundedByUser,
     assistantAutoBackgrounded
   }: Out, toolUseID: string): ToolResultBlockParam {
-    // For image data, format as image content block for Claude
+    // For image data, format as image content block for Zero
     if (isImage) {
       const block = buildImageToolResult(stdout, toolUseID);
       if (block) return block;
@@ -540,7 +540,7 @@ export const PowerShellTool = buildTool({
       // model (BashTool has no early return, so all paths flow through its
       // single extraction site).
       if (result.backgroundTaskId) {
-        const bgExtracted = extractClaudeCodeHints(result.stdout || '', input.command);
+        const bgExtracted = extractZeroCodeHints(result.stdout || '', input.command);
         if (isMainThread && bgExtracted.hints.length > 0) {
           for (const hint of bgExtracted.hints) maybeRecordPluginHint(hint);
         }
@@ -574,11 +574,11 @@ export const PowerShellTool = buildTool({
 
       // ZeroCLI hints protocol: CLIs/SDKs gated on CLAUDECODE=1 emit a
       // `<claude-code-hint />` tag to stderr (merged into stdout here). Scan,
-      // record for useClaudeCodeHintRecommendation to surface, then strip
+      // record for useZeroCodeHintRecommendation to surface, then strip
       // so the model never sees the tag — a zero-token side channel.
       // Stripping runs unconditionally (subagent output must stay clean too);
       // only the dialog recording is main-thread-only.
-      const extracted = extractClaudeCodeHints(stdout, input.command);
+      const extracted = extractZeroCodeHints(stdout, input.command);
       stdout = extracted.stripped;
       if (isMainThread && extracted.hints.length > 0) {
         for (const hint of extracted.hints) maybeRecordPluginHint(hint);
@@ -852,7 +852,7 @@ async function* runPowerShellCommand({
     }, ASSISTANT_BLOCKING_BUDGET_MS).unref();
   }
 
-  // Handle Claude asking to run it in the background explicitly
+  // Handle Zero asking to run it in the background explicitly
   // When explicitly requested via run_in_background, always honor the request
   // regardless of the command type (isAutobackgroundingAllowed only applies to automatic backgrounding)
   if (run_in_background === true && !isBackgroundTasksDisabled) {

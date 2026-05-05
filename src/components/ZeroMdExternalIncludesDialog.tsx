@@ -2,16 +2,16 @@ import { c as _c } from "react-compiler-runtime";
 import React from 'react';
 import { logEvent } from 'src/services/analytics/index.js';
 import { Box, Link, Text } from '../ink.js';
-import type { ExternalClaudeMdInclude } from '../utils/claudemd.js';
+import type { ExternalZeroMdInclude } from '../utils/claudemd.js';
 import { saveCurrentProjectConfig } from '../utils/config.js';
 import { Select } from './CustomSelect/index.js';
 import { Dialog } from './design-system/Dialog.js';
 type Props = {
   onDone(): void;
   isStandaloneDialog?: boolean;
-  externalIncludes?: ExternalClaudeMdInclude[];
+  externalIncludes?: ExternalZeroMdInclude[];
 };
-export function ClaudeMdExternalIncludesDialog(t0: Props) {
+export function ZeroMdExternalIncludesDialog(t0: Props) {
   const $ = _c(18);
   const {
     onDone,
@@ -115,21 +115,21 @@ export function ClaudeMdExternalIncludesDialog(t0: Props) {
   }
   return t11;
 }
-function _temp4(include: ExternalClaudeMdInclude, i: number) {
+function _temp4(include: ExternalZeroMdInclude, i: number) {
   return <Text key={i} dimColor={true}>{"  "}{include.path}</Text>;
 }
 function _temp3(current_0: any) {
   return {
     ...current_0,
-    hasClaudeMdExternalIncludesApproved: true,
-    hasClaudeMdExternalIncludesWarningShown: true
+    hasZeroMdExternalIncludesApproved: true,
+    hasZeroMdExternalIncludesWarningShown: true
   };
 }
 function _temp2(current: any) {
   return {
     ...current,
-    hasClaudeMdExternalIncludesApproved: false,
-    hasClaudeMdExternalIncludesWarningShown: true
+    hasZeroMdExternalIncludesApproved: false,
+    hasZeroMdExternalIncludesWarningShown: true
   };
 }
 function _temp() {

@@ -1,6 +1,6 @@
 import { afterEach, expect, mock, test } from 'bun:test'
 
-const originalClaudeCodeNewInit = process.env.CLAUDE_CODE_NEW_INIT
+const originalZeroCodeNewInit = process.env.CLAUDE_CODE_NEW_INIT
 
 async function importInitCommand() {
   return (await import(`./init.ts?ts=${Date.now()}-${Math.random()}`)).default
@@ -9,10 +9,10 @@ async function importInitCommand() {
 afterEach(() => {
   mock.restore()
 
-  if (originalClaudeCodeNewInit === undefined) {
+  if (originalZeroCodeNewInit === undefined) {
     delete process.env.CLAUDE_CODE_NEW_INIT
   } else {
-    process.env.CLAUDE_CODE_NEW_INIT = originalClaudeCodeNewInit
+    process.env.CLAUDE_CODE_NEW_INIT = originalZeroCodeNewInit
   }
 })
 

@@ -1218,7 +1218,7 @@ export async function hasWorktreeChanges(
 
 /**
  * Fast-path handler for --worktree --tmux.
- * Creates the worktree and execs into tmux running Claude inside.
+ * Creates the worktree and execs into tmux running Zero inside.
  * This is called early in cli.tsx before loading the full CLI.
  */
 export async function execIntoTmuxWorktree(args: string[]): Promise<{
@@ -1383,8 +1383,8 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
     }
   }
 
-  // Check if tmux prefix conflicts with Claude keybindings
-  // Claude binds: ctrl+b (task:background), ctrl+c, ctrl+d, ctrl+t, ctrl+o, ctrl+r, ctrl+s, ctrl+g, ctrl+e
+  // Check if tmux prefix conflicts with Zero keybindings
+  // Zero binds: ctrl+b (task:background), ctrl+c, ctrl+d, ctrl+t, ctrl+o, ctrl+r, ctrl+s, ctrl+g, ctrl+e
   const claudeBindings = [
     'C-b',
     'C-c',
@@ -1398,7 +1398,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
   ]
   const prefixConflicts = claudeBindings.includes(tmuxPrefix)
 
-  // Set env vars for the inner Claude to display tmux info in welcome message
+  // Set env vars for the inner Zero to display tmux info in welcome message
   const tmuxEnv = {
     ...process.env,
     CLAUDE_CODE_TMUX_SESSION: tmuxSessionName,
@@ -1438,11 +1438,11 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
 
   // For ants in claude-cli-internal, set up dev panes (watch + start)
   const isAnt = process.env.USER_TYPE === 'ant'
-  const isClaudeCliInternal = repoName === 'claude-cli-internal'
-  const shouldSetupDevPanes = isAnt && isClaudeCliInternal && !sessionExists
+  const isZeroCliInternal = repoName === 'claude-cli-internal'
+  const shouldSetupDevPanes = isAnt && isZeroCliInternal && !sessionExists
 
   if (shouldSetupDevPanes) {
-    // Create detached session with Claude in first pane
+    // Create detached session with Zero in first pane
     spawnSync(
       'tmux',
       [
@@ -1481,7 +1481,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
       cwd: worktreeDir,
     })
 
-    // Select the first pane (Claude)
+    // Select the first pane (Zero)
     spawnSync('tmux', ['select-pane', '-t', `${tmuxSessionName}:0.0`], {
       cwd: worktreeDir,
     })

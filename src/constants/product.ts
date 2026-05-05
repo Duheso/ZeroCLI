@@ -34,9 +34,9 @@ export function isRemoteSessionLocal(
 }
 
 /**
- * Get the base URL for Claude AI based on environment.
+ * Get the base URL for Zero AI based on environment.
  */
-export function getClaudeAiBaseUrl(
+export function getZeroAiBaseUrl(
   sessionId?: string,
   ingressUrl?: string,
 ): string {
@@ -71,6 +71,6 @@ export function getRemoteSessionUrl(
     require('../bridge/sessionIdCompat.js') as typeof import('../bridge/sessionIdCompat.js')
   /* eslint-enable @typescript-eslint/no-require-imports */
   const compatId = toCompatSessionId(sessionId)
-  const baseUrl = getClaudeAiBaseUrl(compatId, ingressUrl)
+  const baseUrl = getZeroAiBaseUrl(compatId, ingressUrl)
   return `${baseUrl}/code/${compatId}`
 }

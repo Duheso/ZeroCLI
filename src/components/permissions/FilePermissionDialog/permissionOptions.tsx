@@ -12,18 +12,18 @@ import type { OptionWithDescription } from '../../CustomSelect/select.js';
  * Check if a path is within the project's .claude/ folder.
  * This is used to determine whether to show the special ".claude folder" permission option.
  */
-export function isInClaudeFolder(filePath: string): boolean {
+export function isInZeroFolder(filePath: string): boolean {
   const absolutePath = expandPath(filePath);
   const claudeFolderPath = expandPath(`${getOriginalCwd()}/.claude`);
 
   // Check if the path is within the project's .claude folder
   const normalizedAbsolutePath = normalizeCaseForComparison(absolutePath);
-  const normalizedClaudeFolderPath = normalizeCaseForComparison(claudeFolderPath);
+  const normalizedZeroFolderPath = normalizeCaseForComparison(claudeFolderPath);
 
   // Path must start with the .claude folder path (and be inside it, not just the folder itself)
-  return normalizedAbsolutePath.startsWith(normalizedClaudeFolderPath + sep.toLowerCase()) ||
+  return normalizedAbsolutePath.startsWith(normalizedZeroFolderPath + sep.toLowerCase()) ||
   // Also match case where sep is / on posix systems
-  normalizedAbsolutePath.startsWith(normalizedClaudeFolderPath + '/');
+  normalizedAbsolutePath.startsWith(normalizedZeroFolderPath + '/');
 }
 
 /**
@@ -31,12 +31,12 @@ export function isInClaudeFolder(filePath: string): boolean {
  * This is used to determine whether to show the special ".claude folder" permission option
  * for files in the user's home directory.
  */
-export function isInGlobalClaudeFolder(filePath: string): boolean {
+export function isInGlobalZeroFolder(filePath: string): boolean {
   const absolutePath = expandPath(filePath);
-  const globalClaudeFolderPath = join(homedir(), '.claude');
+  const globalZeroFolderPath = join(homedir(), '.claude');
   const normalizedAbsolutePath = normalizeCaseForComparison(absolutePath);
-  const normalizedGlobalClaudeFolderPath = normalizeCaseForComparison(globalClaudeFolderPath);
-  return normalizedAbsolutePath.startsWith(normalizedGlobalClaudeFolderPath + sep.toLowerCase()) || normalizedAbsolutePath.startsWith(normalizedGlobalClaudeFolderPath + '/');
+  const normalizedGlobalZeroFolderPath = normalizeCaseForComparison(globalZeroFolderPath);
+  return normalizedAbsolutePath.startsWith(normalizedGlobalZeroFolderPath + sep.toLowerCase()) || normalizedAbsolutePath.startsWith(normalizedGlobalZeroFolderPath + '/');
 }
 export type PermissionOption = {
   type: 'accept-once';
@@ -76,7 +76,7 @@ export function getFilePermissionOptions({
       type: 'input',
       label: 'Yes',
       value: 'yes',
-      placeholder: 'and tell Claude what to do next',
+      placeholder: 'and tell Zero what to do next',
       onChange: onAcceptFeedbackChange,
       allowEmptySubmitToCancel: true,
       option: {
@@ -95,20 +95,20 @@ export function getFilePermissionOptions({
   const inAllowedPath = pathInAllowedWorkingPath(filePath, toolPermissionContext);
 
   // Check if this is a .claude/ folder path (project or global)
-  const inClaudeFolder = isInClaudeFolder(filePath);
-  const inGlobalClaudeFolder = isInGlobalClaudeFolder(filePath);
+  const inZeroFolder = isInZeroFolder(filePath);
+  const inGlobalZeroFolder = isInGlobalZeroFolder(filePath);
 
   // Option 2: For .claude/ folder, show special option instead of generic session option
   // Note: Session-level options are always shown since they only affect in-memory state,
   // not persisted settings. The allowManagedPermissionRulesOnly setting only restricts
   // persisted permission rules.
-  if ((inClaudeFolder || inGlobalClaudeFolder) && operationType !== 'read') {
+  if ((inZeroFolder || inGlobalZeroFolder) && operationType !== 'read') {
     options.push({
-      label: 'Yes, and allow Claude to edit its own settings for this session',
+      label: 'Yes, and allow Zero to edit its own settings for this session',
       value: 'yes-claude-folder',
       option: {
         type: 'accept-session',
-        scope: inGlobalClaudeFolder ? 'global-claude-folder' : 'claude-folder'
+        scope: inGlobalZeroFolder ? 'global-claude-folder' : 'claude-folder'
       }
     });
   } else {
@@ -155,7 +155,7 @@ export function getFilePermissionOptions({
       type: 'input',
       label: 'No',
       value: 'no',
-      placeholder: 'and tell Claude what to do differently',
+      placeholder: 'and tell Zero what to do differently',
       onChange: onRejectFeedbackChange,
       allowEmptySubmitToCancel: true,
       option: {

@@ -44,7 +44,7 @@ import {
 import picomatch from 'picomatch'
 import { logEvent } from 'src/services/analytics/index.js'
 import {
-  getAdditionalDirectoriesForClaudeMd,
+  getAdditionalDirectoriesForZeroMd,
   getOriginalCwd,
 } from '../bootstrap/state.js'
 import { truncateEntrypointContent } from '../memdir/memdir.js'
@@ -52,13 +52,13 @@ import { getAutoMemEntrypoint, isAutoMemoryEnabled } from '../memdir/paths.js'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from '../services/analytics/growthbook.js'
 import {
   getCurrentProjectConfig,
-  getManagedClaudeRulesDir,
+  getManagedZeroRulesDir,
   getMemoryPath,
-  getUserClaudeRulesDir,
+  getUserZeroRulesDir,
 } from './config.js'
 import { logForDebugging } from './debug.js'
 import { logForDiagnosticsNoPII } from './diagLogs.js'
-import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
+import { getZeroConfigHomeDir, isEnvTruthy } from './envUtils.js'
 import { getErrnoCode } from './errors.js'
 import { normalizePathForComparison } from './file.js'
 import { cacheKeys, type FileStateCache } from './fileStateCache.js'
@@ -426,7 +426,7 @@ function handleMemoryFileReadError(error: unknown, filePath: string): void {
     // Don't log the full file path to avoid PII/security issues
     logEvent('tengu_claude_md_permission_error', {
       is_access_error: 1,
-      has_home_dir: filePath.includes(getClaudeConfigHomeDir()) ? 1 : 0,
+      has_home_dir: filePath.includes(getZeroConfigHomeDir()) ? 1 : 0,
     })
   }
 }
@@ -559,7 +559,7 @@ const MAX_INCLUDE_DEPTH = 5
  * Matches both the original path and the realpath-resolved path to handle symlinks
  * (e.g., /tmp -> /private/tmp on macOS).
  */
-function isClaudeMdExcluded(filePath: string, type: MemoryType): boolean {
+function isZeroMdExcluded(filePath: string, type: MemoryType): boolean {
   if (type !== 'User' && type !== 'Project' && type !== 'Local') {
     return false
   }
@@ -611,7 +611,7 @@ function resolveExcludePatterns(patterns: string[]): string[] {
     const dirToResolve = dirname(staticPrefix)
 
     try {
-      // sync IO: called from sync context (isClaudeMdExcluded -> processMemoryFile -> getMemoryFiles)
+      // sync IO: called from sync context (isZeroMdExcluded -> processMemoryFile -> getMemoryFiles)
       const resolvedDir = fs.realpathSync(dirToResolve).replaceAll('\\', '/')
       if (resolvedDir !== dirToResolve) {
         const resolvedPattern =
@@ -647,7 +647,7 @@ export async function processMemoryFile(
   }
 
   // Skip if path is excluded by claudeMdExcludes setting
-  if (isClaudeMdExcluded(filePath, type)) {
+  if (isZeroMdExcluded(filePath, type)) {
     return []
   }
 
@@ -795,7 +795,7 @@ export async function processMdRules({
     if (error instanceof Error && error.message.includes('EACCES')) {
       logEvent('tengu_claude_rules_md_permission_error', {
         is_access_error: 1,
-        has_home_dir: rulesDir.includes(getClaudeConfigHomeDir()) ? 1 : 0,
+        has_home_dir: rulesDir.includes(getZeroConfigHomeDir()) ? 1 : 0,
       })
     }
     return []
@@ -812,24 +812,24 @@ export const getMemoryFiles = memoize(
     const config = getCurrentProjectConfig()
     const includeExternal =
       forceIncludeExternal ||
-      config.hasClaudeMdExternalIncludesApproved ||
+      config.hasZeroMdExternalIncludesApproved ||
       false
 
     // Process Managed file first (always loaded - policy settings)
-    const managedClaudeMd = getMemoryPath('Managed')
+    const managedZeroMd = getMemoryPath('Managed')
     result.push(
       ...(await processMemoryFile(
-        managedClaudeMd,
+        managedZeroMd,
         'Managed',
         processedPaths,
         includeExternal,
       )),
     )
     // Process Managed .claude/rules/*.md files
-    const managedClaudeRulesDir = getManagedClaudeRulesDir()
+    const managedZeroRulesDir = getManagedZeroRulesDir()
     result.push(
       ...(await processMdRules({
-        rulesDir: managedClaudeRulesDir,
+        rulesDir: managedZeroRulesDir,
         type: 'Managed',
         processedPaths,
         includeExternal,
@@ -839,20 +839,20 @@ export const getMemoryFiles = memoize(
 
     // Process User file (only if userSettings is enabled)
     if (isSettingSourceEnabled('userSettings')) {
-      const userClaudeMd = getMemoryPath('User')
+      const userZeroMd = getMemoryPath('User')
       result.push(
         ...(await processMemoryFile(
-          userClaudeMd,
+          userZeroMd,
           'User',
           processedPaths,
           true, // User memory can always include external files
         )),
       )
       // Process User ~/.claude/rules/*.md files
-      const userClaudeRulesDir = getUserClaudeRulesDir()
+      const userZeroRulesDir = getUserZeroRulesDir()
       result.push(
         ...(await processMdRules({
-          rulesDir: userClaudeRulesDir,
+          rulesDir: userZeroRulesDir,
           type: 'User',
           processedPaths,
           includeExternal: true,
@@ -914,10 +914,10 @@ export const getMemoryFiles = memoize(
         )
 
         // Try reading .claude/CLAUDE.md (Project)
-        const dotClaudePath = join(dir, '.claude', 'CLAUDE.md')
+        const dotZeroPath = join(dir, '.claude', 'CLAUDE.md')
         result.push(
           ...(await processMemoryFile(
-            dotClaudePath,
+            dotZeroPath,
             'Project',
             processedPaths,
             includeExternal,
@@ -956,7 +956,7 @@ export const getMemoryFiles = memoize(
     // Note: we don't check isSettingSourceEnabled('projectSettings') here because --add-dir
     // is an explicit user action and the SDK defaults settingSources to [] when not specified
     if (isEnvTruthy(process.env.CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD)) {
-      const additionalDirs = getAdditionalDirectoriesForClaudeMd()
+      const additionalDirs = getAdditionalDirectoriesForZeroMd()
       for (const dir of additionalDirs) {
         // Try reading the root project instruction file from the additional directory
         const projectPath = getProjectInstructionFilePath(
@@ -973,10 +973,10 @@ export const getMemoryFiles = memoize(
         )
 
         // Try reading .claude/CLAUDE.md from the additional directory
-        const dotClaudePath = join(dir, '.claude', 'CLAUDE.md')
+        const dotZeroPath = join(dir, '.claude', 'CLAUDE.md')
         result.push(
           ...(await processMemoryFile(
-            dotClaudePath,
+            dotZeroPath,
             'Project',
             processedPaths,
             includeExternal,
@@ -1065,7 +1065,7 @@ export const getMemoryFiles = memoize(
     // AutoMem/TeamMem are intentionally excluded — they're a separate
     // memory system, not "instructions" in the CLAUDE.md/rules sense.
     // Gated on !forceIncludeExternal: the forceIncludeExternal=true variant
-    // is only used by getExternalClaudeMdIncludes() for approval checks, not
+    // is only used by getExternalZeroMdIncludes() for approval checks, not
     // for building context — firing the hook there would double-fire on startup.
     // The one-shot flag is consumed on every !forceIncludeExternal cache miss
     // (NOT gated on hasInstructionsLoadedHook) so the flag is released even
@@ -1171,7 +1171,7 @@ export function filterInjectedMemoryFiles(
   return files.filter(f => f.type !== 'AutoMem' && f.type !== 'TeamMem')
 }
 
-export const getClaudeMds = (
+export const getZeroMds = (
   memoryFiles: MemoryFileInfo[],
   filter?: (type: MemoryType) => boolean,
 ): string => {
@@ -1230,11 +1230,11 @@ export async function getManagedAndUserConditionalRules(
   const result: MemoryFileInfo[] = []
 
   // Process Managed conditional .claude/rules/*.md files
-  const managedClaudeRulesDir = getManagedClaudeRulesDir()
+  const managedZeroRulesDir = getManagedZeroRulesDir()
   result.push(
     ...(await processConditionedMdRules(
       targetPath,
-      managedClaudeRulesDir,
+      managedZeroRulesDir,
       'Managed',
       processedPaths,
       false,
@@ -1243,11 +1243,11 @@ export async function getManagedAndUserConditionalRules(
 
   if (isSettingSourceEnabled('userSettings')) {
     // Process User conditional .claude/rules/*.md files
-    const userClaudeRulesDir = getUserClaudeRulesDir()
+    const userZeroRulesDir = getUserZeroRulesDir()
     result.push(
       ...(await processConditionedMdRules(
         targetPath,
-        userClaudeRulesDir,
+        userZeroRulesDir,
         'User',
         processedPaths,
         true,
@@ -1288,10 +1288,10 @@ export async function getMemoryFilesForNestedDirectory(
         false,
       )),
     )
-    const dotClaudePath = join(dir, '.claude', 'CLAUDE.md')
+    const dotZeroPath = join(dir, '.claude', 'CLAUDE.md')
     result.push(
       ...(await processMemoryFile(
-        dotClaudePath,
+        dotZeroPath,
         'Project',
         processedPaths,
         false,
@@ -1420,15 +1420,15 @@ export async function processConditionedMdRules(
   })
 }
 
-export type ExternalClaudeMdInclude = {
+export type ExternalZeroMdInclude = {
   path: string
   parent: string
 }
 
-export function getExternalClaudeMdIncludes(
+export function getExternalZeroMdIncludes(
   files: MemoryFileInfo[],
-): ExternalClaudeMdInclude[] {
-  const externals: ExternalClaudeMdInclude[] = []
+): ExternalZeroMdInclude[] {
+  const externals: ExternalZeroMdInclude[] = []
   for (const file of files) {
     if (file.type !== 'User' && file.parent && !pathInOriginalCwd(file.path)) {
       externals.push({ path: file.path, parent: file.parent })
@@ -1437,20 +1437,20 @@ export function getExternalClaudeMdIncludes(
   return externals
 }
 
-export function hasExternalClaudeMdIncludes(files: MemoryFileInfo[]): boolean {
-  return getExternalClaudeMdIncludes(files).length > 0
+export function hasExternalZeroMdIncludes(files: MemoryFileInfo[]): boolean {
+  return getExternalZeroMdIncludes(files).length > 0
 }
 
-export async function shouldShowClaudeMdExternalIncludesWarning(): Promise<boolean> {
+export async function shouldShowZeroMdExternalIncludesWarning(): Promise<boolean> {
   const config = getCurrentProjectConfig()
   if (
-    config.hasClaudeMdExternalIncludesApproved ||
-    config.hasClaudeMdExternalIncludesWarningShown
+    config.hasZeroMdExternalIncludesApproved ||
+    config.hasZeroMdExternalIncludesWarningShown
   ) {
     return false
   }
 
-  return hasExternalClaudeMdIncludes(await getMemoryFiles(true))
+  return hasExternalZeroMdIncludes(await getMemoryFiles(true))
 }
 
 /**

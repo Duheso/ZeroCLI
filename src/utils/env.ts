@@ -3,7 +3,7 @@ import { homedir } from 'os'
 import { join } from 'path'
 import { fileSuffixForOauthConfig } from '../constants/oauth.js'
 import { isRunningWithBun } from './bundledMode.js'
-import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
+import { getZeroConfigHomeDir, isEnvTruthy } from './envUtils.js'
 import { findExecutable } from './findExecutable.js'
 import { getFsImplementation } from './fsOperations.js'
 import { which } from './which.js'
@@ -11,14 +11,14 @@ import { which } from './which.js'
 type Platform = 'win32' | 'darwin' | 'linux'
 
 // Config and data paths
-export const getGlobalClaudeFile = memoize((): string => {
+export const getGlobalZeroFile = memoize((): string => {
   // Legacy fallback for backwards compatibility
   if (
     getFsImplementation().existsSync(
-      join(getClaudeConfigHomeDir(), '.config.json'),
+      join(getZeroConfigHomeDir(), '.config.json'),
     )
   ) {
-    return join(getClaudeConfigHomeDir(), '.config.json')
+    return join(getZeroConfigHomeDir(), '.config.json')
   }
 
   const oauthSuffix = fileSuffixForOauthConfig()
@@ -26,7 +26,7 @@ export const getGlobalClaudeFile = memoize((): string => {
 
   // Default to .zerocli.json. Fall back to .claude.json only if the new
   // file doesn't exist yet and the legacy one does (same migration pattern
-  // as resolveClaudeConfigHomeDir for the config directory).
+  // as resolveZeroConfigHomeDir for the config directory).
   const newFilename = `.zerocli${oauthSuffix}.json`
   const legacyFilename = `.claude${oauthSuffix}.json`
   if (

@@ -10,7 +10,7 @@ import {
 } from 'src/services/analytics/index.js'
 import { getProjectRoot } from '../bootstrap/state.js'
 import { logForDebugging } from './debug.js'
-import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
+import { getZeroConfigHomeDir, isEnvTruthy } from './envUtils.js'
 import { isFsInaccessible } from './errors.js'
 import { normalizePathForComparison } from './file.js'
 import type { FrontmatterData } from './frontmatterParser.js'
@@ -25,7 +25,7 @@ import {
 import { getManagedFilePath } from './settings/managedPath.js'
 import { isRestrictedToPluginOnly } from './settings/pluginOnlyPolicy.js'
 
-// Claude configuration directory names
+// Zero configuration directory names
 export const CLAUDE_CONFIG_DIRECTORIES = [
   'commands',
   'agents',
@@ -35,7 +35,7 @@ export const CLAUDE_CONFIG_DIRECTORIES = [
   ...(feature('TEMPLATES') ? (['templates'] as const) : []),
 ] as const
 
-export type ClaudeConfigDirectory = (typeof CLAUDE_CONFIG_DIRECTORIES)[number]
+export type ZeroConfigDirectory = (typeof CLAUDE_CONFIG_DIRECTORIES)[number]
 
 export type MarkdownFile = {
   filePath: string
@@ -232,7 +232,7 @@ function resolveStopBoundary(cwd: string): string | null {
  * @returns Array of directory paths containing .claude/subdir, from most specific (cwd) to least specific
  */
 export function getProjectDirsUpToHome(
-  subdir: ClaudeConfigDirectory,
+  subdir: ZeroConfigDirectory,
   cwd: string,
 ): string[] {
   const home = resolve(homedir()).normalize('NFC')
@@ -296,11 +296,11 @@ export function getProjectDirsUpToHome(
  */
 export const loadMarkdownFilesForSubdir = memoize(
   async function (
-    subdir: ClaudeConfigDirectory,
+    subdir: ZeroConfigDirectory,
     cwd: string,
   ): Promise<MarkdownFile[]> {
     const searchStartTime = Date.now()
-    const userDir = join(getClaudeConfigHomeDir(), subdir)
+    const userDir = join(getZeroConfigHomeDir(), subdir)
     const managedDir = join(getManagedFilePath(), '.claude', subdir)
     const projectDirs = getProjectDirsUpToHome(subdir, cwd)
 
@@ -327,9 +327,9 @@ export const loadMarkdownFilesForSubdir = memoize(
         dir => normalizePathForComparison(dir) === worktreeSubdir,
       )
       if (!worktreeHasSubdir) {
-        const mainClaudeSubdir = join(canonicalRoot, '.claude', subdir)
-        if (!projectDirs.includes(mainClaudeSubdir)) {
-          projectDirs.push(mainClaudeSubdir)
+        const mainZeroSubdir = join(canonicalRoot, '.claude', subdir)
+        if (!projectDirs.includes(mainZeroSubdir)) {
+          projectDirs.push(mainZeroSubdir)
         }
       }
     }
@@ -426,7 +426,7 @@ export const loadMarkdownFilesForSubdir = memoize(
     return deduplicatedFiles
   },
   // Custom resolver creates cache key from both subdir and cwd parameters
-  (subdir: ClaudeConfigDirectory, cwd: string) => `${subdir}:${cwd}`,
+  (subdir: ZeroConfigDirectory, cwd: string) => `${subdir}:${cwd}`,
 )
 
 /**

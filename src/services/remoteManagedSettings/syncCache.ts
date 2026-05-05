@@ -10,7 +10,7 @@
 import { CLAUDE_AI_INFERENCE_SCOPE } from '../../constants/oauth.js'
 import {
   getAnthropicApiKeyWithSource,
-  getClaudeAIOAuthTokens,
+  getZeroAIOAuthTokens,
 } from '../../utils/auth.js'
 import {
   getAPIProvider,
@@ -67,15 +67,15 @@ export function isRemoteManagedSettingsEligible(): boolean {
     return (cached = setEligibility(false))
   }
 
-  // Check OAuth first: most Claude.ai users have no API key in the keychain.
+  // Check OAuth first: most Zero.ai users have no API key in the keychain.
   // The API key check spawns `security find-generic-password` (~20-50ms) which
   // returns null for OAuth-only users. Checking OAuth first short-circuits
   // that subprocess for the common case.
-  const tokens = getClaudeAIOAuthTokens()
+  const tokens = getZeroAIOAuthTokens()
 
   // Externally-injected tokens (CCD via CLAUDE_CODE_OAUTH_TOKEN, CCR via
   // CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR, Agent SDK, CI) carry no
-  // subscriptionType metadata — getClaudeAIOAuthTokens() constructs them with
+  // subscriptionType metadata — getZeroAIOAuthTokens() constructs them with
   // subscriptionType: null. The token itself is valid; let the API decide.
   // fetchRemoteManagedSettings handles 204/404 gracefully (returns {}), and
   // settings.ts falls through to MDM/file when remote is empty, so ineligible

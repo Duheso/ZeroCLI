@@ -72,7 +72,7 @@ export function ConsoleOAuthFlow({
   const settings = getSettings_DEPRECATED() || {};
   const forceLoginMethod = forceLoginMethodProp ?? settings.forceLoginMethod;
   const orgUUID = settings.forceLoginOrgUUID;
-  const forcedMethodMessage = forceLoginMethod === 'claudeai' ? 'Login method pre-selected: Subscription Plan (Claude Pro/Max)' : forceLoginMethod === 'console' ? 'Login method pre-selected: API Usage Billing (Anthropic Console)' : null;
+  const forcedMethodMessage = forceLoginMethod === 'claudeai' ? 'Login method pre-selected: Subscription Plan (Zero Pro/Max)' : forceLoginMethod === 'console' ? 'Login method pre-selected: API Usage Billing (Anthropic Console)' : null;
   const terminal = useTerminalNotification();
   const [oauthStatus, setOAuthStatus] = useState<OAuthStatus>(() => {
     if (initialStatus) {
@@ -95,8 +95,8 @@ export function ConsoleOAuthFlow({
   const [pastedCode, setPastedCode] = useState('');
   const [cursorOffset, setCursorOffset] = useState(0);
   const [oauthService] = useState(() => new OAuthService());
-  const [loginWithClaudeAi, setLoginWithClaudeAi] = useState(() => {
-    // Use Claude AI auth for setup-token mode to support user:inference scope
+  const [loginWithZeroAi, setLoginWithZeroAi] = useState(() => {
+    // Use Zero AI auth for setup-token mode to support user:inference scope
     return mode === 'setup-token' || forceLoginMethod === 'claudeai';
   });
   // After a few seconds we suggest the user to copy/paste url if the
@@ -126,7 +126,7 @@ export function ConsoleOAuthFlow({
   // Handle Enter to continue on success state
   useKeybinding('confirm:yes', () => {
     logEvent('tengu_oauth_success', {
-      loginWithClaudeAi
+      loginWithZeroAi
     });
     onDone({
       type: 'oauth'
@@ -210,7 +210,7 @@ export function ConsoleOAuthFlow({
   const startOAuth = useCallback(async () => {
     try {
       logEvent('tengu_oauth_flow_start', {
-        loginWithClaudeAi
+        loginWithZeroAi
       });
       const result = await oauthService.startOAuthFlow(async url_0 => {
         setOAuthStatus({
@@ -219,7 +219,7 @@ export function ConsoleOAuthFlow({
         });
         setTimeout(setShowPastePrompt, 3000, true);
       }, {
-        loginWithClaudeAi,
+        loginWithZeroAi,
         inferenceOnly: mode === 'setup-token',
         expiresIn: mode === 'setup-token' ? 365 * 24 * 60 * 60 : undefined,
         // 1 year for setup-token
@@ -281,7 +281,7 @@ export function ConsoleOAuthFlow({
         ssl_error: sslHint !== null
       });
     }
-  }, [oauthService, setShowPastePrompt, loginWithClaudeAi, mode, orgUUID]);
+  }, [oauthService, setShowPastePrompt, loginWithZeroAi, mode, orgUUID]);
   const pendingOAuthStartRef = useRef(false);
   useEffect(() => {
     if (oauthStatus.state === 'ready_to_start' && !pendingOAuthStartRef.current) {
@@ -297,16 +297,16 @@ export function ConsoleOAuthFlow({
   useEffect(() => {
     if (mode === 'setup-token' && oauthStatus.state === 'success') {
       // Delay to ensure static content is fully rendered before exiting
-      const timer_0 = setTimeout((loginWithClaudeAi_0, onDone_0) => {
+      const timer_0 = setTimeout((loginWithZeroAi_0, onDone_0) => {
         logEvent('tengu_oauth_success', {
-          loginWithClaudeAi: loginWithClaudeAi_0
+          loginWithZeroAi: loginWithZeroAi_0
         });
         // Don't clear terminal so the token remains visible
         onDone_0();
-      }, 500, loginWithClaudeAi, onDone);
+      }, 500, loginWithZeroAi, onDone);
       return () => clearTimeout(timer_0);
     }
-  }, [mode, oauthStatus, loginWithClaudeAi, onDone]);
+  }, [mode, oauthStatus, loginWithZeroAi, onDone]);
 
   // Cleanup OAuth service when component unmounts
   useEffect(() => {
@@ -346,7 +346,7 @@ export function ConsoleOAuthFlow({
             </Box>
           </Box>}
       <Box paddingLeft={1} flexDirection="column" gap={1}>
-        <OAuthStatusMessage oauthStatus={oauthStatus} mode={mode} startingMessage={startingMessage} forcedMethodMessage={forcedMethodMessage} showPastePrompt={showPastePrompt} pastedCode={pastedCode} setPastedCode={setPastedCode} cursorOffset={cursorOffset} setCursorOffset={setCursorOffset} textInputColumns={textInputColumns} handleSubmitCode={handleSubmitCode} setOAuthStatus={setOAuthStatus} setLoginWithClaudeAi={setLoginWithClaudeAi} />
+        <OAuthStatusMessage oauthStatus={oauthStatus} mode={mode} startingMessage={startingMessage} forcedMethodMessage={forcedMethodMessage} showPastePrompt={showPastePrompt} pastedCode={pastedCode} setPastedCode={setPastedCode} cursorOffset={cursorOffset} setCursorOffset={setCursorOffset} textInputColumns={textInputColumns} handleSubmitCode={handleSubmitCode} setOAuthStatus={setOAuthStatus} setLoginWithZeroAi={setLoginWithZeroAi} />
       </Box>
     </Box>;
 }
@@ -363,7 +363,7 @@ type OAuthStatusMessageProps = {
   textInputColumns: number;
   handleSubmitCode: (value: string, url: string) => void;
   setOAuthStatus: (status: OAuthStatus) => void;
-  setLoginWithClaudeAi: (value: boolean) => void;
+  setLoginWithZeroAi: (value: boolean) => void;
 };
 function OAuthStatusMessage({
   oauthStatus,
@@ -378,19 +378,19 @@ function OAuthStatusMessage({
   textInputColumns,
   handleSubmitCode,
   setOAuthStatus,
-  setLoginWithClaudeAi,
+  setLoginWithZeroAi,
 }: OAuthStatusMessageProps) {
   switch (oauthStatus.state) {
     case 'idle': {
       const promptText =
         startingMessage ||
-        'ZeroCLI can be used with your Claude subscription or billed based on API usage through your Console account.'
+        'ZeroCLI can be used with your Zero subscription or billed based on API usage through your Console account.'
 
       const loginOptions = [
         {
           label: (
             <Text>
-              Claude account with subscription ·{' '}
+              Zero account with subscription ·{' '}
               <Text dimColor>Pro, Max, Team, or Enterprise</Text>
               {'\n'}
             </Text>
@@ -436,10 +436,10 @@ function OAuthStatusMessage({
                 setOAuthStatus({ state: 'ready_to_start' })
                 if (value === 'claudeai') {
                   logEvent('tengu_oauth_claudeai_selected', {})
-                  setLoginWithClaudeAi(true)
+                  setLoginWithZeroAi(true)
                 } else {
                   logEvent('tengu_oauth_console_selected', {})
-                  setLoginWithClaudeAi(false)
+                  setLoginWithZeroAi(false)
                 }
               }}
             />

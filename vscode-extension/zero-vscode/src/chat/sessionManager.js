@@ -35,12 +35,12 @@ function resolveConfigDir() {
   const envDir = process.env.CLAUDE_CONFIG_DIR;
   if (envDir) return envDir;
   const home = os.homedir();
-  const openClaudeDir = path.join(home, '.zerocli');
+  const openZeroDir = path.join(home, '.zerocli');
   const legacyDir = path.join(home, '.claude');
-  if (!fs.existsSync(openClaudeDir) && fs.existsSync(legacyDir)) {
+  if (!fs.existsSync(openZeroDir) && fs.existsSync(legacyDir)) {
     return legacyDir;
   }
-  return openClaudeDir;
+  return openZeroDir;
 }
 
 function getProjectsDir() {

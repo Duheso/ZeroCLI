@@ -1,6 +1,6 @@
 /**
- * Adapter layer that wraps @anthropic-ai/sandbox-runtime with Claude CLI-specific integrations.
- * This file provides the bridge between the external sandbox-runtime package and Claude CLI's
+ * Adapter layer that wraps @anthropic-ai/sandbox-runtime with Zero CLI-specific integrations.
+ * This file provides the bridge between the external sandbox-runtime package and Zero CLI's
  * settings system, tool integration, and additional features.
  */
 
@@ -25,7 +25,7 @@ import { readFile } from 'fs/promises'
 import { memoize } from 'lodash-es'
 import { join, resolve, sep } from 'path'
 import {
-  getAdditionalDirectoriesForClaudeMd,
+  getAdditionalDirectoriesForZeroMd,
   getCwdState,
   getOriginalCwd,
 } from '../../bootstrap/state.js'
@@ -54,7 +54,7 @@ import { FILE_EDIT_TOOL_NAME } from 'src/tools/FileEditTool/constants.js'
 import { FILE_READ_TOOL_NAME } from 'src/tools/FileReadTool/prompt.js'
 import { WEB_FETCH_TOOL_NAME } from 'src/tools/WebFetchTool/prompt.js'
 import { errorMessage } from '../errors.js'
-import { getClaudeTempDir } from '../permissions/filesystem.js'
+import { getZeroTempDir } from '../permissions/filesystem.js'
 import type { PermissionRuleValue } from '../permissions/PermissionRule.js'
 import { ripgrepCommand } from '../ripgrep.js'
 
@@ -220,9 +220,9 @@ export function convertToSandboxRuntimeConfig(
   }
 
   // Extract filesystem paths from Edit and Read rules
-  // Always include current directory and Claude temp directory as writable
+  // Always include current directory and Zero temp directory as writable
   // The temp directory is needed for Shell.ts cwd tracking files
-  const allowWrite: string[] = ['.', getClaudeTempDir()]
+  const allowWrite: string[] = ['.', getZeroTempDir()]
   const denyWrite: string[] = []
   const denyRead: string[] = []
   const allowRead: string[] = []
@@ -247,7 +247,7 @@ export function convertToSandboxRuntimeConfig(
   // Block writes to .claude/skills in both original and current working directories.
   // The sandbox-runtime's getDangerousDirectories() protects .claude/commands and
   // .claude/agents but not .claude/skills. Skills have the same privilege level
-  // (auto-discovered, auto-loaded, full Claude capabilities) so they need the
+  // (auto-discovered, auto-loaded, full Zero capabilities) so they need the
   // same OS-level sandbox protection.
   denyWrite.push(resolve(originalCwd, '.claude', 'skills'))
   if (cwd !== originalCwd) {
@@ -256,7 +256,7 @@ export function convertToSandboxRuntimeConfig(
 
   // SECURITY: Git's is_git_directory() treats cwd as a bare repo if it has
   // HEAD + objects/ + refs/. An attacker planting these (plus a config with
-  // core.fsmonitor) escapes the sandbox when Claude's unsandboxed git runs.
+  // core.fsmonitor) escapes the sandbox when Zero's unsandboxed git runs.
   //
   // Unconditionally denying these paths makes sandbox-runtime mount
   // /dev/null at non-existent ones, which (a) leaves a 0-byte HEAD stub on
@@ -294,7 +294,7 @@ export function convertToSandboxRuntimeConfig(
   // Two sources: persisted in settings, and session-only in bootstrap state.
   const additionalDirs = new Set([
     ...(settings.permissions?.additionalDirectories || []),
-    ...getAdditionalDirectoriesForClaudeMd(),
+    ...getAdditionalDirectoriesForZeroMd(),
   ])
   allowWrite.push(...additionalDirs)
 
@@ -381,7 +381,7 @@ export function convertToSandboxRuntimeConfig(
 }
 
 // ============================================================================
-// Claude CLI-specific state
+// Zero CLI-specific state
 // ============================================================================
 
 let initializationPromise: Promise<void> | undefined
@@ -398,7 +398,7 @@ const bareGitRepoScrubPaths: string[] = []
 
 /**
  * Delete bare-repo files planted at cwd during a sandboxed command, before
- * Claude's unsandboxed git calls can see them. See the SECURITY block above
+ * Zero's unsandboxed git calls can see them. See the SECURITY block above
  * bareGitRepoFiles. anthropics/claude-code#29316.
  */
 function scrubBareGitRepoFiles(): void {
@@ -832,7 +832,7 @@ async function reset(): Promise<void> {
 
 /**
  * Add a command to the excluded commands list (commands that should not be sandboxed)
- * This is a Claude CLI-specific function that updates local settings.
+ * This is a Zero CLI-specific function that updates local settings.
  */
 export function addToExcludedCommands(
   command: string,
@@ -931,7 +931,7 @@ export interface ISandboxManager {
 }
 
 /**
- * Claude CLI sandbox manager - wraps sandbox-runtime with Claude-specific features
+ * Zero CLI sandbox manager - wraps sandbox-runtime with Zero-specific features
  */
 export const SandboxManager: ISandboxManager = {
   // Custom implementations

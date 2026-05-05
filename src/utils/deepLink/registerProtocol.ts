@@ -22,7 +22,7 @@ import {
   logEvent,
 } from 'src/services/analytics/index.js'
 import { logForDebugging } from '../debug.js'
-import { getClaudeConfigHomeDir } from '../envUtils.js'
+import { getZeroConfigHomeDir } from '../envUtils.js'
 import { getErrnoCode } from '../errors.js'
 import { execFileNoThrow } from '../execFileNoThrow.js'
 import { getInitialSettings } from '../settings/settings.js'
@@ -66,7 +66,7 @@ function windowsCommandValue(claudePath: string): string {
  * Creates a .app bundle where the CFBundleExecutable is a symlink to the
  * already-installed (and signed) `claude` binary. When macOS opens a
  * `claude-cli://` URL, it launches `claude` through this app bundle.
- * Claude then uses the url-handler NAPI module to read the URL from the
+ * Zero then uses the url-handler NAPI module to read the URL from the
  * Apple Event and handles it normally.
  *
  * This approach avoids shipping a separate executable (which would need
@@ -215,7 +215,7 @@ async function registerWindows(claudePath: string): Promise<void> {
 export async function registerProtocolHandler(
   claudePath?: string,
 ): Promise<void> {
-  const resolved = claudePath ?? (await resolveClaudePath())
+  const resolved = claudePath ?? (await resolveZeroPath())
 
   switch (process.platform) {
     case 'darwin':
@@ -238,7 +238,7 @@ export async function registerProtocolHandler(
  * auto-updates; falls back to process.execPath when the symlink is absent
  * (dev builds, non-native installs).
  */
-async function resolveClaudePath(): Promise<string> {
+async function resolveZeroPath(): Promise<string> {
   const binaryName = process.platform === 'win32' ? 'claude.exe' : 'claude'
   const stablePath = path.join(getUserBinDir(), binaryName)
   try {
@@ -303,7 +303,7 @@ export async function ensureDeepLinkProtocolRegistered(): Promise<void> {
     return
   }
 
-  const claudePath = await resolveClaudePath()
+  const claudePath = await resolveZeroPath()
   if (await isProtocolHandlerCurrent(claudePath)) {
     return
   }
@@ -313,7 +313,7 @@ export async function ensureDeepLinkProtocolRegistered(): Promise<void> {
   // doesn't generate a failure event on every startup. Marker lives in
   // ~/.claude (per-machine, not synced) rather than ~/.zerocli.json (can sync).
   const failureMarkerPath = path.join(
-    getClaudeConfigHomeDir(),
+    getZeroConfigHomeDir(),
     '.deep-link-register-failed',
   )
   try {

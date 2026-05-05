@@ -400,14 +400,14 @@ export async function* runAgent({
   // Dropping claudeMd here saves ~5-15 Gtok/week across 34M+ Explore spawns.
   // Explicit override.userContext from callers is preserved untouched.
   // Kill-switch defaults true; flip tengu_slim_subagent_claudemd=false to revert.
-  const shouldOmitClaudeMd =
-    agentDefinition.omitClaudeMd &&
+  const shouldOmitZeroMd =
+    agentDefinition.omitZeroMd &&
     !override?.userContext &&
     getFeatureValue_CACHED_MAY_BE_STALE('tengu_slim_subagent_claudemd', true)
-  const { claudeMd: _omittedClaudeMd, ...userContextNoClaudeMd } =
+  const { claudeMd: _omittedZeroMd, ...userContextNoZeroMd } =
     baseUserContext
-  const resolvedUserContext = shouldOmitClaudeMd
-    ? userContextNoClaudeMd
+  const resolvedUserContext = shouldOmitZeroMd
+    ? userContextNoZeroMd
     : baseUserContext
 
   // Explore/Plan are read-only search agents — the parent-session-start

@@ -16,9 +16,9 @@ import type {
 } from 'src/types/message.js'
 import {
   getAnthropicApiKeyWithSource,
-  getClaudeAIOAuthTokens,
+  getZeroAIOAuthTokens,
   getOauthAccountInfo,
-  isClaudeAISubscriber,
+  isZeroAISubscriber,
 } from 'src/utils/auth.js'
 import {
   createAssistantAPIErrorMessage,
@@ -44,7 +44,7 @@ import {
   logEvent,
 } from '../analytics/index.js'
 import {
-  type ClaudeAILimits,
+  type ZeroAILimits,
   getRateLimitErrorMessage,
   type OverageDisabledReason,
 } from '../claudeAiLimits.js'
@@ -308,13 +308,13 @@ export const OAUTH_ORG_NOT_ALLOWED_ERROR_MESSAGE =
 
 export function getTokenRevokedErrorMessage(): string {
   return getIsNonInteractiveSession()
-    ? 'Your account does not have access to Claude. Please login again or contact your administrator.'
+    ? 'Your account does not have access to Zero. Please login again or contact your administrator.'
     : TOKEN_REVOKED_ERROR_MESSAGE
 }
 
 export function getOauthOrgNotAllowedErrorMessage(): string {
   return getIsNonInteractiveSession()
-    ? 'Your organization does not have access to Claude. Please login again or contact your administrator.'
+    ? 'Your organization does not have access to Zero. Please login again or contact your administrator.'
     : OAUTH_ORG_NOT_ALLOWED_ERROR_MESSAGE
 }
 
@@ -587,7 +587,7 @@ export function getAssistantMessageFromError(
   if (
     error instanceof APIError &&
     error.status === 429 &&
-    shouldProcessRateLimits(isClaudeAISubscriber())
+    shouldProcessRateLimits(isZeroAISubscriber())
   ) {
     // Check if this is the new API with multiple rate limit headers
     const rateLimitType = error.headers?.get?.(
@@ -601,7 +601,7 @@ export function getAssistantMessageFromError(
     // If we have the new headers, use the new message generation
     if (rateLimitType || overageStatus) {
       // Build limits object from error headers to determine the appropriate message
-      const limits: ClaudeAILimits = {
+      const limits: ZeroAILimits = {
         status: 'rejected',
         unifiedRateLimitFallbackAvailable: false,
         isUsingOverage: false,
@@ -649,7 +649,7 @@ export function getAssistantMessageFromError(
       // If getRateLimitErrorMessage returned null, it means the fallback mechanism
       // will handle this silently (e.g., Opus -> Sonnet fallback for eligible users).
       // Return NO_RESPONSE_REQUESTED so no error is shown to the user, but the
-      // message is still recorded in conversation history for Claude to see.
+      // message is still recorded in conversation history for Zero to see.
       return createAssistantAPIErrorMessage({
         content: NO_RESPONSE_REQUESTED,
         error: 'rate_limit',
@@ -860,7 +860,7 @@ export function getAssistantMessageFromError(
 
   // Check for invalid model name error for subscription users trying to use Opus
   if (
-    isClaudeAISubscriber() &&
+    isZeroAISubscriber() &&
     error instanceof APIError &&
     error.status === 400 &&
     error.message.toLowerCase().includes('invalid model name') &&
@@ -868,7 +868,7 @@ export function getAssistantMessageFromError(
   ) {
     return createAssistantAPIErrorMessage({
       content:
-        'Claude Opus is not available with the Claude Pro plan. If you have updated your subscription plan recently, run /logout and /login for the plan to take effect.',
+        'Zero Opus is not available with the Zero Pro plan. If you have updated your subscription plan recently, run /logout and /login for the plan to take effect.',
       error: 'invalid_request',
     })
   }
@@ -921,9 +921,9 @@ export function getAssistantMessageFromError(
     if (
       source === 'ANTHROPIC_API_KEY' &&
       process.env.ANTHROPIC_API_KEY &&
-      !isClaudeAISubscriber()
+      !isZeroAISubscriber()
     ) {
-      const hasStoredOAuth = getClaudeAIOAuthTokens()?.accessToken != null
+      const hasStoredOAuth = getZeroAIOAuthTokens()?.accessToken != null
       // Not 'authentication_failed' — that triggers VS Code's showLogin(), but
       // login can't fix this (approved env var keeps overriding OAuth). The fix
       // is configuration-based (unset the var), so invalid_request is correct.

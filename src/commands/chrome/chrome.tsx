@@ -4,7 +4,7 @@ import { Select } from '../../components/CustomSelect/select.js';
 import { Dialog } from '../../components/design-system/Dialog.js';
 import { Box, Text } from '../../ink.js';
 import { useAppState } from '../../state/AppState.js';
-import { isClaudeAISubscriber } from '../../utils/auth.js';
+import { isZeroAISubscriber } from '../../utils/auth.js';
 import { openBrowser } from '../../utils/browser.js';
 import { CLAUDE_IN_CHROME_MCP_SERVER_NAME, openInChrome } from '../../utils/claudeInChrome/common.js';
 import { isChromeExtensionInstalled } from '../../utils/claudeInChrome/setup.js';
@@ -18,16 +18,16 @@ type Props = {
   onDone: (result?: string) => void;
   isExtensionInstalled: boolean;
   configEnabled: boolean | undefined;
-  isClaudeAISubscriber: boolean;
+  isZeroAISubscriber: boolean;
   isWSL: boolean;
 };
-function ClaudeInChromeMenu(t0: Props) {
+function ZeroInChromeMenu(t0: Props) {
   const $ = _c(41);
   const {
     onDone,
     isExtensionInstalled: installed,
     configEnabled,
-    isClaudeAISubscriber,
+    isZeroAISubscriber,
     isWSL
   } = t0;
   const mcpClients = useAppState(_temp);
@@ -210,9 +210,9 @@ function ClaudeInChromeMenu(t0: Props) {
     t7 = $[22];
   }
   let t8;
-  if ($[23] !== isClaudeAISubscriber) {
+  if ($[23] !== isZeroAISubscriber) {
     t8 = false;
-    $[23] = isClaudeAISubscriber;
+    $[23] = isZeroAISubscriber;
     $[24] = t8;
   } else {
     t8 = $[24];
@@ -277,7 +277,7 @@ function _temp(s: { mcp: { clients: { name: string }[] } }) {
 export const call = async function (onDone: (result?: string) => void): Promise<React.ReactNode> {
   const isExtensionInstalled = await isChromeExtensionInstalled();
   const config = getGlobalConfig();
-  const isSubscriber = isClaudeAISubscriber();
+  const isSubscriber = isZeroAISubscriber();
   const isWSL = env.isWslEnvironment();
-  return <ClaudeInChromeMenu onDone={onDone} isExtensionInstalled={isExtensionInstalled} configEnabled={config.claudeInChromeDefaultEnabled} isClaudeAISubscriber={isSubscriber} isWSL={isWSL} />;
+  return <ZeroInChromeMenu onDone={onDone} isExtensionInstalled={isExtensionInstalled} configEnabled={config.claudeInChromeDefaultEnabled} isZeroAISubscriber={isSubscriber} isWSL={isWSL} />;
 };

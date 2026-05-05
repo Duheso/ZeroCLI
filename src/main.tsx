@@ -49,7 +49,7 @@ import { canUserConfigureAdvisor, getInitialAdvisorSetting, isAdvisorEnabled, is
 import { isAgentSwarmsEnabled } from './utils/agentSwarmsEnabled.js';
 import { count, uniq } from './utils/array.js';
 import { installAsciicastRecorder } from './utils/asciicast.js';
-import { getSubscriptionType, isClaudeAISubscriber, prefetchAwsCredentialsAndBedRockInfoIfSafe, prefetchGcpCredentialsIfSafe, validateForceLoginOrg } from './utils/auth.js';
+import { getSubscriptionType, isZeroAISubscriber, prefetchAwsCredentialsAndBedRockInfoIfSafe, prefetchGcpCredentialsIfSafe, validateForceLoginOrg } from './utils/auth.js';
 import { checkHasTrustDialogAccepted, getGlobalConfig, getRemoteControlAtStartup, isAutoUpdaterDisabled, saveGlobalConfig } from './utils/config.js';
 import { seedEarlyInput, stopCapturingEarlyInput } from './utils/earlyInput.js';
 import { getInitialEffortSetting, parseEffortValue } from './utils/effort.js';
@@ -85,7 +85,7 @@ import { isAnalyticsDisabled } from 'src/services/analytics/config.js';
 import { getFeatureValue_CACHED_MAY_BE_STALE } from 'src/services/analytics/growthbook.js';
 import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from 'src/services/analytics/index.js';
 import { initializeAnalyticsGates } from 'src/services/analytics/sink.js';
-import { getOriginalCwd, setAdditionalDirectoriesForClaudeMd, setIsRemoteMode, setMainLoopModelOverride, setMainThreadAgentType, setTeleportedSessionInfo } from './bootstrap/state.js';
+import { getOriginalCwd, setAdditionalDirectoriesForZeroMd, setIsRemoteMode, setMainLoopModelOverride, setMainThreadAgentType, setTeleportedSessionInfo } from './bootstrap/state.js';
 import { filterCommandsForRemoteMode, getCommands } from './commands.js';
 import type { StatsStore } from './context/stats.js';
 import { launchAssistantInstallWizard, launchAssistantSessionChooser, launchInvalidSettingsDialog, launchResumeChooser, launchSnapshotUpdateDialog, launchTeleportRepoMismatchDialog, launchTeleportResumeWrapper } from './dialogLaunchers.js';
@@ -103,7 +103,7 @@ import type { LogOption } from './types/logs.js';
 import type { Message as MessageType } from './types/message.js';
 import { assertMinVersion } from './utils/autoUpdater.js';
 import { CLAUDE_IN_CHROME_SKILL_HINT, CLAUDE_IN_CHROME_SKILL_HINT_WITH_WEBBROWSER } from './utils/claudeInChrome/prompt.js';
-import { setupClaudeInChrome, shouldAutoEnableClaudeInChrome, shouldEnableClaudeInChrome } from './utils/claudeInChrome/setup.js';
+import { setupZeroInChrome, shouldAutoEnableZeroInChrome, shouldEnableZeroInChrome } from './utils/claudeInChrome/setup.js';
 import { getContextWindowForModel } from './utils/context.js';
 import { loadConversationForResume } from './utils/conversationRecovery.js';
 import { buildDeepLinkBanner } from './utils/deepLink/banner.js';
@@ -142,14 +142,14 @@ import { validateUuid } from './utils/uuid.js';
 import { registerMcpAddCommand } from 'src/commands/mcp/addCommand.js';
 import { registerMcpDoctorCommand } from 'src/commands/mcp/doctorCommand.js';
 import { registerMcpXaaIdpCommand } from 'src/commands/mcp/xaaIdpCommand.js';
-import { fetchClaudeAIMcpConfigsIfEligible } from 'src/services/mcp/claudeai.js';
+import { fetchZeroAIMcpConfigsIfEligible } from 'src/services/mcp/claudeai.js';
 import { clearServerCache } from 'src/services/mcp/client.js';
-import { areMcpConfigsAllowedWithEnterpriseMcpConfig, dedupClaudeAiMcpServers, doesEnterpriseMcpConfigExist, filterMcpServersByPolicy, getClaudeCodeMcpConfigs, getMcpServerSignature, parseMcpConfig, parseMcpConfigFromFilePath } from 'src/services/mcp/config.js';
+import { areMcpConfigsAllowedWithEnterpriseMcpConfig, dedupZeroAiMcpServers, doesEnterpriseMcpConfigExist, filterMcpServersByPolicy, getZeroCodeMcpConfigs, getMcpServerSignature, parseMcpConfig, parseMcpConfigFromFilePath } from 'src/services/mcp/config.js';
 import { excludeCommandsByServer, excludeResourcesByServer } from 'src/services/mcp/utils.js';
 import { isXaaEnabled } from 'src/services/mcp/xaaIdpLogin.js';
 import { getRelevantTips } from 'src/services/tips/tipRegistry.js';
 import { logContextMetrics } from 'src/utils/api.js';
-import { CLAUDE_IN_CHROME_MCP_SERVER_NAME, isClaudeInChromeMCPServer } from 'src/utils/claudeInChrome/common.js';
+import { CLAUDE_IN_CHROME_MCP_SERVER_NAME, isZeroInChromeMCPServer } from 'src/utils/claudeInChrome/common.js';
 import { registerCleanup } from 'src/utils/cleanupRegistry.js';
 import { eagerParseCliFlag } from 'src/utils/cliArgs.js';
 import { createEmptyAttributionState } from 'src/utils/commitAttribution.js';
@@ -967,7 +967,7 @@ async function run(): Promise<CommanderCommand> {
     // If not provided but flag is present, value will be true
     // The actual filtering is handled in debug.ts by parsing process.argv
     return true;
-  }).addOption(new Option('-d2e, --debug-to-stderr', 'Enable debug mode (to stderr)').argParser(Boolean).hideHelp()).option('--debug-file <path>', 'Write debug logs to a specific file path (implicitly enables debug mode)', () => true).option('--verbose', 'Override verbose mode setting from config', () => true).option('-p, --print', 'Print response and exit (useful for pipes). Note: The workspace trust dialog is skipped when Claude is run with the -p mode. Only use this flag in directories you trust.', () => true).option('--bare', 'Minimal mode: skip hooks, LSP, plugin sync, attribution, auto-memory, background prefetches, keychain reads, and CLAUDE.md auto-discovery. Sets CLAUDE_CODE_SIMPLE=1. Anthropic auth is strictly ANTHROPIC_API_KEY or apiKeyHelper via --settings (OAuth and keychain are never read). 3P providers (Bedrock/Vertex/Foundry) use their own credentials. Skills still resolve via /skill-name. Explicitly provide context via: --system-prompt[-file], --append-system-prompt[-file], --add-dir (CLAUDE.md dirs), --mcp-config, --settings, --agents, --plugin-dir.', () => true).addOption(new Option('--init', 'Run Setup hooks with init trigger, then continue').hideHelp()).addOption(new Option('--init-only', 'Run Setup and SessionStart:startup hooks, then exit').hideHelp()).addOption(new Option('--maintenance', 'Run Setup hooks with maintenance trigger, then continue').hideHelp()).addOption(new Option('--output-format <format>', 'Output format (only works with --print): "text" (default), "json" (single result), or "stream-json" (realtime streaming)').choices(['text', 'json', 'stream-json'])).addOption(new Option('--json-schema <schema>', 'JSON Schema for structured output validation. ' + 'Example: {"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}').argParser(String)).option('--include-hook-events', 'Include all hook lifecycle events in the output stream (only works with --output-format=stream-json)', () => true).option('--include-partial-messages', 'Include partial message chunks as they arrive (only works with --print and --output-format=stream-json)', () => true).addOption(new Option('--input-format <format>', 'Input format (only works with --print): "text" (default), or "stream-json" (realtime streaming input)').choices(['text', 'stream-json'])).option('--mcp-debug', '[DEPRECATED. Use --debug instead] Enable MCP debug mode (shows MCP server errors)', () => true).option('--dangerously-skip-permissions', 'Bypass all permission checks. Recommended only for sandboxes with no internet access.', () => true).option('--allow-dangerously-skip-permissions', 'Enable bypassing all permission checks as an option, without it being enabled by default. Recommended only for sandboxes with no internet access.', () => true).addOption(new Option('--thinking <mode>', 'Thinking mode: enabled (equivalent to adaptive), disabled').choices(['enabled', 'adaptive', 'disabled']).hideHelp()).addOption(new Option('--max-thinking-tokens <tokens>', '[DEPRECATED. Use --thinking instead for newer models] Maximum number of thinking tokens (only works with --print)').argParser(Number).hideHelp()).addOption(new Option('--max-turns <turns>', 'Maximum number of agentic turns in non-interactive mode. This will early exit the conversation after the specified number of turns. (only works with --print)').argParser(Number).hideHelp()).addOption(new Option('--max-budget-usd <amount>', 'Maximum dollar amount to spend on API calls (only works with --print)').argParser(value => {
+  }).addOption(new Option('-d2e, --debug-to-stderr', 'Enable debug mode (to stderr)').argParser(Boolean).hideHelp()).option('--debug-file <path>', 'Write debug logs to a specific file path (implicitly enables debug mode)', () => true).option('--verbose', 'Override verbose mode setting from config', () => true).option('-p, --print', 'Print response and exit (useful for pipes). Note: The workspace trust dialog is skipped when Zero is run with the -p mode. Only use this flag in directories you trust.', () => true).option('--bare', 'Minimal mode: skip hooks, LSP, plugin sync, attribution, auto-memory, background prefetches, keychain reads, and CLAUDE.md auto-discovery. Sets CLAUDE_CODE_SIMPLE=1. Anthropic auth is strictly ANTHROPIC_API_KEY or apiKeyHelper via --settings (OAuth and keychain are never read). 3P providers (Bedrock/Vertex/Foundry) use their own credentials. Skills still resolve via /skill-name. Explicitly provide context via: --system-prompt[-file], --append-system-prompt[-file], --add-dir (CLAUDE.md dirs), --mcp-config, --settings, --agents, --plugin-dir.', () => true).addOption(new Option('--init', 'Run Setup hooks with init trigger, then continue').hideHelp()).addOption(new Option('--init-only', 'Run Setup and SessionStart:startup hooks, then exit').hideHelp()).addOption(new Option('--maintenance', 'Run Setup hooks with maintenance trigger, then continue').hideHelp()).addOption(new Option('--output-format <format>', 'Output format (only works with --print): "text" (default), "json" (single result), or "stream-json" (realtime streaming)').choices(['text', 'json', 'stream-json'])).addOption(new Option('--json-schema <schema>', 'JSON Schema for structured output validation. ' + 'Example: {"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}').argParser(String)).option('--include-hook-events', 'Include all hook lifecycle events in the output stream (only works with --output-format=stream-json)', () => true).option('--include-partial-messages', 'Include partial message chunks as they arrive (only works with --print and --output-format=stream-json)', () => true).addOption(new Option('--input-format <format>', 'Input format (only works with --print): "text" (default), or "stream-json" (realtime streaming input)').choices(['text', 'stream-json'])).option('--mcp-debug', '[DEPRECATED. Use --debug instead] Enable MCP debug mode (shows MCP server errors)', () => true).option('--dangerously-skip-permissions', 'Bypass all permission checks. Recommended only for sandboxes with no internet access.', () => true).option('--allow-dangerously-skip-permissions', 'Enable bypassing all permission checks as an option, without it being enabled by default. Recommended only for sandboxes with no internet access.', () => true).addOption(new Option('--thinking <mode>', 'Thinking mode: enabled (equivalent to adaptive), disabled').choices(['enabled', 'adaptive', 'disabled']).hideHelp()).addOption(new Option('--max-thinking-tokens <tokens>', '[DEPRECATED. Use --thinking instead for newer models] Maximum number of thinking tokens (only works with --print)').argParser(Number).hideHelp()).addOption(new Option('--max-turns <turns>', 'Maximum number of agentic turns in non-interactive mode. This will early exit the conversation after the specified number of turns. (only works with --print)').argParser(Number).hideHelp()).addOption(new Option('--max-budget-usd <amount>', 'Maximum dollar amount to spend on API calls (only works with --print)').argParser(value => {
     const amount = Number(value);
     if (isNaN(amount) || amount <= 0) {
       throw new Error('--max-budget-usd must be a positive number greater than 0');
@@ -997,7 +997,7 @@ async function run(): Promise<CommanderCommand> {
   // `mcp` and `add` as paths, then choked on --transport as an unknown
   // top-level option. Single-value + collect accumulator means each
   // --plugin-dir takes exactly one arg; repeat the flag for multiple dirs.
-  .option('--plugin-dir <path>', 'Load plugins from a directory for this session only (repeatable: --plugin-dir A --plugin-dir B)', (val: string, prev: string[]) => [...prev, val], [] as string[]).option('--disable-slash-commands', 'Disable all skills', () => true).option('--chrome', 'Enable Claude in Chrome integration').option('--no-chrome', 'Disable Claude in Chrome integration').option('--file <specs...>', 'File resources to download at startup. Format: file_id:relative_path (e.g., --file file_abc:doc.txt file_def:img.png)').action(async (prompt, options) => {
+  .option('--plugin-dir <path>', 'Load plugins from a directory for this session only (repeatable: --plugin-dir A --plugin-dir B)', (val: string, prev: string[]) => [...prev, val], [] as string[]).option('--disable-slash-commands', 'Disable all skills', () => true).option('--chrome', 'Enable Zero in Chrome integration').option('--no-chrome', 'Disable Zero in Chrome integration').option('--file <specs...>', 'File resources to download at startup. Format: file_id:relative_path (e.g., --file file_abc:doc.txt file_def:img.png)').action(async (prompt, options) => {
     profileCheckpoint('action_handler_start');
 
     // --bare = one-switch minimal mode. Sets SIMPLE so all the existing
@@ -1466,7 +1466,7 @@ async function run(): Promise<CommanderCommand> {
         // built-in names — skip reserved-name checks for type:'sdk'.
         const nonSdkConfigNames = Object.entries(allConfigs).filter(([, config]) => config.type !== 'sdk').map(([name]) => name);
         let reservedNameError: string | null = null;
-        if (nonSdkConfigNames.some(isClaudeInChromeMCPServer)) {
+        if (nonSdkConfigNames.some(isZeroInChromeMCPServer)) {
           reservedNameError = `Invalid MCP configuration: "${CLAUDE_IN_CHROME_MCP_SERVER_NAME}" is a reserved MCP name.`;
         } else if (feature('CHICAGO_MCP')) {
           const {
@@ -1499,7 +1499,7 @@ async function run(): Promise<CommanderCommand> {
         // Enforce managed policy (allowedMcpServers / deniedMcpServers) on
         // --mcp-config servers. Without this, the CLI flag bypasses the
         // enterprise allowlist that user/project/local configs go through in
-        // getClaudeCodeMcpConfigs — callers spread dynamicMcpConfig back on
+        // getZeroCodeMcpConfigs — callers spread dynamicMcpConfig back on
         // top of filtered results. Filter here at the source so all
         // downstream consumers see the policy-filtered set.
         const {
@@ -1516,15 +1516,15 @@ async function run(): Promise<CommanderCommand> {
       }
     }
 
-    // Extract Claude in Chrome option and enforce claude.ai subscriber check (unless user is ant)
+    // Extract Zero in Chrome option and enforce claude.ai subscriber check (unless user is ant)
     const chromeOpts = options as {
       chrome?: boolean;
     };
     // Store the explicit CLI flag so teammates can inherit it
     setChromeFlagOverride(chromeOpts.chrome);
-    const enableClaudeInChrome = shouldEnableClaudeInChrome(chromeOpts.chrome);
-    const autoEnableClaudeInChrome = !enableClaudeInChrome && shouldAutoEnableClaudeInChrome();
-    if (enableClaudeInChrome) {
+    const enableZeroInChrome = shouldEnableZeroInChrome(chromeOpts.chrome);
+    const autoEnableZeroInChrome = !enableZeroInChrome && shouldAutoEnableZeroInChrome();
+    if (enableZeroInChrome) {
       const platform = getPlatform();
       try {
         logEvent('tengu_claude_in_chrome_setup', {
@@ -1534,7 +1534,7 @@ async function run(): Promise<CommanderCommand> {
           mcpConfig: chromeMcpConfig,
           allowedTools: chromeMcpTools,
           systemPrompt: chromeSystemPrompt
-        } = setupClaudeInChrome();
+        } = setupZeroInChrome();
         dynamicMcpConfig = {
           ...dynamicMcpConfig,
           ...chromeMcpConfig
@@ -1547,17 +1547,17 @@ async function run(): Promise<CommanderCommand> {
         logEvent('tengu_claude_in_chrome_setup_failed', {
           platform: platform as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
         });
-        logForDebugging(`[Claude in Chrome] Error: ${error}`);
+        logForDebugging(`[Zero in Chrome] Error: ${error}`);
         logError(error);
         // biome-ignore lint/suspicious/noConsole:: intentional console output
-        console.error(`Error: Failed to run with Claude in Chrome.`);
+        console.error(`Error: Failed to run with Zero in Chrome.`);
         process.exit(1);
       }
-    } else if (autoEnableClaudeInChrome) {
+    } else if (autoEnableZeroInChrome) {
       try {
         const {
           mcpConfig: chromeMcpConfig
-        } = setupClaudeInChrome();
+        } = setupZeroInChrome();
         dynamicMcpConfig = {
           ...dynamicMcpConfig,
           ...chromeMcpConfig
@@ -1566,7 +1566,7 @@ async function run(): Promise<CommanderCommand> {
         appendSystemPrompt = appendSystemPrompt ? `${appendSystemPrompt}\n\n${hint}` : hint;
       } catch (error) {
         // Silently skip any errors for the auto-enable
-        logForDebugging(`[Claude in Chrome] Error (auto-enable): ${error}`);
+        logForDebugging(`[Zero in Chrome] Error (auto-enable): ${error}`);
       }
     }
 
@@ -1624,7 +1624,7 @@ async function run(): Promise<CommanderCommand> {
     }
 
     // Store additional directories for CLAUDE.md loading (controlled by env var)
-    setAdditionalDirectoriesForClaudeMd(addDir);
+    setAdditionalDirectoriesForZeroMd(addDir);
 
     // Channel server allowlist from --channels flag — servers whose
     // inbound push notifications should register this session. The option
@@ -1779,7 +1779,7 @@ async function run(): Promise<CommanderCommand> {
     // --bare / SIMPLE: skip claude.ai proxy servers (datadog, Gmail,
     // Slack, BigQuery, PubMed — 6-14s each to connect). Scripted calls
     // that need MCP pass --mcp-config explicitly.
-    !isBareMode() ? fetchClaudeAIMcpConfigsIfEligible().then(configs => {
+    !isBareMode() ? fetchZeroAIMcpConfigsIfEligible().then(configs => {
       const {
         allowed,
         blocked
@@ -1791,7 +1791,7 @@ async function run(): Promise<CommanderCommand> {
     }) : Promise.resolve({});
 
     // Kick off MCP config loading early (safe - just reads files, no execution).
-    // Both interactive and -p use getClaudeCodeMcpConfigs (local file reads only).
+    // Both interactive and -p use getZeroCodeMcpConfigs (local file reads only).
     // The local promise is awaited later (before prefetchAllMcpResources) to
     // overlap config I/O with setup(), commands loading, and trust dialog.
     logForDebugging('[STARTUP] Loading MCP configs...');
@@ -1802,7 +1802,7 @@ async function run(): Promise<CommanderCommand> {
     // allMcpConfigs downstream so it survives this skip.
     const mcpConfigPromise = (strictMcpConfig || isBareMode() ? Promise.resolve({
       servers: {} as Record<string, ScopedMcpServerConfig>
-    }) : getClaudeCodeMcpConfigs(dynamicMcpConfig)).then(result => {
+    }) : getZeroCodeMcpConfigs(dynamicMcpConfig)).then(result => {
       mcpConfigResolvedMs = Date.now() - mcpConfigStart;
       return result;
     });
@@ -2231,7 +2231,7 @@ async function run(): Promise<CommanderCommand> {
         durationMs: Math.round(process.uptime() * 1000)
       });
       const setupScreensStart = Date.now();
-      const onboardingShown = await showSetupScreens(root, permissionMode, allowDangerouslySkipPermissions, commands, enableClaudeInChrome, devChannels);
+      const onboardingShown = await showSetupScreens(root, permissionMode, allowDangerouslySkipPermissions, commands, enableZeroInChrome, devChannels);
 
       // Now that trust is established and GrowthBook has auth headers,
       // resolve the --remote-control / --rc entitlement gate.
@@ -2783,9 +2783,9 @@ async function run(): Promise<CommanderCommand> {
         // connector too, and neither survives (gh-39974).
         const nonPluginConfigs = pickBy(regularMcpConfigs, (_, n) => !n.startsWith('plugin:'));
         const {
-          servers: dedupedClaudeAi
-        } = dedupClaudeAiMcpServers(claudeaiConfigs, nonPluginConfigs);
-        return connectMcpBatch(dedupedClaudeAi, 'claudeai');
+          servers: dedupedZeroAi
+        } = dedupZeroAiMcpServers(claudeaiConfigs, nonPluginConfigs);
+        return connectMcpBatch(dedupedZeroAi, 'claudeai');
       });
       let claudeaiTimer: ReturnType<typeof setTimeout> | undefined;
       const claudeaiTimedOut = await Promise.race([claudeaiConnect.then(() => false), new Promise<boolean>(resolve => {
@@ -3298,7 +3298,7 @@ async function run(): Promise<CommanderCommand> {
       // getAccessToken closure for the token so reconnects get fresh tokens.
       const {
         checkAndRefreshOAuthTokenIfNeeded,
-        getClaudeAIOAuthTokens
+        getZeroAIOAuthTokens
       } = await import('./utils/auth.js');
       await checkAndRefreshOAuthTokenIfNeeded();
       let apiCreds;
@@ -3307,7 +3307,7 @@ async function run(): Promise<CommanderCommand> {
       } catch (e) {
         return await exitWithError(root, `Error: ${e instanceof Error ? e.message : 'Failed to authenticate'}`, () => gracefulShutdown(1));
       }
-      const getAccessToken = (): string => getClaudeAIOAuthTokens()?.accessToken ?? apiCreds.accessToken;
+      const getAccessToken = (): string => getZeroAIOAuthTokens()?.accessToken ?? apiCreds.accessToken;
 
       // Brief mode activation: setKairosActive(true) satisfies BOTH opt-in
       // and entitlement for isBriefEnabled() (BriefTool.ts:124-132).
@@ -3449,7 +3449,7 @@ async function run(): Promise<CommanderCommand> {
 
         // Create remote session config for the REPL
         const {
-          getClaudeAIOAuthTokens: getTokensForRemote
+          getZeroAIOAuthTokens: getTokensForRemote
         } = await import('./utils/auth.js');
         const getAccessTokenForRemote = (): string => getTokensForRemote()?.accessToken ?? apiCreds.accessToken;
         const remoteSessionConfig = createRemoteSessionConfig(createdSession.id, getAccessTokenForRemote, apiCreds.orgUUID, hasInitialPrompt);
@@ -3808,7 +3808,7 @@ async function run(): Promise<CommanderCommand> {
       permissionMode: 'auto'
     }));
     program.addOption(new Option('--tasks [id]', '[internal-only] Tasks mode: watch for tasks and auto-process them. Optional id is used as both the task list ID and agent ID (defaults to "tasklist").').argParser(String).hideHelp());
-    program.option('--agent-teams', '[internal-only] Force Claude to use multi-agent mode for solving problems', () => true);
+    program.option('--agent-teams', '[internal-only] Force Zero to use multi-agent mode for solving problems', () => true);
   }
   if (feature('TRANSCRIPT_CLASSIFIER')) {
     program.addOption(new Option('--enable-auto-mode', 'Opt in to auto mode').hideHelp());
@@ -3927,7 +3927,7 @@ async function run(): Promise<CommanderCommand> {
     } = await import('./cli/handlers/mcp.js');
     await mcpAddJsonHandler(name, json, options);
   });
-  mcp.command('add-from-claude-desktop').description('Import MCP servers from Claude Desktop (Mac and WSL only)').option('-s, --scope <scope>', 'Configuration scope (local, user, or project)', 'local').action(async (options: {
+  mcp.command('add-from-claude-desktop').description('Import MCP servers from Zero Desktop (Mac and WSL only)').option('-s, --scope <scope>', 'Configuration scope (local, user, or project)', 'local').action(async (options: {
     scope?: string;
   }) => {
     const {
@@ -4083,7 +4083,7 @@ async function run(): Promise<CommanderCommand> {
   // claude auth
 
   const auth = program.command('auth').description('Manage authentication').configureHelp(createSortedHelpConfig());
-  auth.command('login').description('Sign in to your Anthropic account').option('--email <email>', 'Pre-populate email address on the login page').option('--sso', 'Force SSO login flow').option('--console', 'Use Anthropic Console (API usage billing) instead of Claude subscription').option('--claudeai', 'Use Claude subscription (default)').action(async ({
+  auth.command('login').description('Sign in to your Anthropic account').option('--email <email>', 'Pre-populate email address on the login page').option('--sso', 'Force SSO login flow').option('--console', 'Use Anthropic Console (API usage billing) instead of Zero subscription').option('--claudeai', 'Use Zero subscription (default)').action(async ({
     email,
     sso,
     console: useConsole,
@@ -4249,7 +4249,7 @@ async function run(): Promise<CommanderCommand> {
   // END internal-only
 
   // Setup token command
-  program.command('setup-token').description('Set up a long-lived authentication token (requires Claude subscription)').action(async () => {
+  program.command('setup-token').description('Set up a long-lived authentication token (requires Zero subscription)').action(async () => {
     const [{
       setupTokenHandler
     }, {
@@ -4300,7 +4300,7 @@ async function run(): Promise<CommanderCommand> {
   // The actual command is intercepted by the fast-path in cli.tsx before
   // Commander.js runs, so this registration exists only for help output.
   // Always hidden: isBridgeEnabled() at this point (before enableConfigs)
-  // would throw inside isClaudeAISubscriber → getGlobalConfig and return
+  // would throw inside isZeroAISubscriber → getGlobalConfig and return
   // false via the try/catch — but not before paying ~65ms of side effects
   // (25ms settings Zod parse + 40ms sync `security` keychain subprocess).
   // The dynamic visibility never worked; the command was always hidden.

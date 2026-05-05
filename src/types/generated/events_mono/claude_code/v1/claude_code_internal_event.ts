@@ -53,7 +53,7 @@ export interface SlackContext {
   creation_method?: string | undefined
 }
 
-export interface ClaudeCodeInternalEvent {
+export interface ZeroCodeInternalEvent {
   event_name?: string | undefined
   client_timestamp?: Date | undefined
   model?: string | undefined
@@ -85,24 +85,24 @@ export interface ClaudeCodeInternalEvent {
   marketplace_name?: string | undefined
 }
 
-export const ClaudeCodeInternalEvent = {
-  fromJSON(object: any): ClaudeCodeInternalEvent {
+export const ZeroCodeInternalEvent = {
+  fromJSON(object: any): ZeroCodeInternalEvent {
     return object ?? {}
   },
 
-  toJSON(message: ClaudeCodeInternalEvent): unknown {
+  toJSON(message: ZeroCodeInternalEvent): unknown {
     return message ?? {}
   },
 
-  create<I extends ClaudeCodeInternalEvent>(
+  create<I extends ZeroCodeInternalEvent>(
     base?: I,
-  ): ClaudeCodeInternalEvent {
+  ): ZeroCodeInternalEvent {
     return base ?? {}
   },
 
-  fromPartial<I extends ClaudeCodeInternalEvent>(
+  fromPartial<I extends ZeroCodeInternalEvent>(
     object: I,
-  ): ClaudeCodeInternalEvent {
+  ): ZeroCodeInternalEvent {
     return object ?? {}
   },
 }

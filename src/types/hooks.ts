@@ -56,7 +56,7 @@ export const syncHookResponseSchema = lazySchema(() =>
   z.object({
     continue: z
       .boolean()
-      .describe('Whether Claude should continue after hook (default: true)')
+      .describe('Whether Zero should continue after hook (default: true)')
       .optional(),
     suppressOutput: z
       .boolean()

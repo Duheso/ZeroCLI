@@ -6,7 +6,7 @@ import { dirname, join, parse } from 'path'
 import { getPlatform } from 'src/utils/platform.js'
 import type { PluginError } from '../../types/plugin.js'
 import { getPluginErrorMessage } from '../../types/plugin.js'
-import { isClaudeInChromeMCPServer } from '../../utils/claudeInChrome/common.js'
+import { isZeroInChromeMCPServer } from '../../utils/claudeInChrome/common.js'
 import {
   getCurrentProjectConfig,
   getGlobalConfig,
@@ -40,7 +40,7 @@ import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
   logEvent,
 } from '../analytics/index.js'
-import { fetchClaudeAIMcpConfigsIfEligible } from './claudeai.js'
+import { fetchZeroAIMcpConfigsIfEligible } from './claudeai.js'
 import { expandEnvVarsInString } from './envExpansion.js'
 import {
   type ConfigScope,
@@ -278,7 +278,7 @@ export function dedupPluginMcpServers(
  * Only enabled manual servers count as dedup targets — a disabled manual server
  * mustn't suppress its connector twin, or neither runs.
  */
-export function dedupClaudeAiMcpServers(
+export function dedupZeroAiMcpServers(
   claudeAiServers: Record<string, ScopedMcpServerConfig>,
   manualServers: Record<string, ScopedMcpServerConfig>,
 ): {
@@ -513,7 +513,7 @@ function isMcpServerAllowedByPolicy(
  * returned so callers can warn the user.
  *
  * Intended for user-controlled config entry points that bypass the policy filter
- * in getClaudeCodeMcpConfigs(): --mcp-config (main.tsx) and the mcp_set_servers
+ * in getZeroCodeMcpConfigs(): --mcp-config (main.tsx) and the mcp_set_servers
  * control message (print.ts, SDK V2 Query.setMcpServers()).
  *
  * SDK-type servers are exempt — they are SDK-managed transport placeholders,
@@ -634,7 +634,7 @@ export async function addMcpConfig(
   }
 
   // Block reserved server name "claude-in-chrome"
-  if (isClaudeInChromeMCPServer(name)) {
+  if (isZeroInChromeMCPServer(name)) {
     throw new Error(`Cannot add MCP server "${name}": this name is reserved.`)
   }
 
@@ -1034,7 +1034,7 @@ export function getMcpConfigByName(name: string): ScopedMcpServerConfig | null {
   const { servers: enterpriseServers } = getMcpConfigsByScope('enterprise')
 
   // When MCP is locked to plugin-only, only enterprise servers are reachable
-  // by name. User/project/local servers are blocked — same as getClaudeCodeMcpConfigs().
+  // by name. User/project/local servers are blocked — same as getZeroCodeMcpConfigs().
   if (isRestrictedToPluginOnly('mcp')) {
     return enterpriseServers[name] ?? null
   }
@@ -1068,7 +1068,7 @@ export function getMcpConfigByName(name: string): ScopedMcpServerConfig | null {
  * so the two overlap rather than serialize.
  * @returns ZeroCLI server configurations with appropriate scopes
  */
-export async function getClaudeCodeMcpConfigs(
+export async function getZeroCodeMcpConfigs(
   dynamicServers: Record<string, ScopedMcpServerConfig> = {},
   extraDedupTargets: Promise<
     Record<string, ScopedMcpServerConfig>
@@ -1252,7 +1252,7 @@ export async function getClaudeCodeMcpConfigs(
 
 /**
  * Get all MCP configurations across all scopes, including claude.ai servers.
- * This may be slow due to network calls - use getClaudeCodeMcpConfigs() for fast startup.
+ * This may be slow due to network calls - use getZeroCodeMcpConfigs() for fast startup.
  * @returns All server configurations with appropriate scopes
  */
 export async function getAllMcpConfigs(): Promise<{
@@ -1261,13 +1261,13 @@ export async function getAllMcpConfigs(): Promise<{
 }> {
   // In enterprise mode, don't load claude.ai servers (enterprise has exclusive control)
   if (doesEnterpriseMcpConfigExist()) {
-    return getClaudeCodeMcpConfigs()
+    return getZeroCodeMcpConfigs()
   }
 
-  // Kick off the claude.ai fetch before getClaudeCodeMcpConfigs so it overlaps
+  // Kick off the claude.ai fetch before getZeroCodeMcpConfigs so it overlaps
   // with loadAllPluginsCacheOnly() inside. Memoized — the awaited call below is a cache hit.
-  const claudeaiPromise = fetchClaudeAIMcpConfigsIfEligible()
-  const { servers: claudeCodeServers, errors } = await getClaudeCodeMcpConfigs(
+  const claudeaiPromise = fetchZeroAIMcpConfigsIfEligible()
+  const { servers: claudeCodeServers, errors } = await getZeroCodeMcpConfigs(
     {},
     claudeaiPromise,
   )
@@ -1278,13 +1278,13 @@ export async function getAllMcpConfigs(): Promise<{
   // Suppress claude.ai connectors that duplicate an enabled manual server.
   // Keys never collide (`slack` vs `claude.ai Slack`) so the merge below
   // won't catch this — need content-based dedup by URL signature.
-  const { servers: dedupedClaudeAi } = dedupClaudeAiMcpServers(
+  const { servers: dedupedZeroAi } = dedupZeroAiMcpServers(
     claudeaiMcpServers,
     claudeCodeServers,
   )
 
   // Merge with claude.ai having lowest precedence
-  const servers = Object.assign({}, dedupedClaudeAi, claudeCodeServers)
+  const servers = Object.assign({}, dedupedZeroAi, claudeCodeServers)
 
   return { servers, errors }
 }

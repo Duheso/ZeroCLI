@@ -46,7 +46,7 @@ function installCommonMocks(options?: {
 
   mock.module('./auth.js', () => ({
     getAnthropicApiKey: () => options?.apiKey ?? null,
-    getClaudeAIOAuthTokens: () =>
+    getZeroAIOAuthTokens: () =>
       options?.oauthToken ? { accessToken: options.oauthToken } : null,
     handleOAuth401Error: async () => {},
     hasProfileScope: () => options?.hasProfileScope ?? false,

@@ -2,12 +2,12 @@
 export interface TranslationKeys {
   // Welcome / Branding
   welcomeToZeroCLI: string
-  welcomeToClaudeCode: string
+  welcomeToZeroCode: string
 
   // Onboarding – security step
   securityNotes: string
   claudeCanMakeMistakes: string
-  reviewClaudeResponses: string
+  reviewZeroResponses: string
   promptInjectionRisk: string
   forMoreDetailsSee: string
 
@@ -629,13 +629,13 @@ export interface TranslationKeys {
 export const en: TranslationKeys = {
   // Welcome / Branding
   welcomeToZeroCLI: 'Welcome to Zero CLI',
-  welcomeToClaudeCode: 'Welcome to Zero CLI',
+  welcomeToZeroCode: 'Welcome to Zero CLI',
 
   // Onboarding – security step
   securityNotes: 'Security notes:',
   claudeCanMakeMistakes: 'Zero CLI can make mistakes',
-  reviewClaudeResponses:
-    "You should always review Claude's responses, especially when\nrunning code.",
+  reviewZeroResponses:
+    "You should always review Zero's responses, especially when\nrunning code.",
   promptInjectionRisk: 'Due to prompt injection risks, only use it with code you trust',
   forMoreDetailsSee: 'For more details see:',
 
@@ -646,7 +646,7 @@ export const en: TranslationKeys = {
 
   // Interrupted
   interrupted: 'Interrupted',
-  whatShouldClaudoDoInstead: 'What should Claude do instead?',
+  whatShouldClaudoDoInstead: 'What should Zero do instead?',
 
   // Exit / Goodbye
   goodbyeMessages: ['Goodbye!', 'See ya!', 'Bye!', 'Catch you later!'],
@@ -683,7 +683,7 @@ export const en: TranslationKeys = {
   cmd_clear: 'Clear conversation history and free up context',
   cmd_commit: 'Create a git commit',
   cmd_review: 'Review a pull request',
-  cmd_memory: 'Edit Claude memory files',
+  cmd_memory: 'Edit Zero memory files',
   cmd_mcp: 'Manage MCP servers',
   cmd_resume: 'Resume a previous conversation',
   cmd_model: 'Change the AI model',
@@ -712,7 +712,7 @@ export const en: TranslationKeys = {
   cmd_keybindings: 'Open or create your keybindings configuration file',
   cmd_agents: 'Manage agent configurations',
   cmd_session: 'Show remote session URL and QR code',
-  cmd_mobile: 'Show QR code to download the Claude mobile app',
+  cmd_mobile: 'Show QR code to download the Zero mobile app',
   cmd_usage: 'Show plan usage limits',
   cmd_tag: 'Toggle a searchable tag on the current session',
   cmd_buddy: 'Hatch, pet, and manage your ZeroCLI companion',
@@ -724,7 +724,7 @@ export const en: TranslationKeys = {
   cmd_privacy: 'View and update your privacy settings',
   cmd_permissions: 'Manage allow & deny tool permission rules',
   cmd_effort: 'Set effort level for model usage',
-  cmd_copy: "Copy Claude's last response to clipboard (or /copy N for the Nth-latest)",
+  cmd_copy: "Copy Zero's last response to clipboard (or /copy N for the Nth-latest)",
   cmd_reload_plugins: 'Activate pending plugin changes in the current session',
   cmd_branch: 'Create a branch of the current conversation at this point',
   cmd_sandbox_toggle: 'Toggle sandbox mode',
@@ -750,8 +750,8 @@ export const en: TranslationKeys = {
   cmd_login_switch: 'Switch Anthropic accounts',
   cmd_login_signin: 'Sign in with your Anthropic account',
   cmd_plugin: 'Manage ZeroCLI plugins',
-  cmd_chrome: 'Claude in Chrome (Beta) settings',
-  cmd_install_slack: 'Install the Claude Slack app',
+  cmd_chrome: 'Zero in Chrome (Beta) settings',
+  cmd_install_slack: 'Install the Zero Slack app',
   cmd_color: 'Set the prompt bar color for this session',
   cmd_thinkback: 'Your 2025 ZeroCLI Year in Review',
   cmd_thinkback_play: 'Play the thinkback animation',
@@ -760,8 +760,8 @@ export const en: TranslationKeys = {
   cmd_remote_env: 'Configure the default remote environment for teleport sessions',
   cmd_rate_limit_options: 'Show options when rate limit is reached',
   cmd_heapdump: 'Dump the JS heap to ~/Desktop',
-  cmd_install_github_app: 'Set up Claude GitHub Actions for a repository',
-  cmd_desktop: 'Continue the current session in Claude Desktop',
+  cmd_install_github_app: 'Set up Zero GitHub Actions for a repository',
+  cmd_desktop: 'Continue the current session in Zero Desktop',
   cmd_web_setup: 'Setup ZeroCLI on the web (requires connecting your GitHub account)',
 
   // UI strings – startup screen, footer, IDE indicator
@@ -992,7 +992,7 @@ export const en: TranslationKeys = {
   agents_plugin_source: 'Plugin agents',
   agents_create_new: 'Create new agent',
   agents_no_agents_subtitle: 'No agents found',
-  agents_no_agents_desc1: 'No agents found. Create specialized subagents that Claude can delegate to.',
+  agents_no_agents_desc1: 'No agents found. Create specialized subagents that Zero can delegate to.',
   agents_no_agents_desc2: 'Each subagent has its own context window, custom system prompt, and specific tools.',
   agents_no_agents_desc3: 'Try creating: Code Reviewer, Code Simplifier, Security Reviewer, Tech Lead, or UX Reviewer.',
   agents_builtin_always_available_title: 'Built-in (always available):',
@@ -1213,7 +1213,7 @@ export const en: TranslationKeys = {
   cmd_batch: 'Research and plan a large-scale change, then execute it in parallel across 5–30 isolated worktree agents that each open a PR.',
   cmd_loop: 'Run a prompt on a fixed interval or dynamically reschedule it, including bare maintenance-mode loops.',
   cmd_simplify: 'Review changed code for reuse, quality, and efficiency, then fix any issues found.',
-  cmd_update_config: 'Use this skill to configure the Zero CLI harness via settings.json. Automated behaviors ("from now on when X", "each time X", "whenever X", "before/after X") require hooks configured in settings.json - the harness executes these, not Claude, so memory/preferences cannot fulfill them. Also use for: permissions ("allow X", "add permission", "move permission to"), env vars ("set X=Y"), hook troubleshooting, or any changes to settings.json/settings.local.json files. For simple settings like theme/model, use Config tool.',
+  cmd_update_config: 'Use this skill to configure the Zero CLI harness via settings.json. Automated behaviors ("from now on when X", "each time X", "whenever X", "before/after X") require hooks configured in settings.json - the harness executes these, not Zero, so memory/preferences cannot fulfill them. Also use for: permissions ("allow X", "add permission", "move permission to"), env vars ("set X=Y"), hook troubleshooting, or any changes to settings.json/settings.local.json files. For simple settings like theme/model, use Config tool.',
   cmd_dream: 'Run memory consolidation — synthesize recent sessions into durable memories',
   cmd_bridge_kick: 'Inject bridge failure states for manual recovery testing',
   cmd_commit_push_pr: 'Commit, push, and open a PR',
@@ -1249,12 +1249,12 @@ export const en: TranslationKeys = {
     'custom-commands': 'Create skills by adding .md files to .claude/skills/ in your project or ~/.claude/skills/ for skills that work in any project',
     'custom-agents': 'Use /agents to optimize specific tasks. Eg. Software Architect, Code Writer, Code Reviewer',
     'agent-flag': 'Use --agent <agent_name> to directly start a conversation with a subagent',
-    'desktop-app': 'Run ZeroCLI locally or remotely using the Claude desktop app: clau.de/desktop',
+    'desktop-app': 'Run ZeroCLI locally or remotely using the Zero desktop app: clau.de/desktop',
     'web-app': 'Run tasks in the cloud while you keep coding locally \u00b7 clau.de/web',
-    'mobile-app': '/mobile to use ZeroCLI from the Claude app on your phone',
+    'mobile-app': '/mobile to use ZeroCLI from the Zero app on your phone',
     'feedback-command': 'Use /feedback to help us improve!',
     'clear': 'Use /clear to start fresh when switching topics and free up context',
-    'btw': "Use /btw to ask a quick side question without interrupting Claude's current work",
+    'btw': "Use /btw to ask a quick side question without interrupting Zero's current work",
   },
 
   // Away summary (while-you-were-away recap)

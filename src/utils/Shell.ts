@@ -30,7 +30,7 @@ export type { ExecResult } from './ShellCommand.js'
 
 import { accessSync } from 'fs'
 import { onCwdChangedForHooks } from './hooks/fileChangedWatcher.js'
-import { getClaudeTempDirName } from './permissions/filesystem.js'
+import { getZeroTempDirName } from './permissions/filesystem.js'
 import { getPlatform } from './platform.js'
 import { SandboxManager } from './sandbox/sandbox-adapter.js'
 import { invalidateSessionEnvCache } from './sessionEnvironment.js'
@@ -127,7 +127,7 @@ export async function findSuitableShell(): Promise<string> {
   // If no valid shell found, throw a helpful error
   if (!shellPath) {
     const errorMsg =
-      'No suitable shell found. Claude CLI requires a Posix shell environment. ' +
+      'No suitable shell found. Zero CLI requires a Posix shell environment. ' +
       'Please ensure you have a valid shell installed and the SHELL environment variable set.'
     logError(new Error(errorMsg))
     throw new Error(errorMsg)
@@ -203,7 +203,7 @@ export async function exec(
   // Sandbox temp directory - use per-user directory name to prevent multi-user permission conflicts
   const sandboxTmpDir = posixJoin(
     process.env.CLAUDE_CODE_TMPDIR || '/tmp',
-    getClaudeTempDirName(),
+    getZeroTempDirName(),
   )
 
   const { commandString: builtCommand, cwdFilePath } =
@@ -232,7 +232,7 @@ export async function exec(
       cwd = fallback
     } catch {
       return createFailedCommand(
-        `Working directory "${cwd}" no longer exists. Please restart Claude from an existing directory.`,
+        `Working directory "${cwd}" no longer exists. Please restart Zero from an existing directory.`,
       )
     }
   }

@@ -9,8 +9,8 @@ declare module '@ant/claude-for-chrome-mcp' {
   export const BROWSER_TOOLS: string[];
   export type Logger = { info(msg: string): void; error(msg: string): void; };
   export type PermissionMode = 'always' | 'ask' | 'never';
-  export class ClaudeForChromeContext {}
-  export function createClaudeForChromeMcpServer(ctx?: any): any;
+  export class ZeroForChromeContext {}
+  export function createZeroForChromeMcpServer(ctx?: any): any;
 }
 
 declare module 'ws' {

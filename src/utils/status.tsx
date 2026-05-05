@@ -3,14 +3,14 @@ import figures from 'figures';
 import * as React from 'react';
 import { color, Text } from '../ink.js';
 import type { MCPServerConnection } from '../services/mcp/types.js';
-import { getAccountInformation, isClaudeAISubscriber } from './auth.js';
+import { getAccountInformation, isZeroAISubscriber } from './auth.js';
 import { getLargeMemoryFiles, getMemoryFiles, MAX_MEMORY_CHARACTER_COUNT } from './claudemd.js';
 import { getDoctorDiagnostic } from './doctorDiagnostic.js';
 import { getAWSRegion, getDefaultVertexRegion, isEnvTruthy } from './envUtils.js';
 import { getDisplayPath } from './file.js';
 import { formatNumber } from './format.js';
 import { getIdeClientName, type IDEExtensionInstallationStatus, isJetBrainsIde, toIDEDisplayName } from './ide.js';
-import { getClaudeAiUserDefaultModelDescription, modelDisplayString } from './model/model.js';
+import { getZeroAiUserDefaultModelDescription, modelDisplayString } from './model/model.js';
 import { getAPIProvider } from './model/providers.js';
 import { resolveProviderRequest } from '../services/api/providerConfig.js';
 import { getMTLSConfig } from './mtls.js';
@@ -450,8 +450,8 @@ export function buildAPIProviderProperties(): Property[] {
 }
 export function getModelDisplayLabel(mainLoopModel: string | null): string {
   let modelLabel = modelDisplayString(mainLoopModel);
-  if (mainLoopModel === null && isClaudeAISubscriber()) {
-    const description = getClaudeAiUserDefaultModelDescription();
+  if (mainLoopModel === null && isZeroAISubscriber()) {
+    const description = getZeroAiUserDefaultModelDescription();
     modelLabel = `${chalk.bold('Default')} ${description}`;
   }
   return modelLabel;

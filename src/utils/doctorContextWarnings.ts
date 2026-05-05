@@ -40,7 +40,7 @@ export type ContextWarnings = {
   unreachableRulesWarning: ContextWarning | null
 }
 
-async function checkClaudeMdFiles(): Promise<ContextWarning | null> {
+async function checkZeroMdFiles(): Promise<ContextWarning | null> {
   const largeFiles = getLargeMemoryFiles(await getMemoryFiles())
 
   // This already filters for files > 40k chars each
@@ -250,7 +250,7 @@ export async function checkContextWarnings(
 ): Promise<ContextWarnings> {
   const [claudeMdWarning, agentWarning, mcpWarning, unreachableRulesWarning] =
     await Promise.all([
-      checkClaudeMdFiles(),
+      checkZeroMdFiles(),
       checkAgentDescriptions(agentInfo),
       checkMcpTools(tools, getToolPermissionContext, agentInfo),
       checkUnreachableRules(getToolPermissionContext),

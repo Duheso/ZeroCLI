@@ -42,10 +42,10 @@ import {
   logEvent,
 } from 'src/services/analytics/index.js'
 import {
-  dedupClaudeAiMcpServers,
+  dedupZeroAiMcpServers,
   doesEnterpriseMcpConfigExist,
   filterMcpServersByPolicy,
-  getClaudeCodeMcpConfigs,
+  getZeroCodeMcpConfigs,
   isMcpServerDisabled,
   setMcpServerEnabled,
 } from 'src/services/mcp/config.js'
@@ -77,8 +77,8 @@ import {
   isChannelPermissionRelayEnabled,
 } from './channelPermissions.js'
 import {
-  clearClaudeAIMcpConfigsCache,
-  fetchClaudeAIMcpConfigsIfEligible,
+  clearZeroAIMcpConfigsCache,
+  fetchZeroAIMcpConfigsIfEligible,
 } from './claudeai.js'
 import { registerElicitationHandler } from './elicitationHandler.js'
 import { getMcpPrefix } from './mcpStringUtils.js'
@@ -147,7 +147,7 @@ export function useManageMCPConnections(
   const store = useAppStateStore()
   const _authVersion = useAppState(s => s.authVersion)
   // Incremented by /reload-plugins (refreshActivePlugins) to pick up newly
-  // enabled plugin MCP servers. getClaudeCodeMcpConfigs() reads loadAllPlugins()
+  // enabled plugin MCP servers. getZeroCodeMcpConfigs() reads loadAllPlugins()
   // which has been cleared by refreshActivePlugins, so the effects below see
   // fresh plugin data on re-run.
   const _pluginReconnectKey = useAppState(s => s.mcp.pluginReconnectKey)
@@ -184,7 +184,7 @@ export function useManageMCPConnections(
       // ship without this. Checked at mount; mid-session flips need restart.
       // If off, callbacks never go into AppState → interactiveHandler sees
       // undefined → never sends → intercept has nothing pending → "yes tbxkq"
-      // flows to Claude as normal chat. One gate, full disable.
+      // flows to Zero as normal chat. One gate, full disable.
       if (!isChannelPermissionRelayEnabled()) return
       setAppState(prev => {
         if (prev.channelPermissionCallbacks === callbacks) return prev
@@ -773,7 +773,7 @@ export function useManageMCPConnections(
     async function initializeServersAsPending() {
       const { servers: existingConfigs, errors: mcpErrors } = isStrictMcpConfig
         ? { servers: {}, errors: [] }
-        : await getClaudeCodeMcpConfigs(dynamicMcpConfig)
+        : await getZeroCodeMcpConfigs(dynamicMcpConfig)
       const configs = { ...existingConfigs, ...dynamicMcpConfig }
 
       // Add MCP errors to plugin errors for UI visibility (deduplicated)
@@ -862,14 +862,14 @@ export function useManageMCPConnections(
       // Clear claude.ai MCP cache so we fetch fresh configs with current auth
       // state. This is important when authVersion changes (e.g., after login/
       // logout). Kick off the fetch now so it overlaps with loadAllPlugins()
-      // inside getClaudeCodeMcpConfigs; it's awaited only at the dedup step.
+      // inside getZeroCodeMcpConfigs; it's awaited only at the dedup step.
       // Phase 2 below awaits the same promise — no second network call.
       let claudeaiPromise: Promise<Record<string, ScopedMcpServerConfig>>
       if (isStrictMcpConfig || doesEnterpriseMcpConfigExist()) {
         claudeaiPromise = Promise.resolve({})
       } else {
-        clearClaudeAIMcpConfigsCache()
-        claudeaiPromise = fetchClaudeAIMcpConfigsIfEligible()
+        clearZeroAIMcpConfigsCache()
+        claudeaiPromise = fetchZeroAIMcpConfigsIfEligible()
       }
 
       // Phase 1: Load ZeroCLI configs. Plugin MCP servers that duplicate a
@@ -878,7 +878,7 @@ export function useManageMCPConnections(
       const { servers: claudeCodeConfigs, errors: mcpErrors } =
         isStrictMcpConfig
           ? { servers: {}, errors: [] }
-          : await getClaudeCodeMcpConfigs(dynamicMcpConfig, claudeaiPromise)
+          : await getZeroCodeMcpConfigs(dynamicMcpConfig, claudeaiPromise)
       if (cancelled) return
 
       // Add MCP errors to plugin errors for UI visibility (deduplicated)
@@ -913,11 +913,11 @@ export function useManageMCPConnections(
         // Keys never collide (`slack` vs `claude.ai Slack`) so the merge below
         // won't catch this — need content-based dedup by URL signature.
         if (Object.keys(claudeaiConfigs).length > 0) {
-          const { servers: dedupedClaudeAi } = dedupClaudeAiMcpServers(
+          const { servers: dedupedZeroAi } = dedupZeroAiMcpServers(
             claudeaiConfigs,
             configs,
           )
-          claudeaiConfigs = dedupedClaudeAi
+          claudeaiConfigs = dedupedZeroAi
         }
 
         if (Object.keys(claudeaiConfigs).length > 0) {
@@ -946,14 +946,14 @@ export function useManageMCPConnections(
           })
 
           // Now start connecting (only enabled servers)
-          const enabledClaudeaiConfigs = Object.fromEntries(
+          const enabledZeroaiConfigs = Object.fromEntries(
             Object.entries(claudeaiConfigs).filter(
               ([name]) => !isMcpServerDisabled(name),
             ),
           )
           getMcpToolsCommandsAndResources(
             onConnectionAttempt,
-            enabledClaudeaiConfigs,
+            enabledZeroaiConfigs,
           ).catch(error => {
             logMCPError(
               'useManageMcpConnections',

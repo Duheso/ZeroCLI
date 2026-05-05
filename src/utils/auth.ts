@@ -33,7 +33,7 @@ import {
 import {
   isOAuthTokenExpired,
   refreshOAuthToken,
-  shouldUseClaudeAIAuth,
+  shouldUseZeroAIAuth,
 } from '../services/oauth/client.js'
 import { getOauthProfileFromOauthToken } from '../services/oauth/getOauthProfile.js'
 import type { OAuthTokens, SubscriptionType } from '../services/oauth/types.js'
@@ -60,7 +60,7 @@ import {
 } from './config.js'
 import { logAntError, logForDebugging } from './debug.js'
 import {
-  getClaudeConfigHomeDir,
+  getZeroConfigHomeDir,
   isBareMode,
   isEnvTruthy,
   isRunningOnHomespace,
@@ -92,7 +92,7 @@ import { clearToolSchemaCache } from './toolSchemaCache.js'
 const DEFAULT_API_KEY_HELPER_TTL = 5 * 60 * 1000
 
 /**
- * CCR and Claude Desktop spawn the CLI with OAuth and should never fall back
+ * CCR and Zero Desktop spawn the CLI with OAuth and should never fall back
  * to the user's ~/.claude/settings.json API-key config (apiKeyHelper,
  * env.ANTHROPIC_API_KEY, env.ANTHROPIC_AUTH_TOKEN). Those settings exist for
  * the user's terminal CLI, not managed sessions. Without this guard, a user
@@ -212,8 +212,8 @@ export function getAuthTokenSource() {
     return { source: 'apiKeyHelper' as const, hasToken: true }
   }
 
-  const oauthTokens = getClaudeAIOAuthTokens()
-  if (shouldUseClaudeAIAuth(oauthTokens?.scopes) && oauthTokens?.accessToken) {
+  const oauthTokens = getZeroAIOAuthTokens()
+  if (shouldUseZeroAIAuth(oauthTokens?.scopes) && oauthTokens?.accessToken) {
     return { source: 'claude.ai' as const, hasToken: true }
   }
 
@@ -1212,7 +1212,7 @@ export function saveOAuthTokensIfNeeded(tokens: OAuthTokens): {
   success: boolean
   warning?: string
 } {
-  if (!shouldUseClaudeAIAuth(tokens.scopes)) {
+  if (!shouldUseZeroAIAuth(tokens.scopes)) {
     logEvent('tengu_oauth_tokens_not_claude_ai', {})
     return { success: true }
   }
@@ -1253,7 +1253,7 @@ export function saveOAuthTokensIfNeeded(tokens: OAuthTokens): {
       logEvent('tengu_oauth_tokens_save_failed', { storageBackend })
     }
 
-    getClaudeAIOAuthTokens.cache?.clear?.()
+    getZeroAIOAuthTokens.cache?.clear?.()
     clearBetasCaches()
     clearToolSchemaCache()
     return updateStatus
@@ -1269,7 +1269,7 @@ export function saveOAuthTokensIfNeeded(tokens: OAuthTokens): {
   }
 }
 
-export const getClaudeAIOAuthTokens = memoize((): OAuthTokens | null => {
+export const getZeroAIOAuthTokens = memoize((): OAuthTokens | null => {
   // --bare: API-key-only. No OAuth env tokens, no keychain, no credentials file.
   if (isBareMode()) return null
 
@@ -1323,7 +1323,7 @@ export const getClaudeAIOAuthTokens = memoize((): OAuthTokens | null => {
  * server (e.g., due to clock corrections after token was issued).
  */
 export function clearOAuthTokenCache(): void {
-  getClaudeAIOAuthTokens.cache?.clear?.()
+  getZeroAIOAuthTokens.cache?.clear?.()
   clearKeychainCache()
 }
 
@@ -1337,7 +1337,7 @@ let lastCredentialsMtimeMs = 0
 async function invalidateOAuthCacheIfDiskChanged(): Promise<void> {
   try {
     const { mtimeMs } = await stat(
-      join(getClaudeConfigHomeDir(), '.credentials.json'),
+      join(getZeroConfigHomeDir(), '.credentials.json'),
     )
     if (mtimeMs !== lastCredentialsMtimeMs) {
       lastCredentialsMtimeMs = mtimeMs
@@ -1348,7 +1348,7 @@ async function invalidateOAuthCacheIfDiskChanged(): Promise<void> {
     // the memoize so it delegates to the keychain cache's 30s TTL instead
     // of caching forever on top. `security find-generic-password` is
     // ~15ms; bounded to once per 30s by the keychain cache.
-    getClaudeAIOAuthTokens.cache?.clear?.()
+    getZeroAIOAuthTokens.cache?.clear?.()
   }
 }
 
@@ -1392,7 +1392,7 @@ async function handleOAuth401ErrorImpl(
 ): Promise<boolean> {
   // Clear caches and re-read from keychain (async — sync read blocks ~100ms/call)
   clearOAuthTokenCache()
-  const currentTokens = await getClaudeAIOAuthTokensAsync()
+  const currentTokens = await getZeroAIOAuthTokensAsync()
 
   if (!currentTokens?.refreshToken) {
     return false
@@ -1413,7 +1413,7 @@ async function handleOAuth401ErrorImpl(
  * Delegates to the sync memoized version for env var / file descriptor tokens
  * (which don't hit the keychain), and only uses async for storage reads.
  */
-export async function getClaudeAIOAuthTokensAsync(): Promise<OAuthTokens | null> {
+export async function getZeroAIOAuthTokensAsync(): Promise<OAuthTokens | null> {
   if (isBareMode()) return null
 
   // Env var and FD tokens are sync and don't hit the keychain
@@ -1421,7 +1421,7 @@ export async function getClaudeAIOAuthTokensAsync(): Promise<OAuthTokens | null>
     process.env.CLAUDE_CODE_OAUTH_TOKEN ||
     getOAuthTokenFromFileDescriptor()
   ) {
-    return getClaudeAIOAuthTokens()
+    return getZeroAIOAuthTokens()
   }
 
   try {
@@ -1471,7 +1471,7 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
 
   // First check if token is expired with cached value
   // Skip this check if force=true (server already told us token is bad)
-  const tokens = getClaudeAIOAuthTokens()
+  const tokens = getZeroAIOAuthTokens()
   if (!force) {
     if (!tokens?.refreshToken || !isOAuthTokenExpired(tokens.expiresAt)) {
       return false
@@ -1482,15 +1482,15 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
     return false
   }
 
-  if (!shouldUseClaudeAIAuth(tokens.scopes)) {
+  if (!shouldUseZeroAIAuth(tokens.scopes)) {
     return false
   }
 
   // Re-read tokens async to check if they're still expired
   // Another process might have refreshed them
-  getClaudeAIOAuthTokens.cache?.clear?.()
+  getZeroAIOAuthTokens.cache?.clear?.()
   clearKeychainCache()
-  const freshTokens = await getClaudeAIOAuthTokensAsync()
+  const freshTokens = await getZeroAIOAuthTokensAsync()
   if (
     !freshTokens?.refreshToken ||
     !isOAuthTokenExpired(freshTokens.expiresAt)
@@ -1499,7 +1499,7 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
   }
 
   // Tokens are still expired, try to acquire lock and refresh
-  const claudeDir = getClaudeConfigHomeDir()
+  const claudeDir = getZeroConfigHomeDir()
   await mkdir(claudeDir, { recursive: true })
 
   let release
@@ -1533,9 +1533,9 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
   }
   try {
     // Check one more time after acquiring lock
-    getClaudeAIOAuthTokens.cache?.clear?.()
+    getZeroAIOAuthTokens.cache?.clear?.()
     clearKeychainCache()
-    const lockedTokens = await getClaudeAIOAuthTokensAsync()
+    const lockedTokens = await getZeroAIOAuthTokensAsync()
     if (
       !lockedTokens?.refreshToken ||
       !isOAuthTokenExpired(lockedTokens.expiresAt)
@@ -1546,25 +1546,25 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
 
     logEvent('tengu_oauth_token_refresh_starting', {})
     const refreshedTokens = await refreshOAuthToken(lockedTokens.refreshToken, {
-      // For Claude.ai subscribers, omit scopes so the default
+      // For Zero.ai subscribers, omit scopes so the default
       // CLAUDE_AI_OAUTH_SCOPES applies — this allows scope expansion
       // (e.g. adding user:file_upload) on refresh without re-login.
-      scopes: shouldUseClaudeAIAuth(lockedTokens.scopes)
+      scopes: shouldUseZeroAIAuth(lockedTokens.scopes)
         ? undefined
         : lockedTokens.scopes,
     })
     saveOAuthTokensIfNeeded(refreshedTokens)
 
     // Clear the cache after refreshing token
-    getClaudeAIOAuthTokens.cache?.clear?.()
+    getZeroAIOAuthTokens.cache?.clear?.()
     clearKeychainCache()
     return true
   } catch (error) {
     logError(error)
 
-    getClaudeAIOAuthTokens.cache?.clear?.()
+    getZeroAIOAuthTokens.cache?.clear?.()
     clearKeychainCache()
-    const currentTokens = await getClaudeAIOAuthTokensAsync()
+    const currentTokens = await getZeroAIOAuthTokensAsync()
     if (currentTokens && !isOAuthTokenExpired(currentTokens.expiresAt)) {
       logEvent('tengu_oauth_token_refresh_race_recovered', {})
       return true
@@ -1578,12 +1578,12 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
   }
 }
 
-export function isClaudeAISubscriber(): boolean {
+export function isZeroAISubscriber(): boolean {
   if (!isAnthropicAuthEnabled()) {
     return false
   }
 
-  return shouldUseClaudeAIAuth(getClaudeAIOAuthTokens()?.scopes)
+  return shouldUseZeroAIAuth(getZeroAIOAuthTokens()?.scopes)
 }
 
 /**
@@ -1596,13 +1596,13 @@ export function isClaudeAISubscriber(): boolean {
  */
 export function hasProfileScope(): boolean {
   return (
-    getClaudeAIOAuthTokens()?.scopes?.includes(CLAUDE_AI_PROFILE_SCOPE) ?? false
+    getZeroAIOAuthTokens()?.scopes?.includes(CLAUDE_AI_PROFILE_SCOPE) ?? false
   )
 }
 
 export function is1PApiCustomer(): boolean {
   // 1P API customers are users who are NOT:
-  // 1. Claude.ai subscribers (Max, Pro, Enterprise, Team)
+  // 1. Zero.ai subscribers (Max, Pro, Enterprise, Team)
   // 2. Vertex AI users
   // 3. AWS Bedrock users
   // 4. Foundry users
@@ -1616,8 +1616,8 @@ export function is1PApiCustomer(): boolean {
     return false
   }
 
-  // Exclude Claude.ai subscribers
-  if (isClaudeAISubscriber()) {
+  // Exclude Zero.ai subscribers
+  if (isZeroAISubscriber()) {
     return false
   }
 
@@ -1641,8 +1641,8 @@ export function isOverageProvisioningAllowed(): boolean {
   const accountInfo = getOauthAccountInfo()
   const billingType = accountInfo?.billingType
 
-  // Must be a Claude subscriber with a supported subscription type
-  if (!isClaudeAISubscriber() || !billingType) {
+  // Must be a Zero subscriber with a supported subscription type
+  if (!isZeroAISubscriber() || !billingType) {
     return false
   }
 
@@ -1685,7 +1685,7 @@ export function getSubscriptionType(): SubscriptionType | null {
   if (!isAnthropicAuthEnabled()) {
     return null
   }
-  const oauthTokens = getClaudeAIOAuthTokens()
+  const oauthTokens = getZeroAIOAuthTokens()
   if (!oauthTokens) {
     return null
   }
@@ -1720,7 +1720,7 @@ export function getRateLimitTier(): string | null {
   if (!isAnthropicAuthEnabled()) {
     return null
   }
-  const oauthTokens = getClaudeAIOAuthTokens()
+  const oauthTokens = getZeroAIOAuthTokens()
   if (!oauthTokens) {
     return null
   }
@@ -1733,15 +1733,15 @@ export function getSubscriptionName(): string {
 
   switch (subscriptionType) {
     case 'enterprise':
-      return 'Claude Enterprise'
+      return 'Zero Enterprise'
     case 'team':
-      return 'Claude Team'
+      return 'Zero Team'
     case 'max':
-      return 'Claude Max'
+      return 'Zero Max'
     case 'pro':
-      return 'Claude Pro'
+      return 'Zero Pro'
     default:
-      return 'Claude API'
+      return 'Zero API'
   }
 }
 
@@ -1867,7 +1867,7 @@ function isConsumerPlan(plan: SubscriptionType): plan is 'max' | 'pro' {
 export function isConsumerSubscriber(): boolean {
   const subscriptionType = getSubscriptionType()
   return (
-    isClaudeAISubscriber() &&
+    isZeroAISubscriber() &&
     subscriptionType !== null &&
     isConsumerPlan(subscriptionType)
   )
@@ -1894,7 +1894,7 @@ export function getAccountInformation() {
     authTokenSource === 'CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR'
   ) {
     accountInfo.tokenSource = authTokenSource
-  } else if (isClaudeAISubscriber()) {
+  } else if (isZeroAISubscriber()) {
     accountInfo.subscription = getSubscriptionName()
   } else {
     accountInfo.tokenSource = authTokenSource
@@ -1963,7 +1963,7 @@ export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
   // No-op for env-var tokens (refreshToken is null).
   await checkAndRefreshOAuthTokenIfNeeded()
 
-  const tokens = getClaudeAIOAuthTokens()
+  const tokens = getZeroAIOAuthTokens()
   if (!tokens) {
     return { valid: true }
   }

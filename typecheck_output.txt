@@ -561,12 +561,12 @@ src/components/BridgeDialog.tsx(389,17): error TS7006: Parameter 's_2' implicitl
 src/components/BridgeDialog.tsx(392,17): error TS7006: Parameter 's_1' implicitly has an 'any' type.
 src/components/BridgeDialog.tsx(395,17): error TS7006: Parameter 's_0' implicitly has an 'any' type.
 src/components/BridgeDialog.tsx(398,16): error TS7006: Parameter 's' implicitly has an 'any' type.
-src/components/ClaudeInChromeOnboarding.tsx(14,42): error TS7006: Parameter 't0' implicitly has an 'any' type.
-src/components/ClaudeInChromeOnboarding.tsx(21,7): error TS7034: Variable 't2' implicitly has type 'any[]' in some locations where its type cannot be determined.
-src/components/ClaudeInChromeOnboarding.tsx(30,12): error TS7005: Variable 't2' implicitly has an 'any[]' type.
-src/components/ClaudeInChromeOnboarding.tsx(38,11): error TS7006: Parameter '_input' implicitly has an 'any' type.
-src/components/ClaudeInChromeOnboarding.tsx(38,19): error TS7006: Parameter 'key' implicitly has an 'any' type.
-src/components/ClaudeInChromeOnboarding.tsx(115,16): error TS7006: Parameter 'current' implicitly has an 'any' type.
+src/components/ZeroInChromeOnboarding.tsx(14,42): error TS7006: Parameter 't0' implicitly has an 'any' type.
+src/components/ZeroInChromeOnboarding.tsx(21,7): error TS7034: Variable 't2' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/components/ZeroInChromeOnboarding.tsx(30,12): error TS7005: Variable 't2' implicitly has an 'any[]' type.
+src/components/ZeroInChromeOnboarding.tsx(38,11): error TS7006: Parameter '_input' implicitly has an 'any' type.
+src/components/ZeroInChromeOnboarding.tsx(38,19): error TS7006: Parameter 'key' implicitly has an 'any' type.
+src/components/ZeroInChromeOnboarding.tsx(115,16): error TS7006: Parameter 'current' implicitly has an 'any' type.
 src/components/CompactSummary.tsx(6,44): error TS2307: Cannot find module '../types/message.js' or its corresponding type declarations.
 src/components/CompactSummary.tsx(14,32): error TS7006: Parameter 't0' implicitly has an 'any' type.
 src/components/ConfigurableShortcutHint.tsx(3,62): error TS2307: Cannot find module '../keybindings/types.js' or its corresponding type declarations.
@@ -2628,7 +2628,7 @@ src/hooks/useChromeExtensionNotification.tsx(17,26): error TS2345: Argument of t
             Type '{ key: string; jsx: JSX.Element; priority: string; timeoutMs: number; text?: undefined; }' is not assignable to type 'BaseNotification'.
               Types of property 'priority' are incompatible.
                 Type 'string' is not assignable to type 'Priority'.
-src/hooks/useClaudeCodeHintRecommendation.tsx(66,10): error TS7006: Parameter 'response' implicitly has an 'any' type.
+src/hooks/useZeroCodeHintRecommendation.tsx(66,10): error TS7006: Parameter 'response' implicitly has an 'any' type.
 src/hooks/useCommandKeybindings.tsx(37,43): error TS7006: Parameter 't0' implicitly has an 'any' type.
 src/hooks/useCommandKeybindings.tsx(80,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
 src/hooks/useDeferredHookMessages.ts(2,49): error TS2307: Cannot find module '../types/message.js' or its corresponding type declarations.
@@ -2675,8 +2675,8 @@ src/hooks/usePasteHandler.test.ts(5,8): error TS5097: An import path can only en
 src/hooks/usePluginRecommendationBase.tsx(30,10): error TS7006: Parameter 'resolve' implicitly has an 'any' type.
 src/hooks/usePluginRecommendationBase.tsx(41,22): error TS7006: Parameter 'rec' implicitly has an 'any' type.
 src/hooks/usePromptSuggestion.ts(27,40): error TS7006: Parameter 's' implicitly has an 'any' type.
-src/hooks/usePromptsFromClaudeInChrome.tsx(31,46): error TS7006: Parameter 'mcpClients' implicitly has an 'any' type.
-src/hooks/usePromptsFromClaudeInChrome.tsx(31,58): error TS7006: Parameter 'toolPermissionMode' implicitly has an 'any' type.
+src/hooks/usePromptsFromZeroInChrome.tsx(31,46): error TS7006: Parameter 'mcpClients' implicitly has an 'any' type.
+src/hooks/usePromptsFromZeroInChrome.tsx(31,58): error TS7006: Parameter 'toolPermissionMode' implicitly has an 'any' type.
 src/hooks/useRemoteSession.ts(4,34): error TS2307: Cannot find module '../components/Spinner/types.js' or its corresponding type declarations.
 src/hooks/useRemoteSession.ts(22,45): error TS2307: Cannot find module '../types/message.js' or its corresponding type declarations.
 src/hooks/useRemoteSession.ts(294,23): error TS7006: Parameter 'block' implicitly has an 'any' type.

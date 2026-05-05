@@ -120,7 +120,7 @@ type State = {
   lastClassifierRequests: unknown[] | null
   // CLAUDE.md content cached by context.ts for the auto-mode classifier.
   // Breaks the yoloClassifier → claudemd → filesystem → permissions cycle.
-  cachedClaudeMdContent: string | null
+  cachedZeroMdContent: string | null
   // In-memory error log for recent errors
   inMemoryErrorLog: Array<{ error: string; timestamp: string }>
   // Session-only plugins from --plugin-dir flag
@@ -204,7 +204,7 @@ type State = {
   // Last date emitted to the model (for detecting midnight date changes)
   lastEmittedDate: string | null
   // Additional directories from --add-dir flag (for CLAUDE.md loading)
-  additionalDirectoriesForClaudeMd: string[]
+  additionalDirectoriesForZeroMd: string[]
   // Channel server allowlist from --channels flag (servers whose channel
   // notifications should register this session). Parsed once in main.tsx —
   // the tag decides trust model: 'plugin' → marketplace verification +
@@ -344,7 +344,7 @@ function getInitialState(): State {
     lastAPIRequestMessages: null,
     // Last auto-mode classifier request(s) for /share transcript
     lastClassifierRequests: null,
-    cachedClaudeMdContent: null,
+    cachedZeroMdContent: null,
     // In-memory error log for recent errors
     inMemoryErrorLog: [],
     // Session-only plugins from --plugin-dir flag
@@ -400,7 +400,7 @@ function getInitialState(): State {
     // Last date emitted to the model
     lastEmittedDate: null,
     // Additional directories from --add-dir flag (for CLAUDE.md loading)
-    additionalDirectoriesForClaudeMd: [],
+    additionalDirectoriesForZeroMd: [],
     // Channel server allowlist from --channels flag
     allowedChannels: [],
     hasDevChannels: false,
@@ -1204,12 +1204,12 @@ export function getLastClassifierRequests(): unknown[] | null {
   return STATE.lastClassifierRequests
 }
 
-export function setCachedClaudeMdContent(content: string | null): void {
-  STATE.cachedClaudeMdContent = content
+export function setCachedZeroMdContent(content: string | null): void {
+  STATE.cachedZeroMdContent = content
 }
 
-export function getCachedClaudeMdContent(): string | null {
-  return STATE.cachedClaudeMdContent
+export function getCachedZeroMdContent(): string | null {
+  return STATE.cachedZeroMdContent
 }
 
 export function addToInMemoryErrorLog(errorInfo: {
@@ -1627,14 +1627,14 @@ export function setLastEmittedDate(date: string | null): void {
   STATE.lastEmittedDate = date
 }
 
-export function getAdditionalDirectoriesForClaudeMd(): string[] {
-  return STATE.additionalDirectoriesForClaudeMd
+export function getAdditionalDirectoriesForZeroMd(): string[] {
+  return STATE.additionalDirectoriesForZeroMd
 }
 
-export function setAdditionalDirectoriesForClaudeMd(
+export function setAdditionalDirectoriesForZeroMd(
   directories: string[],
 ): void {
-  STATE.additionalDirectoriesForClaudeMd = directories
+  STATE.additionalDirectoriesForZeroMd = directories
 }
 
 export function getAllowedChannels(): ChannelEntry[] {

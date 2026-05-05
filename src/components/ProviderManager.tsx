@@ -1306,7 +1306,7 @@ export function ProviderManager({ mode, onDone }: Props): React.ReactNode {
       {
         value: 'anthropic',
         label: 'Anthropic',
-        description: 'Native Claude API (x-api-key auth)',
+        description: 'Native Zero API (x-api-key auth)',
       },
       {
         value: 'atomic-chat',

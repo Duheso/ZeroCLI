@@ -13,7 +13,7 @@ export function RejectedPlanMessage(t0: any) {
   } = t0;
   let t1;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t1 = <Text color="subtle">User rejected Claude's plan:</Text>;
+    t1 = <Text color="subtle">User rejected Zero's plan:</Text>;
     $[0] = t1;
   } else {
     t1 = $[0];

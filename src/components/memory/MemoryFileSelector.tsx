@@ -18,7 +18,7 @@ import type { AppState } from '../../state/AppStateStore.js';
 import { getAgentMemoryDir } from '../../tools/AgentTool/agentMemory.js';
 import { openPath } from '../../utils/browser.js';
 import { getMemoryFiles, type MemoryFileInfo } from '../../utils/claudemd.js';
-import { getClaudeConfigHomeDir } from '../../utils/envUtils.js';
+import { getZeroConfigHomeDir } from '../../utils/envUtils.js';
 import { getDisplayPath } from '../../utils/file.js';
 import { formatRelativeTimeAgo } from '../../utils/format.js';
 import { projectIsInGitRepo } from '../../utils/memory/versions.js';
@@ -51,7 +51,7 @@ export function MemoryFileSelector(t0: Props) {
   } = t0;
   const existingMemoryFiles = use(getMemoryFiles());
   const originalCwd = getOriginalCwd();
-  const userMemoryPath = join(getClaudeConfigHomeDir(), "CLAUDE.md");
+  const userMemoryPath = join(getZeroConfigHomeDir(), "CLAUDE.md");
   const projectMemoryPath = getProjectMemoryPathForSelector(existingMemoryFiles, originalCwd);
   const projectMemoryFileName = basename(projectMemoryPath);
   const hasUserMemory = existingMemoryFiles.some(f => f.path === userMemoryPath);

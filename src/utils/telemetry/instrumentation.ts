@@ -43,7 +43,7 @@ import {
   getOtelHeadersFromHelper,
   getSubscriptionType,
   is1PApiCustomer,
-  isClaudeAISubscriber,
+  isZeroAISubscriber,
 } from 'src/utils/auth.js'
 import { getPlatform, getWslVersion } from 'src/utils/platform.js'
 
@@ -59,7 +59,7 @@ import { jsonStringify } from '../slowOperations.js'
 import { profileCheckpoint } from '../startupProfiler.js'
 import { isBetaTracingEnabled } from './betaSessionTracing.js'
 import { BigQueryMetricsExporter } from './bigqueryExporter.js'
-import { ClaudeCodeDiagLogger } from './logger.js'
+import { ZeroCodeDiagLogger } from './logger.js'
 import { initializePerfettoTracing } from './perfettoTracing.js'
 import {
   endInteractionSpan,
@@ -335,12 +335,12 @@ function getBigQueryExportingReader() {
 
 function isBigQueryMetricsEnabled() {
   // BigQuery metrics are enabled for:
-  // 1. API customers (excluding Claude.ai subscribers and Bedrock/Vertex)
-  // 2. Claude for Enterprise (C4E) users
-  // 3. Claude for Teams users
+  // 1. API customers (excluding Zero.ai subscribers and Bedrock/Vertex)
+  // 2. Zero for Enterprise (C4E) users
+  // 3. Zero for Teams users
   const subscriptionType = getSubscriptionType()
   const isC4EOrTeamUser =
-    isClaudeAISubscriber() &&
+    isZeroAISubscriber() &&
     (subscriptionType === 'enterprise' || subscriptionType === 'team')
 
   return is1PApiCustomer() || isC4EOrTeamUser
@@ -446,7 +446,7 @@ export async function initializeTelemetry() {
     }
   }
 
-  diag.setLogger(new ClaudeCodeDiagLogger(), DiagLogLevel.ERROR)
+  diag.setLogger(new ZeroCodeDiagLogger(), DiagLogLevel.ERROR)
 
   // Initialize Perfetto tracing (independent of OTEL)
   // Enable via CLAUDE_CODE_PERFETTO_TRACE=1 or CLAUDE_CODE_PERFETTO_TRACE=<path>

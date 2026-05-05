@@ -12,7 +12,7 @@ const CHROME_PERMISSIONS_URL = 'https://github.com/Duheso/ZeroCLI#chrome-extensi
 type Props = {
   onDone(): void;
 };
-export function ClaudeInChromeOnboarding(t0: Props) {
+export function ZeroInChromeOnboarding(t0: Props) {
   const $ = _c(20);
   const {
     onDone
@@ -73,7 +73,7 @@ export function ClaudeInChromeOnboarding(t0: Props) {
   }
   let t7;
   if ($[10] !== t6) {
-    t7 = <Text dimColor={true}>Site-level permissions are inherited from the Chrome extension. Manage permissions in the Chrome extension settings to control which sites Claude can browse, click, and type on{t6}.</Text>;
+    t7 = <Text dimColor={true}>Site-level permissions are inherited from the Chrome extension. Manage permissions in the Chrome extension settings to control which sites Zero can browse, click, and type on{t6}.</Text>;
     $[10] = t6;
     $[11] = t7;
   } else {
@@ -116,6 +116,6 @@ export function ClaudeInChromeOnboarding(t0: Props) {
 function _temp(current: GlobalConfig): GlobalConfig {
   return {
     ...current,
-    hasCompletedClaudeInChromeOnboarding: true
+    hasCompletedZeroInChromeOnboarding: true
   };
 }

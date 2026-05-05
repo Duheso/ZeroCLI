@@ -11,7 +11,7 @@ import {
   type InstallMethod,
 } from './config.js'
 import { getCwd } from './cwd.js'
-import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
+import { getZeroConfigHomeDir, isEnvTruthy } from './envUtils.js'
 import { execFileNoThrow } from './execFileNoThrow.js'
 import { getFsImplementation } from './fsOperations.js'
 import {
@@ -37,8 +37,8 @@ import { SandboxManager } from './sandbox/sandbox-adapter.js'
 import { getManagedFilePath } from './settings/managedPath.js'
 import { CUSTOMIZATION_SURFACES } from './settings/types.js'
 import {
-  findClaudeAlias,
-  findValidClaudeAlias,
+  findZeroAlias,
+  findValidZeroAlias,
   getShellConfigPaths,
 } from './shellConfig.js'
 import { jsonParse } from './slowOperations.js'
@@ -476,8 +476,8 @@ async function detectConfigurationIssues(
     })
   }
 
-  const existingAlias = await findClaudeAlias()
-  const validAlias = await findValidClaudeAlias()
+  const existingAlias = await findZeroAlias()
+  const validAlias = await findValidZeroAlias()
 
   // Check if running local installation but it's not in PATH
   if (type === 'npm-local') {

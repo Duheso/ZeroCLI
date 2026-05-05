@@ -21,7 +21,7 @@ import type {
   SessionState,
 } from '../../utils/sessionState.js'
 import { sleep } from '../../utils/sleep.js'
-import { getClaudeCodeUserAgent } from '../../utils/userAgent.js'
+import { getZeroCodeUserAgent } from '../../utils/userAgent.js'
 import {
   RetryableError,
   SerialBatchEventUploader,
@@ -584,7 +584,7 @@ export class CCRClient {
             ...authHeaders,
             'Content-Type': 'application/json',
             'anthropic-version': '2023-06-01',
-            'User-Agent': getClaudeCodeUserAgent(),
+            'User-Agent': getZeroCodeUserAgent(),
           },
           validateStatus: alwaysValidStatus,
           timeout,
@@ -926,7 +926,7 @@ export class CCRClient {
           headers: {
             ...authHeaders,
             'anthropic-version': '2023-06-01',
-            'User-Agent': getClaudeCodeUserAgent(),
+            'User-Agent': getZeroCodeUserAgent(),
           },
           validateStatus: alwaysValidStatus,
           timeout: 30_000,

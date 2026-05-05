@@ -77,7 +77,7 @@ const _openBuildDefaults = {
  *   tengu_amber_stoat              = true       Built-in agent availability (Explore, Plan, etc.)
  *   tengu_agent_list_attach        = true       Attach file context to agent list
  *   tengu_auto_background_agents   = false      Auto-spawn background agents
- *   tengu_slim_subagent_claudemd   = true       Lighter ClaudeMD for subagents
+ *   tengu_slim_subagent_claudemd   = true       Lighter ZeroMD for subagents
  *   tengu_hive_evidence            = false      Verification agent / evidence tracking (4 call sites)
  *   tengu_ultraplan_model          = model cfg  ULTRAPLAN model selection (dynamic config)
  *
@@ -397,7 +397,7 @@ export function shouldShowUndercoverAutoNotice() { return false; }
 `,
 
 	'types/generated/events_mono/claude_code/v1/claude_code_internal_event': `
-export const ClaudeCodeInternalEvent = {
+export const ZeroCodeInternalEvent = {
   fromJSON: value => value,
   toJSON: value => value,
   create: value => value ?? {},

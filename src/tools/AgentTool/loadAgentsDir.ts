@@ -129,7 +129,7 @@ export type BaseAgentDefinition = {
    * (Explore, Plan) don't need commit/PR/lint guidelines — the main agent has
    * full CLAUDE.md and interprets their output. Saves ~5-15 Gtok/week across
    * 34M+ Explore spawns. Kill-switch: tengu_slim_subagent_claudemd. */
-  omitClaudeMd?: boolean
+  omitZeroMd?: boolean
 }
 
 // Built-in agents - dynamic prompts only, no static systemPrompt field

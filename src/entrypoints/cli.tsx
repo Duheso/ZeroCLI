@@ -168,9 +168,9 @@ async function main(): Promise<void> {
   if (process.argv[2] === '--claude-in-chrome-mcp') {
     profileCheckpoint('cli_claude_in_chrome_mcp_path');
     const {
-      runClaudeInChromeMcpServer
+      runZeroInChromeMcpServer
     } = await import('../utils/claudeInChrome/mcpServer.js');
-    await runClaudeInChromeMcpServer();
+    await runZeroInChromeMcpServer();
     return;
   } else if (process.argv[2] === '--chrome-native-host') {
     profileCheckpoint('cli_chrome_native_host_path');
@@ -230,9 +230,9 @@ async function main(): Promise<void> {
     // getBridgeDisabledReason awaits GB init, so the returned value is fresh
     // (not the stale disk cache), but init still needs auth headers to work.
     const {
-      getClaudeAIOAuthTokens
+      getZeroAIOAuthTokens
     } = await import('../utils/auth.js');
-    if (!getClaudeAIOAuthTokens()?.accessToken) {
+    if (!getZeroAIOAuthTokens()?.accessToken) {
       exitWithError(BRIDGE_LOGIN_ERROR);
     }
     const disabledReason = await getBridgeDisabledReason();

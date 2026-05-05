@@ -3,44 +3,44 @@ import { existsSync } from 'fs'
 import { homedir } from 'os'
 import { join } from 'path'
 
-export function resolveClaudeConfigHomeDir(options?: {
+export function resolveZeroConfigHomeDir(options?: {
   configDirEnv?: string
   homeDir?: string
-  openClaudeExists?: boolean
-  legacyClaudeExists?: boolean
+  openZeroExists?: boolean
+  legacyZeroExists?: boolean
 }): string {
   if (options?.configDirEnv) {
     return options.configDirEnv.normalize('NFC')
   }
 
   const homeDir = options?.homeDir ?? homedir()
-  const openClaudeDir = join(homeDir, '.zerocli')
-  const legacyClaudeDir = join(homeDir, '.claude')
-  const openClaudeExists =
-    options?.openClaudeExists ?? existsSync(openClaudeDir)
-  const legacyClaudeExists =
-    options?.legacyClaudeExists ?? existsSync(legacyClaudeDir)
+  const openZeroDir = join(homeDir, '.zerocli')
+  const legacyZeroDir = join(homeDir, '.claude')
+  const openZeroExists =
+    options?.openZeroExists ?? existsSync(openZeroDir)
+  const legacyZeroExists =
+    options?.legacyZeroExists ?? existsSync(legacyZeroDir)
 
   // Preserve existing user config/install state until we ship an explicit
   // migration. New installs (neither path exists) use ~/.zerocli.
-  if (!openClaudeExists && legacyClaudeExists) {
-    return legacyClaudeDir.normalize('NFC')
+  if (!openZeroExists && legacyZeroExists) {
+    return legacyZeroDir.normalize('NFC')
   }
 
-  return openClaudeDir.normalize('NFC')
+  return openZeroDir.normalize('NFC')
 }
 
 // Memoized: 150+ callers, many on hot paths. Keyed off CLAUDE_CONFIG_DIR so
 // tests that change the env var get a fresh value without explicit cache.clear.
-export const getClaudeConfigHomeDir = memoize(
-  (): string => resolveClaudeConfigHomeDir({
+export const getZeroConfigHomeDir = memoize(
+  (): string => resolveZeroConfigHomeDir({
     configDirEnv: process.env.CLAUDE_CONFIG_DIR,
   }),
   () => process.env.CLAUDE_CONFIG_DIR,
 )
 
 export function getTeamsDir(): string {
-  return join(getClaudeConfigHomeDir(), 'teams')
+  return join(getZeroConfigHomeDir(), 'teams')
 }
 
 /**

@@ -27,38 +27,38 @@ afterEach(() => {
 describe('Zero CLI paths', () => {
   test('defaults user config home to ~/.zerocli', async () => {
     delete process.env.CLAUDE_CONFIG_DIR
-    const { resolveClaudeConfigHomeDir } = await importFreshEnvUtils()
+    const { resolveZeroConfigHomeDir } = await importFreshEnvUtils()
 
     expect(
-      resolveClaudeConfigHomeDir({
+      resolveZeroConfigHomeDir({
         homeDir: homedir(),
-        openClaudeExists: true,
-        legacyClaudeExists: false,
+        openZeroExists: true,
+        legacyZeroExists: false,
       }),
     ).toBe(join(homedir(), '.zerocli'))
   })
 
   test('falls back to ~/.claude when legacy config exists and ~/.zerocli does not', async () => {
     delete process.env.CLAUDE_CONFIG_DIR
-    const { resolveClaudeConfigHomeDir } = await importFreshEnvUtils()
+    const { resolveZeroConfigHomeDir } = await importFreshEnvUtils()
 
     expect(
-      resolveClaudeConfigHomeDir({
+      resolveZeroConfigHomeDir({
         homeDir: homedir(),
-        openClaudeExists: false,
-        legacyClaudeExists: true,
+        openZeroExists: false,
+        legacyZeroExists: true,
       }),
     ).toBe(join(homedir(), '.claude'))
   })
 
   test('uses CLAUDE_CONFIG_DIR override when provided', async () => {
     process.env.CLAUDE_CONFIG_DIR = '/tmp/custom-zero'
-    const { getClaudeConfigHomeDir, resolveClaudeConfigHomeDir } =
+    const { getZeroConfigHomeDir, resolveZeroConfigHomeDir } =
       await importFreshEnvUtils()
 
-    expect(getClaudeConfigHomeDir()).toBe('/tmp/custom-zero')
+    expect(getZeroConfigHomeDir()).toBe('/tmp/custom-zero')
     expect(
-      resolveClaudeConfigHomeDir({
+      resolveZeroConfigHomeDir({
         configDirEnv: '/tmp/custom-zero',
       }),
     ).toBe('/tmp/custom-zero')
@@ -79,9 +79,9 @@ describe('Zero CLI paths', () => {
     // Force .zerocli config home so the test doesn't fall back to
     // ~/.claude when ~/.zerocli doesn't exist on this machine.
     process.env.CLAUDE_CONFIG_DIR = join(homedir(), '.zerocli')
-    const { getLocalClaudePath } = await importFreshLocalInstaller()
+    const { getLocalZeroPath } = await importFreshLocalInstaller()
 
-    expect(getLocalClaudePath()).toBe(
+    expect(getLocalZeroPath()).toBe(
       join(homedir(), '.zerocli', 'local', 'zero'),
     )
   })

@@ -1,13 +1,13 @@
 import type { Command } from '../../commands.js'
 import { t } from '../../i18n/index.js'
-import { isClaudeAISubscriber } from '../../utils/auth.js'
+import { isZeroAISubscriber } from '../../utils/auth.js'
 
 const rateLimitOptions = {
   type: 'local-jsx',
   name: 'rate-limit-options',
   description: t('cmd_rate_limit_options') as string,
   isEnabled: () => {
-    if (!isClaudeAISubscriber()) {
+    if (!isZeroAISubscriber()) {
       return false
     }
 

@@ -6,19 +6,19 @@ import { access, chmod, writeFile } from 'fs/promises'
 import { homedir } from 'os'
 import { join } from 'path'
 import { type ReleaseChannel, saveGlobalConfig } from './config.js'
-import { getClaudeConfigHomeDir } from './envUtils.js'
+import { getZeroConfigHomeDir } from './envUtils.js'
 import { getErrnoCode } from './errors.js'
 import { execFileNoThrowWithCwd } from './execFileNoThrow.js'
 import { getFsImplementation } from './fsOperations.js'
 import { logError } from './log.js'
 import { jsonStringify } from './slowOperations.js'
 
-// Lazy getters: getClaudeConfigHomeDir() is memoized and reads process.env.
+// Lazy getters: getZeroConfigHomeDir() is memoized and reads process.env.
 // Evaluating at module scope would capture the value before entrypoints like
 // hfi.tsx get a chance to set CLAUDE_CONFIG_DIR in main(), and would also
 // populate the memoize cache with that stale value for all 150+ other callers.
 function getLocalInstallDir(): string {
-  return join(getClaudeConfigHomeDir(), 'local')
+  return join(getZeroConfigHomeDir(), 'local')
 }
 
 function getLegacyLocalInstallDir(homeDir = homedir()): string {
@@ -30,7 +30,7 @@ export function getCandidateLocalInstallDirs(options?: {
   homeDir?: string
 }): string[] {
   const homeDir = options?.homeDir ?? homedir()
-  const configHomeDir = options?.configHomeDir ?? getClaudeConfigHomeDir()
+  const configHomeDir = options?.configHomeDir ?? getZeroConfigHomeDir()
   return Array.from(
     new Set([join(configHomeDir, 'local'), getLegacyLocalInstallDir(homeDir)]),
   )
@@ -51,7 +51,7 @@ export function isManagedLocalInstallationPath(execPath: string): boolean {
   )
 }
 
-export function getLocalClaudePath(): string {
+export function getLocalZeroPath(): string {
   return join(getLocalInstallDir(), 'zero')
 }
 
@@ -102,7 +102,7 @@ export async function ensureLocalPackageEnvironment(): Promise<boolean> {
     )
 
     // Create the wrapper script if it doesn't exist
-    const wrapperPath = getLocalClaudePath()
+    const wrapperPath = getLocalZeroPath()
     const created = await writeIfMissing(
       wrapperPath,
       `#!/bin/sh\nexec "${localInstallDir}/node_modules/.bin/zero" "$@"`,
@@ -121,11 +121,11 @@ export async function ensureLocalPackageEnvironment(): Promise<boolean> {
 }
 
 /**
- * Install or update Claude CLI package in the local directory
+ * Install or update Zero CLI package in the local directory
  * @param channel - Release channel to use (latest or stable)
  * @param specificVersion - Optional specific version to install (overrides channel)
  */
-export async function installOrUpdateClaudePackage(
+export async function installOrUpdateZeroPackage(
   channel: ReleaseChannel,
   specificVersion?: string | null,
 ): Promise<'in_progress' | 'success' | 'install_failed'> {
@@ -149,7 +149,7 @@ export async function installOrUpdateClaudePackage(
 
     if (result.code !== 0) {
       const error = new Error(
-        `Failed to install Claude CLI package: ${result.stderr}`,
+        `Failed to install Zero CLI package: ${result.stderr}`,
       )
       logError(error)
       return result.code === 190 ? 'in_progress' : 'install_failed'

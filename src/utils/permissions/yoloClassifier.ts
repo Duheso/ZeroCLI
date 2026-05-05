@@ -5,7 +5,7 @@ import { mkdir, writeFile } from 'fs/promises'
 import { dirname, join } from 'path'
 import { z } from 'zod/v4'
 import {
-  getCachedClaudeMdContent,
+  getCachedZeroMdContent,
   getLastClassifierRequests,
   getSessionId,
   setLastClassifierRequests,
@@ -41,7 +41,7 @@ import {
   extractToolUseBlock,
   parseClassifierResponse,
 } from './classifierShared.js'
-import { getClaudeTempDir } from './filesystem.js'
+import { getZeroTempDir } from './filesystem.js'
 
 // Dead code elimination: conditional imports for auto mode classifier prompts.
 // At build time, the bundler inlines .txt files as string literals. At test
@@ -145,7 +145,7 @@ export function buildDefaultExternalSystemPrompt(): string {
 }
 
 function getAutoModeDumpDir(): string {
-  return join(getClaudeTempDir(), 'auto-mode')
+  return join(getZeroTempDir(), 'auto-mode')
 }
 
 /**
@@ -188,7 +188,7 @@ async function maybeDumpAutoMode(
  */
 export function getAutoModeClassifierErrorDumpPath(): string {
   return join(
-    getClaudeTempDir(),
+    getZeroTempDir(),
     'auto-mode-classifier-errors',
     `${getSessionId()}.txt`,
   )
@@ -577,8 +577,8 @@ export function buildTranscriptForClassifier(
  * getUserContext), the classifier proceeds without CLAUDE.md — same as
  * pre-PR behavior.
  */
-function buildClaudeMdMessage(): Anthropic.MessageParam | null {
-  const claudeMd = getCachedClaudeMdContent()
+function buildZeroMdMessage(): Anthropic.MessageParam | null {
+  const claudeMd = getCachedZeroMdContent()
   if (claudeMd === null) return null
   return {
     role: 'user',
@@ -1156,7 +1156,7 @@ export async function classifyYoloAction(
     tools,
     transcriptBudget,
   )
-  const claudeMdMessage = buildClaudeMdMessage()
+  const claudeMdMessage = buildZeroMdMessage()
   const prefixMessages: Anthropic.MessageParam[] = claudeMdMessage
     ? [claudeMdMessage]
     : []

@@ -10,7 +10,7 @@ export function WelcomeV2() {
   if (env.terminal === "Apple_Terminal") {
     let t0;
     if ($[0] !== theme) {
-      t0 = <AppleTerminalWelcomeV2 theme={theme} welcomeMessage={t('welcomeToClaudeCode') as string} />;
+      t0 = <AppleTerminalWelcomeV2 theme={theme} welcomeMessage={t('welcomeToZeroCode') as string} />;
       $[0] = theme;
       $[1] = t0;
     } else {

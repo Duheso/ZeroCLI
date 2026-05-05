@@ -3,13 +3,13 @@ import type { TranslationKeys } from './en.js'
 
 export const ptBR: TranslationKeys = {
   welcomeToZeroCLI: 'Bem-vindo ao Zero CLI',
-  welcomeToClaudeCode: 'Bem-vindo ao Zero CLI',
+  welcomeToZeroCode: 'Bem-vindo ao Zero CLI',
 
   // Onboarding – security step
   securityNotes: 'Notas de segurança:',
   claudeCanMakeMistakes: 'O ZeroCLI pode cometer erros',
-  reviewClaudeResponses:
-    'Você deve sempre revisar as respostas do Claude, especialmente ao\nexecutar código.',
+  reviewZeroResponses:
+    'Você deve sempre revisar as respostas do Zero, especialmente ao\nexecutar código.',
   promptInjectionRisk:
     'Devido a riscos de injeção de prompt, use apenas com código de sua confiança',
   forMoreDetailsSee: 'Para mais detalhes, consulte:',
@@ -59,7 +59,7 @@ export const ptBR: TranslationKeys = {
   cmd_commit: 'Criar um commit git',
   cmd_review: 'Revisar um pull request',
   cmd_init: 'Inicializar arquivo de instruções do projeto com documentação da base de código',
-  cmd_memory: 'Editar arquivos de memória do Claude',
+  cmd_memory: 'Editar arquivos de memória do Zero',
   cmd_mcp: 'Gerenciar servidores MCP',
   cmd_resume: 'Retomar uma conversa anterior',
   cmd_model: 'Trocar o modelo de IA',
@@ -88,7 +88,7 @@ export const ptBR: TranslationKeys = {
   cmd_keybindings: 'Abrir ou criar seu arquivo de configuração de atalhos',
   cmd_agents: 'Gerenciar configurações de agentes',
   cmd_session: 'Mostrar URL da sessão remota e QR code',
-  cmd_mobile: 'Mostrar QR code para baixar o aplicativo Claude para celular',
+  cmd_mobile: 'Mostrar QR code para baixar o aplicativo Zero para celular',
   cmd_usage: 'Mostrar limites de uso do plano',
   cmd_tag: 'Alternar uma etiqueta pesquisável na sessão atual',
   cmd_buddy: 'Criar, interagir e gerenciar seu companheiro ZeroCLI',
@@ -126,8 +126,8 @@ export const ptBR: TranslationKeys = {
   cmd_login_switch: 'Trocar conta Anthropic',
   cmd_login_signin: 'Entrar com sua conta Anthropic',
   cmd_plugin: 'Gerenciar plugins do ZeroCLI',
-  cmd_chrome: 'Configurações do Claude no Chrome (Beta)',
-  cmd_install_slack: 'Instalar o aplicativo Claude para Slack',
+  cmd_chrome: 'Configurações do Zero no Chrome (Beta)',
+  cmd_install_slack: 'Instalar o aplicativo Zero para Slack',
   cmd_color: 'Definir a cor da barra de prompt para esta sessão',
   cmd_thinkback: 'Seu resumo do ZeroCLI de 2025',
   cmd_thinkback_play: 'Reproduzir a animação do thinkback',
@@ -136,8 +136,8 @@ export const ptBR: TranslationKeys = {
   cmd_remote_env: 'Configurar o ambiente remoto padrão para sessões de teleporte',
   cmd_rate_limit_options: 'Exibir opções quando o limite de taxa é atingido',
   cmd_heapdump: 'Exportar o heap JS para ~/Desktop',
-  cmd_install_github_app: 'Configurar o GitHub Actions do Claude para um repositório',
-  cmd_desktop: 'Continuar a sessão atual no Claude Desktop',
+  cmd_install_github_app: 'Configurar o GitHub Actions do Zero para um repositório',
+  cmd_desktop: 'Continuar a sessão atual no Zero Desktop',
   cmd_web_setup: 'Configurar o ZeroCLI na web (requer conexão com conta do GitHub)',
 
   // Strings de UI – tela inicial, rodapé, indicador IDE
@@ -373,7 +373,7 @@ export const ptBR: TranslationKeys = {
   agents_plugin_source: 'Agentes de plugins',
   agents_create_new: 'Criar novo agente',
   agents_no_agents_subtitle: 'Nenhum agente encontrado',
-  agents_no_agents_desc1: 'Nenhum agente encontrado. Crie subagentes especializados para os quais o Claude pode delegar.',
+  agents_no_agents_desc1: 'Nenhum agente encontrado. Crie subagentes especializados para os quais o Zero pode delegar.',
   agents_no_agents_desc2: 'Cada subagente tem sua própria janela de contexto, prompt de sistema personalizado e ferramentas específicas.',
   agents_no_agents_desc3: 'Experimente criar: Revisor de código, Simplificador de código, Revisor de segurança, Tech Lead ou Revisor de UX.',
   agents_builtin_always_available_title: 'Integrados (sempre disponíveis):',
@@ -597,7 +597,7 @@ export const ptBR: TranslationKeys = {
   cmd_batch: 'Pesquisar e planejar uma mudança em grande escala, depois executá-la em paralelo em 5 a 30 agentes isolados em worktrees, cada um abrindo um PR.',
   cmd_loop: 'Executar um prompt em intervalos fixos ou reagendar dinamicamente, incluindo loops de manutenção.',
   cmd_simplify: 'Revisar código alterado quanto a reutilização, qualidade e eficiência, corrigindo os problemas encontrados.',
-  cmd_update_config: 'Use esta skill para configurar o harness do Zero CLI via settings.json. Comportamentos automatizados ("a partir de agora quando X", "cada vez que X", "sempre que X", "antes/depois de X") requerem hooks configurados em settings.json — o harness os executa, não o Claude. Use também para: permissões ("permitir X"), variáveis de ambiente ("definir X=Y"), solução de problemas de hooks ou alterações em settings.json/settings.local.json. Para configurações simples como tema/modelo, use a ferramenta Config.',
+  cmd_update_config: 'Use esta skill para configurar o harness do Zero CLI via settings.json. Comportamentos automatizados ("a partir de agora quando X", "cada vez que X", "sempre que X", "antes/depois de X") requerem hooks configurados em settings.json — o harness os executa, não o Zero. Use também para: permissões ("permitir X"), variáveis de ambiente ("definir X=Y"), solução de problemas de hooks ou alterações em settings.json/settings.local.json. Para configurações simples como tema/modelo, use a ferramenta Config.',
   cmd_dream: 'Executar consolidação de memória — sintetizar sessões recentes em memórias duráveis',
   cmd_bridge_kick: 'Injetar estados de falha no bridge para testes manuais de recuperação',
   cmd_commit_push_pr: 'Fazer commit, push e abrir um PR',
@@ -633,9 +633,9 @@ export const ptBR: TranslationKeys = {
     'custom-commands': 'Crie skills adicionando arquivos .md em .claude/skills/ no projeto ou ~/.claude/skills/ para skills globais',
     'custom-agents': 'Use /agents para otimizar tarefas específicas. Ex.: Arquiteto de Software, Escritor de Código, Revisor de Código',
     'agent-flag': 'Use --agent <nome_do_agente> para iniciar uma conversa diretamente com um subagente',
-    'desktop-app': 'Execute o ZeroCLI local ou remotamente usando o app Claude para desktop: clau.de/desktop',
+    'desktop-app': 'Execute o ZeroCLI local ou remotamente usando o app Zero para desktop: clau.de/desktop',
     'web-app': 'Execute tarefas na nuvem enquanto continua codificando localmente \u00b7 clau.de/web',
-    'mobile-app': '/mobile para usar o ZeroCLI pelo app Claude no seu celular',
+    'mobile-app': '/mobile para usar o ZeroCLI pelo app Zero no seu celular',
     'feedback-command': 'Use /feedback para nos ajudar a melhorar!',
     'clear': 'Use /clear para limpar a conversa ao trocar de assunto e liberar contexto',
     'btw': 'Use /btw para fazer uma pergunta rápida sem interromper o trabalho atual do ZeroCLI',

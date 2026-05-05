@@ -11,7 +11,7 @@ import { enableConfigs } from '../config.js'
 import { logForDebugging } from '../debug.js'
 import { runZeroCLIChromeMcpServer } from './zeroCLIMcpServer.js'
 
-export async function runClaudeInChromeMcpServer(): Promise<void> {
+export async function runZeroInChromeMcpServer(): Promise<void> {
   enableConfigs()
   logForDebugging('[ZeroCLI Chrome] Starting MCP server')
   await runZeroCLIChromeMcpServer()

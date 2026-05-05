@@ -22,13 +22,13 @@ import { ModelPicker } from '../ModelPicker.js';
 import type { EffortLevel } from '../../utils/effort.js';
 import { modelDisplayString, isOpus1mMergeEnabled } from '../../utils/model/model.js';
 import { isBilledAsExtraUsage } from '../../utils/extraUsage.js';
-import { ClaudeMdExternalIncludesDialog } from '../ClaudeMdExternalIncludesDialog.js';
+import { ZeroMdExternalIncludesDialog } from '../ZeroMdExternalIncludesDialog.js';
 import { ChannelDowngradeDialog, type ChannelDowngradeChoice } from '../ChannelDowngradeDialog.js';
 import { Dialog } from '../design-system/Dialog.js';
 import { Select } from '../CustomSelect/index.js';
 import { OutputStylePicker } from '../OutputStylePicker.js';
 import { LanguagePicker } from '../LanguagePicker.js';
-import { getExternalClaudeMdIncludes, getMemoryFiles, hasExternalClaudeMdIncludes } from 'src/utils/claudemd.js';
+import { getExternalZeroMdIncludes, getMemoryFiles, hasExternalZeroMdIncludes } from 'src/utils/claudemd.js';
 import { KeyboardShortcutHint } from '../design-system/KeyboardShortcutHint.js';
 import { ConfigurableShortcutHint } from '../ConfigurableShortcutHint.js';
 import { Byline } from '../design-system/Byline.js';
@@ -201,7 +201,7 @@ export function Config({
   const isConnectedToIde = hasAccessToIDEExtensionDiffFeature(context.options.mcpClients);
   const isFileCheckpointingAvailable = !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING);
   const memoryFiles = React.use(getMemoryFiles(true));
-  const shouldShowExternalIncludesToggle = hasExternalClaudeMdIncludes(memoryFiles);
+  const shouldShowExternalIncludesToggle = hasExternalZeroMdIncludes(memoryFiles);
   const autoUpdaterDisabledReason = getAutoUpdaterDisabledReason();
   function onChangeMainModelConfig(value: string | null): void {
     const previousModel = mainLoopModel;
@@ -763,7 +763,7 @@ export function Config({
     }
   }, {
     id: 'agentPushNotifEnabled',
-    label: 'Push when Claude decides',
+    label: 'Push when Zero decides',
     value: globalConfig.agentPushNotifEnabled ?? false,
     type: 'boolean' as const,
     onChange(agentPushNotifEnabled: boolean) {
@@ -951,7 +951,7 @@ export function Config({
     }
   }] : []), {
     id: 'claudeInChromeDefaultEnabled',
-    label: 'Claude in Chrome enabled by default',
+    label: 'Zero in Chrome enabled by default',
     value: globalConfig.claudeInChromeDefaultEnabled ?? true,
     type: 'boolean' as const,
     onChange(enabled_5: boolean) {
@@ -1056,7 +1056,7 @@ export function Config({
     label: 'External CLAUDE.md includes',
     value: (() => {
       const projectConfig = getCurrentProjectConfig();
-      if (projectConfig.hasClaudeMdExternalIncludesApproved) {
+      if (projectConfig.hasZeroMdExternalIncludesApproved) {
         return 'true';
       } else {
         return 'false';
@@ -1607,10 +1607,10 @@ export function Config({
             </Byline>
           </Text>
         </> : showSubmenu === 'ExternalIncludes' ? <>
-          <ClaudeMdExternalIncludesDialog onDone={() => {
+          <ZeroMdExternalIncludesDialog onDone={() => {
         setShowSubmenu(null);
         setTabsHidden(false);
-      }} externalIncludes={getExternalClaudeMdIncludes(memoryFiles)} />
+      }} externalIncludes={getExternalZeroMdIncludes(memoryFiles)} />
           <Text dimColor>
             <Byline>
               <KeyboardShortcutHint shortcut="Enter" action="confirm" />

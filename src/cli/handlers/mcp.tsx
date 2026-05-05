@@ -424,11 +424,11 @@ export async function mcpAddFromDesktopHandler(options: {
       source: 'desktop' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
     });
     const {
-      readClaudeDesktopMcpServers
+      readZeroDesktopMcpServers
     } = await import('../../utils/claudeDesktop.js');
-    const servers = await readClaudeDesktopMcpServers();
+    const servers = await readZeroDesktopMcpServers();
     if (Object.keys(servers).length === 0) {
-      cliOk('No MCP servers found in Claude Desktop configuration or configuration file does not exist.');
+      cliOk('No MCP servers found in Zero Desktop configuration or configuration file does not exist.');
     }
     const {
       unmount

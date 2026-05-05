@@ -130,7 +130,7 @@ function makeToolSchema(input: Input): BetaWebSearchTool20250305 {
   }
 }
 
-function isClaudeModel(model: string): boolean {
+function isZeroModel(model: string): boolean {
   return /claude/i.test(model)
 }
 
@@ -529,7 +529,7 @@ export const WebSearchTool = buildTool({
   maxResultSizeChars: 100_000,
   shouldDefer: true,
   async description(input) {
-    return `Claude wants to search the web for: ${input.query}`
+    return `Zero wants to search the web for: ${input.query}`
   },
   userFacingName() {
     return 'Web Search'
@@ -559,7 +559,7 @@ export const WebSearchTool = buildTool({
       return true
     }
 
-    // Enable for Vertex AI with supported models (Claude 4.0+)
+    // Enable for Vertex AI with supported models (Zero 4.0+)
     if (provider === 'vertex') {
       const supportsWebSearch =
         model.includes('claude-opus-4') ||

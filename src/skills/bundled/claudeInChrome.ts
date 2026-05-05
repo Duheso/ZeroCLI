@@ -1,6 +1,6 @@
 import { ZEROCLI_BROWSER_TOOLS } from '../../utils/claudeInChrome/zeroCLIMcpServer.js'
 import { BASE_CHROME_PROMPT } from '../../utils/claudeInChrome/prompt.js'
-import { shouldAutoEnableClaudeInChrome } from '../../utils/claudeInChrome/setup.js'
+import { shouldAutoEnableZeroInChrome } from '../../utils/claudeInChrome/setup.js'
 import { registerBundledSkill } from '../bundledSkills.js'
 
 const CLAUDE_IN_CHROME_MCP_TOOLS = ZEROCLI_BROWSER_TOOLS.map(
@@ -13,7 +13,7 @@ Now that this skill is invoked, you have access to Chrome browser automation too
 IMPORTANT: Start by calling mcp__claude-in-chrome__tabs_context_mcp to get information about the user's current browser tabs.
 `
 
-export function registerClaudeInChromeSkill(): void {
+export function registerZeroInChromeSkill(): void {
   registerBundledSkill({
     name: 'claude-in-chrome',
     description:
@@ -22,7 +22,7 @@ export function registerClaudeInChromeSkill(): void {
       'When the user wants to interact with web pages, automate browser tasks, capture screenshots, read console logs, or perform any browser-based actions. Always invoke BEFORE attempting to use any mcp__claude-in-chrome__* tools.',
     allowedTools: CLAUDE_IN_CHROME_MCP_TOOLS,
     userInvocable: true,
-    isEnabled: () => shouldAutoEnableClaudeInChrome(),
+    isEnabled: () => shouldAutoEnableZeroInChrome(),
     async getPromptForCommand(args) {
       let prompt = `${BASE_CHROME_PROMPT}\n${SKILL_ACTIVATION_MESSAGE}`
       if (args) {
