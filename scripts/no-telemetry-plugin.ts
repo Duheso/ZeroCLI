@@ -13,7 +13,6 @@
  *   - 1P event logging (api.anthropic.com/api/event_logging/batch)
  *   - BigQuery metrics exporter (api.anthropic.com/api/claude_code/metrics)
  *   - Perfetto / OpenTelemetry session tracing
- *   - Auto-updater (storage.googleapis.com, npm registry)
  *   - Plugin fetch telemetry
  *   - Transcript / feedback sharing
  */
@@ -341,22 +340,14 @@ export function startHookSpan() { return noopSpan; }
 export function endHookSpan() {}
 `,
 
-	// ─── Auto-updater (phones home to GCS + npm) ──────────────────
+	// ─── Auto-updater ──────────────────────────────────────────────
+	// NOT stubbed. The auto-updater queries the public npm registry
+	// (getLatestVersion, getNpmDistTags) and performs local installs
+	// (installGlobalPackage) — none of these are telemetry.
+	// assertMinVersion/getMaxVersion use GrowthBook which is already
+	// stubbed above, so they return gracefully without phoning home.
 
-	'utils/autoUpdater': `
-export async function assertMinVersion() {}
-export async function getMaxVersion() { return undefined; }
-export async function getMaxVersionMessage() { return undefined; }
-export function shouldSkipVersion() { return true; }
-export function getLockFilePath() { return '/tmp/zero-update.lock'; }
-export async function checkGlobalInstallPermissions() { return { hasPermissions: false, npmPrefix: null }; }
-export async function getLatestVersion() { return null; }
-export async function getNpmDistTags() { return { latest: null, stable: null }; }
-export async function getLatestVersionFromGcs() { return null; }
-export async function getGcsDistTags() { return { latest: null, stable: null }; }
-export async function getVersionHistory() { return []; }
-export async function installGlobalPackage() { return 'success'; }
-`,
+
 
 	// ─── Plugin fetch telemetry (not the marketplace itself) ───────
 
