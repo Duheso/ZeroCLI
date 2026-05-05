@@ -57,7 +57,7 @@ export function ClaudeInChromeOnboarding(t0: Props) {
   }
   let t5;
   if ($[6] !== t4) {
-    t5 = <Text>Claude in Chrome works with the Chrome extension to let you control your browser directly from ZeroCLI. You can navigate websites, fill forms, capture screenshots, record GIFs, and debug with console logs and network requests.{t4}</Text>;
+    t5 = <Text>ZeroCLI Browser works with the Chrome extension to let you control your browser directly from ZeroCLI. You can navigate websites, fill forms, capture screenshots, record GIFs, and debug with console logs and network requests.{t4}</Text>;
     $[6] = t4;
     $[7] = t5;
   } else {
@@ -88,7 +88,7 @@ export function ClaudeInChromeOnboarding(t0: Props) {
   }
   let t9;
   if ($[13] === Symbol.for("react.memo_cache_sentinel")) {
-    t9 = <Text dimColor={true}>For more info, use{" "}{t8}{" "}or visit <Link url="https://code.claude.com/docs/en/chrome" /></Text>;
+    t9 = <Text dimColor={true}>For more info, use{" "}{t8}{" "}or visit <Link url="https://github.com/Duheso/ZeroCLI#chrome-extension" /></Text>;
     $[13] = t9;
   } else {
     t9 = $[13];
@@ -104,7 +104,7 @@ export function ClaudeInChromeOnboarding(t0: Props) {
   }
   let t11;
   if ($[17] !== onDone || $[18] !== t10) {
-    t11 = <Dialog title="Claude in Chrome (Beta)" onCancel={onDone} color="chromeYellow">{t10}</Dialog>;
+    t11 = <Dialog title="ZeroCLI Browser (Beta)" onCancel={onDone} color="chromeYellow">{t10}</Dialog>;
     $[17] = onDone;
     $[18] = t10;
     $[19] = t11;

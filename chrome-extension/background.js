@@ -898,6 +898,22 @@ function setFileInputValue(selector, imageData, mediaType) {
   }
 }
 
+// ─── Popup Status Query ──────────────────────────────────────────────────────
+
+// Respond to popup (or any extension page) asking for current connection state.
+// This avoids the popup spawning a second native host process just to check status.
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message?.type === 'get_status') {
+    sendResponse({
+      isConnected,
+      nativePortAlive: nativePort !== null,
+      version: VERSION,
+    });
+  }
+  // Return false: we handled synchronously.
+  return false;
+});
+
 // ─── Init ────────────────────────────────────────────────────────────────────
 
 chrome.runtime.onInstalled.addListener(() => {

@@ -32,8 +32,8 @@ async function _temp() {
   }
   if (chromeFlag === undefined) {
     return {
-      key: "claude-in-chrome-default-enabled",
-      text: "Claude in Chrome enabled \xB7 /chrome",
+      key: "zerocli-browser-default-enabled",
+      text: "ZeroCLI Browser enabled \xB7 /chrome",
       priority: "low"
     };
   }
