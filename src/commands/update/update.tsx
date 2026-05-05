@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import type { CommandResultDisplay } from '../../commands.js'
 import { Box, Text } from '../../ink.js'
 import { PressEnterToContinue } from '../../components/PressEnterToContinue.js'
 import { useExitOnCtrlCDWithKeybindings } from '../../hooks/useExitOnCtrlCDWithKeybindings.js'
+import { useKeybindings } from '../../keybindings/useKeybinding.js'
 import { getLatestVersion, type InstallStatus, installGlobalPackage } from '../../utils/autoUpdater.js'
 import { getCurrentInstallationType } from '../../utils/doctorDiagnostic.js'
-import { installOrUpdateZeroPackage, localInstallationExists } from '../../utils/localInstaller.js'
+import { installOrUpdateZeroPackage } from '../../utils/localInstaller.js'
 import { getInitialSettings } from '../../utils/settings/settings.js'
 import { gte } from '../../utils/semver.js'
 import type { LocalJSXCommandCall } from '../../types/command.js'
@@ -68,7 +69,7 @@ function UpdateScreen({ onDone }: {
     })()
   }, [])
 
-  const handleDone = () => {
+  const handleDone = useCallback(() => {
     switch (state.type) {
       case 'success':
         onDone(`Updated from ${state.from} to ${state.to}. Restart to apply.`, { display: 'system' })
@@ -85,7 +86,14 @@ function UpdateScreen({ onDone }: {
       default:
         onDone('Update dismissed', { display: 'system' })
     }
-  }
+  }, [state, onDone])
+
+  useKeybindings(
+    { 'confirm:yes': handleDone, 'confirm:no': handleDone },
+    { context: 'Confirmation' },
+  )
+
+  const isDone = state.type !== 'checking' && state.type !== 'updating'
 
   return (
     <Box flexDirection="column">
@@ -93,33 +101,24 @@ function UpdateScreen({ onDone }: {
         <Text dimColor>Checking for updates…</Text>
       )}
       {state.type === 'up-to-date' && (
-        <>
-          <Text color="green">✓ ZeroCLI is up to date ({state.version})</Text>
-          <PressEnterToContinue onEnter={handleDone} />
-        </>
+        <Text color="success">✓ ZeroCLI is up to date ({state.version})</Text>
       )}
       {state.type === 'updating' && (
         <Text dimColor>Updating {state.from} → {state.to}…</Text>
       )}
       {state.type === 'success' && (
         <>
-          <Text color="green">✓ Updated {state.from} → {state.to}</Text>
+          <Text color="success">✓ Updated {state.from} → {state.to}</Text>
           <Text dimColor>Restart ZeroCLI to apply the update.</Text>
-          <PressEnterToContinue onEnter={handleDone} />
         </>
       )}
       {state.type === 'failed' && (
-        <>
-          <Text color="red">✗ {state.error}</Text>
-          <PressEnterToContinue onEnter={handleDone} />
-        </>
+        <Text color="error">✗ {state.error}</Text>
       )}
       {state.type === 'dev-build' && (
-        <>
-          <Text color="yellow">Cannot update a development build.</Text>
-          <PressEnterToContinue onEnter={handleDone} />
-        </>
+        <Text color="warning">Cannot update a development build.</Text>
       )}
+      {isDone && <Box><PressEnterToContinue /></Box>}
     </Box>
   )
 }
