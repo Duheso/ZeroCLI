@@ -6,6 +6,8 @@ const VERSION = '1.0.0';
 
 let nativePort = null;
 let isConnected = false;
+let isConnecting = false;       // guard against concurrent connect attempts
+let reconnectTimer = null;      // handle for pending reconnect setTimeout
 let pendingRequests = new Map(); // requestId -> { resolve, reject, timeoutId }
 let requestCounter = 0;
 let debuggerAttachedTabs = new Set();
@@ -34,21 +36,36 @@ function dbg(msg, ...args) {
   console.log(`[ZeroCLI ${ts}] ${msg}`, ...args);
 }
 
+function scheduleReconnect(delayMs) {
+  // Cancel any pending reconnect to avoid stacking timers
+  if (reconnectTimer !== null) {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+  }
+  reconnectTimer = setTimeout(() => {
+    reconnectTimer = null;
+    connectNativeHost();
+  }, delayMs);
+}
+
 function connectNativeHost() {
+  // Guard: don't start a new connection if one is already in progress or live
+  if (isConnecting || isConnected) {
+    dbg(`connectNativeHost skipped (isConnecting=${isConnecting}, isConnected=${isConnected})`);
+    return;
+  }
+  isConnecting = true;
   debugStats.connectAttempts++;
   dbg(`Connecting to native host (attempt #${debugStats.connectAttempts})...`);
   try {
-    nativePort = chrome.runtime.connectNative(NATIVE_HOST_NAME);
-    isConnected = true;
-    debugStats.connectSuccesses++;
-    updateIcon(true);
-    dbg('Native host connected successfully.');
+    const port = chrome.runtime.connectNative(NATIVE_HOST_NAME);
+    nativePort = port;
 
-    nativePort.onMessage.addListener((message) => {
+    port.onMessage.addListener((message) => {
       handleNativeMessage(message);
     });
 
-    nativePort.onDisconnect.addListener(() => {
+    port.onDisconnect.addListener(() => {
       // Read lastError to mark it as "checked" and suppress DevTools warning
       const err = chrome.runtime.lastError;
       const errMsg = err?.message ?? 'unknown reason';
@@ -57,39 +74,56 @@ function connectNativeHost() {
         err.message?.includes('Cannot find native messaging host') ||
         err.message?.includes('Specified native messaging host not found')
       );
+
+      // Only process disconnect for the port we currently own
+      if (nativePort !== port) {
+        dbg(`Stale port disconnect ignored: ${errMsg}`);
+        return;
+      }
+
       debugStats.disconnects++;
       debugStats.lastError = errMsg;
       debugStats.lastErrorTime = Date.now();
       isConnected = false;
+      isConnecting = false;
       nativePort = null;
       updateIcon(false);
       dbg(`Native host disconnected (total disconnects: ${debugStats.disconnects}): ${errMsg}`);
+
       // Reject all pending requests
-      for (const [id, pending] of pendingRequests) {
+      for (const [, pending] of pendingRequests) {
         clearTimeout(pending.timeoutId);
         pending.reject(new Error(err?.message ?? 'Native host disconnected'));
       }
       pendingRequests.clear();
+
       if (hostNotFound) {
-        // Native host not installed yet — retry slowly (every 30s)
-        // User needs to run: zero --chrome  (to register the native host)
         console.warn('[ZeroCLI] Native messaging host not found. Run "zero --chrome" once to register it, then reload this extension.');
-        setTimeout(connectNativeHost, 30000);
+        scheduleReconnect(30000);
       } else {
-        // Normal disconnect — reconnect after short delay
-        setTimeout(connectNativeHost, 3000);
+        scheduleReconnect(3000);
       }
     });
+
+    // Mark connected only after port is set up (Chrome fires onDisconnect
+    // synchronously if the host binary isn't found, so this must come after)
+    isConnected = true;
+    isConnecting = false;
+    debugStats.connectSuccesses++;
+    updateIcon(true);
+    dbg('Native host connected successfully.');
 
     // Send initial ping
     sendToNative({ type: 'ping' });
   } catch (err) {
     isConnected = false;
+    isConnecting = false;
+    nativePort = null;
     updateIcon(false);
     debugStats.lastError = err?.message ?? String(err);
     debugStats.lastErrorTime = Date.now();
     console.warn('[ZeroCLI] connectNativeHost error:', err?.message);
-    setTimeout(connectNativeHost, 30000);
+    scheduleReconnect(30000);
   }
 }
 
@@ -524,6 +558,11 @@ async function toolDebugInfo(_params) {
       disconnects: debugStats.disconnects,
       toolsDispatched: debugStats.toolsDispatched,
       toolErrors: debugStats.toolErrors,
+    },
+    flags: {
+      isConnected,
+      isConnecting,
+      hasPendingReconnectTimer: reconnectTimer !== null,
     },
     lastError: debugStats.lastError,
     lastErrorAgo: debugStats.lastErrorTime
@@ -977,6 +1016,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message?.type === 'get_status') {
     sendResponse({
       isConnected,
+      isConnecting,
       nativePortAlive: nativePort !== null,
       version: VERSION,
       stats: { ...debugStats },
@@ -997,12 +1037,13 @@ chrome.alarms.create('zerocli-keepalive', { periodInMinutes: 0.33 }); // ~20 sec
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === 'zerocli-keepalive') {
-    if (!isConnected) {
-      dbg('Keep-alive alarm: not connected, attempting reconnect...');
-      connectNativeHost();
-    } else {
+    if (isConnected) {
       // Send a lightweight ping to verify the connection is still healthy
       sendToNative({ type: 'ping' });
+    } else if (!isConnecting && reconnectTimer === null) {
+      // Only reconnect if nothing else has already scheduled one
+      dbg('Keep-alive alarm: not connected, scheduling reconnect...');
+      scheduleReconnect(0);
     }
   }
 });
