@@ -19,7 +19,7 @@ import { getGlobalConfig, saveGlobalConfig, type GlobalConfig } from '../../util
 import { t } from '../../i18n/index.js';
 import { extractTextContent, stripPromptXMLTags } from '../../utils/messages.js';
 import { countCharInString } from '../../utils/stringUtils.js';
-const COPY_DIR = join(tmpdir(), 'claude');
+const COPY_DIR = join(tmpdir(), 'zerocli');
 const RESPONSE_FILENAME = 'response.md';
 const MAX_LOOKBACK = 20;
 type CodeBlock = {

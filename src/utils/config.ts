@@ -1845,7 +1845,7 @@ export function getMemoryPath(memoryType: MemoryType): string {
 }
 
 export function getManagedZeroRulesDir(): string {
-  return join(getManagedFilePath(), '.claude', 'rules')
+  return join(getManagedFilePath(), '.zerocli', 'rules')
 }
 
 export function getUserZeroRulesDir(): string {

@@ -51,7 +51,9 @@ function getCliBinaryName(): string {
 }
 
 function getNativeDataDirName(): string {
-  return getCliBinaryName()
+  return MACRO.PACKAGE_URL === '@anthropic-ai/claude-code'
+    ? 'claude'
+    : 'zerocli'
 }
 
 export type InstallationType =

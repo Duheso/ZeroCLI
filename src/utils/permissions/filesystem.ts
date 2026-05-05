@@ -94,11 +94,11 @@ export function normalizeCaseForComparison(path: string): string {
 }
 
 /**
- * If filePath is inside a .claude/skills/{name}/ directory (project or global),
+ * If filePath is inside a .zerocli/skills/{name}/ directory (project or global),
  * return the skill name and a session-allow pattern scoped to just that skill.
  * Used to offer a narrower "allow edits to this skill only" option in the
  * permission dialog and SDK suggestions, so iterating on one skill doesn't
- * require granting session access to all of .claude/ (settings.json, hooks/, etc.).
+ * require granting session access to all of .zerocli/ (settings.json, hooks/, etc.).
  */
 export function getZeroSkillScope(
   filePath: string,
@@ -107,6 +107,15 @@ export function getZeroSkillScope(
   const absolutePathLower = normalizeCaseForComparison(absolutePath)
 
   const bases = [
+    {
+      dir: expandPath(join(getOriginalCwd(), '.zerocli', 'skills')),
+      prefix: '/.zerocli/skills/',
+    },
+    {
+      dir: expandPath(join(homedir(), '.zerocli', 'skills')),
+      prefix: '~/.zerocli/skills/',
+    },
+    // Legacy fallback
     {
       dir: expandPath(join(getOriginalCwd(), '.claude', 'skills')),
       prefix: '/.claude/skills/',
@@ -231,15 +240,15 @@ function isZeroConfigFilePath(filePath: string): boolean {
     return true
   }
 
-  // Check if file is within .claude/commands or .claude/agents directories
+  // Check if file is within .zerocli/commands or .zerocli/agents directories
   // using proper path segment validation (not string matching with includes())
   // pathInWorkingPath now handles case-insensitive comparison to prevent bypasses
-  const commandsDir = join(getOriginalCwd(), '.claude', 'commands')
-  const agentsDir = join(getOriginalCwd(), '.claude', 'agents')
-  const skillsDir = join(getOriginalCwd(), '.claude', 'skills')
-  const openCommandsDir = join(getOriginalCwd(), '.zerocli', 'commands')
-  const openAgentsDir = join(getOriginalCwd(), '.zerocli', 'agents')
-  const openSkillsDir = join(getOriginalCwd(), '.zerocli', 'skills')
+  const commandsDir = join(getOriginalCwd(), '.zerocli', 'commands')
+  const agentsDir = join(getOriginalCwd(), '.zerocli', 'agents')
+  const skillsDir = join(getOriginalCwd(), '.zerocli', 'skills')
+  const openCommandsDir = join(getOriginalCwd(), '.claude', 'commands')
+  const openAgentsDir = join(getOriginalCwd(), '.claude', 'agents')
+  const openSkillsDir = join(getOriginalCwd(), '.claude', 'skills')
 
   return (
     pathInWorkingPath(filePath, commandsDir) ||
@@ -289,7 +298,7 @@ function isSessionMemoryPath(absolutePath: string): boolean {
 
 /**
  * Check if file is within the current project's directory.
- * Path format: ~/.claude/projects/{sanitized-cwd}/...
+ * Path format: ~/.zerocli/projects/{sanitized-cwd}/...
  */
 function isProjectDirPath(absolutePath: string): boolean {
   const projectDir = getProjectDir(getCwd())
@@ -311,29 +320,29 @@ export function isScratchpadEnabled(): boolean {
 
 /**
  * Returns the user-specific Zero temp directory name.
- * On Unix: 'claude-{uid}' to prevent multi-user permission conflicts
- * On Windows: 'claude' (tmpdir() is already per-user)
+ * On Unix: 'zero-{uid}' to prevent multi-user permission conflicts
+ * On Windows: 'zero' (tmpdir() is already per-user)
  */
 export function getZeroTempDirName(): string {
   if (getPlatform() === 'windows') {
-    return 'claude'
+    return 'zero'
   }
   // Use UID to create per-user directories, preventing permission conflicts
   // when multiple users share the same /tmp directory
   const uid = process.getuid?.() ?? 0
-  return `claude-${uid}`
+  return `zero-${uid}`
 }
 
 /**
  * Returns the Zero temp directory path with symlinks resolved.
  * Uses TMPDIR env var if set, otherwise:
- * - On Unix: /tmp/claude-{uid}/ (resolved to /private/tmp/claude-{uid}/ on macOS)
- * - On Windows: {tmpdir}/claude/ (e.g., C:\Users\{user}\AppData\Local\Temp\claude\)
+ * - On Unix: /tmp/zero-{uid}/ (resolved to /private/tmp/zero-{uid}/ on macOS)
+ * - On Windows: {tmpdir}/zero/ (e.g., C:\Users\{user}\AppData\Local\Temp\zero\)
  * This is a per-user temporary directory used by ZeroCLI for all temp files.
  *
  * NOTE: We resolve symlinks to ensure this path matches the resolved paths used
  * in permission checks. On macOS, /tmp is a symlink to /private/tmp, so without
- * resolution, paths like /tmp/claude-{uid}/... wouldn't match /private/tmp/claude-{uid}/...
+ * resolution, paths like /tmp/zero-{uid}/... wouldn't match /private/tmp/zero-{uid}/...
  */
 // Memoized: called per-tool from permission checks (yoloClassifier, sandbox-adapter)
 // and per-turn from BashTool prompt. Inputs (CLAUDE_CODE_TMPDIR env + platform) are
@@ -389,7 +398,7 @@ export function getProjectTempDir(): string {
 
 /**
  * Returns the scratchpad directory path for the current session.
- * Path format: /tmp/claude-{uid}/{sanitized-cwd}/{sessionId}/scratchpad/
+ * Path format: /tmp/zero-{uid}/{sanitized-cwd}/{sessionId}/scratchpad/
  */
 export function getScratchpadDir(): string {
   return join(getProjectTempDir(), getSessionId(), 'scratchpad')
@@ -463,17 +472,17 @@ function isDangerousFilePathToAutoEdit(path: string): boolean {
         continue
       }
 
-      // Special case: .claude/worktrees/ is a structural path (where Zero stores
-      // git worktrees), not a user-created dangerous directory. Skip the .claude
-      // segment when it's followed by 'worktrees'. Any nested .claude directories
+      // Special case: .zerocli/worktrees/ is a structural path (where Zero stores
+      // git worktrees), not a user-created dangerous directory. Skip the .zerocli
+      // segment when it's followed by 'worktrees'. Any nested .zerocli directories
       // within the worktree (not followed by 'worktrees') are still blocked.
-      if (dir === '.claude') {
+      if (dir === '.claude' || dir === '.zerocli') {
         const nextSegment = pathSegments[i + 1]
         if (
           nextSegment &&
           normalizeCaseForComparison(nextSegment) === 'worktrees'
         ) {
-          break // Skip this .claude, continue checking other segments
+          break // Skip this .zerocli/.claude, continue checking other segments
         }
       }
 
@@ -617,7 +626,7 @@ function hasSuspiciousWindowsPathPattern(path: string): boolean {
  *
  * This function performs comprehensive safety checks including:
  * - Suspicious Windows path patterns (NTFS streams, 8.3 names, long path prefixes, etc.)
- * - Zero config files (.claude/settings.json, .claude/commands/, .claude/agents/)
+ * - Zero config files (.zerocli/settings.json, .zerocli/commands/, .zerocli/agents/)
  * - MCP CLI state files (managed internally by ZeroCLI)
  * - Dangerous files (.bashrc, .gitconfig, .git/, .vscode/, .idea/, etc.)
  *
@@ -1593,13 +1602,13 @@ export function checkEditableInternalPath(
   // .claude/launch.json — desktop preview config (dev server command + port).
   // The desktop's preview_start MCP tool instructs Zero to create/update
   // this file as part of the preview workflow. Without this carve-out the
-  // .claude/ DANGEROUS_DIRECTORIES check prompts for it, which in SDK mode
+  // .zerocli/ DANGEROUS_DIRECTORIES check prompts for it, which in SDK mode
   // cascades: user clicks "Always allow" → setMode:acceptEdits suggestion
   // applied → silent downgrade from auto mode. Matches the project-level
-  // .claude/ only (not ~/.claude/) since launch.json is per-project.
+  // .zerocli/ only (not ~/.zerocli/) since launch.json is per-project.
   if (
     normalizeCaseForComparison(normalizedPath) ===
-    normalizeCaseForComparison(join(getOriginalCwd(), '.claude', 'launch.json'))
+    normalizeCaseForComparison(join(getOriginalCwd(), '.zerocli', 'launch.json'))
   ) {
     return {
       behavior: 'allow',
@@ -1639,7 +1648,7 @@ export function checkReadableInternalPath(
   }
 
   // Project directory (for reading past session memories)
-  // Path format: ~/.claude/projects/{sanitized-cwd}/...
+  // Path format: ~/.zerocli/projects/{sanitized-cwd}/...
   if (isProjectDirPath(normalizedPath)) {
     return {
       behavior: 'allow',
@@ -1695,7 +1704,7 @@ export function checkReadableInternalPath(
     }
   }
 
-  // Project temp directory (/tmp/claude/{sanitized-cwd}/)
+  // Project temp directory (/tmp/zero/{sanitized-cwd}/)
   // Intentionally allows reading files from all sessions in this project, not just the current session.
   // This enables cross-session file access within the same project's temp space.
   const projectTempDir = getProjectTempDir()
@@ -1734,7 +1743,7 @@ export function checkReadableInternalPath(
     }
   }
 
-  // Tasks directory (~/.claude/tasks/) for swarm task coordination
+  // Tasks directory (~/.zerocli/tasks/) for swarm task coordination
   const tasksDir = join(getZeroConfigHomeDir(), 'tasks') + sep
   if (
     normalizedPath === tasksDir.slice(0, -1) ||
@@ -1750,7 +1759,7 @@ export function checkReadableInternalPath(
     }
   }
 
-  // Teams directory (~/.claude/teams/) for swarm coordination
+  // Teams directory (~/.zerocli/teams/) for swarm coordination
   const teamsReadDir = join(getZeroConfigHomeDir(), 'teams') + sep
   if (
     normalizedPath === teamsReadDir.slice(0, -1) ||

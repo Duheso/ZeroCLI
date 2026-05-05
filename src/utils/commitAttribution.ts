@@ -164,7 +164,7 @@ export function sanitizeModelName(shortName: string): string {
   if (shortName.includes('haiku-4-5')) return 'claude-haiku-4-5'
   if (shortName.includes('haiku-3-5')) return 'claude-haiku-3-5'
   // Unknown models get a generic name
-  return 'claude'
+  return 'zero'
 }
 
 /**
