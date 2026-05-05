@@ -14,13 +14,35 @@ let networkRequests = new Map(); // tabId -> [requests]
 let captureStreams = new Map(); // tabId -> MediaRecorder
 let gifFrames = new Map(); // requestId -> [frames]
 
-// ─── Native Messaging ──────────────────────────────────────────────────────
+// ─── Debug Stats ──────────────────────────────────────────────────────────────
+
+const debugStats = {
+  connectAttempts: 0,
+  connectSuccesses: 0,
+  disconnects: 0,
+  toolsDispatched: 0,
+  toolErrors: 0,
+  lastError: null,
+  lastErrorTime: null,
+  lastToolCall: null,
+  lastToolCallTime: null,
+  workerStartTime: Date.now(),
+};
+
+function dbg(msg, ...args) {
+  const ts = new Date().toISOString();
+  console.log(`[ZeroCLI ${ts}] ${msg}`, ...args);
+}
 
 function connectNativeHost() {
+  debugStats.connectAttempts++;
+  dbg(`Connecting to native host (attempt #${debugStats.connectAttempts})...`);
   try {
     nativePort = chrome.runtime.connectNative(NATIVE_HOST_NAME);
     isConnected = true;
+    debugStats.connectSuccesses++;
     updateIcon(true);
+    dbg('Native host connected successfully.');
 
     nativePort.onMessage.addListener((message) => {
       handleNativeMessage(message);
@@ -29,14 +51,19 @@ function connectNativeHost() {
     nativePort.onDisconnect.addListener(() => {
       // Read lastError to mark it as "checked" and suppress DevTools warning
       const err = chrome.runtime.lastError;
+      const errMsg = err?.message ?? 'unknown reason';
       const hostNotFound = err && (
         err.message?.includes('not found') ||
         err.message?.includes('Cannot find native messaging host') ||
         err.message?.includes('Specified native messaging host not found')
       );
+      debugStats.disconnects++;
+      debugStats.lastError = errMsg;
+      debugStats.lastErrorTime = Date.now();
       isConnected = false;
       nativePort = null;
       updateIcon(false);
+      dbg(`Native host disconnected (total disconnects: ${debugStats.disconnects}): ${errMsg}`);
       // Reject all pending requests
       for (const [id, pending] of pendingRequests) {
         clearTimeout(pending.timeoutId);
@@ -59,6 +86,8 @@ function connectNativeHost() {
   } catch (err) {
     isConnected = false;
     updateIcon(false);
+    debugStats.lastError = err?.message ?? String(err);
+    debugStats.lastErrorTime = Date.now();
     console.warn('[ZeroCLI] connectNativeHost error:', err?.message);
     setTimeout(connectNativeHost, 30000);
   }
@@ -79,7 +108,7 @@ async function handleNativeMessage(message) {
 
   switch (message.type) {
     case 'pong':
-      // Connection confirmed
+      dbg('Received pong from native host — connection healthy.');
       break;
 
     case 'status_response':
@@ -88,14 +117,23 @@ async function handleNativeMessage(message) {
 
     case 'tool_request': {
       const { method, params, id: requestId } = message;
+      debugStats.toolsDispatched++;
+      debugStats.lastToolCall = method;
+      debugStats.lastToolCallTime = Date.now();
+      dbg(`Tool request #${debugStats.toolsDispatched}: ${method} (id=${requestId})`);
       try {
         const result = await dispatchTool(method, params || {});
+        dbg(`Tool success: ${method}`);
         sendToNative({
           type: 'tool_response',
           id: requestId,
           result,
         });
       } catch (err) {
+        debugStats.toolErrors++;
+        debugStats.lastError = `${method}: ${err.message}`;
+        debugStats.lastErrorTime = Date.now();
+        console.error(`[ZeroCLI] Tool error: ${method}:`, err.message);
         sendToNative({
           type: 'tool_response',
           id: requestId,
@@ -106,10 +144,12 @@ async function handleNativeMessage(message) {
     }
 
     case 'mcp_connected':
+      dbg('MCP client connected.');
       updateIcon(true);
       break;
 
     case 'mcp_disconnected':
+      dbg('MCP client disconnected.');
       updateIcon(false);
       break;
 
@@ -156,6 +196,8 @@ async function dispatchTool(method, params) {
       return toolShortcutsList(params);
     case 'shortcuts_execute':
       return toolShortcutsExecute(params);
+    case 'debug_info':
+      return toolDebugInfo(params);
     default:
       throw new Error(`Unknown tool: ${method}`);
   }
@@ -465,6 +507,35 @@ async function toolShortcutsExecute(params) {
   const targetTabId = tabId || (await getActiveTabId());
   const result = await executeInTab(targetTabId, pressKey, [key]);
   return result;
+}
+
+async function toolDebugInfo(_params) {
+  const uptimeMs = Date.now() - debugStats.workerStartTime;
+  const tabs = await chrome.tabs.query({}).catch(() => []);
+  return {
+    version: VERSION,
+    isConnected,
+    nativePortAlive: nativePort !== null,
+    uptime_ms: uptimeMs,
+    uptime_human: `${Math.floor(uptimeMs / 60000)}m ${Math.floor((uptimeMs % 60000) / 1000)}s`,
+    stats: {
+      connectAttempts: debugStats.connectAttempts,
+      connectSuccesses: debugStats.connectSuccesses,
+      disconnects: debugStats.disconnects,
+      toolsDispatched: debugStats.toolsDispatched,
+      toolErrors: debugStats.toolErrors,
+    },
+    lastError: debugStats.lastError,
+    lastErrorAgo: debugStats.lastErrorTime
+      ? `${Math.round((Date.now() - debugStats.lastErrorTime) / 1000)}s ago`
+      : null,
+    lastToolCall: debugStats.lastToolCall,
+    lastToolCallAgo: debugStats.lastToolCallTime
+      ? `${Math.round((Date.now() - debugStats.lastToolCallTime) / 1000)}s ago`
+      : null,
+    openTabs: tabs.length,
+    debuggerAttachedTabs: debuggerAttachedTabs.size,
+  };
 }
 
 // ─── Helper Functions ────────────────────────────────────────────────────────
@@ -908,21 +979,46 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       isConnected,
       nativePortAlive: nativePort !== null,
       version: VERSION,
+      stats: { ...debugStats },
     });
   }
   // Return false: we handled synchronously.
   return false;
 });
 
+// ─── Service Worker Keep-Alive (MV3) ─────────────────────────────────────────
+//
+// Chrome MV3 service workers are killed after ~30s of inactivity. We use the
+// alarms API to wake the worker every 20 seconds, keeping the native messaging
+// connection alive. Without this, the native host process exits, the Unix socket
+// disappears, and all tool calls fail with "Browser extension is not connected".
+
+chrome.alarms.create('zerocli-keepalive', { periodInMinutes: 0.33 }); // ~20 seconds
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === 'zerocli-keepalive') {
+    if (!isConnected) {
+      dbg('Keep-alive alarm: not connected, attempting reconnect...');
+      connectNativeHost();
+    } else {
+      // Send a lightweight ping to verify the connection is still healthy
+      sendToNative({ type: 'ping' });
+    }
+  }
+});
+
 // ─── Init ────────────────────────────────────────────────────────────────────
 
 chrome.runtime.onInstalled.addListener(() => {
   updateIcon(false);
+  dbg('Extension installed/updated.');
 });
 
 chrome.runtime.onStartup.addListener(() => {
+  dbg('Browser startup — connecting native host.');
   connectNativeHost();
 });
 
 // Connect when extension loads
+dbg('Service worker started.');
 connectNativeHost();

@@ -92,6 +92,7 @@ const messageSchema = lazySchema(() =>
 type ToolRequest = {
   method: string
   params?: unknown
+  id?: string
 }
 
 type McpClient = {
@@ -405,6 +406,7 @@ class ChromeNativeHost {
               type: 'tool_request',
               method: request.method,
               params: request.params,
+              id: request.id,
             }),
           )
         } catch (e) {

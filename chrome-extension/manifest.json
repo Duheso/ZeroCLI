@@ -39,7 +39,8 @@
     "storage",
     "tabCapture",
     "windows",
-    "notifications"
+    "notifications",
+    "alarms"
   ],
   "host_permissions": [
     "<all_urls>"

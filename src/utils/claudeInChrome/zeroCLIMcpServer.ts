@@ -40,6 +40,7 @@ export const ZEROCLI_BROWSER_TOOLS: string[] = [
   'update_plan',
   'shortcuts_list',
   'shortcuts_execute',
+  'debug_info',
 ]
 
 // ─── Socket client ────────────────────────────────────────────────────────────
@@ -55,17 +56,39 @@ async function sendToolRequest(
   method: string,
   params: unknown,
 ): Promise<unknown> {
-  const socketPaths = getAllSocketPaths()
+  // Retry with backoff to tolerate Chrome service worker restarts.
+  // When the MV3 service worker is killed and relaunched, the native host
+  // spawns a new process with a new socket path. A brief retry window lets
+  // the new socket become available without surfacing a spurious error.
+  const retryDelaysMs = [0, 800, 2000, 4000]
 
-  for (const socketPath of socketPaths) {
-    try {
-      const result = await sendViaSocket(socketPath, method, params)
-      return result
-    } catch (err) {
+  for (let attempt = 0; attempt < retryDelaysMs.length; attempt++) {
+    if (retryDelaysMs[attempt]! > 0) {
       logForDebugging(
-        `[ZeroCLI Chrome] Socket ${socketPath} failed: ${err}`,
-        { level: 'debug' },
+        `[ZeroCLI Chrome] Retrying ${method} in ${retryDelaysMs[attempt]}ms (attempt ${attempt + 1}/${retryDelaysMs.length})...`,
+        { level: 'info' },
       )
+      await new Promise(resolve => setTimeout(resolve, retryDelaysMs[attempt]))
+    }
+
+    const socketPaths = getAllSocketPaths()
+
+    for (const socketPath of socketPaths) {
+      try {
+        const result = await sendViaSocket(socketPath, method, params)
+        if (attempt > 0) {
+          logForDebugging(
+            `[ZeroCLI Chrome] ${method} succeeded on attempt ${attempt + 1} via ${socketPath}`,
+            { level: 'info' },
+          )
+        }
+        return result
+      } catch (err) {
+        logForDebugging(
+          `[ZeroCLI Chrome] Socket ${socketPath} failed (attempt ${attempt + 1}): ${err}`,
+          { level: 'debug' },
+        )
+      }
     }
   }
 
@@ -558,6 +581,19 @@ export function createZeroCLIChromeMcpServer(): McpServer {
     },
     async (params) => {
       const result = await callTool('shortcuts_execute', params)
+      return {
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+      }
+    },
+  )
+
+  // ── debug_info ────────────────────────────────────────────────────────────
+  server.tool(
+    'debug_info',
+    'Get diagnostic information about the browser extension connection: uptime, connect/disconnect counts, last error, last tool call, and open tabs. Use this to diagnose intermittent "not connected" failures.',
+    {},
+    async () => {
+      const result = await callTool('debug_info', {})
       return {
         content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
       }
