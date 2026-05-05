@@ -2501,7 +2501,12 @@ export function buildExportData(
   insights: InsightResults,
   facets: Map<string, SessionFacets>,
 ): InsightsExport {
-  const version = typeof MACRO !== 'undefined' ? MACRO.VERSION : 'unknown'
+  let version: string
+  try {
+    version = MACRO.VERSION || 'unknown'
+  } catch {
+    version = 'unknown'
+  }
 
   const facets_summary = {
     total: facets.size,

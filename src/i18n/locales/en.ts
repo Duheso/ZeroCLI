@@ -77,6 +77,7 @@ export interface TranslationKeys {
   cmd_rename: string
   cmd_release_notes: string
   cmd_upgrade: string
+  cmd_update: string
   cmd_auto_fix: string
   cmd_insights: string
   cmd_security_review: string
@@ -706,6 +707,7 @@ export const en: TranslationKeys = {
   cmd_rename: 'Rename the current conversation',
   cmd_release_notes: 'View release notes',
   cmd_upgrade: 'Upgrade to Max for higher rate limits and more Opus',
+  cmd_update: 'Check for updates and install the latest version',
   cmd_auto_fix: 'Configure auto-fix: run lint/test after AI edits',
   cmd_insights: 'Generate a report analyzing your ZeroCLI sessions',
   cmd_security_review: 'Complete a security review of pending changes',

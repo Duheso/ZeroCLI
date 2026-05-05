@@ -25,6 +25,7 @@ import dream from './commands/dream/index.js'
 // @ts-expect-error no type declarations
 import ctx_viz from './commands/ctx_viz/index.js'
 import doctor from './commands/doctor/index.js'
+import update from './commands/update/index.js'
 import onboardGithub from './commands/onboard-github/index.js'
 import memory from './commands/memory/index.js'
 import help from './commands/help/index.js'
@@ -342,6 +343,7 @@ const COMMANDS = memoize((): Command[] => [
   securityReview,
   terminalSetup,
   upgrade,
+  update,
   extraUsage,
   extraUsageNonInteractive,
   rateLimitOptions,

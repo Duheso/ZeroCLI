@@ -82,6 +82,7 @@ export const ptBR: TranslationKeys = {
   cmd_rename: 'Renomear a conversa atual',
   cmd_release_notes: 'Ver notas de lançamento',
   cmd_upgrade: 'Fazer upgrade para o Max com limites maiores e mais Opus',
+  cmd_update: 'Verificar e instalar a versão mais recente',
   cmd_auto_fix: 'Configurar correção automática: executar lint/testes após edições',
   cmd_insights: 'Gerar um relatório analisando suas sessões do ZeroCLI',
   cmd_security_review: 'Concluir uma revisão de segurança das alterações pendentes',

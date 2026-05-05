@@ -97,7 +97,12 @@ import { validateUuid } from './uuid.js'
 
 // Cache MACRO.VERSION at module level to work around bun --define bug in async contexts
 // See: https://github.com/oven-sh/bun/issues/26168
-const VERSION = typeof MACRO !== 'undefined' ? MACRO.VERSION : 'unknown'
+let VERSION: string
+try {
+  VERSION = MACRO.VERSION || 'unknown'
+} catch {
+  VERSION = 'unknown'
+}
 
 type Transcript = (
   | UserMessage

@@ -140,6 +140,9 @@ const result = await Bun.build({
       JSON.stringify('report the issue at https://github.com/anthropics/claude-code/issues'),
     'MACRO.PACKAGE_URL': JSON.stringify('@duheso/zerocli'),
     'MACRO.NATIVE_PACKAGE_URL': 'undefined',
+    // Ensure production mode so getCurrentInstallationType() doesn't
+    // get statically evaluated as "development" by the bundler.
+    'process.env.NODE_ENV': JSON.stringify('production'),
   },
   plugins: [
     noTelemetryPlugin,
