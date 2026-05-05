@@ -36,9 +36,9 @@ declare module 'image-processor-napi' {
 }
 
 declare const MACRO: {
-  /** Internal compat version (always "0.8.7" in open build). */
+  /** Internal compat version (always "0.8.8" in open build). */
   VERSION: string
-  /** Human-readable display version (e.g. "0.8.7"). */
+  /** Human-readable display version (e.g. "0.8.8"). */
   DISPLAY_VERSION?: string
   /** ISO timestamp of the build. */
   BUILD_TIME: string
