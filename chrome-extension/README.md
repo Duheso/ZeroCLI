@@ -32,10 +32,29 @@ This ID is stable because it's derived from the included RSA key in `manifest.js
    - The ZeroCLI extension should appear with ID: `ccmaidbdaocjoeceanhlkafcokhmiolf`
    - The extension icon (⚡) will appear in your toolbar
 
-5. **Connect to ZeroCLI**
-   - Start ZeroCLI with Chrome support: `zero --chrome`
-   - ZeroCLI will automatically install the native messaging host
-   - Click the extension icon to verify the "Connected" status
+5. **Register the Native Host** ← *must do before the extension can connect*
+
+   Run the setup script from the repo root:
+   ```powershell
+   # Windows (PowerShell):
+   node scripts/setup-chrome-native-host.mjs
+
+   # macOS / Linux:
+   node scripts/setup-chrome-native-host.mjs
+   ```
+
+   This writes the Windows registry keys (or macOS/Linux manifest files) that
+   Chrome uses to find the `zero` process.
+
+6. **Reload the extension**
+   - Go back to `chrome://extensions`
+   - Click the ↺ reload button on the ZeroCLI extension
+   - The popup should now show **"Connected"**
+
+7. **Use it**
+   ```powershell
+   zero --chrome
+   ```
 
 ## Native Messaging Host
 

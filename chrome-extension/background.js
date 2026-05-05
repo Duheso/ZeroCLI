@@ -27,17 +27,31 @@ function connectNativeHost() {
     });
 
     nativePort.onDisconnect.addListener(() => {
+      // Read lastError to mark it as "checked" and suppress DevTools warning
+      const err = chrome.runtime.lastError;
+      const hostNotFound = err && (
+        err.message?.includes('not found') ||
+        err.message?.includes('Cannot find native messaging host') ||
+        err.message?.includes('Specified native messaging host not found')
+      );
       isConnected = false;
       nativePort = null;
       updateIcon(false);
       // Reject all pending requests
       for (const [id, pending] of pendingRequests) {
         clearTimeout(pending.timeoutId);
-        pending.reject(new Error('Native host disconnected'));
+        pending.reject(new Error(err?.message ?? 'Native host disconnected'));
       }
       pendingRequests.clear();
-      // Reconnect after delay
-      setTimeout(connectNativeHost, 3000);
+      if (hostNotFound) {
+        // Native host not installed yet — retry slowly (every 30s)
+        // User needs to run: zero --chrome  (to register the native host)
+        console.warn('[ZeroCLI] Native messaging host not found. Run "zero --chrome" once to register it, then reload this extension.');
+        setTimeout(connectNativeHost, 30000);
+      } else {
+        // Normal disconnect — reconnect after short delay
+        setTimeout(connectNativeHost, 3000);
+      }
     });
 
     // Send initial ping
@@ -45,7 +59,8 @@ function connectNativeHost() {
   } catch (err) {
     isConnected = false;
     updateIcon(false);
-    setTimeout(connectNativeHost, 5000);
+    console.warn('[ZeroCLI] connectNativeHost error:', err?.message);
+    setTimeout(connectNativeHost, 30000);
   }
 }
 
