@@ -7,7 +7,7 @@
  */
 
 const W = 58;
-const ver = "0.7.8";
+const ver = "0.7.9";
 const dot = "\u2026".repeat(58);
 const footer = "\u2026".repeat(7) + "\u2588 \u2588   \u2588 \u2588" + "\u2026".repeat(54);
 
