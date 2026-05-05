@@ -2,7 +2,6 @@ import { ZEROCLI_BROWSER_TOOLS } from './zeroCLIMcpServer.js'
 import { chmod, mkdir, readFile, writeFile } from 'fs/promises'
 import { homedir } from 'os'
 import { join } from 'path'
-import { fileURLToPath } from 'url'
 import {
   getIsInteractive,
   getIsNonInteractiveSession,
@@ -138,9 +137,9 @@ export function setupClaudeInChrome(): {
       systemPrompt: getChromeSystemPrompt(),
     }
   } else {
-    const __filename = fileURLToPath(import.meta.url)
-    const __dirname = join(__filename, '..')
-    const cliPath = join(__dirname, 'cli.js')
+    // Non-bundled mode (npm install): process.argv[1] is the absolute path to
+    // the CLI script (e.g. dist/cli.mjs), which is the correct file to invoke.
+    const cliPath = process.argv[1]!
 
     void createWrapperScript(
       `"${process.execPath}" "${cliPath}" --chrome-native-host`,
@@ -159,7 +158,7 @@ export function setupClaudeInChrome(): {
       [CLAUDE_IN_CHROME_MCP_SERVER_NAME]: {
         type: 'stdio' as const,
         command: process.execPath,
-        args: [`${cliPath}`, '--claude-in-chrome-mcp'],
+        args: [cliPath, '--claude-in-chrome-mcp'],
         scope: 'dynamic' as const,
         ...(hasEnv && { env }),
       },

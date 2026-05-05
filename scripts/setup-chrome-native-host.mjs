@@ -30,34 +30,45 @@ const ZEROCLI_EXTENSION_ID = 'ccmaidbdaocjoeceanhlkafcokhmiolf'
 // ─── Find the zero executable ─────────────────────────────────────────────────
 
 function findZeroExecutable() {
-  // 1. Check if 'zero' is on PATH
+  // Priority: use node + dist/cli.mjs directly, which is the most reliable
+  // path for Chrome native messaging (avoids wrapper chain issues).
+
+  // 1. dist/cli.mjs in this repo (dev mode / cloned repo)
+  const devCli = join(ROOT, 'dist', 'cli.mjs')
+  if (existsSync(devCli)) {
+    return { node: process.execPath, cli: devCli }
+  }
+
+  // 2. Find globally installed @duheso/zerocli — locate its dist/cli.mjs
+  //    by resolving from the zero bin script location
   const which = platform() === 'win32'
     ? spawnSync('where', ['zero'], { shell: true })
     : spawnSync('which', ['zero'])
   if (which.status === 0) {
-    return which.stdout.toString().trim().split('\n')[0].trim()
+    const zeroBin = which.stdout.toString().trim().split('\n')[0].trim()
+      .replace(/\r/g, '')
+    // zero bin is at: <pkg_root>/bin/zero(.cmd)
+    // dist/cli.mjs is at: <pkg_root>/dist/cli.mjs
+    const pkgRoot = resolve(dirname(zeroBin), '..')
+    const globalCli = join(pkgRoot, 'dist', 'cli.mjs')
+    if (existsSync(globalCli)) {
+      return { node: process.execPath, cli: globalCli }
+    }
+    // On Windows, zero.cmd might be in %APPDATA%\npm\, and the actual package
+    // might be in %APPDATA%\npm\node_modules\@duheso\zerocli\
+    const winModules = join(dirname(zeroBin), 'node_modules', '@duheso', 'zerocli', 'dist', 'cli.mjs')
+    if (existsSync(winModules)) {
+      return { node: process.execPath, cli: winModules }
+    }
   }
 
-  // 2. Check common global install locations
-  const candidates = platform() === 'win32'
-    ? [
-        join(process.env.APPDATA ?? '', 'npm', 'zero.cmd'),
-        join(process.env.APPDATA ?? '', 'npm', 'zero'),
-        'C:\\Program Files\\nodejs\\zero.cmd',
-      ]
-    : [
-        '/usr/local/bin/zero',
-        '/usr/bin/zero',
-        join(homedir(), '.local', 'bin', 'zero'),
-      ]
-  for (const c of candidates) {
-    if (existsSync(c)) return c
-  }
-
-  // 3. Fall back to dist/cli.mjs in this repo (dev mode)
-  const devCli = join(ROOT, 'dist', 'cli.mjs')
-  if (existsSync(devCli)) {
-    return `node "${devCli}"`
+  // 3. Common Windows npm global path
+  if (platform() === 'win32') {
+    const appData = process.env.APPDATA ?? join(homedir(), 'AppData', 'Roaming')
+    const winCli = join(appData, 'npm', 'node_modules', '@duheso', 'zerocli', 'dist', 'cli.mjs')
+    if (existsSync(winCli)) {
+      return { node: process.execPath, cli: winCli }
+    }
   }
 
   return null
@@ -65,19 +76,19 @@ function findZeroExecutable() {
 
 // ─── Create wrapper script (Windows .cmd / Unix shell) ────────────────────────
 
-function createWrapperScript(zeroExec) {
+function createWrapperScript({ node, cli }) {
   const chromeDir = join(homedir(), '.zerocli', 'chrome')
   mkdirSync(chromeDir, { recursive: true })
 
   if (platform() === 'win32') {
     const wrapperPath = join(chromeDir, 'zerocli-native-host.cmd')
-    const content = `@echo off\n"${zeroExec}" --chrome-native-host\n`
+    const content = `@echo off\r\n"${node}" "${cli}" --chrome-native-host\r\n`
     writeFileSync(wrapperPath, content, 'utf8')
     console.log(`  ✓ Wrapper script: ${wrapperPath}`)
     return wrapperPath
   } else {
     const wrapperPath = join(chromeDir, 'zerocli-native-host.sh')
-    const content = `#!/bin/sh\nexec ${zeroExec} --chrome-native-host\n`
+    const content = `#!/bin/sh\nexec "${node}" "${cli}" --chrome-native-host\n`
     writeFileSync(wrapperPath, content, { encoding: 'utf8', mode: 0o755 })
     console.log(`  ✓ Wrapper script: ${wrapperPath}`)
     return wrapperPath
@@ -175,23 +186,24 @@ function registerWindows(manifestJsonPath) {
 
 console.log('\n🔧 ZeroCLI Chrome Native Host Setup\n')
 
-console.log('1. Locating zero executable...')
-const zeroExec = findZeroExecutable()
-if (!zeroExec) {
+console.log('1. Locating ZeroCLI dist/cli.mjs...')
+const found = findZeroExecutable()
+if (!found) {
   console.error(`
-  ✗ Could not find 'zero' executable.
+  ✗ Could not find ZeroCLI dist/cli.mjs.
   
   Options:
-    a) Install globally:  npm install -g @duheso/zerocli
-    b) Run from repo:     node dist/cli.mjs --chrome-native-host
+    a) Run this script from the ZeroCLI repo root:  node scripts/setup-chrome-native-host.mjs
+    b) Install globally:  npm install -g @duheso/zerocli
     c) Set PATH to include the folder containing 'zero'
   `)
   process.exit(1)
 }
-console.log(`  ✓ Found: ${zeroExec}\n`)
+console.log(`  ✓ Node:       ${found.node}`)
+console.log(`  ✓ CLI script: ${found.cli}\n`)
 
 console.log('2. Creating wrapper script...')
-const wrapperPath = createWrapperScript(zeroExec)
+const wrapperPath = createWrapperScript(found)
 console.log()
 
 console.log('3. Writing native host manifest...')
