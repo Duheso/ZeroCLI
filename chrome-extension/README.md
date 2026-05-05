@@ -101,7 +101,7 @@ zero --chrome
 /chrome
 ```
 
-The `claude-in-chrome` skill will be automatically available.
+The `zero-in-chrome` skill will be automatically available.
 
 ## Permissions
 

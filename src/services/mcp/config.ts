@@ -633,7 +633,7 @@ export async function addMcpConfig(
     )
   }
 
-  // Block reserved server name "claude-in-chrome"
+  // Block reserved server name "zero-in-chrome"
   if (isZeroInChromeMCPServer(name)) {
     throw new Error(`Cannot add MCP server "${name}": this name is reserved.`)
   }

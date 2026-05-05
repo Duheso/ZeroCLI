@@ -95,7 +95,7 @@ export function setupZeroInChrome(): {
 } {
   const isNativeBuild = isInBundledMode()
   const allowedTools = ZEROCLI_BROWSER_TOOLS.map(
-    (toolName: string) => `mcp__claude-in-chrome__${toolName}`,
+    (toolName: string) => `mcp__zero-in-chrome__${toolName}`,
   )
 
   const env: Record<string, string> = {}
@@ -126,7 +126,7 @@ export function setupZeroInChrome(): {
         [CLAUDE_IN_CHROME_MCP_SERVER_NAME]: {
           type: 'stdio' as const,
           command: process.execPath,
-          args: ['--claude-in-chrome-mcp'],
+          args: ['--zero-in-chrome-mcp'],
           scope: 'dynamic' as const,
           ...(hasEnv && { env }),
         },
@@ -156,7 +156,7 @@ export function setupZeroInChrome(): {
       [CLAUDE_IN_CHROME_MCP_SERVER_NAME]: {
         type: 'stdio' as const,
         command: process.execPath,
-        args: [cliPath, '--claude-in-chrome-mcp'],
+        args: [cliPath, '--zero-in-chrome-mcp'],
         scope: 'dynamic' as const,
         ...(hasEnv && { env }),
       },

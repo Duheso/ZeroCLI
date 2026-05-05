@@ -165,7 +165,7 @@ async function main(): Promise<void> {
     console.log(prompt.join('\n'));
     return;
   }
-  if (process.argv[2] === '--claude-in-chrome-mcp') {
+  if (process.argv[2] === '--zero-in-chrome-mcp') {
     profileCheckpoint('cli_claude_in_chrome_mcp_path');
     const {
       runZeroInChromeMcpServer

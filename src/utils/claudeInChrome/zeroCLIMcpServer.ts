@@ -569,7 +569,7 @@ export function createZeroCLIChromeMcpServer(): McpServer {
 
 // ─── Entry point ──────────────────────────────────────────────────────────────
 
-/** Run the ZeroCLI Chrome MCP server (called from entrypoint via --claude-in-chrome-mcp flag). */
+/** Run the ZeroCLI Chrome MCP server (called from entrypoint via --zero-in-chrome-mcp flag). */
 export async function runZeroCLIChromeMcpServer(): Promise<void> {
   const server = createZeroCLIChromeMcpServer()
   const transport = new StdioServerTransport()
