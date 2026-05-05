@@ -1,4 +1,4 @@
-import { BROWSER_TOOLS } from '@ant/claude-for-chrome-mcp'
+import { ZEROCLI_BROWSER_TOOLS } from './zeroCLIMcpServer.js'
 import { chmod, mkdir, readFile, writeFile } from 'fs/promises'
 import { homedir } from 'os'
 import { join } from 'path'
@@ -97,8 +97,8 @@ export function setupClaudeInChrome(): {
   systemPrompt: string
 } {
   const isNativeBuild = isInBundledMode()
-  const allowedTools = (BROWSER_TOOLS as unknown as { name: string }[]).map(
-    tool => `mcp__claude-in-chrome__${tool.name}`,
+  const allowedTools = ZEROCLI_BROWSER_TOOLS.map(
+    (toolName: string) => `mcp__claude-in-chrome__${toolName}`,
   )
 
   const env: Record<string, string> = {}

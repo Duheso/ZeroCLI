@@ -924,21 +924,17 @@ export const connectToServer = memoize(
         isClaudeInChromeMCPServer(name)
       ) {
         // Run the Chrome MCP server in-process to avoid spawning a ~325 MB subprocess
-        const { createChromeContext } = await import(
-          '../../utils/claudeInChrome/mcpServer.js'
-        )
-        const { createClaudeForChromeMcpServer } = await import(
-          '@ant/claude-for-chrome-mcp'
+        const { createZeroCLIChromeMcpServer } = await import(
+          '../../utils/claudeInChrome/zeroCLIMcpServer.js'
         )
         const { createLinkedTransportPair } = await import(
           './InProcessTransport.js'
         )
-        const context = createChromeContext(serverRef.env)
-        inProcessServer = createClaudeForChromeMcpServer(context)
+        inProcessServer = createZeroCLIChromeMcpServer()
         const [clientTransport, serverTransport] = createLinkedTransportPair()
         await (inProcessServer as InProcessMcpServer).connect(serverTransport)
         transport = clientTransport
-        logMCPDebug(name, `In-process Chrome MCP server started`)
+        logMCPDebug(name, `In-process ZeroCLI Chrome MCP server started`)
       } else if (
         feature('CHICAGO_MCP') &&
         (serverRef.type === 'stdio' || !serverRef.type) &&
