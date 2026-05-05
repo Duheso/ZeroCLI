@@ -602,10 +602,14 @@ async function waitForTabLoad(tabId, timeoutMs = 10000) {
 }
 
 async function executeInTab(tabId, func, args) {
+  // chrome.scripting.executeScript requires all args to be structured-clone
+  // serializable. undefined is NOT serializable, so replace with null.
+  // The injected functions already treat null as "not provided" (falsy checks).
+  const safeArgs = args.map(v => v === undefined ? null : v);
   const results = await chrome.scripting.executeScript({
     target: { tabId },
     func,
-    args,
+    args: safeArgs,
   });
   return results[0]?.result;
 }
