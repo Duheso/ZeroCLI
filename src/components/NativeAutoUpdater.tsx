@@ -10,6 +10,7 @@ import type { AutoUpdaterResult } from '../utils/autoUpdater.js';
 import { getMaxVersion, getMaxVersionMessage } from '../utils/autoUpdater.js';
 import { isAutoUpdaterDisabled } from '../utils/config.js';
 import { installLatest } from '../utils/nativeInstaller/index.js';
+import { EXIT_CODE_RESTART } from '../utils/restartCodes.js';
 import { gt } from '../utils/semver.js';
 import { getInitialSettings } from '../utils/settings/settings.js';
 
@@ -118,6 +119,11 @@ export function NativeAutoUpdater({
           version: result.latestVersion,
           status: 'success'
         });
+
+        // Auto-restart after successful update
+        setTimeout(() => {
+          process.exit(EXIT_CODE_RESTART);
+        }, 2000);
       } else {
         // Already up to date
         logEvent('tengu_native_auto_updater_up_to_date', {
@@ -179,7 +185,7 @@ export function NativeAutoUpdater({
             Checking for updates
           </Text>
         </Box> : autoUpdaterResult?.status === 'success' && showSuccessMessage && updateSemver && <Text color="success" wrap="truncate">
-            ✓ Update installed · Restart to update
+            ✓ Updated to {autoUpdaterResult.version} · Restarting…
           </Text>}
       {autoUpdaterResult?.status === 'install_failed' && <Text color="error" wrap="truncate">
           ✗ Auto-update failed &middot; Try <Text bold>/status</Text>
@@ -187,7 +193,7 @@ export function NativeAutoUpdater({
       // @ts-expect-error build flag comparison
       {maxVersionIssue && ("external" as any) === 'ant' && <Text color="warning">
           ⚠ Known issue: {maxVersionIssue} &middot; Run{' '}
-          <Text bold>claude rollback --safe</Text> to downgrade
+          <Text bold>zero rollback --safe</Text> to downgrade
         </Text>}
     </Box>;
 }

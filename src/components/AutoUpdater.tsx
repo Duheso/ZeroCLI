@@ -10,6 +10,7 @@ import { logForDebugging } from '../utils/debug.js';
 import { getCurrentInstallationType } from '../utils/doctorDiagnostic.js';
 import { installOrUpdateZeroPackage, localInstallationExists } from '../utils/localInstaller.js';
 import { removeInstalledSymlink } from '../utils/nativeInstaller/index.js';
+import { EXIT_CODE_RESTART } from '../utils/restartCodes.js';
 import { gt, gte } from '../utils/semver.js';
 import { getInitialSettings } from '../utils/settings/settings.js';
 type Props = {
@@ -152,6 +153,13 @@ export function AutoUpdater({
         version: latestVersion,
         status: installStatus
       });
+
+      // Auto-restart after successful update
+      if (installStatus === 'success') {
+        setTimeout(() => {
+          process.exit(EXIT_CODE_RESTART);
+        }, 2000);
+      }
     }
     // isUpdating intentionally omitted from deps; we read isUpdatingRef
     // instead so the guard is always current without changing callback
@@ -185,7 +193,7 @@ export function AutoUpdater({
             </Text>
           </Box>
         </> : autoUpdaterResult?.status === 'success' && showSuccessMessage && updateSemver && <Text color="success" wrap="truncate">
-            ✓ Update installed · Restart to apply
+            ✓ Updated to {autoUpdaterResult.version} · Restarting…
           </Text>}
       {(autoUpdaterResult?.status === 'install_failed' || autoUpdaterResult?.status === 'no_permissions') && <Text color="error" wrap="truncate">
           ✗ Auto-update failed &middot; Try <Text bold>zero doctor</Text> or{' '}

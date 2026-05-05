@@ -526,6 +526,45 @@ To fix this issue:
       return 'install_failed'
     }
 
+    // Verify the installed package is intact by resolving the binary entry point
+    try {
+      const globalRoot = await execFileNoThrowWithCwd(
+        packageManager,
+        ['root', '-g'],
+        { cwd: homedir() },
+      )
+      if (globalRoot.code === 0) {
+        const binPath = join(
+          globalRoot.stdout.trim(),
+          '@duheso',
+          'zerocli',
+          'bin',
+          'zero',
+        )
+        await access(binPath, fsConstants.R_OK)
+      }
+    } catch {
+      logError(
+        new AutoUpdaterError(
+          'Post-install verification failed: bin/zero not found. Retrying install...',
+        ),
+      )
+      // Retry once — the first install may have left a corrupt state
+      const retryResult = await execFileNoThrowWithCwd(
+        packageManager,
+        ['install', '-g', packageSpec],
+        { cwd: homedir() },
+      )
+      if (retryResult.code !== 0) {
+        logError(
+          new AutoUpdaterError(
+            `Retry install also failed: ${retryResult.stdout} ${retryResult.stderr}`,
+          ),
+        )
+        return 'install_failed'
+      }
+    }
+
     // Set installMethod to 'global' to track npm global installations
     saveGlobalConfig(current => ({
       ...current,

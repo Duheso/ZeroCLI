@@ -89,15 +89,25 @@ if (!existsSync(distPath)) {
   process.exit(1);
 }
 
-const child = spawn(process.execPath, [distPath, ...process.argv.slice(2)], {
-  stdio: 'inherit',
-  env,
-});
+// Special exit code used by the auto-updater to signal a restart after update
+const EXIT_CODE_RESTART = 75;
 
-child.on('exit', (code, signal) => {
-  if (signal) {
-    process.kill(process.pid, signal);
-  } else {
-    process.exit(code ?? 0);
-  }
-});
+function launch() {
+  const child = spawn(process.execPath, [distPath, ...process.argv.slice(2)], {
+    stdio: 'inherit',
+    env,
+  });
+
+  child.on('exit', (code, signal) => {
+    if (signal) {
+      process.kill(process.pid, signal);
+    } else if (code === EXIT_CODE_RESTART) {
+      // Auto-updater requested a restart — re-spawn with the updated binary
+      setTimeout(launch, 500);
+    } else {
+      process.exit(code ?? 0);
+    }
+  });
+}
+
+launch();
