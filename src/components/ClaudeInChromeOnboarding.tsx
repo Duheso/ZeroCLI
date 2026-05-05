@@ -7,8 +7,8 @@ import { isChromeExtensionInstalled } from '../utils/claudeInChrome/setup.js';
 import { saveGlobalConfig } from '../utils/config.js';
 import type { GlobalConfig } from '../utils/config.js';
 import { Dialog } from './design-system/Dialog.js';
-const CHROME_EXTENSION_URL = 'https://claude.ai/chrome';
-const CHROME_PERMISSIONS_URL = 'https://clau.de/chrome/permissions';
+const CHROME_EXTENSION_URL = 'https://github.com/Duheso/ZeroCLI#chrome-extension';
+const CHROME_PERMISSIONS_URL = 'https://github.com/Duheso/ZeroCLI#chrome-extension';
 type Props = {
   onDone(): void;
 };

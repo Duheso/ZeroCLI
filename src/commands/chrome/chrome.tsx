@@ -11,9 +11,9 @@ import { isChromeExtensionInstalled } from '../../utils/claudeInChrome/setup.js'
 import { getGlobalConfig, saveGlobalConfig } from '../../utils/config.js';
 import { env } from '../../utils/env.js';
 import { isRunningOnHomespace } from '../../utils/envUtils.js';
-const CHROME_EXTENSION_URL = 'https://claude.ai/chrome';
-const CHROME_PERMISSIONS_URL = 'https://clau.de/chrome/permissions';
-const CHROME_RECONNECT_URL = 'https://clau.de/chrome/reconnect';
+const CHROME_EXTENSION_URL = 'https://github.com/Duheso/ZeroCLI#chrome-extension';
+const CHROME_PERMISSIONS_URL = 'https://github.com/Duheso/ZeroCLI#chrome-extension';
+const CHROME_RECONNECT_URL = 'https://github.com/Duheso/ZeroCLI#chrome-extension';
 type Props = {
   onDone: (result?: string) => void;
   isExtensionInstalled: boolean;

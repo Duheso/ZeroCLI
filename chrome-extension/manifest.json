@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "ZeroCLI Browser Extension",
+  "version": "1.0.0",
+  "description": "Connects ZeroCLI to your Chrome browser for automated browser control, screenshots, and web automation.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5/GiPKFZcQoYRyPVCk+gH6SmIZ9L+LoyWtnHxCTjO97Hq1e80CtBzDk85S6CqScFw/mPFYGSfiZTWkU6YBEQctg1NsCnc4F6CLUhb5CRbrOQse3p1vb1w/64uylRwsbOIOdiEQWMPccz5gGowGtWFfAMskrpdBhsFxb085Sz7e5DIZN9x+QBw2qvbcfgPTV2L7pGSsey5sjXmRYATOvRM1Bt6VHdCx9Ir4Qr/JNK6KOZkyqt17Oag8emCdk44eYnsvh6NBtWx1mDvDx/ZQ0BUb1WFiYvBcI3Zt/pZja0SS/PGi9iVpj5AIWk0FLPJC/iThui44NhPkCIB2spQIg7qQIDAQAB",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "ZeroCLI Browser Extension"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "scripting",
+    "debugger",
+    "nativeMessaging",
+    "storage",
+    "tabCapture",
+    "windows",
+    "notifications"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["offscreen.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

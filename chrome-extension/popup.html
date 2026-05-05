@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZeroCLI Browser Extension</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <div class="logo-text">
+          <h1>ZeroCLI</h1>
+          <span class="subtitle">Browser Extension</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="status-card" id="statusCard">
+        <div class="status-indicator">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-label" id="statusLabel">Checking...</span>
+        </div>
+        <p class="status-description" id="statusDescription"></p>
+      </div>
+
+      <div class="info-section" id="infoSection" style="display:none">
+        <div class="info-row">
+          <span class="info-label">Native Host</span>
+          <span class="info-value" id="nativeHostStatus">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Extension ID</span>
+          <span class="info-value" id="extensionId">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Version</span>
+          <span class="info-value" id="extensionVersion">—</span>
+        </div>
+      </div>
+
+      <div class="instructions" id="setupInstructions" style="display:none">
+        <h3>Setup Required</h3>
+        <ol>
+          <li>Ensure ZeroCLI is installed and running</li>
+          <li>Run: <code>zero --chrome</code></li>
+          <li>The native host will be auto-installed</li>
+          <li>Reload this extension if needed</li>
+        </ol>
+      </div>
+    </main>
+
+    <footer>
+      <a href="https://github.com/Duheso/ZeroCLI" target="_blank" class="footer-link">
+        ZeroCLI on GitHub
+      </a>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -3,18 +3,15 @@ import { homedir } from 'os'
 import { join } from 'path'
 import { isFsInaccessible } from '../errors.js'
 
-export const CHROME_EXTENSION_URL = 'https://claude.ai/chrome'
+export const CHROME_EXTENSION_URL = 'https://github.com/Duheso/ZeroCLI#chrome-extension'
 
-// Production extension ID
+// ZeroCLI Browser Extension (developer mode, derived from manifest.json key)
+const ZEROCLI_EXTENSION_ID = 'ccmaidbdaocjoeceanhlkafcokhmiolf'
+// Legacy Anthropic extension IDs (kept for compatibility detection)
 const PROD_EXTENSION_ID = 'fcoeoabgfenejglbffodgkkbkcdhcgfn'
-// Dev extension IDs (for internal use)
-const DEV_EXTENSION_ID = 'dihbgbndebgnbjfmelmegjepbnkhlgni'
-const ANT_EXTENSION_ID = 'dngcpimnedloihjnnfngkgjoidhnaolf'
 
 function getExtensionIds(): string[] {
-  return process.env.USER_TYPE === 'ant'
-    ? [PROD_EXTENSION_ID, DEV_EXTENSION_ID, ANT_EXTENSION_ID]
-    : [PROD_EXTENSION_ID]
+  return [ZEROCLI_EXTENSION_ID, PROD_EXTENSION_ID]
 }
 
 // Must match ChromiumBrowser from common.ts

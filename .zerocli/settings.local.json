@@ -61,7 +61,11 @@
       "Bash(cd /home/accadmin/workspace/ZeroCLI/.claude/worktrees/agent-a215d7b4 __NEW_LINE_52b1e0b0ad84e461__ grep -n \"FeedbackSurveyType\\\\|surveyType\" src/components/FeedbackSurvey/useFeedbackSurvey.tsx)",
       "Bash(head -20 grep -rn \"FeedbackSurveyType\\\\|FeedbackSurveyResponse\" src/ --include=*.ts --include=*.tsx)",
       "Bash(find /home/accadmin/.claude/sessions/ -name *.jsonl -size +100M)",
-      "Bash(find /home/accadmin/.claude/ -name *.jsonl)"
+      "Bash(find /home/accadmin/.claude/ -name *.jsonl)",
+      "Bash(node:*)",
+      "Read(//home/accadmin/**)",
+      "Read(//home/accadmin/.zerocli/**)",
+      "Bash(find ~/.config ~/.local ~/.zerocli ~/.cache -name *project-config* -o -name *zerocli* -o -name *zero*config*)"
     ]
   },
   "enabledMcpjsonServers": [

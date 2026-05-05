@@ -33,7 +33,10 @@ import { isChromeExtensionInstalledPortable } from './setupPortable.js'
 
 const CHROME_EXTENSION_RECONNECT_URL = 'https://clau.de/chrome/reconnect'
 
-const NATIVE_HOST_IDENTIFIER = 'com.anthropic.claude_code_browser_extension'
+// ZeroCLI Browser Extension ID (developer mode, key in chrome-extension/manifest.json)
+export const ZEROCLI_EXTENSION_ID = 'ccmaidbdaocjoeceanhlkafcokhmiolf'
+
+const NATIVE_HOST_IDENTIFIER = 'com.duheso.zerocli_browser_extension'
 const NATIVE_HOST_MANIFEST_NAME = `${NATIVE_HOST_IDENTIFIER}.json`
 
 export function shouldEnableClaudeInChrome(chromeFlag?: boolean): boolean {
@@ -202,13 +205,7 @@ export async function installChromeNativeHostManifest(
     path: manifestBinaryPath,
     type: 'stdio',
     allowed_origins: [
-      `chrome-extension://fcoeoabgfenejglbffodgkkbkcdhcgfn/`, // PROD_EXTENSION_ID
-      ...(process.env.USER_TYPE === 'ant'
-        ? [
-            'chrome-extension://dihbgbndebgnbjfmelmegjepbnkhlgni/', // DEV_EXTENSION_ID
-            'chrome-extension://dngcpimnedloihjnnfngkgjoidhnaolf/', // ANT_EXTENSION_ID
-          ]
-        : []),
+      `chrome-extension://${ZEROCLI_EXTENSION_ID}/`, // ZeroCLI Browser Extension
     ],
   }
 
