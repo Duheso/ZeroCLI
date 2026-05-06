@@ -15,10 +15,14 @@ const { buildControlCenterViewModel } = require('./presentation');
 const { ChatController, ZeroCLIChatViewProvider, ZeroCLIChatPanelManager } = require('./chat/chatProvider');
 const { SessionManager } = require('./chat/sessionManager');
 const { DiffContentProvider, SCHEME: DIFF_SCHEME } = require('./chat/diffController');
+const { McpBridgeServer } = require('./bridge');
 
 const ZERO_REPO_URL = 'https://github.com/Duheso/ZeroCLI';
 const ZERO_SETUP_URL = 'https://github.com/Duheso/ZeroCLI/blob/main/README.md#quick-start';
 const PROFILE_FILE_NAME = '.zerocli-profile.json';
+
+/** @type {McpBridgeServer|null} */
+let activeBridge = null;
 
 function escapeHtml(value) {
   return String(value)
@@ -308,6 +312,9 @@ async function launchZeroCLI(options = {}) {
   const env = {};
   if (shimEnabled) {
     env.CLAUDE_CODE_USE_OPENAI = '1';
+  }
+  if (activeBridge && activeBridge.port) {
+    env.CLAUDE_CODE_SSE_PORT = String(activeBridge.port);
   }
 
   const terminalOptions = {
@@ -1044,6 +1051,15 @@ class ZeroCLIControlCenterProvider {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+  // ── MCP Bridge Server (enables /ide connection) ──
+  const bridge = new McpBridgeServer();
+  activeBridge = bridge;
+  bridge.start().then(port => {
+    console.log(`[Zero CLI] MCP bridge server started on port ${port}`);
+  }).catch(err => {
+    console.error(`[Zero CLI] Failed to start MCP bridge: ${err.message}`);
+  });
+
   // ── Control Center (existing) ──
   const provider = new ZeroCLIControlCenterProvider();
   const refreshProvider = () => {
@@ -1218,10 +1234,16 @@ function activate(context) {
     { dispose: () => chatController.dispose() },
     { dispose: () => chatPanelManager.dispose() },
     { dispose: () => diffProvider.dispose() },
+    { dispose: () => bridge.dispose() },
   );
 }
 
-function deactivate() {}
+function deactivate() {
+  if (activeBridge) {
+    activeBridge.stop().catch(() => {});
+    activeBridge = null;
+  }
+}
 
 module.exports = {
   activate,

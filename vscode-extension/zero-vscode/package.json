@@ -31,6 +31,7 @@
     "README.md",
     "media/**",
     "src/extension.js",
+    "src/bridge.js",
     "src/presentation.js",
     "src/state.js",
     "src/chat/**",
