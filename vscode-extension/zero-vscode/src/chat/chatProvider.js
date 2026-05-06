@@ -50,6 +50,9 @@ class ChatController {
     this._thinkingTokens = 0;
     this._thinkingStartTime = null;
     this._currentBlockType = null;
+    this._currentModel = null;
+    this._totalInputTokens = 0;
+    this._maxContextTokens = 200000; // Default, updated from model info
 
     this._onDidChangeState = new vscode.EventEmitter();
     this.onDidChangeState = this._onDidChangeState.event;
@@ -78,6 +81,8 @@ class ChatController {
     this.stopSession();
     this._accumulatedText = '';
     this._toolUses = [];
+    this._totalInputTokens = 0;
+    this._currentModel = null;
     // Only clear messages if this is a brand new session (not continuing)
     if (!opts.continueSession && !opts.sessionId) {
       this._messages = [];
@@ -219,10 +224,28 @@ class ChatController {
 
     // System message — extract model and session info
     if (msg.type === 'system') {
+      if (msg.model) {
+        this._currentModel = msg.model;
+        // Estimate max context based on model name
+        if (msg.model.includes('256k') || msg.model.includes('qwen')) {
+          this._maxContextTokens = 256000;
+        } else if (msg.model.includes('128k') || msg.model.includes('gpt-4')) {
+          this._maxContextTokens = 128000;
+        } else if (msg.model.includes('claude')) {
+          this._maxContextTokens = 200000;
+        }
+      }
       this._broadcast({
         type: 'system_info',
         model: msg.model || null,
         sessionId: msg.session_id || msg.sessionId || null,
+      });
+      // Also broadcast model_info for footer display
+      this._broadcast({
+        type: 'model_info',
+        model: this._currentModel,
+        inputTokens: this._totalInputTokens,
+        maxTokens: this._maxContextTokens,
       });
       return;
     }
@@ -321,6 +344,16 @@ class ChatController {
       this._lastResult = msg;
       // Only use result text if nothing was shown via streaming yet
       const text = this._accumulatedText || '';
+      // Update token count from usage
+      if (msg.usage && msg.usage.input_tokens) {
+        this._totalInputTokens = msg.usage.input_tokens;
+        this._broadcast({
+          type: 'model_info',
+          model: this._currentModel,
+          inputTokens: this._totalInputTokens,
+          maxTokens: this._maxContextTokens,
+        });
+      }
       this._broadcast({ type: 'stream_end', text, usage: msg.usage || null, final: true });
       // Show turn info: if the model stopped without using tools (num_turns=1),
       // the user knows the model chose not to edit

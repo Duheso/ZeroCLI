@@ -1938,6 +1938,10 @@ function renderChatHtml({ nonce, platform }) {
         }
         break;
 
+      case 'model_info':
+        updateModelInfo(msg.model, msg.inputTokens, msg.maxTokens);
+        break;
+
       case 'error':
         setStreaming(false);
         finalizeAssistant();
