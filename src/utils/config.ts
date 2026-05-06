@@ -1387,11 +1387,12 @@ export function enableConfigs(): void {
   // Any reads to configuration before this flag is set show an console warning
   // to prevent us from adding config reading during module initialization
   configReadingAllowed = true
-  // We only check the global config because currently all the configs share a file
+  // We only check the global config because currently all the configs share a file.
+  // Don't throw on invalid — let getConfig's recovery logic handle corruption
+  // (backup the corrupted file and return defaults) so the app can still start.
   getConfig(
     getGlobalZeroFile(),
     createDefaultGlobalConfig,
-    true /* throw on invalid */,
   )
 
   logForDiagnosticsNoPII('info', 'enable_configs_completed', {
