@@ -33,8 +33,12 @@ function resolveConfigHomeDir() {
 
 // ── SSE helpers ──────────────────────────────────────────────────────────
 
-function sseWrite(res, event, data) {
+function sseWriteJson(res, event, data) {
   res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+}
+
+function sseWriteRaw(res, event, data) {
+  res.write(`event: ${event}\ndata: ${data}\n\n`);
 }
 
 // ── MCP Tool Handlers ────────────────────────────────────────────────────
@@ -397,7 +401,7 @@ class McpBridgeServer {
     });
 
     // Send the endpoint event that tells the client where to POST messages
-    sseWrite(res, 'endpoint', `/message?sessionId=${sessionId}`);
+    sseWriteRaw(res, 'endpoint', `/message?sessionId=${sessionId}`);
 
     this._sseClients.set(sessionId, res);
 
@@ -555,7 +559,7 @@ class McpBridgeServer {
         };
     }
 
-    sseWrite(sseRes, 'message', response);
+    sseWriteJson(sseRes, 'message', response);
   }
 
   dispose() {

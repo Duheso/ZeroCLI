@@ -558,6 +558,14 @@ export async function cleanupStaleIdeLockfiles(): Promise<void> {
               shouldDelete = true
             }
           }
+        } else {
+          // PID is alive, but the IDE extension port might still be dead
+          // (e.g., the PID belongs to the VS Code server/parent, not the
+          // extension host that wrote this lockfile).
+          const isResponding = await checkIdeConnection(host, lockfileInfo.port)
+          if (!isResponding) {
+            shouldDelete = true
+          }
         }
       } else {
         // No PID, check if the URL is responding
