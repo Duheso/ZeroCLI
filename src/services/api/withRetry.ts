@@ -24,6 +24,9 @@ import {
 import { isEnvTruthy } from '../../utils/envUtils.js'
 import { errorMessage } from '../../utils/errors.js'
 import {
+  refreshGithubModelsTokenIfNeeded,
+} from '../../utils/githubModelsCredentials.js'
+import {
   type CooldownReason,
   handleFastModeOverageRejection,
   handleFastModeRejectedByAPI,
@@ -251,9 +254,15 @@ export async function* withRetry<T>(
           (lastError instanceof APIError && lastError.status === 401) ||
           isOAuthTokenRevokedError(lastError)
         ) {
-          const failedAccessToken = getZeroAIOAuthTokens()?.accessToken
-          if (failedAccessToken) {
-            await handleOAuth401Error(failedAccessToken)
+          if (isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)) {
+            // GitHub Copilot tokens are short-lived (~30 min); exchange
+            // the stored OAuth token for a fresh one before retrying.
+            await refreshGithubModelsTokenIfNeeded()
+          } else {
+            const failedAccessToken = getZeroAIOAuthTokens()?.accessToken
+            if (failedAccessToken) {
+              await handleOAuth401Error(failedAccessToken)
+            }
           }
         }
         client = await getClient()

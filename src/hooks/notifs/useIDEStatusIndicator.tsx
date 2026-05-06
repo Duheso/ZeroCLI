@@ -75,29 +75,18 @@ export function useIDEStatusIndicator(t0: Props) {
   useEffect(t2, t3);
   let t4;
   let t5;
-  if ($[8] !== addNotification || $[9] !== ideName || $[10] !== ideStatus || $[11] !== removeNotification || $[12] !== showIDEInstallError || $[13] !== showJetBrainsInfo) {
+  if ($[8] !== removeNotification) {
     t4 = () => {
       if (getIsRemoteMode()) {
         return;
       }
-      if (showIDEInstallError || showJetBrainsInfo || ideStatus !== "disconnected" || !ideName) {
-        removeNotification("ide-status-disconnected");
-        return;
-      }
-      addNotification({
-        key: "ide-status-disconnected",
-        text: `${ideName} disconnected`,
-        color: "error",
-        priority: "medium"
-      });
+      // Disable IDE disconnection notifications - they appear even when the IDE extension
+      // was never successfully connected, which is confusing for users. Users can use /ide
+      // to check IDE connection status and configure MCP if needed.
+      removeNotification("ide-status-disconnected");
     };
-    t5 = [addNotification, removeNotification, ideStatus, ideName, showIDEInstallError, showJetBrainsInfo];
-    $[8] = addNotification;
-    $[9] = ideName;
-    $[10] = ideStatus;
-    $[11] = removeNotification;
-    $[12] = showIDEInstallError;
-    $[13] = showJetBrainsInfo;
+    t5 = [removeNotification];
+    $[8] = removeNotification;
     $[14] = t4;
     $[15] = t5;
   } else {

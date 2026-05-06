@@ -65,7 +65,8 @@
       "Bash(node:*)",
       "Read(//home/accadmin/**)",
       "Read(//home/accadmin/.zerocli/**)",
-      "Bash(find ~/.config ~/.local ~/.zerocli ~/.cache -name *project-config* -o -name *zerocli* -o -name *zero*config*)"
+      "Bash(find ~/.config ~/.local ~/.zerocli ~/.cache -name *project-config* -o -name *zerocli* -o -name *zero*config*)",
+      "Bash(bun run:*)"
     ]
   },
   "enabledMcpjsonServers": [
