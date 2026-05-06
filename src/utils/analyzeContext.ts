@@ -1170,8 +1170,10 @@ export async function analyzeContextUsage(
       apiUsage.cache_read_input_tokens
     : null
 
-  // Use API total if available, otherwise fall back to estimated total
-  const finalTotalTokens = totalFromAPI ?? totalIncludingReserved
+  // Use API total if available and non-zero, otherwise fall back to estimated total.
+  // Local models (e.g. Ollama) may return usage with all-zero fields; in that case
+  // the estimated total from category breakdown is more accurate.
+  const finalTotalTokens = totalFromAPI ? totalFromAPI : totalIncludingReserved
 
   // Pre-calculate grid based on model context window and terminal width
   // For narrow screens (< 80 cols), use 5x5 for 200k models, 5x10 for 1M+ models

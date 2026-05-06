@@ -26,8 +26,7 @@ import { formatDuration } from '../../utils/format.js';
 import { setEnvHookNotifier } from '../../utils/hooks/fileChangedWatcher.js';
 import { toIDEDisplayName } from '../../utils/ide.js';
 import { getMessagesAfterCompactBoundary } from '../../utils/messages.js';
-import { tokenCountFromLastAPIResponse } from '../../utils/tokens.js';
-import { roughTokenCountEstimationForMessages } from '../../services/tokenEstimation.js';
+import { tokenCountWithEstimation } from '../../utils/tokens.js';
 import { AutoUpdaterWrapper } from '../AutoUpdaterWrapper.js';
 import { ConfigurableShortcutHint } from '../ConfigurableShortcutHint.js';
 import { IdeStatusIndicator } from '../IdeStatusIndicator.js';
@@ -76,8 +75,7 @@ export function Notifications(t0: Props) {
   let t3;
   if ($[0] !== messages) {
     const messagesForTokenCount = getMessagesAfterCompactBoundary(messages);
-    const apiTokens = tokenCountFromLastAPIResponse(messagesForTokenCount);
-    t3 = apiTokens > 0 ? apiTokens : roughTokenCountEstimationForMessages(messagesForTokenCount);
+    t3 = tokenCountWithEstimation(messagesForTokenCount);
     $[0] = messages;
     $[1] = t3;
   } else {
