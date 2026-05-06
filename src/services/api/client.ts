@@ -60,7 +60,7 @@ const importRuntimeModule = new Function(
  * Vertex AI:
  * - Model-specific region variables (highest priority):
  *   - VERTEX_REGION_CLAUDE_3_5_HAIKU: Region for Zero 3.5 Haiku model
- *   - VERTEX_REGION_CLAUDE_HAIKU_4_5: Region for Zero Haiku 4.5 model
+ *   - VERTEX_REGION_CLAUDE_HAIKU_4_5: Region for Claude Haiku 4.5 model
  *   - VERTEX_REGION_CLAUDE_3_5_SONNET: Region for Zero 3.5 Sonnet model
  *   - VERTEX_REGION_CLAUDE_3_7_SONNET: Region for Zero 3.7 Sonnet model
  * - CLOUD_ML_REGION: Optional. The default GCP region to use for all models
