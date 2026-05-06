@@ -29,12 +29,28 @@ import { trySessionMemoryCompaction } from './sessionMemoryCompact.js'
 // Based on p99.99 of compact summary output being 17,387 tokens.
 const MAX_OUTPUT_TOKENS_FOR_SUMMARY = 20_000
 
-// Returns the context window size minus the max output tokens for the model
+// Returns the context window size minus the max output tokens for the model.
+// For OpenAI-compatible APIs (Ollama, vLLM, etc.), the context_length includes
+// both input and output tokens, so we must reserve the full max_output_tokens.
+// For Claude's native API, the context window is input-only, so we only
+// reserve a smaller buffer for the compaction summary.
 export function getEffectiveContextWindowSize(model: string): number {
-  const reservedTokensForSummary = Math.min(
-    getMaxOutputTokensForModel(model),
-    MAX_OUTPUT_TOKENS_FOR_SUMMARY,
-  )
+  const modelMaxOutput = getMaxOutputTokensForModel(model)
+
+  // OpenAI-compatible providers: context_length = input + output,
+  // so we must subtract the full output reservation from the window.
+  // Claude's API: context window is input-only, reserve only enough
+  // for the compaction summary output.
+  const isOpenAIProvider =
+    isEnvTruthy(process.env.CLAUDE_CODE_USE_OPENAI) ||
+    isEnvTruthy(process.env.CLAUDE_CODE_USE_GEMINI) ||
+    isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB) ||
+    isEnvTruthy(process.env.CLAUDE_CODE_USE_MISTRAL)
+
+  const reservedForOutput = isOpenAIProvider
+    ? modelMaxOutput // full output reservation for shared context window
+    : Math.min(modelMaxOutput, MAX_OUTPUT_TOKENS_FOR_SUMMARY)
+
   let contextWindow = getContextWindowForModel(model, getSdkBetas())
 
   const autoCompactWindow = process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW
@@ -49,8 +65,8 @@ export function getEffectiveContextWindowSize(model: string): number {
   // usable buffer. If it goes lower, the auto-compact threshold becomes
   // negative and fires on every message (issue #635).
   const autocompactBuffer = 13_000 // must match AUTOCOMPACT_BUFFER_TOKENS
-  const effectiveContext = contextWindow - reservedTokensForSummary
-  return Math.max(effectiveContext, reservedTokensForSummary + autocompactBuffer)
+  const effectiveContext = contextWindow - reservedForOutput
+  return Math.max(effectiveContext, reservedForOutput + autocompactBuffer)
 }
 
 export type AutoCompactTrackingState = {
