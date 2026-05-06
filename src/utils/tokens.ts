@@ -58,7 +58,11 @@ export function tokenCountFromLastAPIResponse(messages: Message[]): number {
     const message = messages[i]
     const usage = message ? getTokenUsage(message) : undefined
     if (usage) {
-      return getTokenCountFromUsage(usage)
+      const count = getTokenCountFromUsage(usage)
+      // Skip zero-usage responses (local models may return all-zero fields)
+      if (count > 0) {
+        return count
+      }
     }
     i--
   }
@@ -421,31 +425,38 @@ export function tokenCountWithEstimation(messages: readonly Message[]): number {
     const message = messages[i]
     const usage = message ? getTokenUsage(message) : undefined
     if (message && usage) {
-      // Walk back past any earlier sibling records split from the same API
-      // response (same message.id) so interleaved tool_results between them
-      // are included in the estimation slice.
-      const responseId = getAssistantMessageId(message)
-      if (responseId) {
-        let j = i - 1
-        while (j >= 0) {
-          const prior = messages[j]
-          const priorId = prior ? getAssistantMessageId(prior) : undefined
-          if (priorId === responseId) {
-            // Earlier split of the same API response — anchor here instead.
-            i = j
-          } else if (priorId !== undefined) {
-            // Hit a different API response — stop walking.
-            break
+      // Skip zero-usage API responses (e.g. local models via Ollama that
+      // return usage with all-zero fields). Anchoring on a zero count would
+      // discard the rough estimation of all prior messages, producing a
+      // drastically underestimated total.
+      const usageCount = getTokenCountFromUsage(usage)
+      if (usageCount > 0) {
+        // Walk back past any earlier sibling records split from the same API
+        // response (same message.id) so interleaved tool_results between them
+        // are included in the estimation slice.
+        const responseId = getAssistantMessageId(message)
+        if (responseId) {
+          let j = i - 1
+          while (j >= 0) {
+            const prior = messages[j]
+            const priorId = prior ? getAssistantMessageId(prior) : undefined
+            if (priorId === responseId) {
+              // Earlier split of the same API response — anchor here instead.
+              i = j
+            } else if (priorId !== undefined) {
+              // Hit a different API response — stop walking.
+              break
+            }
+            // priorId === undefined: a user/tool_result/attachment message,
+            // possibly interleaved between splits — keep walking.
+            j--
           }
-          // priorId === undefined: a user/tool_result/attachment message,
-          // possibly interleaved between splits — keep walking.
-          j--
         }
+        return (
+          usageCount +
+          roughTokenCountEstimationForMessages(messages.slice(i + 1))
+        )
       }
-      return (
-        getTokenCountFromUsage(usage) +
-        roughTokenCountEstimationForMessages(messages.slice(i + 1))
-      )
     }
     i--
   }
