@@ -482,22 +482,42 @@ function renderControlCenterHtml(status, options = {}) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --oc-bg: #050505;
-      --oc-panel: #110d0c;
-      --oc-panel-strong: #17110f;
-      --oc-panel-soft: #1d1512;
-      --oc-border: #645041;
-      --oc-border-soft: rgba(220, 195, 170, 0.14);
-      --oc-text: #f7efe5;
-      --oc-text-dim: #dcc3aa;
-      --oc-text-soft: #aa9078;
-      --oc-accent: #d77757;
-      --oc-accent-bright: #f09464;
-      --oc-accent-soft: rgba(240, 148, 100, 0.18);
-      --oc-positive: #e8b86b;
-      --oc-warning: #f3c969;
-      --oc-critical: #ff8a6c;
-      --oc-focus: #ffd3a1;
+      /* ZeroChat Theme - Black/Purple/Cyan */
+      --zc-bg: #0a0a0f;
+      --zc-panel: #0f0f18;
+      --zc-panel-strong: #141420;
+      --zc-panel-soft: #1a1a28;
+      --zc-border: #3d3d5c;
+      --zc-border-soft: rgba(138,130,200,0.14);
+      --zc-text: #e8e8f5;
+      --zc-text-dim: #b0b0cc;
+      --zc-text-soft: #7878a0;
+      --zc-accent: #8b5cf6;
+      --zc-accent-bright: #a78bfa;
+      --zc-accent-soft: rgba(139,92,246,0.18);
+      --zc-cyan: #22d3ee;
+      --zc-cyan-soft: rgba(34,211,238,0.15);
+      --zc-positive: #4ade80;
+      --zc-warning: #fbbf24;
+      --zc-critical: #f87171;
+      --zc-focus: #c4b5fd;
+      /* Legacy aliases */
+      --oc-bg: var(--zc-bg);
+      --oc-panel: var(--zc-panel);
+      --oc-panel-strong: var(--zc-panel-strong);
+      --oc-panel-soft: var(--zc-panel-soft);
+      --oc-border: var(--zc-border);
+      --oc-border-soft: var(--zc-border-soft);
+      --oc-text: var(--zc-text);
+      --oc-text-dim: var(--zc-text-dim);
+      --oc-text-soft: var(--zc-text-soft);
+      --oc-accent: var(--zc-accent);
+      --oc-accent-bright: var(--zc-accent-bright);
+      --oc-accent-soft: var(--zc-accent-soft);
+      --oc-positive: var(--zc-positive);
+      --oc-warning: var(--zc-warning);
+      --oc-critical: var(--zc-critical);
+      --oc-focus: var(--zc-focus);
     }
     * {
       box-sizing: border-box;
@@ -514,9 +534,9 @@ function renderControlCenterHtml(status, options = {}) {
       font-family: var(--vscode-font-family, "Segoe UI", sans-serif);
       color: var(--oc-text);
       background:
-        radial-gradient(circle at top right, rgba(240, 148, 100, 0.16), transparent 34%),
-        radial-gradient(circle at 20% 0%, rgba(215, 119, 87, 0.14), transparent 28%),
-        linear-gradient(180deg, #090706, #050505 58%, #090706);
+        radial-gradient(circle at top right, rgba(139, 92, 246, 0.14), transparent 34%),
+        radial-gradient(circle at 20% 0%, rgba(34, 211, 238, 0.10), transparent 28%),
+        linear-gradient(180deg, #0a0a0f, #050508 58%, #0a0a0f);
       line-height: 1.45;
     }
     button {
@@ -529,7 +549,7 @@ function renderControlCenterHtml(status, options = {}) {
       border-radius: 20px;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 16%),
-        linear-gradient(180deg, rgba(17, 13, 12, 0.98), rgba(9, 7, 6, 0.98));
+        linear-gradient(180deg, rgba(15, 15, 24, 0.98), rgba(10, 10, 15, 0.98));
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
     }
     .shell::before {
@@ -537,11 +557,11 @@ function renderControlCenterHtml(status, options = {}) {
       position: absolute;
       inset: 0 0 auto;
       height: 2px;
-      background: linear-gradient(90deg, #ffb464, #f09464, #d77757, #814334);
+      background: linear-gradient(90deg, #22d3ee, #67e8f9, #a78bfa, #8b5cf6);
       opacity: 0.95;
     }
     .sunset-gradient {
-      background: linear-gradient(90deg, #ffb464, #f09464, #d77757, #814334);
+      background: linear-gradient(90deg, #22d3ee, #67e8f9, #a78bfa, #8b5cf6);
     }
     .frame {
       display: grid;
@@ -554,7 +574,7 @@ function renderControlCenterHtml(status, options = {}) {
       padding: 18px;
       border-radius: 16px;
       background:
-        linear-gradient(135deg, rgba(240, 148, 100, 0.06), rgba(215, 119, 87, 0.02) 55%, transparent),
+        linear-gradient(135deg, rgba(139, 92, 246, 0.06), rgba(34, 211, 238, 0.02) 55%, transparent),
         var(--oc-panel);
       border: 1px solid var(--oc-border-soft);
     }
@@ -584,7 +604,7 @@ function renderControlCenterHtml(status, options = {}) {
       color: var(--oc-text);
     }
     .wordmark-accent {
-      color: var(--oc-accent-bright);
+      color: var(--zc-cyan);
     }
     .headline {
       display: grid;

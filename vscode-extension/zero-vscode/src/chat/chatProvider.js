@@ -520,6 +520,19 @@ class ZeroCLIChatViewProvider {
           break;
         case 'webview_ready':
           break;
+        case 'mode_changed': {
+          const cfg = vscode.workspace.getConfiguration('zerocli');
+          await cfg.update('permissionMode', msg.mode, vscode.ConfigurationTarget.Workspace);
+          break;
+        }
+        case 'setting_changed':
+          vscode.window.showInformationMessage(`Setting ${msg.setting} changed to ${msg.value}`);
+          break;
+        case 'attach_file':
+          if (msg.path) {
+            vscode.window.showInformationMessage(`File attached: ${msg.path}`);
+          }
+          break;
       }
     });
   }

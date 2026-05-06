@@ -156,7 +156,7 @@
       {
         "label": "Zero CLI Terminal Black",
         "uiTheme": "vs-dark",
-        "path": "./themes/Zero CLI-Terminal-Black.json"
+        "path": "./themes/Zero-Terminal-Black.json"
       }
     ]
   },

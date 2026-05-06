@@ -51,6 +51,62 @@ function getProjectDir(cwd) {
   return path.join(getProjectsDir(), sanitizePath(cwd));
 }
 
+/**
+ * Parse XML-style tags from local command output in session history.
+ * Converts tags like <local-command-caveat>, <command-name>, etc. into structured data.
+ */
+function parseLocalCommandXml(text) {
+  if (!text || typeof text !== 'string') return null;
+  
+  // Check if text contains local command XML tags
+  const hasLocalCommand = /<local-command-caveat>|<command-name>|<local-command-stdout>/.test(text);
+  if (!hasLocalCommand) return null;
+
+  const result = {
+    type: 'local_command',
+    caveat: null,
+    commandName: null,
+    commandMessage: null,
+    commandArgs: null,
+    stdout: null,
+    rawText: text,
+  };
+
+  // Extract each tag's content
+  const caveatMatch = text.match(/<local-command-caveat>([\s\S]*?)<\/local-command-caveat>/);
+  if (caveatMatch) result.caveat = caveatMatch[1].trim();
+
+  const nameMatch = text.match(/<command-name>([\s\S]*?)<\/command-name>/);
+  if (nameMatch) result.commandName = nameMatch[1].trim();
+
+  const msgMatch = text.match(/<command-message>([\s\S]*?)<\/command-message>/);
+  if (msgMatch) result.commandMessage = msgMatch[1].trim();
+
+  const argsMatch = text.match(/<command-args>([\s\S]*?)<\/command-args>/);
+  if (argsMatch) result.commandArgs = argsMatch[1].trim();
+
+  const stdoutMatch = text.match(/<local-command-stdout>([\s\S]*?)<\/local-command-stdout>/);
+  if (stdoutMatch) result.stdout = stdoutMatch[1].trim();
+
+  return result;
+}
+
+/**
+ * Clean text by removing XML tags and returning readable content
+ */
+function cleanXmlTags(text) {
+  if (!text || typeof text !== 'string') return text;
+  
+  // Remove known XML tags but keep their content readable
+  return text
+    .replace(/<local-command-caveat>[\s\S]*?<\/local-command-caveat>/g, '')
+    .replace(/<command-name>([\s\S]*?)<\/command-name>/g, '/$1')
+    .replace(/<command-message>[\s\S]*?<\/command-message>/g, '')
+    .replace(/<command-args>([\s\S]*?)<\/command-args>/g, ' $1')
+    .replace(/<local-command-stdout>([\s\S]*?)<\/local-command-stdout>/g, '\nOutput: $1')
+    .trim();
+}
+
 class SessionManager {
   constructor() {
     this._cwd = null;
@@ -219,19 +275,37 @@ class SessionManager {
           const c = entry.message.content;
           // Skip tool result messages (they're user messages with tool_result blocks)
           if (Array.isArray(c) && c.length > 0 && c[0].type === 'tool_result') continue;
-          const text = typeof c === 'string'
+          let text = typeof c === 'string'
             ? c
             : Array.isArray(c)
               ? c.filter(b => b.type === 'text').map(b => b.text).join('')
               : '';
-          if (text) messages.push({ role: 'user', text });
+          
+          // Check for local command XML tags and parse them
+          const localCmd = parseLocalCommandXml(text);
+          if (localCmd) {
+            messages.push({
+              role: 'user',
+              text: cleanXmlTags(text),
+              localCommand: localCmd,
+            });
+          } else if (text) {
+            messages.push({ role: 'user', text });
+          }
         } else if (entry.type === 'assistant' && entry.message) {
           const c = entry.message.content;
-          const text = typeof c === 'string'
+          let text = typeof c === 'string'
             ? c
             : Array.isArray(c)
               ? c.filter(b => b.type === 'text').map(b => b.text).join('')
               : '';
+          
+          // Clean any XML tags in assistant messages too
+          const localCmd = parseLocalCommandXml(text);
+          if (localCmd) {
+            text = cleanXmlTags(text);
+          }
+          
           const toolUses = Array.isArray(c)
             ? c.filter(b => b.type === 'tool_use').map(tu => {
                 const result = toolResults.get(String(tu.id));
@@ -245,7 +319,7 @@ class SessionManager {
                 };
               })
             : [];
-          messages.push({ role: 'assistant', text, toolUses });
+          messages.push({ role: 'assistant', text, toolUses, localCommand: localCmd || undefined });
         }
       } catch { /* skip */ }
     }

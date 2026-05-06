@@ -27,32 +27,62 @@ function renderChatHtml({ nonce, platform }) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --oc-bg: #0a0908;
-      --oc-panel: #110d0c;
-      --oc-panel-strong: #17110f;
-      --oc-panel-soft: #1d1512;
-      --oc-border: #645041;
-      --oc-border-soft: rgba(220,195,170,0.14);
-      --oc-text: #f7efe5;
-      --oc-text-dim: #dcc3aa;
-      --oc-text-soft: #aa9078;
-      --oc-accent: #d77757;
-      --oc-accent-bright: #f09464;
-      --oc-accent-soft: rgba(240,148,100,0.18);
-      --oc-positive: #e8b86b;
-      --oc-warning: #f3c969;
-      --oc-critical: #ff8a6c;
-      --oc-focus: #ffd3a1;
-      --oc-user-bg: rgba(240,148,100,0.12);
-      --oc-user-border: rgba(240,148,100,0.28);
-      --oc-assistant-bg: rgba(255,255,255,0.03);
-      --oc-assistant-border: rgba(220,195,170,0.10);
-      --oc-code-bg: #1a1310;
-      --oc-code-border: rgba(220,195,170,0.12);
-      --oc-tool-bg: rgba(232,184,107,0.06);
-      --oc-tool-border: rgba(232,184,107,0.22);
-      --oc-perm-bg: rgba(255,138,108,0.08);
-      --oc-perm-border: rgba(255,138,108,0.35);
+      /* ZeroChat Theme - Black/Purple/Cyan */
+      --zc-bg: #0a0a0f;
+      --zc-panel: #0f0f18;
+      --zc-panel-strong: #141420;
+      --zc-panel-soft: #1a1a28;
+      --zc-border: #3d3d5c;
+      --zc-border-soft: rgba(138,130,200,0.14);
+      --zc-text: #e8e8f5;
+      --zc-text-dim: #b0b0cc;
+      --zc-text-soft: #7878a0;
+      --zc-accent: #8b5cf6;
+      --zc-accent-bright: #a78bfa;
+      --zc-accent-soft: rgba(139,92,246,0.18);
+      --zc-cyan: #22d3ee;
+      --zc-cyan-soft: rgba(34,211,238,0.15);
+      --zc-positive: #4ade80;
+      --zc-warning: #fbbf24;
+      --zc-critical: #f87171;
+      --zc-focus: #c4b5fd;
+      --zc-user-bg: rgba(139,92,246,0.12);
+      --zc-user-border: rgba(139,92,246,0.28);
+      --zc-assistant-bg: rgba(34,211,238,0.05);
+      --zc-assistant-border: rgba(34,211,238,0.12);
+      --zc-code-bg: #12121c;
+      --zc-code-border: rgba(138,130,200,0.15);
+      --zc-tool-bg: rgba(139,92,246,0.06);
+      --zc-tool-border: rgba(139,92,246,0.22);
+      --zc-perm-bg: rgba(248,113,113,0.08);
+      --zc-perm-border: rgba(248,113,113,0.35);
+      /* Legacy aliases for compatibility */
+      --oc-bg: var(--zc-bg);
+      --oc-panel: var(--zc-panel);
+      --oc-panel-strong: var(--zc-panel-strong);
+      --oc-panel-soft: var(--zc-panel-soft);
+      --oc-border: var(--zc-border);
+      --oc-border-soft: var(--zc-border-soft);
+      --oc-text: var(--zc-text);
+      --oc-text-dim: var(--zc-text-dim);
+      --oc-text-soft: var(--zc-text-soft);
+      --oc-accent: var(--zc-accent);
+      --oc-accent-bright: var(--zc-accent-bright);
+      --oc-accent-soft: var(--zc-accent-soft);
+      --oc-positive: var(--zc-positive);
+      --oc-warning: var(--zc-warning);
+      --oc-critical: var(--zc-critical);
+      --oc-focus: var(--zc-focus);
+      --oc-user-bg: var(--zc-user-bg);
+      --oc-user-border: var(--zc-user-border);
+      --oc-assistant-bg: var(--zc-assistant-bg);
+      --oc-assistant-border: var(--zc-assistant-border);
+      --oc-code-bg: var(--zc-code-bg);
+      --oc-code-border: var(--zc-code-border);
+      --oc-tool-bg: var(--zc-tool-bg);
+      --oc-tool-border: var(--zc-tool-border);
+      --oc-perm-bg: var(--zc-perm-bg);
+      --oc-perm-border: var(--zc-perm-border);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; overflow: hidden; }
@@ -86,7 +116,7 @@ function renderChatHtml({ nonce, platform }) {
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .chat-header .brand-accent { color: var(--oc-accent-bright); }
+    .chat-header .brand-accent { color: var(--zc-cyan); }
     .header-btn {
       border: 1px solid var(--oc-border-soft);
       border-radius: 6px;
@@ -152,7 +182,7 @@ function renderChatHtml({ nonce, platform }) {
       gap: 16px;
     }
     .welcome-title { font-size: 20px; font-weight: 700; color: var(--oc-text); }
-    .welcome-title .accent { color: var(--oc-accent-bright); }
+    .welcome-title .accent { color: var(--zc-cyan); }
     .welcome-sub { font-size: 13px; color: var(--oc-text-dim); max-width: 36ch; }
     .welcome-hint { font-size: 11px; color: var(--oc-text-soft); }
     .welcome-hint kbd {
@@ -532,9 +562,9 @@ function renderChatHtml({ nonce, platform }) {
       width: 36px;
       height: 36px;
       border-radius: 10px;
-      border: 1px solid var(--oc-accent);
-      background: linear-gradient(135deg, rgba(240,148,100,0.2), rgba(215,119,87,0.12));
-      color: var(--oc-accent-bright);
+      border: 1px solid var(--zc-accent);
+      background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(34,211,238,0.12));
+      color: var(--zc-accent-bright);
       cursor: pointer;
       font-size: 16px;
       display: flex;
@@ -542,8 +572,276 @@ function renderChatHtml({ nonce, platform }) {
       justify-content: center;
       flex-shrink: 0;
     }
-    .send-btn:hover { background: rgba(240,148,100,0.25); }
+    .send-btn:hover { background: rgba(139,92,246,0.25); }
     .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Tips rotativas ── */
+    .tips-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      font-size: 11px;
+      color: var(--zc-text-soft);
+      background: rgba(139,92,246,0.04);
+      border-top: 1px solid var(--zc-border-soft);
+    }
+    .tips-bar .tip-label {
+      color: var(--zc-cyan);
+      font-weight: 600;
+    }
+    .tips-bar .tip-cmd {
+      color: var(--zc-accent-bright);
+      font-family: var(--vscode-editor-font-family, Consolas, monospace);
+    }
+    .tips-bar .tip-desc {
+      color: var(--zc-text-dim);
+    }
+
+    /* ── Footer com modelo/tokens/mode ── */
+    .footer-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 12px;
+      font-size: 11px;
+      color: var(--zc-text-soft);
+      background: var(--zc-panel);
+      border-top: 1px solid var(--zc-border-soft);
+      flex-shrink: 0;
+    }
+    .footer-settings-btn {
+      border: none;
+      background: transparent;
+      color: var(--zc-text-dim);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .footer-settings-btn:hover { background: rgba(255,255,255,0.06); color: var(--zc-text); }
+    .footer-mode-select {
+      padding: 4px 8px;
+      border: 1px solid var(--zc-border-soft);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.04);
+      color: var(--zc-text-dim);
+      font-size: 11px;
+      cursor: pointer;
+      outline: none;
+    }
+    .footer-mode-select:hover { border-color: var(--zc-accent); }
+    .footer-model-info {
+      flex: 1;
+      text-align: right;
+      color: var(--zc-text-soft);
+      font-family: var(--vscode-editor-font-family, Consolas, monospace);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .footer-model-info .model-name { color: var(--zc-cyan); }
+    .footer-model-info .token-usage { color: var(--zc-text-dim); }
+
+    /* ── Attachments area ── */
+    .attachments-area {
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 12px;
+      border-top: 1px solid var(--zc-border-soft);
+      background: var(--zc-panel-soft);
+    }
+    .attachments-area.visible { display: flex; }
+    .attachment-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(34,211,238,0.1);
+      border: 1px solid rgba(34,211,238,0.2);
+      font-size: 11px;
+      color: var(--zc-text-dim);
+    }
+    .attachment-badge .att-icon { font-size: 12px; }
+    .attachment-badge .att-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .attachment-badge .att-remove {
+      border: none;
+      background: transparent;
+      color: var(--zc-text-soft);
+      cursor: pointer;
+      padding: 0 2px;
+      font-size: 12px;
+    }
+    .attachment-badge .att-remove:hover { color: var(--zc-critical); }
+    .attachment-preview {
+      position: relative;
+      max-width: 120px;
+      max-height: 80px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--zc-border-soft);
+      cursor: pointer;
+    }
+    .attachment-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .attachment-preview .att-remove {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(0,0,0,0.6);
+      border: none;
+      color: #fff;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 10px;
+    }
+
+    /* ── Settings Modal ── */
+    .settings-modal {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 200;
+      background: rgba(5,5,10,0.95);
+      flex-direction: column;
+    }
+    .settings-modal.visible { display: flex; }
+    .settings-modal-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--zc-border-soft);
+    }
+    .settings-modal-header h2 { font-size: 15px; font-weight: 700; flex: 1; color: var(--zc-text); }
+    .settings-modal-close {
+      border: none;
+      background: transparent;
+      color: var(--zc-text-dim);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .settings-modal-close:hover { color: var(--zc-text); }
+    .settings-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--zc-border-soft);
+    }
+    .settings-tab {
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      color: var(--zc-text-soft);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .settings-tab:hover { color: var(--zc-text-dim); }
+    .settings-tab.active { color: var(--zc-accent-bright); border-bottom-color: var(--zc-accent); }
+    .settings-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    .settings-section { margin-bottom: 20px; }
+    .settings-section h3 { font-size: 12px; font-weight: 700; color: var(--zc-text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+      margin-bottom: 6px;
+    }
+    .settings-item:hover { background: rgba(255,255,255,0.04); }
+    .settings-item-label { font-size: 13px; color: var(--zc-text); }
+    .settings-item-desc { font-size: 11px; color: var(--zc-text-soft); margin-top: 2px; }
+    .settings-toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      border-radius: 10px;
+      background: var(--zc-panel-strong);
+      border: 1px solid var(--zc-border-soft);
+      cursor: pointer;
+      transition: background 150ms;
+    }
+    .settings-toggle.on { background: var(--zc-accent); border-color: var(--zc-accent); }
+    .settings-toggle::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--zc-text);
+      transition: transform 150ms;
+    }
+    .settings-toggle.on::after { transform: translateX(16px); }
+    .settings-select {
+      padding: 6px 10px;
+      border: 1px solid var(--zc-border-soft);
+      border-radius: 6px;
+      background: var(--zc-panel-strong);
+      color: var(--zc-text-dim);
+      font-size: 12px;
+      outline: none;
+    }
+    .settings-select:hover { border-color: var(--zc-accent); }
+    
+    /* Shortcuts list */
+    .shortcuts-list { display: grid; gap: 6px; }
+    .shortcut-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+    }
+    .shortcut-item:hover { background: rgba(139,92,246,0.06); }
+    .shortcut-cmd {
+      font-family: var(--vscode-editor-font-family, Consolas, monospace);
+      font-size: 12px;
+      color: var(--zc-cyan);
+      min-width: 100px;
+    }
+    .shortcut-desc { font-size: 12px; color: var(--zc-text-dim); }
+
+    /* Image preview modal */
+    .image-preview-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(0,0,0,0.9);
+      align-items: center;
+      justify-content: center;
+    }
+    .image-preview-modal.visible { display: flex; }
+    .image-preview-modal img { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; }
+    .image-preview-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
 
     /* ── Session list overlay ── */
     .session-overlay {
@@ -602,7 +900,8 @@ function renderChatHtml({ nonce, platform }) {
 </head>
 <body>
   <div class="chat-header">
-    <div class="brand">Open<span class="brand-accent">Zero</span></div>
+    <div class="brand">Zero<span class="brand-accent">Chat</span></div>
+    <button class="header-btn" id="settingsBtn" title="Settings">⚙</button>
     <button class="header-btn" id="historyBtn" title="Session history">History</button>
     <button class="header-btn" id="newChatBtn" title="New chat">+ New</button>
     <button class="header-btn danger" id="abortBtn" title="Abort generation">Stop</button>
@@ -615,7 +914,7 @@ function renderChatHtml({ nonce, platform }) {
 
   <div class="messages" id="messages">
     <div class="welcome" id="welcomeScreen">
-      <div class="welcome-title">Open<span class="accent">Zero</span></div>
+      <div class="welcome-title">Zero<span class="accent">Chat</span></div>
       <div class="welcome-sub">Ask a question, request a code change, or start a new task.</div>
       <div class="welcome-hint">Press <kbd>${escapeHtml(modKey)}+L</kbd> to focus input</div>
     </div>
@@ -635,9 +934,55 @@ function renderChatHtml({ nonce, platform }) {
     <div class="typing-dot"></div>
   </div>
 
+  <!-- Attachments area (for drag&drop files and pasted images) -->
+  <div class="attachments-area" id="attachmentsArea"></div>
+
   <div class="input-area">
-    <textarea id="chatInput" placeholder="Message Zero CLI..." rows="1"></textarea>
+    <textarea id="chatInput" placeholder="Message ZeroChat..." rows="1"></textarea>
     <button class="send-btn" id="sendBtn" title="Send message">&#x27A4;</button>
+  </div>
+
+  <!-- Tips bar -->
+  <div class="tips-bar" id="tipsBar">
+    <span class="tip-label">Tip:</span>
+    <span class="tip-cmd" id="tipCmd">/help</span>
+    <span class="tip-desc" id="tipDesc">— Ver todos os comandos disponíveis</span>
+  </div>
+
+  <!-- Footer with mode, model, tokens -->
+  <div class="footer-bar">
+    <button class="footer-settings-btn" id="footerSettingsBtn" title="Settings">⚙</button>
+    <select class="footer-mode-select" id="modeSelect" title="Permission mode">
+      <option value="default">Normal</option>
+      <option value="acceptEdits" selected>Accepts Edit on</option>
+      <option value="bypassPermissions">Autopilot</option>
+      <option value="plan">Plan</option>
+    </select>
+    <div class="footer-model-info" id="footerModelInfo">
+      <span class="model-name">—</span> · <span class="token-usage">0/0 tokens</span>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="settings-modal" id="settingsModal">
+    <div class="settings-modal-header">
+      <h2>⚙ Configurações</h2>
+      <button class="settings-modal-close" id="settingsModalClose">✕</button>
+    </div>
+    <div class="settings-tabs">
+      <button class="settings-tab active" data-tab="shortcuts">Atalhos</button>
+      <button class="settings-tab" data-tab="config">Config</button>
+      <button class="settings-tab" data-tab="providers">Providers</button>
+    </div>
+    <div class="settings-content" id="settingsContent">
+      <!-- Content loaded dynamically -->
+    </div>
+  </div>
+
+  <!-- Image preview modal -->
+  <div class="image-preview-modal" id="imagePreviewModal">
+    <button class="image-preview-close" id="imagePreviewClose">✕</button>
+    <img id="imagePreviewImg" src="" alt="Preview" />
   </div>
 
   <!-- Session list overlay -->
@@ -663,6 +1008,7 @@ function renderChatHtml({ nonce, platform }) {
   const abortBtn = document.getElementById('abortBtn');
   const newChatBtn = document.getElementById('newChatBtn');
   const historyBtn = document.getElementById('historyBtn');
+  const settingsBtn = document.getElementById('settingsBtn');
   const statusDot = document.getElementById('statusDot');
   const statusText = document.getElementById('statusText');
   const statusUsage = document.getElementById('statusUsage');
@@ -671,11 +1017,352 @@ function renderChatHtml({ nonce, platform }) {
   const closeSessionsBtn = document.getElementById('closeSessionsBtn');
   const sessionSearch = document.getElementById('sessionSearch');
   const sessionList = document.getElementById('sessionList');
+  
+  // New elements
+  const attachmentsArea = document.getElementById('attachmentsArea');
+  const tipsBar = document.getElementById('tipsBar');
+  const tipCmd = document.getElementById('tipCmd');
+  const tipDesc = document.getElementById('tipDesc');
+  const modeSelect = document.getElementById('modeSelect');
+  const footerModelInfo = document.getElementById('footerModelInfo');
+  const footerSettingsBtn = document.getElementById('footerSettingsBtn');
+  const settingsModal = document.getElementById('settingsModal');
+  const settingsModalClose = document.getElementById('settingsModalClose');
+  const settingsContent = document.getElementById('settingsContent');
+  const imagePreviewModal = document.getElementById('imagePreviewModal');
+  const imagePreviewClose = document.getElementById('imagePreviewClose');
+  const imagePreviewImg = document.getElementById('imagePreviewImg');
 
   let isStreaming = false;
   let currentAssistantEl = null;
   let currentTextEl = null;
   const toolResultMap = {};
+  
+  // Attachments state
+  const attachments = [];
+  
+  // Tips rotation
+  const TIPS = [
+    { cmd: '/help', desc: 'Ver todos os comandos disponíveis' },
+    { cmd: '/context', desc: 'Adicionar arquivos ao contexto' },
+    { cmd: '/compact', desc: 'Compactar histórico da conversa' },
+    { cmd: '/debug', desc: 'Ver informações de debug' },
+    { cmd: '/config', desc: 'Abrir configurações' },
+    { cmd: '/clear', desc: 'Limpar conversa atual' },
+    { cmd: '/copy', desc: 'Copiar última resposta' },
+    { cmd: '/model', desc: 'Trocar modelo de IA' },
+    { cmd: '/provider', desc: 'Configurar provedor' },
+    { cmd: '/resume', desc: 'Resumir sessão anterior' },
+    { cmd: '/plan', desc: 'Entrar no modo planejamento' },
+    { cmd: '/permissions', desc: 'Gerenciar permissões' },
+    { cmd: '/memory', desc: 'Memória contextual' },
+    { cmd: '/diff', desc: 'Ver diferenças de arquivos' },
+    { cmd: '/rewind', desc: 'Voltar para checkpoint anterior' },
+    { cmd: '/tasks', desc: 'Gerenciar tarefas' },
+    { cmd: '/cost', desc: 'Ver custos da sessão' },
+    { cmd: '/status', desc: 'Ver status do sistema' },
+  ];
+  let tipIndex = 0;
+  
+  function rotateTip() {
+    tipIndex = (tipIndex + 1) % TIPS.length;
+    const tip = TIPS[tipIndex];
+    tipCmd.textContent = tip.cmd;
+    tipDesc.textContent = '— ' + tip.desc;
+  }
+  setInterval(rotateTip, 8000);
+
+  // Settings modal tabs content
+  const SHORTCUTS_CONTENT = \`
+    <div class="shortcuts-list">
+      <div class="shortcut-item"><span class="shortcut-cmd">/help</span><span class="shortcut-desc">Ver todos os comandos disponíveis</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/context</span><span class="shortcut-desc">Adicionar arquivos ao contexto da conversa</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/compact</span><span class="shortcut-desc">Compactar histórico para economizar tokens</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/debug</span><span class="shortcut-desc">Mostrar informações de debug</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/config</span><span class="shortcut-desc">Abrir configurações do Zero CLI</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/clear</span><span class="shortcut-desc">Limpar conversa atual</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/copy</span><span class="shortcut-desc">Copiar última resposta para clipboard</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/model</span><span class="shortcut-desc">Trocar modelo de IA</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/provider</span><span class="shortcut-desc">Configurar provedor de API</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/resume</span><span class="shortcut-desc">Resumir sessão anterior</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/plan</span><span class="shortcut-desc">Entrar no modo planejamento (read-only)</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/permissions</span><span class="shortcut-desc">Gerenciar permissões de ferramentas</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/memory</span><span class="shortcut-desc">Gerenciar memória contextual</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/diff</span><span class="shortcut-desc">Ver diferenças de arquivos</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/rewind</span><span class="shortcut-desc">Voltar para checkpoint anterior</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/tasks</span><span class="shortcut-desc">Gerenciar lista de tarefas</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/cost</span><span class="shortcut-desc">Ver custos da sessão atual</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/status</span><span class="shortcut-desc">Ver status do sistema</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/files</span><span class="shortcut-desc">Listar arquivos no contexto</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/theme</span><span class="shortcut-desc">Trocar tema do terminal</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/doctor</span><span class="shortcut-desc">Diagnosticar problemas</span></div>
+      <div class="shortcut-item"><span class="shortcut-cmd">/exit</span><span class="shortcut-desc">Sair do Zero CLI</span></div>
+    </div>
+  \`;
+
+  const CONFIG_CONTENT = \`
+    <div class="settings-section">
+      <h3>Geral</h3>
+      <div class="settings-item">
+        <div><div class="settings-item-label">Auto-compact</div><div class="settings-item-desc">Compactar automaticamente histórico longo</div></div>
+        <button class="settings-toggle on" data-setting="autoCompact"></button>
+      </div>
+      <div class="settings-item">
+        <div><div class="settings-item-label">Tool history compression</div><div class="settings-item-desc">Comprimir resultados de ferramentas</div></div>
+        <button class="settings-toggle on" data-setting="toolCompression"></button>
+      </div>
+      <div class="settings-item">
+        <div><div class="settings-item-label">Show tips</div><div class="settings-item-desc">Exibir dicas rotativas</div></div>
+        <button class="settings-toggle on" data-setting="showTips"></button>
+      </div>
+      <div class="settings-item">
+        <div><div class="settings-item-label">Reduce motion</div><div class="settings-item-desc">Reduzir animações</div></div>
+        <button class="settings-toggle" data-setting="reduceMotion"></button>
+      </div>
+      <div class="settings-item">
+        <div><div class="settings-item-label">Thinking mode</div><div class="settings-item-desc">Mostrar processo de pensamento</div></div>
+        <button class="settings-toggle on" data-setting="thinkingMode"></button>
+      </div>
+      <div class="settings-item">
+        <div><div class="settings-item-label">Rewind code (checkpoints)</div><div class="settings-item-desc">Habilitar pontos de restauração</div></div>
+        <button class="settings-toggle on" data-setting="checkpoints"></button>
+      </div>
+      <div class="settings-item">
+        <div><div class="settings-item-label">Verbose output</div><div class="settings-item-desc">Saída detalhada</div></div>
+        <button class="settings-toggle" data-setting="verbose"></button>
+      </div>
+      <div class="settings-item">
+        <div><div class="settings-item-label">Show turn duration</div><div class="settings-item-desc">Mostrar tempo de cada turno</div></div>
+        <button class="settings-toggle on" data-setting="turnDuration"></button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>Aparência</h3>
+      <div class="settings-item">
+        <div><div class="settings-item-label">Theme</div></div>
+        <select class="settings-select" data-setting="theme">
+          <option value="dark" selected>Dark mode</option>
+          <option value="light">Light mode</option>
+          <option value="system">System</option>
+        </select>
+      </div>
+      <div class="settings-item">
+        <div><div class="settings-item-label">Language</div></div>
+        <select class="settings-select" data-setting="language">
+          <option value="pt-BR" selected>Português (BR)</option>
+          <option value="en-US">English (US)</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
+    </div>
+  \`;
+
+  const PROVIDERS_CONTENT = \`
+    <div class="settings-section">
+      <h3>Provedores Configurados</h3>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Anthropic (Claude)</div>
+          <div class="settings-item-desc">claude-3-5-sonnet, claude-3-opus, etc.</div>
+        </div>
+        <span style="color: var(--zc-positive);">● Conectado</span>
+      </div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">OpenAI</div>
+          <div class="settings-item-desc">gpt-4o, gpt-4-turbo, etc.</div>
+        </div>
+        <span style="color: var(--zc-text-soft);">○ Não configurado</span>
+      </div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Ollama (Local)</div>
+          <div class="settings-item-desc">llama3, qwen, mistral, etc.</div>
+        </div>
+        <span style="color: var(--zc-text-soft);">○ Não configurado</span>
+      </div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">OpenRouter</div>
+          <div class="settings-item-desc">Acesso a múltiplos modelos</div>
+        </div>
+        <span style="color: var(--zc-text-soft);">○ Não configurado</span>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>Configurar Provider</h3>
+      <p style="color: var(--zc-text-soft); font-size: 12px;">
+        Use o comando <code style="color: var(--zc-cyan);">/provider</code> no chat para configurar novos provedores.
+      </p>
+    </div>
+  \`;
+
+  // Settings modal
+  function openSettings(tab = 'shortcuts') {
+    settingsModal.classList.add('visible');
+    setSettingsTab(tab);
+  }
+  function closeSettings() {
+    settingsModal.classList.remove('visible');
+  }
+  function setSettingsTab(tab) {
+    document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(\`.settings-tab[data-tab="\${tab}"]\`).classList.add('active');
+    if (tab === 'shortcuts') settingsContent.innerHTML = SHORTCUTS_CONTENT;
+    else if (tab === 'config') settingsContent.innerHTML = CONFIG_CONTENT;
+    else if (tab === 'providers') settingsContent.innerHTML = PROVIDERS_CONTENT;
+    // Add toggle event listeners
+    settingsContent.querySelectorAll('.settings-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('on');
+        const setting = btn.dataset.setting;
+        vscode.postMessage({ type: 'setting_changed', setting, value: btn.classList.contains('on') });
+      });
+    });
+  }
+  settingsBtn.addEventListener('click', () => openSettings());
+  footerSettingsBtn.addEventListener('click', () => openSettings());
+  settingsModalClose.addEventListener('click', closeSettings);
+  document.querySelectorAll('.settings-tab').forEach(tab => {
+    tab.addEventListener('click', () => setSettingsTab(tab.dataset.tab));
+  });
+
+  // Mode select
+  modeSelect.addEventListener('change', () => {
+    vscode.postMessage({ type: 'mode_changed', mode: modeSelect.value });
+  });
+
+  // Image preview modal
+  function openImagePreview(src) {
+    imagePreviewImg.src = src;
+    imagePreviewModal.classList.add('visible');
+  }
+  function closeImagePreview() {
+    imagePreviewModal.classList.remove('visible');
+    imagePreviewImg.src = '';
+  }
+  imagePreviewClose.addEventListener('click', closeImagePreview);
+  imagePreviewModal.addEventListener('click', (e) => {
+    if (e.target === imagePreviewModal) closeImagePreview();
+  });
+
+  // Attachments management
+  function addAttachment(file) {
+    const id = 'att-' + Math.random().toString(36).slice(2, 8);
+    const isImage = file.type && file.type.startsWith('image/');
+    attachments.push({ id, file, isImage });
+    renderAttachments();
+    return id;
+  }
+  function removeAttachment(id) {
+    const idx = attachments.findIndex(a => a.id === id);
+    if (idx >= 0) attachments.splice(idx, 1);
+    renderAttachments();
+  }
+  function renderAttachments() {
+    if (attachments.length === 0) {
+      attachmentsArea.classList.remove('visible');
+      attachmentsArea.innerHTML = '';
+      return;
+    }
+    attachmentsArea.classList.add('visible');
+    attachmentsArea.innerHTML = attachments.map(att => {
+      if (att.isImage && att.dataUrl) {
+        return \`<div class="attachment-preview" data-id="\${att.id}">
+          <img src="\${att.dataUrl}" alt="Preview" />
+          <button class="att-remove" data-id="\${att.id}">✕</button>
+        </div>\`;
+      }
+      return \`<div class="attachment-badge" data-id="\${att.id}">
+        <span class="att-icon">📎</span>
+        <span class="att-name">\${escapeForMd(att.file.name || att.file.path || 'file')}</span>
+        <button class="att-remove" data-id="\${att.id}">✕</button>
+      </div>\`;
+    }).join('');
+    // Event listeners
+    attachmentsArea.querySelectorAll('.att-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        removeAttachment(btn.dataset.id);
+      });
+    });
+    attachmentsArea.querySelectorAll('.attachment-preview').forEach(el => {
+      el.addEventListener('click', () => {
+        const att = attachments.find(a => a.id === el.dataset.id);
+        if (att && att.dataUrl) openImagePreview(att.dataUrl);
+      });
+    });
+  }
+
+  // Drag and drop
+  inputEl.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    inputEl.style.borderColor = 'var(--zc-cyan)';
+  });
+  inputEl.addEventListener('dragleave', () => {
+    inputEl.style.borderColor = '';
+  });
+  inputEl.addEventListener('drop', (e) => {
+    e.preventDefault();
+    inputEl.style.borderColor = '';
+    const files = Array.from(e.dataTransfer.files);
+    const uris = e.dataTransfer.getData('text/uri-list');
+    if (uris) {
+      uris.split('\\n').filter(u => u).forEach(uri => {
+        const path = uri.replace('file://', '');
+        addAttachment({ name: path.split('/').pop(), path });
+        vscode.postMessage({ type: 'attach_file', path });
+      });
+    }
+    files.forEach(file => {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const id = addAttachment(file);
+          const att = attachments.find(a => a.id === id);
+          if (att) att.dataUrl = reader.result;
+          renderAttachments();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        addAttachment(file);
+      }
+    });
+  });
+
+  // Paste image (Ctrl+V)
+  inputEl.addEventListener('paste', (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const id = addAttachment(file);
+            const att = attachments.find(a => a.id === id);
+            if (att) att.dataUrl = reader.result;
+            renderAttachments();
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+  });
+
+  // Update footer model info
+  function updateModelInfo(model, inputTokens, maxTokens) {
+    const modelSpan = footerModelInfo.querySelector('.model-name');
+    const tokenSpan = footerModelInfo.querySelector('.token-usage');
+    modelSpan.textContent = model || '—';
+    if (inputTokens !== undefined && maxTokens) {
+      const pct = Math.round((inputTokens / maxTokens) * 100);
+      tokenSpan.textContent = \`\${inputTokens.toLocaleString()}/\${(maxTokens/1000).toFixed(0)}k tokens (\${pct}%)\`;
+    }
+  }
 
   /* ── Markdown renderer ── */
   function renderMarkdown(text) {
