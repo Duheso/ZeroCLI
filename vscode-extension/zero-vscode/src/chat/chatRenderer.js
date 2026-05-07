@@ -83,6 +83,7 @@ function renderChatHtml({ nonce, platform }) {
       --oc-tool-border: var(--zc-tool-border);
       --oc-perm-bg: var(--zc-perm-bg);
       --oc-perm-border: var(--zc-perm-border);
+      --oc-success: var(--zc-positive);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; overflow: hidden; }
@@ -1688,10 +1689,10 @@ function renderChatHtml({ nonce, platform }) {
           type: 'permission_response',
           requestId: perm.requestId,
           toolUseId: perm.toolUseId || null,
+          input: perm.input || {},
           action: action,
         });
-        el.querySelectorAll('.perm-btn').forEach(b => { b.disabled = true; b.style.opacity = '0.4'; });
-        btn.style.opacity = '1';
+        el.remove();
       });
     });
     messagesEl.appendChild(el);

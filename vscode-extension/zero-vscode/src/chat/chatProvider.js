@@ -188,16 +188,19 @@ class ChatController {
     }
   }
 
-  sendPermissionResponse(requestId, action, toolUseId) {
+  sendPermissionResponse(requestId, action, toolUseId, input) {
     if (!this._process) return;
     if (action === 'deny') {
       try {
         this._process.write({
           type: 'control_response',
           response: {
-            subtype: 'error',
+            subtype: 'success',
             request_id: requestId,
-            error: 'User denied permission',
+            response: {
+              behavior: 'deny',
+              message: 'User denied permission',
+            },
           },
         });
       } catch (err) {
@@ -207,8 +210,9 @@ class ChatController {
     }
     try {
       this._process.sendControlResponse(requestId, {
-        toolUseID: toolUseId || undefined,
-        ...(action === 'allow-session' ? { remember: true } : {}),
+        behavior: 'allow',
+        updatedInput: input || {},
+        ...(action === 'allow-session' ? { decisionClassification: 'user_permanent' } : {}),
       });
     } catch (err) {
       this._broadcast({ type: 'error', message: err.message });
@@ -261,6 +265,7 @@ class ChatController {
         displayName: req.display_name || req.title || toolDisplayName(req.tool_name),
         description: req.description || '',
         inputPreview: parseToolInput(req.input),
+        input: req.input || {},
         toolUseId: req.tool_use_id || null,
       });
       return;
@@ -537,7 +542,7 @@ class ZeroCLIChatViewProvider {
           await this._chatController.startSession({ sessionId: msg.sessionId });
           break;
         case 'permission_response':
-          this._chatController.sendPermissionResponse(msg.requestId, msg.action, msg.toolUseId);
+          this._chatController.sendPermissionResponse(msg.requestId, msg.action, msg.toolUseId, msg.input);
           break;
         case 'copy_code':
           if (msg.text) await vscode.env.clipboard.writeText(msg.text);
@@ -659,7 +664,7 @@ class ZeroCLIChatPanelManager {
           await this._chatController.startSession({ sessionId: msg.sessionId });
           break;
         case 'permission_response':
-          this._chatController.sendPermissionResponse(msg.requestId, msg.action, msg.toolUseId);
+          this._chatController.sendPermissionResponse(msg.requestId, msg.action, msg.toolUseId, msg.input);
           break;
         case 'copy_code':
           if (msg.text) await vscode.env.clipboard.writeText(msg.text);
