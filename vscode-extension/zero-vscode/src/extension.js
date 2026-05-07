@@ -1171,8 +1171,8 @@ function activate(context) {
     chatController.broadcast({ type: 'session_cleared' });
   });
 
-  const openChatCommand = vscode.commands.registerCommand('zerocli.openChat', () => {
-    chatPanelManager.openPanel();
+  const openChatCommand = vscode.commands.registerCommand('zerocli.openChat', async () => {
+    await vscode.commands.executeCommand('zerocli.chat.focus');
   });
 
   const resumeSessionCommand = vscode.commands.registerCommand('zerocli.resumeSession', async () => {
@@ -1208,7 +1208,7 @@ function activate(context) {
   );
 
   const chatViewProviderReg = vscode.window.registerWebviewViewProvider(
-    'zero.chat',
+    'zerocli.chat',
     chatViewProvider,
     { webviewOptions: { retainContextWhenHidden: true } },
   );

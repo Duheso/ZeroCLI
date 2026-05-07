@@ -67,7 +67,11 @@
       "Read(//home/accadmin/.zerocli/**)",
       "Bash(find ~/.config ~/.local ~/.zerocli ~/.cache -name *project-config* -o -name *zerocli* -o -name *zero*config*)",
       "Bash(bun run:*)",
-      "Bash(docker ps:*)"
+      "Bash(docker ps:*)",
+      "Bash(wc -l /home/accadmin/workspace/ZeroCLI/src/components/*.tsx)",
+      "Bash(find /home/accadmin/workspace/ZeroCLI -path node_modules -prune -o -type f \\\\\\(-name *.ts -o -name *.js -o -name *.json \\\\\\) -print -exec wc -l {} +)",
+      "Bash(sort -t/ -k1 -rn)",
+      "Bash(sudo apt-get:*)"
     ]
   },
   "enabledMcpjsonServers": [

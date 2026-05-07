@@ -69,6 +69,7 @@ class ProcessManager {
       '--output-format=stream-json',
       '--include-partial-messages',
       '--permission-mode', this._permissionMode || 'acceptEdits',
+      '--permission-prompt-tool', 'stdio',
     ];
 
     if (this._sessionId) {
